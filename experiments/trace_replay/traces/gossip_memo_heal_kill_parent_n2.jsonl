@@ -1,0 +1,22 @@
+{"at_ms":0,"type":"metrics","note":"gossip-memo-heal-kill-parent-n2"}
+
+# 场景：n3/n4 duty-cycle（睡眠协同），kill 中间节点 n2（父节点），形成“多节点子树断链”，
+# 然后对 leaf(n4) 下发 memo，等待 Kelpie 拓扑中 memo 收敛。
+# 目标：覆盖 “补链/救援并发 + gossip 收敛 + 睡眠协同” 在更深子树场景下的隐性 bug。
+
+{"at_ms":5000,"type":"sleep","node":"n4","sleep_seconds":20,"work_seconds":2,"jitter_percent":0}
+{"at_ms":7000,"type":"sleep","node":"n3","sleep_seconds":10,"work_seconds":2,"jitter_percent":0}
+
+# 预热：在 kill 之前，先对 n4 投递一条 log，确保基础链路工作正常（也能增加队列/路由扰动）。
+{"at_ms":12000,"type":"dtn_enqueue","target":"n4","payload":"log:gossip-heal-n2-pre-1","priority":"normal","ttl_seconds":600}
+
+{"at_ms":20000,"type":"kill","node":"n2"}
+
+# kill 后立刻下发 memo：若自愈机制建立新路径，应当最终投递并通过 gossip 回传到 Kelpie。
+{"at_ms":26000,"type":"dtn_enqueue","target":"n4","payload":"memo:gossip-heal-after-kill-n2","priority":"normal","ttl_seconds":600}
+{"at_ms":29000,"type":"dtn_enqueue","target":"n4","payload":"log:gossip-heal-n2-post-1","priority":"normal","ttl_seconds":600}
+
+{"at_ms":32000,"type":"wait_memo","node":"n4","expect":"gossip-heal-after-kill-n2","timeout_ms":240000}
+
+{"at_ms":70000,"type":"metrics","note":"checkpoint-70s"}
+

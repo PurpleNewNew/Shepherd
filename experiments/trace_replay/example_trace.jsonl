@@ -1,0 +1,5 @@
+{"at_ms":0,"type":"metrics","note":"baseline"}
+{"at_ms":1000,"type":"sleep","node":"n1","sleep_seconds":12,"work_seconds":2,"jitter_percent":0}
+{"at_ms":2000,"type":"sleep","node":"n2","sleep_seconds":18,"work_seconds":3,"jitter_percent":10}
+{"at_ms":4000,"type":"dtn_enqueue","target":"n2","payload":"log:hello-from-trace","priority":"normal","ttl_seconds":600}
+{"at_ms":10000,"type":"metrics","note":"checkpoint-10s"}

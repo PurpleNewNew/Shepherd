@@ -1,0 +1,9 @@
+{"at_ms":0,"type":"metrics","note":"dataplane-token-replay-n3"}
+
+# 场景：dataplane 一次性 token 应该严格“一次性”，成功传输后重复使用必须被拒绝（防重放）。
+{"at_ms":2000,"type":"wait_node_status","node":"n3","expect":"online","timeout_ms":60000}
+
+{"at_ms":5000,"type":"dataplane_token_replay","target":"n3","path":"trace/dp_token_replay_n3.bin","payload_bytes":1024,"timeout_ms":60000}
+
+{"at_ms":15000,"type":"metrics","note":"checkpoint-15s"}
+

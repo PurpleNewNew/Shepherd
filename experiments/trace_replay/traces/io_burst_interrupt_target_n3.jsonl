@@ -1,0 +1,18 @@
+{"at_ms":0,"type":"metrics","note":"io-burst-interrupt-target-n3"}
+
+# 确保目标在线。
+{"at_ms":2000,"type":"wait_node_status","node":"n3","expect":"online","timeout_ms":10000}
+
+# 先做一轮并发 IO，覆盖 stream/dataplane 协同路径。
+{"at_ms":5000,"type":"io_burst","target":"n3","stream_count":3,"dataplane_count":2,"payload_bytes":1024,"timeout_ms":40000}
+
+# 中断目标节点（确定性）：以 kill 触发中断场景，避免上传动作在不同机型上超时判据不稳定。
+{"at_ms":15000,"type":"kill","node":"n3"}
+
+# 等待 n3 被拓扑标记为 offline。
+{"at_ms":17000,"type":"wait_node_status","node":"n3","expect":"offline","timeout_ms":45000}
+
+# 对存活节点做一轮轻量 IO，验证不中毒。
+{"at_ms":25000,"type":"io_burst","target":"n2","stream_count":1,"dataplane_count":1,"payload_bytes":512,"timeout_ms":40000}
+
+{"at_ms":45000,"type":"metrics","note":"checkpoint-45s"}

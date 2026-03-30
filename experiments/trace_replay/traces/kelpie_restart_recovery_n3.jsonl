@@ -1,0 +1,19 @@
+{"at_ms":0,"type":"metrics","note":"kelpie-restart-recovery-n3"}
+
+# 场景：Kelpie 中途重启，随后验证 DTN / stream / dataplane 仍可用。
+
+# Kelpie 中途重启（复用相同 runDir SQLite；root 会自动重连）。
+{"at_ms":12000,"type":"kelpie_restart","timeout_ms":60000}
+
+# 重启后继续投递 DTN，验证队列/路由/补链机制仍可工作。
+{"at_ms":25000,"type":"dtn_enqueue","target":"n3","payload":"log:after-restart-n3-1","priority":"normal","ttl_seconds":600}
+{"at_ms":26000,"type":"dtn_enqueue","target":"n3","payload":"log:after-restart-n3-2","priority":"normal","ttl_seconds":600}
+{"at_ms":27000,"type":"dtn_enqueue","target":"n3","payload":"log:after-restart-n3-3","priority":"normal","ttl_seconds":600}
+
+# 重启后做一次 stream 往返（proxy -> 本机 echo）。
+{"at_ms":32000,"type":"stream_proxy","node":"n3","payload":"PING_AFTER_RESTART_N3\\n","expect":"PING_AFTER_RESTART_N3\\n","timeout_ms":60000}
+
+# 重启后做一次 dataplane roundtrip（upload+download）。
+{"at_ms":38000,"type":"dataplane_roundtrip","target":"n3","path":"trace/after_restart_roundtrip_n3.txt","payload":"HELLO_AFTER_RESTART_N3_0123456789","timeout_ms":60000}
+
+{"at_ms":75000,"type":"metrics","note":"checkpoint-75s"}

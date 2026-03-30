@@ -1,0 +1,6 @@
+{"at_ms":0,"type":"metrics","note":"sleep16-work2"}
+{"at_ms":5000,"type":"sleep","node":"n3","sleep_seconds":16,"work_seconds":2,"jitter_percent":0}
+{"at_ms":12000,"type":"dtn_enqueue","target":"n3","payload":"log:dtn-sleep-effect-1","priority":"normal","ttl_seconds":600}
+{"at_ms":20000,"type":"dtn_enqueue","target":"n3","payload":"log:dtn-sleep-effect-2","priority":"normal","ttl_seconds":600}
+{"at_ms":28000,"type":"dtn_enqueue","target":"n3","payload":"log:dtn-sleep-effect-3","priority":"normal","ttl_seconds":600}
+{"at_ms":65000,"type":"metrics","note":"checkpoint-65s"}

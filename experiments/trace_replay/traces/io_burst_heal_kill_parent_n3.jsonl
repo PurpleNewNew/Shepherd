@@ -1,0 +1,20 @@
+{"at_ms":0,"type":"metrics","note":"io-burst-heal-kill-parent-n3"}
+
+# 场景：让 leaf(n4) 长睡眠，中间节点(n3) 周期睡眠，然后 kill n3。
+# 目标：覆盖 “自愈/补链恢复路径” 之后的 stream/dataplane 并发 IO，捕获重连/乱序/资源泄漏类隐性 bug。
+
+{"at_ms":2000,"type":"wait_node_status","node":"n4","expect":"online","timeout_ms":30000}
+
+{"at_ms":4000,"type":"sleep","node":"n4","sleep_seconds":20,"work_seconds":2,"jitter_percent":0}
+{"at_ms":6000,"type":"sleep","node":"n3","sleep_seconds":10,"work_seconds":2,"jitter_percent":0}
+
+{"at_ms":18000,"type":"kill","node":"n3"}
+
+# 等待 n4 自愈（通过补链/救援恢复 online）。
+{"at_ms":22000,"type":"wait_node_status","node":"n4","expect":"online","timeout_ms":240000}
+
+# 自愈后做一轮更狠的 IO burst：并发 stream_proxy + dataplane_roundtrip。
+{"at_ms":23000,"type":"io_burst","target":"n4","stream_count":4,"dataplane_count":3,"payload_bytes":2048,"timeout_ms":120000}
+
+{"at_ms":70000,"type":"metrics","note":"checkpoint-70s"}
+

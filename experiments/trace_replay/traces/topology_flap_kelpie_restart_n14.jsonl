@@ -1,0 +1,25 @@
+{"at_ms":0,"type":"metrics","note":"topology-flap-kelpie-restart-n14"}
+
+# 场景：更大规模（root+n1..n14）下，中段节点失效 + Kelpie 重启。
+# 目标：验证拓扑任务串行化、自愈/补链以及重启后的连通一致性。
+{"at_ms":1000,"type":"wait_node_status","node":"n14","expect":"online","timeout_ms":150000}
+
+{"at_ms":3000,"type":"sleep","node":"n12","sleep_seconds":18,"work_seconds":2,"jitter_percent":0}
+{"at_ms":3000,"type":"sleep","node":"n13","sleep_seconds":18,"work_seconds":2,"jitter_percent":0}
+{"at_ms":3000,"type":"sleep","node":"n14","sleep_seconds":18,"work_seconds":2,"jitter_percent":0}
+
+# 为兼顾压力与可重复性，保留单点中段失效（n6）。
+{"at_ms":10000,"type":"kill","node":"n6"}
+
+{"at_ms":26000,"type":"dtn_enqueue","target":"n14","payload":"log:topoflap14-pre-1","priority":"normal","ttl_seconds":900}
+{"at_ms":27000,"type":"dtn_enqueue","target":"n14","payload":"log:topoflap14-pre-2","priority":"normal","ttl_seconds":900}
+{"at_ms":28000,"type":"dtn_enqueue","target":"n14","payload":"log:topoflap14-pre-3","priority":"normal","ttl_seconds":900}
+{"at_ms":28500,"type":"dtn_expect_order","payload":"topoflap14-pre-1|topoflap14-pre-2|topoflap14-pre-3"}
+
+{"at_ms":42000,"type":"kelpie_restart","timeout_ms":90000}
+{"at_ms":62000,"type":"wait_node_status","node":"n14","expect":"online","timeout_ms":150000}
+
+# 重启后给链路一个稳定窗口，持续观察在线状态，降低抖动 flake。
+{"at_ms":90000,"type":"wait_node_status","node":"n14","expect":"online","timeout_ms":120000}
+
+{"at_ms":210000,"type":"metrics","note":"checkpoint-210s"}

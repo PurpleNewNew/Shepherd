@@ -1,0 +1,21 @@
+{"at_ms":0,"type":"metrics","note":"dataplane-restart-interrupt-mix-n3"}
+
+# 场景：token replay/expire + Kelpie 重启 + 上传中断（kill target）交错。
+# 目标：验证 dataplane 在异常路径下的一致性与失败快速返回。
+{"at_ms":1000,"type":"wait_node_status","node":"n3","expect":"online","timeout_ms":60000}
+
+{"at_ms":5000,"type":"dataplane_token_replay","target":"n3","path":"trace/dp_mix_replay_n3.bin","payload_bytes":4096,"timeout_ms":60000}
+{"at_ms":12000,"type":"dataplane_token_expire","target":"n3","path":"trace/dp_mix_expire_n3.bin","payload_bytes":2048,"ttl_seconds":1,"delay_ms":2200,"timeout_ms":60000}
+
+{"at_ms":22000,"type":"kelpie_restart","timeout_ms":90000}
+{"at_ms":42000,"type":"wait_node_status","node":"n3","expect":"online","timeout_ms":120000}
+
+{"at_ms":48000,"type":"dataplane_roundtrip","target":"n3","path":"trace/dp_mix_roundtrip_n3.bin","payload":"DP_MIX_ROUNDTRIP_N3","timeout_ms":60000}
+
+{"at_ms":62000,"type":"dataplane_upload_interrupt","target":"n3","path":"trace/dp_mix_interrupt_n3.bin","payload_bytes":4194304,"chunk_delay_ms":8,"kill_node":"n3","kill_after_ms":700,"timeout_ms":180000}
+{"at_ms":66000,"type":"wait_node_status","node":"n3","expect":"offline","timeout_ms":90000}
+
+# 目标被 kill 后，对存活节点做一次 roundtrip，确保 dataplane 主流程未被拖挂。
+{"at_ms":76000,"type":"dataplane_roundtrip","target":"n2","path":"trace/dp_mix_survivor_n2.bin","payload":"DP_MIX_SURVIVOR_N2","timeout_ms":60000}
+
+{"at_ms":150000,"type":"metrics","note":"checkpoint-150s"}

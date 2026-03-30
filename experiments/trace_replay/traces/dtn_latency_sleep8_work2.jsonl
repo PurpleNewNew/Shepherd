@@ -1,0 +1,13 @@
+{"at_ms":0,"type":"metrics","note":"sleep8-work2"}
+{"at_ms":0,"type":"sleep","node":"n3","sleep_seconds":8,"work_seconds":2,"jitter_percent":0}
+{"at_ms":2000,"type":"dtn_enqueue","target":"n3","payload":"log:dtn-latency-1","priority":"normal","ttl_seconds":600}
+{"at_ms":3000,"type":"dtn_enqueue","target":"n3","payload":"log:dtn-latency-2","priority":"normal","ttl_seconds":600}
+{"at_ms":4000,"type":"dtn_enqueue","target":"n3","payload":"log:dtn-latency-3","priority":"normal","ttl_seconds":600}
+{"at_ms":5000,"type":"dtn_enqueue","target":"n3","payload":"log:dtn-latency-4","priority":"normal","ttl_seconds":600}
+{"at_ms":6000,"type":"dtn_enqueue","target":"n3","payload":"log:dtn-latency-5","priority":"normal","ttl_seconds":600}
+{"at_ms":7000,"type":"dtn_enqueue","target":"n3","payload":"log:dtn-latency-6","priority":"normal","ttl_seconds":600}
+{"at_ms":8000,"type":"dtn_enqueue","target":"n3","payload":"log:dtn-latency-7","priority":"normal","ttl_seconds":600}
+{"at_ms":9000,"type":"dtn_enqueue","target":"n3","payload":"log:dtn-latency-8","priority":"normal","ttl_seconds":600}
+{"at_ms":10000,"type":"dtn_enqueue","target":"n3","payload":"log:dtn-latency-9","priority":"normal","ttl_seconds":600}
+{"at_ms":11000,"type":"dtn_enqueue","target":"n3","payload":"log:dtn-latency-10","priority":"normal","ttl_seconds":600}
+{"at_ms":25000,"type":"metrics","note":"checkpoint-25s"}

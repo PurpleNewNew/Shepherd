@@ -1,0 +1,19 @@
+# Keep Docker build context small: Go-only build does not need UI/experiments artifacts.
+build/
+clientui/
+experiments/
+trace_replay/
+formal/
+docs/
+bin/
+db/
+
+*.log
+*.jsonl
+*.png
+*.pdf
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+

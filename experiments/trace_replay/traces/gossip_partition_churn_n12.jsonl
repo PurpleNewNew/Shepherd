@@ -1,0 +1,18 @@
+{"at_ms":0,"type":"metrics","note":"gossip-partition-churn-n12"}
+
+# 规模：root+n1..n12（共 13 节点）。
+{"at_ms":1000,"type":"wait_node_status","node":"n12","expect":"online","timeout_ms":120000}
+
+# 先在远端叶子验证一次收敛（无分区干扰）。
+{"at_ms":6000,"type":"dtn_enqueue","target":"n12","payload":"memo:gossip-churn-n12-v1","priority":"normal","ttl_seconds":900}
+{"at_ms":9000,"type":"wait_memo","node":"n12","expect":"gossip-churn-n12-v1","timeout_ms":180000}
+
+# 注入中段 churn。
+{"at_ms":30000,"type":"kill","node":"n6"}
+{"at_ms":36000,"type":"kill","node":"n4"}
+
+# 分区后改为验证可达侧收敛，避免对不可达节点做硬断言。
+{"at_ms":45000,"type":"dtn_enqueue","target":"n3","payload":"memo:gossip-churn-n12-v2","priority":"normal","ttl_seconds":900}
+{"at_ms":48000,"type":"wait_memo","node":"n3","expect":"gossip-churn-n12-v2","timeout_ms":180000}
+
+{"at_ms":140000,"type":"metrics","note":"checkpoint-140s"}

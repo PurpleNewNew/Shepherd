@@ -1,0 +1,14 @@
+{"at_ms":0,"type":"metrics","note":"dtn-queue-ttl-expire-n3"}
+
+# 暂停 DTN 派发（max_inflight_per_target=0），让一个短 TTL bundle 在队列里过期。
+{"at_ms":200,"type":"dtn_policy","key":"max_inflight_per_target","value":"0"}
+
+# 该 log payload 预期过期（不会出现在 Kelpie 日志中），并让 global_queue.expired_total +1。
+{"at_ms":500,"type":"dtn_enqueue","target":"n3","payload":"log:dtn-ttl-expire-n3-1","priority":"normal","ttl_seconds":2,"expect":"expire"}
+
+# 恢复 DTN 派发，然后投递一个正常 TTL 的 log payload，确保通路仍可用。
+{"at_ms":12000,"type":"dtn_policy","key":"max_inflight_per_target","value":"8"}
+{"at_ms":13000,"type":"dtn_enqueue","target":"n3","payload":"log:dtn-ttl-expire-n3-ok","priority":"normal","ttl_seconds":600}
+
+{"at_ms":45000,"type":"metrics","note":"checkpoint-45s"}
+

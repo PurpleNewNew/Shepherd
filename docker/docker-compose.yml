@@ -1,0 +1,74 @@
+x-shepherd-image: &shepherd_image
+  build:
+    context: ..
+    dockerfile: docker/Dockerfile
+  image: shepherd-lab:dev
+
+services:
+  kelpie:
+    <<: *shepherd_image
+    command:
+      - "kelpie"
+      - "-s"
+      - "${SHEPHERD_SECRET:-Shepherd1234}"
+      - "--ui-grpc-listen"
+      - "0.0.0.0:50061"
+      - "--ui-grpc-token"
+      - "${SHEPHERD_UI_TOKEN:-stockman-dev-token}"
+      - "--dataplane-listen"
+      - "0.0.0.0:60080"
+    ports:
+      - "50061:50061"
+      - "60080:60080"
+    volumes:
+      - kelpie-db:/app/db
+    restart: unless-stopped
+
+  flock-root:
+    <<: *shepherd_image
+    depends_on:
+      - kelpie
+    command:
+      - "flock"
+      - "-s"
+      - "${SHEPHERD_SECRET:-Shepherd1234}"
+      - "-c"
+      - "kelpie:40100"
+      - "--reconnect"
+      - "${FLOCK_RECONNECT_SECONDS:-2}"
+    restart: unless-stopped
+
+  # Additional nodes that will attach to the root pivot listener once bootstrap completes.
+  # Scale with: docker compose -f docker/docker-compose.yml up -d --scale flock=5
+  flock:
+    <<: *shepherd_image
+    depends_on:
+      - flock-root
+    command:
+      - "flock"
+      - "-s"
+      - "${SHEPHERD_SECRET:-Shepherd1234}"
+      - "-c"
+      - "flock-root:41000"
+      - "--reconnect"
+      - "${FLOCK_RECONNECT_SECONDS:-2}"
+    restart: unless-stopped
+
+  # One-shot bootstrap: create Kelpie controller listener (40100) and root pivot listener (41000).
+  bootstrap:
+    <<: *shepherd_image
+    depends_on:
+      - kelpie
+      - flock-root
+    command:
+      - "shepherd-lab-bootstrap"
+    environment:
+      KELPIE_GRPC_ADDR: "kelpie:50061"
+      KELPIE_GRPC_TOKEN: "${SHEPHERD_UI_TOKEN:-stockman-dev-token}"
+      KELPIE_CONTROLLER_BIND: "0.0.0.0:40100"
+      ROOT_PIVOT_BIND: "0.0.0.0:41000"
+      BOOTSTRAP_TIMEOUT: "300s"
+    restart: "no"
+
+volumes:
+  kelpie-db: {}

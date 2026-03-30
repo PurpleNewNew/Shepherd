@@ -1,0 +1,10 @@
+{"at_ms":0,"type":"metrics","note":"dataplane-token-expire-n3"}
+
+# 场景：dataplane token 过期后必须被拒绝（防长时间重放窗口）。
+{"at_ms":2000,"type":"wait_node_status","node":"n3","expect":"online","timeout_ms":60000}
+
+# issue ttl=1s 的 token，delay_ms=2000ms 后使用，应当返回 invalid token。
+{"at_ms":5000,"type":"dataplane_token_expire","target":"n3","path":"trace/dp_token_expire_n3.bin","payload_bytes":256,"ttl_seconds":1,"delay_ms":2000,"timeout_ms":60000}
+
+{"at_ms":20000,"type":"metrics","note":"checkpoint-20s"}
+

@@ -1,0 +1,13 @@
+{"at_ms":0,"type":"metrics","note":"dataplane-big-roundtrip-n3"}
+
+# 场景：dataplane 大文件 roundtrip（upload+download），用于捕获：
+# - 大 payload 下的分片/帧边界问题
+# - stream/dataplane 资源泄漏（goroutine/FD）
+# - DTN churn 时的超时/重试边界
+{"at_ms":2000,"type":"wait_node_status","node":"n3","expect":"online","timeout_ms":60000}
+
+# 8MB 单并发 roundtrip（使用 io_burst 的 dataplane 子任务生成二进制 payload，不把大数据塞进 JSONL）
+{"at_ms":5000,"type":"io_burst","target":"n3","stream_count":0,"dataplane_count":1,"payload_bytes":8388608,"timeout_ms":180000}
+
+{"at_ms":60000,"type":"metrics","note":"checkpoint-60s"}
+

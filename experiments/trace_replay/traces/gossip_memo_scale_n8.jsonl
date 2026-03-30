@@ -1,0 +1,13 @@
+{"at_ms":0,"type":"metrics","note":"gossip-memo-scale-n8"}
+
+# 规模：root+n1..n8（共 9 节点）。在 chain 下，memo 需要跨多跳传播；在 star 下则验证“规模下仍稳定”。
+{"at_ms":1000,"type":"wait_node_status","node":"n8","expect":"online","timeout_ms":30000}
+
+# 通过 DTN payload 更新 memo，并触发 gossip update。
+{"at_ms":5000,"type":"dtn_enqueue","target":"n8","payload":"memo:gossip-scale-n8-1","priority":"normal","ttl_seconds":600}
+
+# 等待 Kelpie topology 中 n8 的 memo 收敛到目标值（验证 gossip 的可观测收敛）。
+{"at_ms":8000,"type":"wait_memo","node":"n8","expect":"gossip-scale-n8-1","timeout_ms":45000}
+
+{"at_ms":55000,"type":"metrics","note":"checkpoint-55s"}
+

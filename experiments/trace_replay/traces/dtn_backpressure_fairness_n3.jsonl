@@ -1,0 +1,36 @@
+{"at_ms":0,"type":"metrics","note":"dtn-backpressure-fairness-n3"}
+
+# 场景：将 max_inflight_per_target 压到 1，在单目标大队列下验证“按优先级分层 + 同优先级 FIFO”。
+{"at_ms":1000,"type":"wait_node_status","node":"n3","expect":"online","timeout_ms":60000}
+{"at_ms":1500,"type":"dtn_policy","key":"max_inflight_per_target","value":"1"}
+
+# 交错入队 18 条（high/normal/low），最终期望派发顺序为：high(1..6) -> normal(1..6) -> low(1..6)
+{"at_ms":2200,"type":"dtn_enqueue","target":"n3","payload":"log:bp-low-01","priority":"low","ttl_seconds":600}
+{"at_ms":2250,"type":"dtn_enqueue","target":"n3","payload":"log:bp-high-01","priority":"high","ttl_seconds":600}
+{"at_ms":2300,"type":"dtn_enqueue","target":"n3","payload":"log:bp-normal-01","priority":"normal","ttl_seconds":600}
+
+{"at_ms":2350,"type":"dtn_enqueue","target":"n3","payload":"log:bp-low-02","priority":"low","ttl_seconds":600}
+{"at_ms":2400,"type":"dtn_enqueue","target":"n3","payload":"log:bp-high-02","priority":"high","ttl_seconds":600}
+{"at_ms":2450,"type":"dtn_enqueue","target":"n3","payload":"log:bp-normal-02","priority":"normal","ttl_seconds":600}
+
+{"at_ms":2500,"type":"dtn_enqueue","target":"n3","payload":"log:bp-low-03","priority":"low","ttl_seconds":600}
+{"at_ms":2550,"type":"dtn_enqueue","target":"n3","payload":"log:bp-high-03","priority":"high","ttl_seconds":600}
+{"at_ms":2600,"type":"dtn_enqueue","target":"n3","payload":"log:bp-normal-03","priority":"normal","ttl_seconds":600}
+
+{"at_ms":2650,"type":"dtn_enqueue","target":"n3","payload":"log:bp-low-04","priority":"low","ttl_seconds":600}
+{"at_ms":2700,"type":"dtn_enqueue","target":"n3","payload":"log:bp-high-04","priority":"high","ttl_seconds":600}
+{"at_ms":2750,"type":"dtn_enqueue","target":"n3","payload":"log:bp-normal-04","priority":"normal","ttl_seconds":600}
+
+{"at_ms":2800,"type":"dtn_enqueue","target":"n3","payload":"log:bp-low-05","priority":"low","ttl_seconds":600}
+{"at_ms":2850,"type":"dtn_enqueue","target":"n3","payload":"log:bp-high-05","priority":"high","ttl_seconds":600}
+{"at_ms":2900,"type":"dtn_enqueue","target":"n3","payload":"log:bp-normal-05","priority":"normal","ttl_seconds":600}
+
+{"at_ms":2950,"type":"dtn_enqueue","target":"n3","payload":"log:bp-low-06","priority":"low","ttl_seconds":600}
+{"at_ms":3000,"type":"dtn_enqueue","target":"n3","payload":"log:bp-high-06","priority":"high","ttl_seconds":600}
+{"at_ms":3050,"type":"dtn_enqueue","target":"n3","payload":"log:bp-normal-06","priority":"normal","ttl_seconds":600}
+
+{"at_ms":3300,"type":"dtn_expect_order","payload":"bp-high-01|bp-high-02|bp-high-03|bp-high-04|bp-high-05|bp-high-06|bp-normal-01|bp-normal-02|bp-normal-03|bp-normal-04|bp-normal-05|bp-normal-06|bp-low-01|bp-low-02|bp-low-03|bp-low-04|bp-low-05|bp-low-06"}
+
+# 末尾恢复默认策略，避免动作完成后仍处于极限 inflight。
+{"at_ms":45000,"type":"dtn_policy","key":"max_inflight_per_target","value":"8"}
+{"at_ms":70000,"type":"metrics","note":"checkpoint-70s"}

@@ -1,0 +1,17 @@
+{"at_ms":0,"type":"metrics","note":"gossip-partition-churn-n16"}
+
+# 规模：root+n1..n16（共 17 节点）。
+{"at_ms":1000,"type":"wait_node_status","node":"n16","expect":"online","timeout_ms":120000}
+
+# 先验证大规模端点收敛。
+{"at_ms":6000,"type":"dtn_enqueue","target":"n16","payload":"memo:gossip-churn-n16-v1","priority":"normal","ttl_seconds":1200}
+{"at_ms":10000,"type":"wait_memo","node":"n16","expect":"gossip-churn-n16-v1","timeout_ms":180000}
+
+# 注入中段失效（chain 下形成分区压力，star 下退化为单点下线）。
+{"at_ms":40000,"type":"kill","node":"n8"}
+
+# 分区后验证可达且稳定节点的持续收敛（n1 在 star/chain 下都更稳定）。
+{"at_ms":52000,"type":"dtn_enqueue","target":"n1","payload":"memo:gossip-churn-n16-v2","priority":"normal","ttl_seconds":1200}
+{"at_ms":56000,"type":"wait_memo","node":"n1","expect":"gossip-churn-n16-v2","timeout_ms":180000}
+
+{"at_ms":220000,"type":"metrics","note":"checkpoint-220s"}

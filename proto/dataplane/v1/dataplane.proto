@@ -1,0 +1,74 @@
+syntax = "proto3";
+
+package dataplane.v1;
+
+option go_package = "codeberg.org/agnoie/shepherd/internal/dataplanepb;dataplanepb";
+
+// 实验性：控制面用于发放一次性数据通路 token/参数。
+
+enum Direction {
+  DIRECTION_UNSPECIFIED = 0;
+  DIRECTION_UPLOAD = 1;
+  DIRECTION_DOWNLOAD = 2;
+  DIRECTION_PROXY = 3;
+}
+
+message PrepareTransferRequest {
+  string target_uuid = 1;
+  Direction direction = 2;
+  string path = 3;
+  int64 size_hint = 4;
+  double max_rate_bps = 5;
+  int64 max_size = 6;
+  int64 ttl_seconds = 7;
+  map<string, string> metadata = 8;
+  string hash = 9;     // optional SHA256 hex for integrity check
+  int64 offset = 10;   // required starting offset for this transfer (bytes)
+}
+
+message PrepareTransferResponse {
+  string token = 1;
+  string endpoint = 2;
+  int64 expires_at_unix = 3;
+}
+
+message CompleteTransferRequest {
+  string token = 1;
+  string target_uuid = 2;
+  int64 bytes = 3;
+  string hash = 4;
+  string status = 5;
+  string error = 6;
+}
+
+message CompleteTransferResponse {}
+
+message PrepareProxyRequest {
+  string target_uuid = 1;
+  string kind = 2; // socks/tcp/http
+  string bind = 3;
+  int64 ttl_seconds = 4;
+  map<string, string> metadata = 5;
+}
+
+message PrepareProxyResponse {
+  string token = 1;
+  string listen_addr = 2;
+  int64 expires_at_unix = 3;
+}
+
+message CompleteProxyRequest {
+  string token = 1;
+  string target_uuid = 2;
+  string status = 3;
+  string error = 4;
+}
+
+message CompleteProxyResponse {}
+
+service DataplaneAdmin {
+  rpc PrepareTransfer(PrepareTransferRequest) returns (PrepareTransferResponse);
+  rpc CompleteTransfer(CompleteTransferRequest) returns (CompleteTransferResponse);
+  rpc PrepareProxy(PrepareProxyRequest) returns (PrepareProxyResponse);
+  rpc CompleteProxy(CompleteProxyRequest) returns (CompleteProxyResponse);
+}

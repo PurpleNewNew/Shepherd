@@ -1,0 +1,7 @@
+{"at_ms":0,"type":"metrics","note":"stream-proxy-roundtrip-n3"}
+
+# 最小 stream 回归：通过 gRPC ProxyStream 打开 kind=proxy 的 stream，
+# 让目标节点去 dial 本机回声服务，做一次 data 往返验证。
+{"at_ms":8000,"type":"stream_proxy","node":"n3","payload":"PING_STREAM_PROXY_N3\\n","expect":"PING_STREAM_PROXY_N3\\n","timeout_ms":20000}
+
+{"at_ms":30000,"type":"metrics","note":"checkpoint-30s"}

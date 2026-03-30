@@ -1,0 +1,13 @@
+{"at_ms":0,"type":"metrics","note":"gossip-memo-heal-kill-parent-n3"}
+
+# 场景：让 leaf(n4) 长睡眠，中间节点(n3) 周期睡眠，然后 kill n3；之后对 n4 下发 memo 并等待 Kelpie 拓扑收敛。
+# 目标：覆盖 “自愈/补链 + gossip 收敛 + 睡眠协同” 三者叠加时的隐性 bug。
+
+{"at_ms":5000,"type":"sleep","node":"n4","sleep_seconds":20,"work_seconds":2,"jitter_percent":0}
+{"at_ms":7000,"type":"sleep","node":"n3","sleep_seconds":10,"work_seconds":2,"jitter_percent":0}
+
+{"at_ms":20000,"type":"kill","node":"n3"}
+
+# kill 后下发 memo：若自愈机制建立新路径，应当最终投递并通过 gossip 回传到 Kelpie。
+{"at_ms":26000,"type":"dtn_enqueue","target":"n4","payload":"memo:gossip-heal-after-kill-n3","priority":"normal","ttl_seconds":600}
+{"at_ms":30000,"type":"wait_memo","node":"n4","expect":"gossip-heal-after-kill-n3","timeout_ms":240000}

@@ -1,0 +1,20 @@
+{"at_ms":0,"type":"metrics","note":"io-burst-heavy-interrupt-target-n3"}
+
+# 场景：重负载 IO burst + dataplane upload 中断（kill 目标），要求“快速失败”而不是 hang。
+# 这条 trace 比 io_burst_interrupt_target_n3 更狠，但仍设计为本机可稳定复现。
+
+{"at_ms":2000,"type":"wait_node_status","node":"n3","expect":"online","timeout_ms":60000}
+
+# 更高并发 IO burst（stream + dataplane small roundtrips）
+{"at_ms":5000,"type":"io_burst","target":"n3","stream_count":8,"dataplane_count":4,"payload_bytes":4096,"timeout_ms":180000}
+
+# 大上传中断：8MB payload，稍微延长 kill_after_ms 以确保进入 data frame 阶段
+{"at_ms":20000,"type":"dataplane_upload_interrupt","target":"n3","path":"trace/dp_interrupt_heavy_n3.bin","payload_bytes":8388608,"chunk_delay_ms":10,"kill_node":"n3","kill_after_ms":800,"timeout_ms":180000}
+
+{"at_ms":22000,"type":"wait_node_status","node":"n3","expect":"offline","timeout_ms":90000}
+
+# 目标被 kill 后，对存活节点做一轮轻量 IO，验证 dataplane/stream 未被拖死。
+{"at_ms":30000,"type":"io_burst","target":"n2","stream_count":2,"dataplane_count":1,"payload_bytes":1024,"timeout_ms":120000}
+
+{"at_ms":60000,"type":"metrics","note":"checkpoint-60s"}
+

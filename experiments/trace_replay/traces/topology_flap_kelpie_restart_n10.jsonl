@@ -1,0 +1,25 @@
+{"at_ms":0,"type":"metrics","note":"topology-flap-kelpie-restart-n10"}
+
+# 场景：更大规模（root+n1..n10）下，连续中间节点失效 + Kelpie 中途重启。
+# 目标：压测拓扑自愈/补链抖动恢复、Kelpie 重启后状态一致性。
+{"at_ms":1000,"type":"wait_node_status","node":"n10","expect":"online","timeout_ms":90000}
+
+{"at_ms":3000,"type":"sleep","node":"n8","sleep_seconds":16,"work_seconds":2,"jitter_percent":0}
+{"at_ms":3000,"type":"sleep","node":"n9","sleep_seconds":16,"work_seconds":2,"jitter_percent":0}
+{"at_ms":3000,"type":"sleep","node":"n10","sleep_seconds":16,"work_seconds":2,"jitter_percent":0}
+
+{"at_ms":10000,"type":"kill","node":"n4"}
+{"at_ms":15000,"type":"kill","node":"n5"}
+{"at_ms":20000,"type":"kill","node":"n6"}
+
+# 失效后下发业务负载，要求最终可达并按序可观测。
+{"at_ms":26000,"type":"dtn_enqueue","target":"n10","payload":"log:topoflap-n10-1","priority":"normal","ttl_seconds":600}
+{"at_ms":27000,"type":"dtn_enqueue","target":"n10","payload":"log:topoflap-n10-2","priority":"normal","ttl_seconds":600}
+{"at_ms":28000,"type":"dtn_enqueue","target":"n10","payload":"log:topoflap-n10-3","priority":"normal","ttl_seconds":600}
+{"at_ms":28500,"type":"dtn_expect_order","payload":"topoflap-n10-1|topoflap-n10-2|topoflap-n10-3"}
+
+# Kelpie 重启后继续验证拓扑恢复与 DTN 可达性。
+{"at_ms":38000,"type":"kelpie_restart","timeout_ms":90000}
+{"at_ms":52000,"type":"wait_node_status","node":"n10","expect":"online","timeout_ms":120000}
+
+{"at_ms":120000,"type":"metrics","note":"checkpoint-120s"}

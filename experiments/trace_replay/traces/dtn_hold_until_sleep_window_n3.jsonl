@@ -1,0 +1,12 @@
+{"at_ms":0,"type":"metrics","note":"dtn-hold-until-sleep-window-n3"}
+
+# 场景：n3 长睡眠期间集中入队，验证 hold-until 调度与恢复后的顺序可观测性。
+{"at_ms":1000,"type":"wait_node_status","node":"n3","expect":"online","timeout_ms":60000}
+{"at_ms":3000,"type":"sleep","node":"n3","sleep_seconds":20,"work_seconds":2,"jitter_percent":0}
+
+{"at_ms":7000,"type":"dtn_enqueue","target":"n3","payload":"log:hold-window-n3-1","priority":"normal","ttl_seconds":600}
+{"at_ms":7500,"type":"dtn_enqueue","target":"n3","payload":"log:hold-window-n3-2","priority":"normal","ttl_seconds":600}
+{"at_ms":8000,"type":"dtn_enqueue","target":"n3","payload":"log:hold-window-n3-3","priority":"normal","ttl_seconds":600}
+{"at_ms":8500,"type":"dtn_expect_order","payload":"hold-window-n3-1|hold-window-n3-2|hold-window-n3-3"}
+
+{"at_ms":65000,"type":"metrics","note":"checkpoint-65s"}

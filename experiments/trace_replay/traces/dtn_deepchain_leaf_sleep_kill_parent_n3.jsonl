@@ -1,0 +1,16 @@
+{"at_ms":0,"type":"metrics","note":"deepchain-leaf-sleep-kill-parent-n3"}
+
+{"at_ms":5000,"type":"sleep","node":"n4","sleep_seconds":20,"work_seconds":2,"jitter_percent":0}
+{"at_ms":7000,"type":"sleep","node":"n3","sleep_seconds":10,"work_seconds":2,"jitter_percent":0}
+
+{"at_ms":12000,"type":"dtn_enqueue","target":"n4","payload":"log:deepchain-leaf-sleep-kill-parent-n3-1","priority":"normal","ttl_seconds":600}
+{"at_ms":16000,"type":"dtn_enqueue","target":"n4","payload":"log:deepchain-leaf-sleep-kill-parent-n3-2","priority":"normal","ttl_seconds":600}
+
+{"at_ms":20000,"type":"kill","node":"n3"}
+
+{"at_ms":26000,"type":"dtn_enqueue","target":"n4","payload":"log:deepchain-leaf-sleep-kill-parent-n3-3","priority":"normal","ttl_seconds":600}
+{"at_ms":32000,"type":"dtn_enqueue","target":"n4","payload":"log:deepchain-leaf-sleep-kill-parent-n3-4","priority":"normal","ttl_seconds":600}
+{"at_ms":38000,"type":"dtn_enqueue","target":"n4","payload":"log:deepchain-leaf-sleep-kill-parent-n3-5","priority":"normal","ttl_seconds":600}
+{"at_ms":44000,"type":"dtn_enqueue","target":"n4","payload":"log:deepchain-leaf-sleep-kill-parent-n3-6","priority":"normal","ttl_seconds":600}
+
+{"at_ms":80000,"type":"metrics","note":"checkpoint-80s"}

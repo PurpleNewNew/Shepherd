@@ -1,0 +1,18 @@
+{"at_ms":0,"type":"metrics","note":"stream-dataplane-long-soak-n3"}
+
+# 场景：长时间多轮 IO burst + Kelpie 重启 + stream/dataplane 验证。
+# 目标：提高并发/中断组合覆盖，观察长时运行下的稳定性。
+{"at_ms":1000,"type":"wait_node_status","node":"n3","expect":"online","timeout_ms":60000}
+
+{"at_ms":6000,"type":"io_burst","target":"n3","stream_count":6,"dataplane_count":3,"payload_bytes":4096,"timeout_ms":180000}
+{"at_ms":26000,"type":"io_burst","target":"n3","stream_count":6,"dataplane_count":3,"payload_bytes":4096,"timeout_ms":180000}
+
+{"at_ms":50000,"type":"kelpie_restart","timeout_ms":90000}
+{"at_ms":70000,"type":"wait_node_status","node":"n3","expect":"online","timeout_ms":120000}
+
+{"at_ms":76000,"type":"io_burst","target":"n3","stream_count":8,"dataplane_count":4,"payload_bytes":8192,"timeout_ms":240000}
+
+{"at_ms":118000,"type":"stream_proxy","node":"n3","payload":"PING_STREAM_DP_LONG_SOAK_N3\\n","expect":"PING_STREAM_DP_LONG_SOAK_N3\\n","timeout_ms":60000}
+{"at_ms":126000,"type":"dataplane_roundtrip","target":"n3","path":"trace/stream_dp_long_soak_n3.bin","payload":"TRACE_STREAM_DP_LONG_SOAK_N3","timeout_ms":60000}
+
+{"at_ms":190000,"type":"metrics","note":"checkpoint-190s"}

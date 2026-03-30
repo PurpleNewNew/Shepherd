@@ -1,0 +1,70 @@
+/* Shepherd handshake model (Tamarin skeleton).
+
+   This is a simplified model intended as a starting point, aligned with:
+   - pkg/share/preauth.go (nonce + MAC)
+   - HI exchange as a PSK-protected message
+
+   TODO:
+   - refine message structure to match protocol/
+   - add proper authentication lemmas (agreement, injective agreement)
+   - model optional MFA as an additional secret gate
+*/
+
+theory ShepherdHandshake
+begin
+
+builtins: symmetric-encryption
+
+functions: tok/1, mac/2
+
+/* Persistent PSK shared by Agent/Admin */
+rule Init_PSK:
+  [ Fr(~psk) ]
+  --[ PSK_Generated(~psk) ]->
+  [ !PSK(~psk) ]
+
+/* Agent sends preauth request: (Na, MAC(tok(psk), <"client",Na>)) */
+rule Agent_Preauth_Req:
+  [ !PSK(psk), Fr(~na) ]
+  --[ ]->
+  [ Out(< ~na, mac(tok(psk), < 'client', ~na >) >),
+    St_A_1(psk, ~na)
+  ]
+
+/* Admin verifies and replies: (Ns, MAC(tok(psk), <"server",Ns,Na>)) */
+rule Admin_Preauth_Resp:
+  [ !PSK(psk),
+    In(< na, mac(tok(psk), < 'client', na >) >),
+    Fr(~ns)
+  ]
+  --[ ]->
+  [ Out(< ~ns, mac(tok(psk), < 'server', ~ns, na >) >),
+    St_S_1(psk, na, ~ns)
+  ]
+
+/* Agent verifies response and sends HI under PSK */
+rule Agent_HI:
+  [ St_A_1(psk, na),
+    In(< ns, mac(tok(psk), < 'server', ns, na >) >)
+  ]
+  --[ ]->
+  [ Out(senc(< 'HI_A', na >, psk)),
+    St_A_2(psk, na, ns)
+  ]
+
+/* Admin receives HI and responds, then issues UUID */
+rule Admin_HI_UUID:
+  [ St_S_1(psk, na, ns),
+    In(senc(< 'HI_A', na >, psk)),
+    Fr(~uuid)
+  ]
+  --[ ]->
+  [ Out(senc(< 'HI_S', ns >, psk)),
+    Out(senc(< 'UUID', ~uuid >, psk))
+  ]
+
+/* Minimal secrecy goal: PSK should not become attacker-known. */
+lemma psk_secrecy:
+  "All k #i. PSK_Generated(k)@i ==> not(Ex #j. K(k)@j)"
+
+end

@@ -1,0 +1,5 @@
+{"at_ms":0,"type":"metrics","note":"baseline"}
+{"at_ms":12000,"type":"dtn_enqueue","target":"n3","payload":"log:dtn-sleep-effect-1","priority":"normal","ttl_seconds":600}
+{"at_ms":20000,"type":"dtn_enqueue","target":"n3","payload":"log:dtn-sleep-effect-2","priority":"normal","ttl_seconds":600}
+{"at_ms":28000,"type":"dtn_enqueue","target":"n3","payload":"log:dtn-sleep-effect-3","priority":"normal","ttl_seconds":600}
+{"at_ms":45000,"type":"metrics","note":"checkpoint-45s"}

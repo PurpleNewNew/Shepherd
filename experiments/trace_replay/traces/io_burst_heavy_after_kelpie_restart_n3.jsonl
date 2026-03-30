@@ -1,0 +1,13 @@
+{"at_ms":0,"type":"metrics","note":"io-burst-heavy-after-kelpie-restart-n3"}
+
+# 场景：Kelpie 中途重启后，立刻对目标节点做更高并发、更大 payload 的 IO burst。
+# 目标：深挖 stream/dataplane 在“重启恢复 + 并发数据面”叠加时的竞态/泄漏/超时边界。
+
+{"at_ms":12000,"type":"kelpie_restart","timeout_ms":60000}
+
+{"at_ms":25000,"type":"wait_node_status","node":"n3","expect":"online","timeout_ms":60000}
+
+{"at_ms":30000,"type":"io_burst","target":"n3","stream_count":10,"dataplane_count":5,"payload_bytes":8192,"timeout_ms":180000}
+
+{"at_ms":75000,"type":"metrics","note":"checkpoint-75s"}
+

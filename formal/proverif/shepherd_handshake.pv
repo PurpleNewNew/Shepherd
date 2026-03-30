@@ -1,0 +1,89 @@
+(* Shepherd handshake model (skeleton).
+
+   This is a simplified model aligned with:
+   - pkg/share/preauth.go (nonce + MAC challenge-response)
+   - pkg/share/handshake/handshake.go (HI exchange conceptually under a PSK)
+
+   Notes:
+   - We treat MAC as a perfect MAC (no algebraic properties).
+   - We treat symmetric encryption as perfect encryption.
+   - MFA is modeled as an additional local secret gate.
+*)
+
+free c : channel.
+
+type key.
+
+fun tok(key) : bitstring.
+fun mac(bitstring, bitstring) : bitstring.
+
+fun shep_enc(bitstring, key) : bitstring.
+reduc forall m:bitstring, k:key; shep_dec(shep_enc(m,k),k) = m.
+
+(* Tags / labels *)
+(* Public tags/labels (not secrets). *)
+free clientLabel : bitstring.
+free serverLabel : bitstring.
+free tag_HI_A    : bitstring.
+free tag_HI_S    : bitstring.
+free tag_UUID    : bitstring.
+
+(* Events *)
+event AdminAccept(bitstring).     (* accepted agent nonce *)
+event AgentAccept(bitstring).     (* accepted server nonce *)
+event AdminComplete(bitstring).   (* completed handshake and issued UUID *)
+event AgentComplete(bitstring).   (* completed handshake with UUID *)
+
+(* Shared secrets (PSK + optional MFA secret) *)
+free psk : key [private].
+free mfa : bitstring [private].
+
+(* Secrecy goals *)
+query attacker(psk).
+
+(* Authentication (skeleton) *)
+query u:bitstring; event(AgentComplete(u)) ==> event(AdminComplete(u)).
+
+let Agent(psk:key, mfa:bitstring) =
+  new na:bitstring;
+  out(c, (na, mac(tok(psk), (clientLabel, na))));
+  in(c, (ns:bitstring, resp:bitstring));
+  if resp = mac(tok(psk), (serverLabel, ns, na)) then
+    event AgentAccept(ns);
+    (* MFA is local: we only proceed if "mfa" exists; no network message. *)
+    (* HI exchange protected by PSK *)
+    out(c, shep_enc((tag_HI_A, na), psk));
+    in(c, hiS:bitstring);
+    if hiS = shep_enc((tag_HI_S, ns), psk) then
+      in(c, uuidMsg:bitstring);
+      let (tag:bitstring, u:bitstring) = shep_dec(uuidMsg, psk) in
+      if tag = tag_UUID then
+        event AgentComplete(u);
+        0
+      else 0
+    else 0
+  else 0.
+
+let Admin(psk:key, mfa:bitstring) =
+  in(c, (na:bitstring, tag:bitstring));
+  if tag = mac(tok(psk), (clientLabel, na)) then
+    event AdminAccept(na);
+    new ns:bitstring;
+    out(c, (ns, mac(tok(psk), (serverLabel, ns, na))));
+    (* HI exchange protected by PSK *)
+    in(c, hiAEnc:bitstring);
+    let (tagHiA:bitstring, na2:bitstring) = shep_dec(hiAEnc, psk) in
+    if tagHiA = tag_HI_A then
+      if na2 = na then
+        out(c, shep_enc((tag_HI_S, ns), psk));
+        new uuid:bitstring;
+        (* "AdminComplete" models the server committing to a UUID. *)
+        event AdminComplete(uuid);
+        out(c, shep_enc((tag_UUID, uuid), psk));
+        0
+      else 0
+    else 0
+  else 0.
+
+process
+  ( !Agent(psk, mfa) | !Admin(psk, mfa) )

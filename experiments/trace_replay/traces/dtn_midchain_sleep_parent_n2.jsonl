@@ -1,0 +1,8 @@
+{"at_ms":0,"type":"metrics","note":"midchain-sleep-parent-n2"}
+{"at_ms":5000,"type":"sleep","node":"n2","sleep_seconds":8,"work_seconds":2,"jitter_percent":0}
+{"at_ms":12000,"type":"dtn_enqueue","target":"n3","payload":"log:midchain-sleep-parent-1","priority":"normal","ttl_seconds":600}
+{"at_ms":16000,"type":"dtn_enqueue","target":"n3","payload":"log:midchain-sleep-parent-2","priority":"normal","ttl_seconds":600}
+{"at_ms":20000,"type":"dtn_enqueue","target":"n3","payload":"log:midchain-sleep-parent-3","priority":"normal","ttl_seconds":600}
+{"at_ms":24000,"type":"dtn_enqueue","target":"n3","payload":"log:midchain-sleep-parent-4","priority":"normal","ttl_seconds":600}
+{"at_ms":28000,"type":"dtn_enqueue","target":"n3","payload":"log:midchain-sleep-parent-5","priority":"normal","ttl_seconds":600}
+{"at_ms":60000,"type":"metrics","note":"checkpoint-60s"}

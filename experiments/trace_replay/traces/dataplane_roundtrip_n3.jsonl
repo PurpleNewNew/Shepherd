@@ -1,0 +1,6 @@
+{"at_ms":0,"type":"metrics","note":"dataplane-roundtrip-n3"}
+
+# 最小 dataplane 回归：PrepareTransfer(upload) -> TCP 上传 -> PrepareTransfer(download) -> TCP 下载 -> 内容一致。
+{"at_ms":8000,"type":"dataplane_roundtrip","target":"n3","path":"trace/dataplane_roundtrip_n3.txt","payload":"HELLO_DATAPLANE_N3_0123456789","timeout_ms":30000}
+
+{"at_ms":45000,"type":"metrics","note":"checkpoint-45s"}

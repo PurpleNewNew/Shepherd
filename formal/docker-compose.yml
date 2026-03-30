@@ -1,0 +1,17 @@
+services:
+  proverif:
+    image: koenyskout/proverif:default
+    volumes:
+      - ..:/work
+    working_dir: /work
+    command: ["proverif", "formal/proverif/shepherd_handshake.pv"]
+
+  tamarin:
+    image: infsec/tamarin-prover:latest
+    volumes:
+      - ..:/work
+    working_dir: /work
+    environment:
+      LANG: C.UTF-8
+      LC_ALL: C.UTF-8
+    command: ["--prove=psk_secrecy", "formal/tamarin/shepherd_handshake.spthy"]

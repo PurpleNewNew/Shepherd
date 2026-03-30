@@ -1,0 +1,16 @@
+{"at_ms":0,"type":"metrics","note":"mid-sleep-kill-parent-n1"}
+{"at_ms":5000,"type":"sleep","node":"n2","sleep_seconds":15,"work_seconds":2,"jitter_percent":0}
+{"at_ms":8000,"type":"sleep","node":"n3","sleep_seconds":18,"work_seconds":2,"jitter_percent":0}
+
+{"at_ms":15000,"type":"dtn_enqueue","target":"n3","payload":"log:mid-sleep-kill-parent-n1-1","priority":"normal","ttl_seconds":600}
+{"at_ms":16000,"type":"dtn_enqueue","target":"n3","payload":"log:mid-sleep-kill-parent-n1-2","priority":"normal","ttl_seconds":600}
+{"at_ms":17000,"type":"dtn_enqueue","target":"n3","payload":"log:mid-sleep-kill-parent-n1-3","priority":"normal","ttl_seconds":600}
+
+{"at_ms":25000,"type":"kill","node":"n1"}
+
+{"at_ms":26000,"type":"dtn_enqueue","target":"n3","payload":"log:mid-sleep-kill-parent-n1-4","priority":"normal","ttl_seconds":600}
+{"at_ms":28000,"type":"dtn_enqueue","target":"n3","payload":"log:mid-sleep-kill-parent-n1-5","priority":"normal","ttl_seconds":600}
+{"at_ms":30000,"type":"dtn_enqueue","target":"n3","payload":"log:mid-sleep-kill-parent-n1-6","priority":"normal","ttl_seconds":600}
+{"at_ms":34000,"type":"dtn_enqueue","target":"n3","payload":"log:mid-sleep-kill-parent-n1-7","priority":"normal","ttl_seconds":600}
+
+{"at_ms":70000,"type":"metrics","note":"checkpoint-70s"}

@@ -1,0 +1,17 @@
+{"at_ms":0,"type":"metrics","note":"gossip-memo-partition-kill-mid-n4-n8"}
+
+# 规模：root+n1..n8（共 9 节点）。
+{"at_ms":1000,"type":"wait_node_status","node":"n8","expect":"online","timeout_ms":60000}
+
+# 让 leaf(n8) 周期睡眠，增加分区恢复期间的时间窗压力（DTN+睡眠协同）。
+{"at_ms":3000,"type":"sleep","node":"n8","sleep_seconds":18,"work_seconds":2,"jitter_percent":0}
+
+# 在 chain 下 kill 中间节点 n4，会把 n5..n8 从 root 侧“物理分区”；在 star 下等价于 kill 一个无关 leaf。
+{"at_ms":8000,"type":"kill","node":"n4"}
+
+# kill 后下发 memo：若自愈机制生效，应当最终通过 gossip/状态上报收敛到 Kelpie topology。
+{"at_ms":12000,"type":"dtn_enqueue","target":"n8","payload":"memo:gossip-partition-kill-mid-n4-n8","priority":"normal","ttl_seconds":600}
+{"at_ms":16000,"type":"wait_memo","node":"n8","expect":"gossip-partition-kill-mid-n4-n8","timeout_ms":300000}
+
+{"at_ms":70000,"type":"metrics","note":"checkpoint-70s"}
+

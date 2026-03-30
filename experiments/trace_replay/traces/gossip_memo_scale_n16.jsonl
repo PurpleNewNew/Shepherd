@@ -1,0 +1,12 @@
+{"at_ms":0,"type":"metrics","note":"gossip-memo-scale-n16"}
+
+# 场景：规模提升到 root+n1..n16（17 节点），验证多轮 memo 收敛稳定性。
+{"at_ms":1000,"type":"wait_node_status","node":"n16","expect":"online","timeout_ms":120000}
+
+{"at_ms":12000,"type":"dtn_enqueue","target":"n16","payload":"memo:gossip-scale-n16-v1","priority":"normal","ttl_seconds":1200}
+{"at_ms":16000,"type":"wait_memo","node":"n16","expect":"gossip-scale-n16-v1","timeout_ms":120000}
+
+{"at_ms":70000,"type":"dtn_enqueue","target":"n16","payload":"memo:gossip-scale-n16-v2","priority":"normal","ttl_seconds":1200}
+{"at_ms":74000,"type":"wait_memo","node":"n16","expect":"gossip-scale-n16-v2","timeout_ms":120000}
+
+{"at_ms":170000,"type":"metrics","note":"checkpoint-170s"}

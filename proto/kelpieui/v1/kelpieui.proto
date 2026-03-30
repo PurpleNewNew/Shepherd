@@ -1,0 +1,1217 @@
+syntax = "proto3";
+
+package kelpieui.v1;
+
+option go_package = "codeberg.org/agnoie/shepherd/internal/kelpie/uipb;uipb";
+
+
+message SnapshotRequest {}
+
+message SnapshotResponse {
+  Snapshot snapshot = 1;
+}
+
+message Snapshot {
+  repeated NodeInfo nodes = 1;
+  repeated Edge edges = 2;
+  repeated StreamDiag streams = 3;
+  repeated LogEntry recent_logs = 4;
+  repeated PivotListener pivot_listeners = 5;
+  repeated SessionInfo sessions = 6;
+  repeated ControllerListener controller_listeners = 7;
+}
+
+message ListNodesRequest {
+  string target_uuid = 1;
+  string network_id = 2;
+}
+
+message ListNodesResponse {
+  repeated NodeInfo nodes = 1;
+}
+
+message GetTopologyRequest {
+  string target_uuid = 1;
+  string network_id = 2;
+}
+
+message GetTopologyResponse {
+  repeated NodeInfo nodes = 1;
+  repeated Edge edges = 2;
+  string last_updated = 3;
+}
+
+enum DtnPriority {
+  DTN_PRIORITY_UNSPECIFIED = 0;
+  DTN_PRIORITY_LOW = 1;
+  DTN_PRIORITY_NORMAL = 2;
+  DTN_PRIORITY_HIGH = 3;
+}
+
+enum RoutingStrategy {
+  ROUTING_STRATEGY_UNSPECIFIED = 0;
+  ROUTING_STRATEGY_HOPS = 1;
+  ROUTING_STRATEGY_WEIGHT = 2;
+  ROUTING_STRATEGY_LATENCY = 3;
+}
+
+message DtnQueueStats {
+  int32 total = 1;
+  int32 ready = 2;
+  int32 held = 3;
+  int32 capacity = 4;
+  int32 high_watermark = 5;
+  string average_wait = 6;
+  string oldest_bundle_id = 7;
+  string oldest_target_uuid = 8;
+  string oldest_age = 9;
+  uint64 dropped_total = 10;
+  uint64 expired_total = 11;
+  map<string, uint64> drop_by_priority = 12;
+}
+
+message DtnBundle {
+  string bundle_id = 1;
+  string target_uuid = 2;
+  DtnPriority priority = 3;
+  int32 attempts = 4;
+  string age = 5;
+  string hold_until = 6;
+  string deliver_by = 7;
+  string preview = 8;
+}
+
+message GetDtnQueueStatsRequest {
+  string target_uuid = 1;
+}
+
+message GetDtnQueueStatsResponse {
+  DtnQueueStats stats = 1;
+}
+
+message ListDtnBundlesRequest {
+  string target_uuid = 1;
+  int32 limit = 2;
+}
+
+message ListDtnBundlesResponse {
+  repeated DtnBundle bundles = 1;
+}
+
+message EnqueueDtnPayloadRequest {
+  string target_uuid = 1;
+  string payload = 2;
+  DtnPriority priority = 3;
+  int64 ttl_seconds = 4;
+}
+
+message EnqueueDtnPayloadResponse {
+  string bundle_id = 1;
+}
+
+message GetDtnPolicyRequest {}
+
+message GetDtnPolicyResponse {
+  map<string, string> entries = 1;
+}
+
+message UpdateDtnPolicyRequest {
+  string key = 1;
+  string value = 2;
+}
+
+message UpdateDtnPolicyResponse {
+  map<string, string> entries = 1;
+}
+
+message GetRoutingStrategyRequest {}
+
+message GetRoutingStrategyResponse {
+  RoutingStrategy strategy = 1;
+}
+
+message SetRoutingStrategyRequest {
+  RoutingStrategy strategy = 1;
+}
+
+message SetRoutingStrategyResponse {
+  RoutingStrategy strategy = 1;
+}
+
+message RouterMetric {
+  uint32 message_type = 1;
+  uint64 dispatched = 2;
+  uint64 errors = 3;
+  uint64 drops = 4;
+}
+
+message ReconnectMetrics {
+  uint64 attempts = 1;
+  uint64 success = 2;
+  uint64 failures = 3;
+  string last_error = 4;
+}
+
+message GetMetricsRequest {
+  bool include_router = 1;
+  bool include_reconnect = 2;
+}
+
+message GetMetricsResponse {
+  repeated RouterMetric router_metrics = 1;
+  ReconnectMetrics reconnect_metrics = 2;
+  DtnMetrics dtn_metrics = 3;
+}
+
+message DtnMetrics {
+  DtnQueueStats global_queue = 1;
+  uint64 enqueued = 2;
+  uint64 delivered = 3;
+  uint64 failed = 4;
+  uint64 retried = 5;
+  string captured_at = 6;
+}
+
+message NodeInfo {
+  string uuid = 1;
+  string alias = 2;
+  string parent_uuid = 3;
+  string status = 4;
+  string network = 5;
+  string sleep = 6;
+  string memo = 7;
+  int32 depth = 9;
+  repeated string tags = 10;
+  uint32 active_streams = 11;
+  string work_profile = 12;
+  reserved 8;
+}
+
+message Edge {
+  string parent_uuid = 1;
+  string child_uuid = 2;
+  bool supplemental = 3;
+}
+
+message StreamDiag {
+  uint32 stream_id = 1;
+  string target_uuid = 2;
+  string kind = 3;
+  bool outbound = 4;
+  uint32 pending = 5;
+  uint32 inflight = 6;
+  uint32 window = 7;
+  uint32 seq = 8;
+  uint32 ack = 9;
+  string rto = 10;
+  string last_activity = 11;
+  string session_id = 12;
+  map<string, string> metadata = 13;
+}
+
+message LogEntry {
+  string id = 1;
+  string level = 2;
+  string message = 3;
+  string node_uuid = 4;
+  string timestamp = 5;
+}
+
+enum PivotListenerMode {
+  PIVOT_LISTENER_MODE_UNSPECIFIED = 0;
+  PIVOT_LISTENER_MODE_NORMAL = 1;
+  PIVOT_LISTENER_MODE_IPTABLES = 2;
+  PIVOT_LISTENER_MODE_SOREUSE = 3;
+}
+
+message PivotListener {
+  string listener_id = 1;
+  string target_uuid = 2;
+  string route = 3;
+  string protocol = 4;
+  string bind = 5;
+  PivotListenerMode mode = 6;
+  string status = 7;
+  string last_error = 8;
+  map<string, string> metadata = 9;
+  string created_at = 10;
+  string updated_at = 11;
+}
+
+message PivotListenerSpec {
+  string protocol = 1;
+  string bind = 2;
+  PivotListenerMode mode = 3;
+  map<string, string> metadata = 4;
+  bytes auth_payload = 5;
+}
+
+enum ControllerListenerStatus {
+  CONTROLLER_LISTENER_STATUS_UNSPECIFIED = 0;
+  CONTROLLER_LISTENER_STATUS_PENDING = 1;
+  CONTROLLER_LISTENER_STATUS_RUNNING = 2;
+  CONTROLLER_LISTENER_STATUS_FAILED = 3;
+  CONTROLLER_LISTENER_STATUS_STOPPED = 4;
+}
+
+message ControllerListenerSpec {
+  string bind = 1;
+  string protocol = 2;
+}
+
+message ControllerListener {
+  string listener_id = 1;
+  string bind = 2;
+  string protocol = 3;
+  ControllerListenerStatus status = 4;
+  string last_error = 5;
+  string created_at = 6;
+  string updated_at = 7;
+}
+
+message ListControllerListenersRequest {}
+
+message ListControllerListenersResponse {
+  repeated ControllerListener listeners = 1;
+}
+
+message CreateControllerListenerRequest {
+  ControllerListenerSpec spec = 1;
+}
+
+message CreateControllerListenerResponse {
+  ControllerListener listener = 1;
+}
+
+message UpdateControllerListenerRequest {
+  string listener_id = 1;
+  ControllerListenerSpec spec = 2;
+  ControllerListenerStatus desired_status = 3;
+}
+
+message UpdateControllerListenerResponse {
+  ControllerListener listener = 1;
+}
+
+message DeleteControllerListenerRequest {
+  string listener_id = 1;
+}
+
+message DeleteControllerListenerResponse {
+  ControllerListener listener = 1;
+}
+
+message ListPivotListenersRequest {
+  repeated string target_uuids = 1;
+  repeated string protocols = 2;
+  repeated string statuses = 3;
+}
+
+message ListPivotListenersResponse {
+  repeated PivotListener listeners = 1;
+}
+
+enum LootCategory {
+  LOOT_CATEGORY_UNSPECIFIED = 0;
+  LOOT_CATEGORY_FILE = 1;
+  LOOT_CATEGORY_SCREENSHOT = 2;
+  LOOT_CATEGORY_TICKET = 3;
+}
+
+message LootItem {
+  string loot_id = 1;
+  string target_uuid = 2;
+  string operator = 3;
+  LootCategory category = 4;
+  string name = 5;
+  // storage_ref 指向 Kelpie 侧落盘文件/对象（相对路径或 URI）。
+  string storage_ref = 6;
+  // origin_path 记录来源路径或描述（可选）。
+  string origin_path = 7;
+  string hash = 8;
+  uint64 size = 9;
+  string mime = 10;
+  map<string, string> metadata = 11;
+  repeated string tags = 12;
+  string created_at = 13;
+}
+
+message ListLootRequest {
+  string target_uuid = 1;
+  LootCategory category = 2;
+  int32 limit = 3;
+  string before_id = 4;
+  repeated string tags = 5;
+}
+
+message ListLootResponse {
+  repeated LootItem items = 1;
+}
+
+message SubmitLootRequest {
+  string target_uuid = 1;
+  LootCategory category = 2;
+  string name = 3;
+  // 可选来源路径/描述（不用于读取内容）。
+  string origin_path = 4;
+  // 小型内容可直接随请求上传；若为空则以 storage_ref 记录外部引用。
+  bytes content = 5;
+  string mime = 6;
+  map<string, string> metadata = 7;
+  repeated string tags = 8;
+  string hash = 9;
+  uint64 size = 10;
+  // 若内容已上传或由其他渠道生成，可直接传入存储引用。
+  string storage_ref = 11;
+}
+
+message SubmitLootResponse {
+  LootItem item = 1;
+}
+
+message GetLootRequest {
+  string loot_id = 1;
+}
+
+message GetLootResponse {
+  LootItem item = 1;
+  bytes content = 2;
+}
+
+message CreatePivotListenerRequest {
+  string target_uuid = 1;
+  PivotListenerSpec spec = 2;
+}
+
+message CreatePivotListenerResponse {
+  PivotListener listener = 1;
+}
+
+message UpdatePivotListenerRequest {
+  string listener_id = 1;
+  PivotListenerSpec spec = 2;
+  string desired_status = 3;
+}
+
+message UpdatePivotListenerResponse {
+  PivotListener listener = 1;
+}
+
+message DeletePivotListenerRequest {
+  string listener_id = 1;
+}
+
+message DeletePivotListenerResponse {}
+
+message WatchEventsRequest {
+  repeated string interested_nodes = 1;
+}
+
+message UiEvent {
+  reserved 3;
+  oneof payload {
+    NodeEvent node_event = 1;
+    LogEntry log_event = 2;
+    StreamEvent stream_event = 4;
+    PivotListenerEvent listener_event = 5;
+    SessionEvent session_event = 6;
+    DialEvent dial_event = 7;
+    ProxyEvent proxy_event = 8;
+    SleepEvent sleep_event = 9;
+    SupplementalEvent supplemental_event = 10;
+    ChatEvent chat_event = 11;
+    AuditEvent audit_event = 12;
+    LootEvent loot_event = 13;
+  }
+}
+
+message LootEvent {
+  enum Kind {
+    LOOT_EVENT_UNSPECIFIED = 0;
+    LOOT_EVENT_ADDED = 1;
+  }
+  Kind kind = 1;
+  LootItem item = 2;
+}
+
+message ChatMessage {
+  string id = 1;
+  string username = 2;
+  string role = 3;
+  string message = 4;
+  string timestamp = 5;
+}
+
+message ChatEvent {
+  ChatMessage message = 1;
+}
+
+message SendChatMessageRequest {
+  string message = 1;
+}
+
+message SendChatMessageResponse {
+  ChatMessage message = 1;
+}
+
+message ListChatMessagesRequest {
+  int32 limit = 1;
+  string before_id = 2;
+}
+
+message ListChatMessagesResponse {
+  repeated ChatMessage messages = 1;
+}
+
+message DialEvent {
+  enum Kind {
+    DIAL_EVENT_UNSPECIFIED = 0;
+    DIAL_EVENT_ENQUEUED = 1;
+    DIAL_EVENT_RUNNING = 2;
+    DIAL_EVENT_COMPLETED = 3;
+    DIAL_EVENT_FAILED = 4;
+    DIAL_EVENT_CANCELED = 5;
+  }
+  Kind kind = 1;
+  DialStatus status = 2;
+}
+
+message NodeEvent {
+  enum Kind {
+    UNKNOWN = 0;
+    ADDED = 1;
+    UPDATED = 2;
+    REMOVED = 3;
+  }
+  Kind kind = 1;
+  NodeInfo node = 2;
+}
+
+message StreamEvent {
+  enum Kind {
+    STREAM_UNSPECIFIED = 0;
+    STREAM_OPENED = 1;
+    STREAM_UPDATED = 2;
+    STREAM_CLOSED = 3;
+  }
+  Kind kind = 1;
+  StreamDiag stream = 2;
+  string reason = 3;
+}
+
+message PivotListenerEvent {
+  enum Kind {
+    PIVOT_LISTENER_UNSPECIFIED = 0;
+    PIVOT_LISTENER_ADDED = 1;
+    PIVOT_LISTENER_UPDATED = 2;
+    PIVOT_LISTENER_REMOVED = 3;
+  }
+  Kind kind = 1;
+  PivotListener listener = 2;
+}
+
+message SessionEvent {
+  enum Kind {
+    SESSION_EVENT_UNSPECIFIED = 0;
+    SESSION_EVENT_ADDED = 1;
+    SESSION_EVENT_UPDATED = 2;
+    SESSION_EVENT_REMOVED = 3;
+    SESSION_EVENT_MARKED = 4;
+    SESSION_EVENT_REPAIR_STARTED = 5;
+    SESSION_EVENT_REPAIR_COMPLETED = 6;
+    SESSION_EVENT_TERMINATED = 7;
+  }
+  Kind kind = 1;
+  SessionInfo session = 2;
+  string reason = 3;
+  string operator = 4;
+}
+
+message StreamControl {
+  enum Kind {
+    KIND_UNSPECIFIED = 0;
+    OPEN = 1;
+    CLOSE = 2;
+    ERROR = 3;
+    RESIZE = 4;
+  }
+  Kind kind = 1;
+  uint32 rows = 2;
+  uint32 cols = 3;
+  string error = 4;
+  ProxyStreamError error_code = 5;
+  uint32 stream_id = 6;
+  string stream_kind = 7;
+}
+
+enum ProxyStreamError {
+  PROXYSTREAM_ERROR_UNSPECIFIED = 0;
+  PROXYSTREAM_ERROR_TARGET_UNAVAILABLE = 1;
+  PROXYSTREAM_ERROR_INVALID_ARGUMENT = 2;
+  PROXYSTREAM_ERROR_BIND = 3;
+  PROXYSTREAM_ERROR_REMOTE = 4;
+  PROXYSTREAM_ERROR_AUTH = 5;
+}
+
+message ProxyStreamHandle {
+  string target_uuid = 1;
+  string session_id = 2;
+  string kind = 3;
+  map<string, string> options = 4;
+}
+
+enum ShellMode {
+  SHELL_MODE_UNSPECIFIED = 0;
+  SHELL_MODE_PIPE = 1;
+  SHELL_MODE_PTY = 2;
+}
+
+message StartShellRequest {
+  string target_uuid = 1;
+  ShellMode mode = 2;
+  string resume_session_id = 3;
+}
+
+message StartShellResponse {
+  ProxyStreamHandle handle = 1;
+}
+
+enum SocksProxyAuth {
+  SOCKS_PROXY_AUTH_UNSPECIFIED = 0;
+  SOCKS_PROXY_AUTH_NONE = 1;
+  SOCKS_PROXY_AUTH_USERPASS = 2;
+}
+
+message StartSocksProxyRequest {
+  string target_uuid = 1;
+  SocksProxyAuth auth = 2;
+  string username = 3;
+  string password = 4;
+}
+
+message StartSocksProxyResponse {
+  ProxyStreamHandle handle = 1;
+}
+
+enum SshSessionAuthMethod {
+  SSH_SESSION_AUTH_METHOD_UNSPECIFIED = 0;
+  SSH_SESSION_AUTH_METHOD_PASSWORD = 1;
+}
+
+message StartSshSessionRequest {
+  string target_uuid = 1;
+  string server_addr = 2;
+  SshSessionAuthMethod auth_method = 3;
+  string username = 4;
+  string password = 5;
+}
+
+message StartSshSessionResponse {
+  ProxyStreamHandle handle = 1;
+}
+
+message StreamRequest {
+  string session_id = 1;
+  string target_uuid = 2;
+  map<string, string> options = 3;
+  bytes data = 4;
+  StreamControl control = 5;
+}
+
+message StreamResponse {
+  string session_id = 1;
+  string target_uuid = 2;
+  bytes data = 3;
+  StreamControl control = 4;
+}
+
+message ProxyInfo {
+  string proxy_id = 1;
+  string target_uuid = 2;
+  string kind = 3;
+  string bind = 4;
+  string remote = 5;
+  map<string, string> metadata = 6;
+}
+
+message ListProxiesRequest {}
+
+message ListProxiesResponse {
+  repeated ProxyInfo proxies = 1;
+}
+
+message ProxyEvent {
+  enum Kind {
+    PROXY_EVENT_UNSPECIFIED = 0;
+    PROXY_EVENT_STARTED = 1;
+    PROXY_EVENT_STOPPED = 2;
+    PROXY_EVENT_FAILED = 3;
+  }
+  Kind kind = 1;
+  ProxyInfo proxy = 2;
+  string reason = 3;
+}
+
+message SleepEvent {
+  enum Kind {
+    SLEEP_EVENT_UNSPECIFIED = 0;
+    SLEEP_EVENT_UPDATED = 1;
+  }
+  Kind kind = 1;
+  string target_uuid = 2;
+  optional int32 sleep_seconds = 3;
+  optional int32 work_seconds = 4;
+  optional double jitter_percent = 5;
+  string operator = 6;
+  string reason = 7;
+}
+
+message SleepProfile {
+  string target_uuid = 1;
+  optional int32 sleep_seconds = 2;
+  optional int32 work_seconds = 3;
+  optional double jitter_percent = 4;
+  string profile = 5;
+  string last_updated = 6;
+  string next_wake_at = 7;
+  string status = 8;
+  string operator = 9;
+  string reason = 10;
+  string memo = 11;
+}
+
+message ListSleepProfilesRequest {}
+
+message ListSleepProfilesResponse {
+  repeated SleepProfile profiles = 1;
+}
+
+message RepairStatus {
+  string target_uuid = 1;
+  int32 attempts = 2;
+  string next_attempt = 3;
+  bool broken = 4;
+  string last_error = 5;
+  string reason = 6;
+}
+
+message ListRepairsRequest {}
+
+message ListRepairsResponse {
+  repeated RepairStatus repairs = 1;
+}
+
+message CloseStreamRequest {
+  uint32 stream_id = 1;
+  string reason = 2;
+}
+
+message CloseStreamResponse {}
+
+message StartDialRequest {
+  string target_uuid = 1;
+  string address = 2;
+  string reason = 3;
+}
+
+message StartDialResponse {
+  string dial_id = 1;
+  bool accepted = 2;
+  string message = 3;
+  string error = 4;
+}
+
+message CancelDialRequest {
+  string dial_id = 1;
+}
+
+message CancelDialResponse {
+  bool canceled = 1;
+  string error = 2;
+}
+
+message ListDialRequest {}
+
+enum DialState {
+  DIAL_STATE_UNSPECIFIED = 0;
+  DIAL_STATE_ENQUEUED = 1;
+  DIAL_STATE_RUNNING = 2;
+  DIAL_STATE_SUCCEEDED = 3;
+  DIAL_STATE_FAILED = 4;
+  DIAL_STATE_CANCELED = 5;
+}
+
+message DialStatus {
+  string dial_id = 1;
+  string target_uuid = 2;
+  string address = 3;
+  string reason = 4;
+  DialState state = 5;
+  string error = 6;
+  string operator = 7;
+  string started_at = 8;
+  string updated_at = 9;
+}
+
+message ListDialResponse {
+  repeated DialStatus dials = 1;
+}
+
+message AuditLogEntry {
+  string id = 1;
+  string username = 2;
+  string role = 3;
+  string method = 4;
+  string target = 5;
+  string parameters = 6;
+  string status = 7;
+  string error = 8;
+  string peer = 9;
+  string timestamp = 10;
+}
+
+message AuditEvent {
+  AuditLogEntry entry = 1;
+}
+
+message ListAuditLogsRequest {
+  string username = 1;
+  string method = 2;
+  string from_time = 3;
+  string to_time = 4;
+  int32 limit = 5;
+}
+
+message ListAuditLogsResponse {
+  repeated AuditLogEntry entries = 1;
+}
+
+message UpdateNodeMemoRequest {
+  string target_uuid = 1;
+  string memo = 2;
+}
+
+message UpdateNodeMemoResponse {}
+
+message StartForwardProxyRequest {
+  string target_uuid = 1;
+  string local_bind = 2;
+  string remote_addr = 3;
+}
+
+message StartForwardProxyResponse {
+  ProxyStreamHandle handle = 1;
+  string proxy_id = 2;
+  string bind = 3;
+  string remote_addr = 4;
+}
+
+message StopForwardProxyRequest {
+  string target_uuid = 1;
+  string proxy_id = 2;
+}
+
+message StopForwardProxyResponse {
+  int32 stopped = 1;
+}
+
+message StartBackwardProxyRequest {
+  string target_uuid = 1;
+  string remote_port = 2;
+  string local_port = 3;
+}
+
+message StartBackwardProxyResponse {
+  ProxyStreamHandle handle = 1;
+  string proxy_id = 2;
+  string remote_port = 3;
+  string local_port = 4;
+}
+
+message StopBackwardProxyRequest {
+  string target_uuid = 1;
+  string proxy_id = 2;
+}
+
+message StopBackwardProxyResponse {
+  int32 stopped = 1;
+}
+
+enum SessionStatus {
+  SESSION_STATUS_UNSPECIFIED = 0;
+  SESSION_STATUS_ACTIVE = 1;
+  SESSION_STATUS_DEGRADED = 2;
+  SESSION_STATUS_FAILED = 3;
+  SESSION_STATUS_MARKED_DEAD = 4;
+  SESSION_STATUS_REPAIRING = 5;
+}
+
+message SessionInfo {
+  string target_uuid = 2;
+  SessionStatus status = 3;
+  bool active = 4;
+  bool connected = 5;
+  string remote_addr = 6;
+  string upstream = 7;
+  string downstream = 8;
+  string network_id = 9;
+  string last_seen = 10;
+  string last_error = 11;
+  string sleep_profile = 12;
+  optional int32 sleep_seconds = 13;
+  optional int32 work_seconds = 14;
+  optional double jitter_percent = 15;
+  string last_command = 16;
+  string last_operator = 17;
+  map<string, string> metadata = 18;
+}
+
+message ListSessionsRequest {
+  repeated string target_uuids = 1;
+  repeated SessionStatus statuses = 2;
+  bool include_inactive = 3;
+}
+
+message ListSessionsResponse {
+  repeated SessionInfo sessions = 1;
+}
+
+enum SessionMarkAction {
+  SESSION_MARK_ACTION_UNSPECIFIED = 0;
+  SESSION_MARK_ACTION_ALIVE = 1;
+  SESSION_MARK_ACTION_DEAD = 2;
+  SESSION_MARK_ACTION_MAINTENANCE = 3;
+}
+
+message MarkSessionRequest {
+  string target_uuid = 1;
+  SessionMarkAction action = 2;
+  string reason = 3;
+}
+
+message MarkSessionResponse {
+  SessionInfo session = 1;
+}
+
+message RepairSessionRequest {
+  string target_uuid = 2;
+  bool force = 3;
+  string reason = 4;
+}
+
+message RepairSessionResponse {
+  bool enqueued = 1;
+  string message = 2;
+}
+
+message ReconnectSessionRequest {
+  string target_uuid = 2;
+  string reason = 3;
+}
+
+message ReconnectSessionResponse {
+  bool accepted = 1;
+  string message = 2;
+}
+
+message TerminateSessionRequest {
+  string target_uuid = 2;
+  string reason = 3;
+}
+
+message TerminateSessionResponse {
+  bool terminated = 1;
+}
+
+message SessionDiagnosticsRequest {
+  string target_uuid = 2;
+  bool include_processes = 3;
+  bool include_metrics = 4;
+}
+
+message SessionMetric {
+  string name = 1;
+  string value = 2;
+}
+
+message SessionProcess {
+  string pid = 1;
+  string name = 2;
+  string user = 3;
+  string status = 4;
+  string path = 5;
+  string started_at = 6;
+}
+
+message SessionIssue {
+  string code = 1;
+  string message = 2;
+  string detail = 3;
+}
+
+message SessionDiagnosticsResponse {
+  SessionInfo session = 1;
+  repeated SessionMetric metrics = 2;
+  repeated SessionIssue issues = 3;
+  repeated SessionProcess processes = 4;
+}
+
+message UpdateSleepRequest {
+  string target_uuid = 1;
+  optional int32 sleep_seconds = 2;
+  optional int32 work_seconds = 3;
+  optional double jitter_percent = 4;
+}
+
+message UpdateSleepResponse {}
+
+message ShutdownNodeRequest {
+  string target_uuid = 1;
+}
+
+message ShutdownNodeResponse {}
+
+message StreamStatInfo {
+  string kind = 1;
+  uint64 opened = 2;
+  uint64 closed = 3;
+  uint64 active = 4;
+  string last_reason = 5;
+  string last_closed = 6;
+}
+
+message StreamStatsRequest {}
+
+message StreamStatsResponse {
+  repeated StreamStatInfo stats = 1;
+}
+
+message StreamDiagnosticsRequest {}
+
+message StreamDiagnosticsResponse {
+  repeated StreamDiag streams = 1;
+}
+
+message StreamPingRequest {
+  string target_uuid = 1;
+  int32 count = 2;
+  int32 payload_size = 3;
+}
+
+message StreamPingResponse {}
+
+message NodeStatusRequest {
+  string target_uuid = 1;
+}
+
+message NodeStatusResponse {
+  NodeInfo node = 1;
+  repeated StreamDiag streams = 2;
+  repeated PivotListener pivot_listeners = 3;
+}
+
+message NetworkInfo {
+  string network_id = 1;
+  repeated string target_uuids = 2;
+  bool active = 3;
+}
+
+message ListNetworksRequest {}
+
+message ListNetworksResponse {
+  repeated NetworkInfo networks = 1;
+  string active_network_id = 2;
+}
+
+message UseNetworkRequest {
+  string network_id = 1;
+}
+
+message UseNetworkResponse {
+  string active_network_id = 1;
+}
+
+message ResetNetworkRequest {}
+
+message ResetNetworkResponse {
+  string active_network_id = 1;
+}
+
+message SetNodeNetworkRequest {
+  string target_uuid = 1;
+  string network_id = 2;
+}
+
+message SetNodeNetworkResponse {}
+
+message PruneOfflineRequest {}
+
+message PruneOfflineResponse {
+  int32 removed = 1;
+}
+
+message SupplementalStatus {
+  bool enabled = 1;
+  int32 queue_length = 2;
+  int32 pending_actions = 3;
+  int32 active_links = 4;
+}
+
+message SupplementalMetrics {
+  uint64 dispatched = 1;
+  uint64 success = 2;
+  uint64 failures = 3;
+  uint64 dropped = 4;
+  uint64 recycled = 5;
+  uint64 queue_high = 6;
+  string last_failure = 7;
+  uint64 event_seq = 8;
+  uint64 repair_attempts = 9;
+  uint64 repair_success = 10;
+  uint64 repair_failures = 11;
+  repeated string last_graph_report = 12;
+}
+
+message ListSupplementalEventsRequest {
+  int32 limit = 1;
+}
+
+message SupplementalEvent {
+  uint64 seq = 1;
+  string kind = 2;
+  string action = 3;
+  string source_uuid = 4;
+  string target_uuid = 5;
+  string detail = 6;
+  string timestamp = 7;
+}
+
+message ListSupplementalEventsResponse {
+  repeated SupplementalEvent events = 1;
+}
+
+message ListSupplementalQualityRequest {
+  int32 limit = 1;
+  repeated string node_uuids = 2;
+}
+
+message SupplementalQuality {
+  string node_uuid = 1;
+  double health_score = 2;
+  double latency_score = 3;
+  double failure_score = 4;
+  double queue_score = 5;
+  double staleness_score = 6;
+  uint64 total_success = 7;
+  uint64 total_failures = 8;
+  string last_heartbeat = 9;
+}
+
+message ListSupplementalQualityResponse {
+  repeated SupplementalQuality qualities = 1;
+}
+
+message SupplementalEmpty {}
+
+enum SshTunnelAuthMethod {
+  SSH_TUNNEL_AUTH_METHOD_UNSPECIFIED = 0;
+  SSH_TUNNEL_AUTH_METHOD_PASSWORD = 1;
+  SSH_TUNNEL_AUTH_METHOD_CERT = 2;
+}
+
+message StartSshTunnelRequest {
+  string target_uuid = 1;
+  string server_addr = 2;
+  string agent_port = 3;
+  SshTunnelAuthMethod auth_method = 4;
+  string username = 5;
+  string password = 6;
+  bytes private_key = 7;
+}
+
+message StartSshTunnelResponse {}
+
+service KelpieUIService {
+  rpc GetSnapshot(SnapshotRequest) returns (SnapshotResponse);
+  rpc ListNodes(ListNodesRequest) returns (ListNodesResponse);
+  rpc GetTopology(GetTopologyRequest) returns (GetTopologyResponse);
+  rpc WatchEvents(WatchEventsRequest) returns (stream UiEvent);
+  rpc ListLoot(ListLootRequest) returns (ListLootResponse);
+   rpc SubmitLoot(SubmitLootRequest) returns (SubmitLootResponse);
+  rpc GetLoot(GetLootRequest) returns (GetLootResponse);
+  rpc ProxyStream(stream StreamRequest) returns (stream StreamResponse);
+  rpc StartShell(StartShellRequest) returns (StartShellResponse);
+  rpc StartSocksProxy(StartSocksProxyRequest) returns (StartSocksProxyResponse);
+  rpc StartSshSession(StartSshSessionRequest) returns (StartSshSessionResponse);
+  rpc UpdateNodeMemo(UpdateNodeMemoRequest) returns (UpdateNodeMemoResponse);
+  rpc ListSessions(ListSessionsRequest) returns (ListSessionsResponse);
+  rpc MarkSession(MarkSessionRequest) returns (MarkSessionResponse);
+  rpc RepairSession(RepairSessionRequest) returns (RepairSessionResponse);
+  rpc ReconnectSession(ReconnectSessionRequest) returns (ReconnectSessionResponse);
+  rpc TerminateSession(TerminateSessionRequest) returns (TerminateSessionResponse);
+  rpc GetSessionDiagnostics(SessionDiagnosticsRequest) returns (SessionDiagnosticsResponse);
+  rpc CloseStream(CloseStreamRequest) returns (CloseStreamResponse);
+  rpc StartSshTunnel(StartSshTunnelRequest) returns (StartSshTunnelResponse);
+  rpc ShutdownNode(ShutdownNodeRequest) returns (ShutdownNodeResponse);
+  rpc StreamStats(StreamStatsRequest) returns (StreamStatsResponse);
+  rpc StreamDiagnostics(StreamDiagnosticsRequest) returns (StreamDiagnosticsResponse);
+  rpc StreamPing(StreamPingRequest) returns (StreamPingResponse);
+  rpc GetMetrics(GetMetricsRequest) returns (GetMetricsResponse);
+  rpc GetDtnQueueStats(GetDtnQueueStatsRequest) returns (GetDtnQueueStatsResponse);
+  rpc ListDtnBundles(ListDtnBundlesRequest) returns (ListDtnBundlesResponse);
+  rpc EnqueueDtnPayload(EnqueueDtnPayloadRequest) returns (EnqueueDtnPayloadResponse);
+  rpc GetDtnPolicy(GetDtnPolicyRequest) returns (GetDtnPolicyResponse);
+  rpc UpdateDtnPolicy(UpdateDtnPolicyRequest) returns (UpdateDtnPolicyResponse);
+  rpc GetRoutingStrategy(GetRoutingStrategyRequest) returns (GetRoutingStrategyResponse);
+  rpc SetRoutingStrategy(SetRoutingStrategyRequest) returns (SetRoutingStrategyResponse);
+  rpc NodeStatus(NodeStatusRequest) returns (NodeStatusResponse);
+  rpc ListNetworks(ListNetworksRequest) returns (ListNetworksResponse);
+  rpc UseNetwork(UseNetworkRequest) returns (UseNetworkResponse);
+  rpc ResetNetwork(ResetNetworkRequest) returns (ResetNetworkResponse);
+  rpc SetNodeNetwork(SetNodeNetworkRequest) returns (SetNodeNetworkResponse);
+  rpc PruneOffline(PruneOfflineRequest) returns (PruneOfflineResponse);
+  rpc SendChatMessage(SendChatMessageRequest) returns (SendChatMessageResponse);
+  rpc ListChatMessages(ListChatMessagesRequest) returns (ListChatMessagesResponse);
+  rpc ListAuditLogs(ListAuditLogsRequest) returns (ListAuditLogsResponse);
+}
+
+service PivotListenerAdminService {
+  rpc ListPivotListeners(ListPivotListenersRequest) returns (ListPivotListenersResponse);
+  rpc CreatePivotListener(CreatePivotListenerRequest) returns (CreatePivotListenerResponse);
+  rpc UpdatePivotListener(UpdatePivotListenerRequest) returns (UpdatePivotListenerResponse);
+  rpc DeletePivotListener(DeletePivotListenerRequest) returns (DeletePivotListenerResponse);
+}
+
+service ControllerListenerAdminService {
+  rpc ListControllerListeners(ListControllerListenersRequest) returns (ListControllerListenersResponse);
+  rpc CreateControllerListener(CreateControllerListenerRequest) returns (CreateControllerListenerResponse);
+  rpc UpdateControllerListener(UpdateControllerListenerRequest) returns (UpdateControllerListenerResponse);
+  rpc DeleteControllerListener(DeleteControllerListenerRequest) returns (DeleteControllerListenerResponse);
+}
+
+service ProxyAdminService {
+  rpc StartForwardProxy(StartForwardProxyRequest) returns (StartForwardProxyResponse);
+  rpc StopForwardProxy(StopForwardProxyRequest) returns (StopForwardProxyResponse);
+  rpc StartBackwardProxy(StartBackwardProxyRequest) returns (StartBackwardProxyResponse);
+  rpc StopBackwardProxy(StopBackwardProxyRequest) returns (StopBackwardProxyResponse);
+  rpc ListProxies(ListProxiesRequest) returns (ListProxiesResponse);
+}
+
+service SleepAdminService {
+  rpc UpdateSleep(UpdateSleepRequest) returns (UpdateSleepResponse);
+  rpc ListSleepProfiles(ListSleepProfilesRequest) returns (ListSleepProfilesResponse);
+}
+
+service SupplementalAdminService {
+  rpc GetSupplementalStatus(SupplementalEmpty) returns (SupplementalStatus);
+  rpc GetSupplementalMetrics(SupplementalEmpty) returns (SupplementalMetrics);
+  rpc ListSupplementalEvents(ListSupplementalEventsRequest) returns (ListSupplementalEventsResponse);
+  rpc ListSupplementalQuality(ListSupplementalQualityRequest) returns (ListSupplementalQualityResponse);
+  rpc ListRepairs(ListRepairsRequest) returns (ListRepairsResponse);
+}
+
+service ConnectAdminService {
+  rpc StartDial(StartDialRequest) returns (StartDialResponse);
+  rpc CancelDial(CancelDialRequest) returns (CancelDialResponse);
+  rpc ListDials(ListDialRequest) returns (ListDialResponse);
+}

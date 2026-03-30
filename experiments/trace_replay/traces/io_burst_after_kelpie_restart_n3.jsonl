@@ -1,0 +1,15 @@
+{"at_ms":0,"type":"metrics","note":"io-burst-after-kelpie-restart-n3"}
+
+# 场景：Kelpie 中途重启后，立刻对目标节点做一轮并发 IO（stream/dataplane），
+# 用来捕获“重启恢复 + 并发数据面”叠加时的隐性竞态/资源泄漏问题。
+
+{"at_ms":12000,"type":"kelpie_restart","timeout_ms":60000}
+
+# 确保目标在线（重启后拓扑/重连收敛）。
+{"at_ms":25000,"type":"wait_node_status","node":"n3","expect":"online","timeout_ms":60000}
+
+# 更狠的 IO burst：比默认 io_burst_interrupt_target_n3 更高并发，但仍保持本机可稳定复现。
+{"at_ms":30000,"type":"io_burst","target":"n3","stream_count":5,"dataplane_count":3,"payload_bytes":2048,"timeout_ms":90000}
+
+{"at_ms":75000,"type":"metrics","note":"checkpoint-75s"}
+
