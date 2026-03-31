@@ -1,7 +1,6 @@
 release/
 .vscode/
 .DS_Store
-AGENTS.md
 .idea/
 db/
 .venv/
