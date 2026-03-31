@@ -245,7 +245,7 @@ func (admin *Admin) attemptBundleDelivery(ctx context.Context, bundle *dtn.Bundl
 			shortID(bundle.ID), shortID(bundle.Target), route, shortID(firstHop), shortID(sess.UUID()), connEndpoints(sess.Conn()))
 	}
 	msg := protocol.NewDownMsg(sess.Conn(), sess.Secret(), sess.UUID())
-	protocol.SetMessageMeta(msg, sess.ProtocolVersion(), sess.ProtocolFlags())
+	protocol.SetMessageMeta(msg, sess.ProtocolFlags())
 	header := &protocol.Header{
 		Sender:      sess.UUID(),
 		Accepter:    protocol.TEMP_UUID,

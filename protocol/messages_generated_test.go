@@ -14,7 +14,6 @@ func newSampleHIMess() interface{} {
 	msg.UUIDLen = uint16(len(msg.UUID))
 	msg.IsAdmin = 1
 	msg.IsReconnect = 1
-	msg.ProtoVersion = 1
 	msg.ProtoFlags = 1
 	return msg
 }
@@ -23,7 +22,6 @@ func newSampleUUIDMess() interface{} {
 	msg := &UUIDMess{}
 	msg.UUID = "uuid-value"
 	msg.UUIDLen = uint16(len(msg.UUID))
-	msg.ProtoVersion = 1
 	msg.ProtoFlags = 1
 	return msg
 }

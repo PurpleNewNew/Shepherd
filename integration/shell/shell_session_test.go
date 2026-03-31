@@ -56,7 +56,7 @@ func TestShellStreamSessionMaintainsState(t *testing.T) {
 	t.Cleanup(func() { agentProcess.TestOnlySetShellSessionFactory(nil) })
 
 	spy := newSpyConn()
-	mockSess := &mockSession{conn: spy, secret: secret, uuid: agentUUID, version: protocol.CurrentProtocolVersion, flags: protocol.DefaultProtocolFlags}
+	mockSess := &mockSession{conn: spy, secret: secret, uuid: agentUUID, flags: protocol.DefaultProtocolFlags}
 	mgr.SetSession(mockSess)
 	if mgr.ActiveSession() == nil {
 		t.Fatalf("active session not set")
@@ -81,25 +81,23 @@ func TestShellStreamSessionMaintainsState(t *testing.T) {
 }
 
 type mockSession struct {
-	conn    net.Conn
-	secret  string
-	uuid    string
-	version uint16
-	flags   uint16
+	conn   net.Conn
+	secret string
+	uuid   string
+	flags  uint16
 }
 
-func (m *mockSession) Conn() net.Conn           { return m.conn }
-func (m *mockSession) Secret() string           { return m.secret }
-func (m *mockSession) UUID() string             { return m.uuid }
-func (m *mockSession) UpdateConn(conn net.Conn) { m.conn = conn }
-func (m *mockSession) ProtocolVersion() uint16  { return m.version }
-func (m *mockSession) ProtocolFlags() uint16    { return m.flags }
-func (m *mockSession) SetProtocol(v, f uint16)  { m.version, m.flags = v, f }
+func (m *mockSession) Conn() net.Conn            { return m.conn }
+func (m *mockSession) Secret() string            { return m.secret }
+func (m *mockSession) UUID() string              { return m.uuid }
+func (m *mockSession) UpdateConn(conn net.Conn)  { m.conn = conn }
+func (m *mockSession) ProtocolFlags() uint16     { return m.flags }
+func (m *mockSession) SetProtocolFlags(f uint16) { m.flags = f }
 
 func decodeUpFrame(frame []byte, secret string) (*protocol.Header, interface{}, error) {
 	conn := &bufferConn{Reader: bytes.NewReader(frame)}
 	msg := protocol.NewUpMsg(conn, secret, protocol.ADMIN_UUID)
-	protocol.SetMessageMeta(msg, protocol.CurrentProtocolVersion, protocol.DefaultProtocolFlags)
+	protocol.SetMessageMeta(msg, protocol.DefaultProtocolFlags)
 	header, payload, err := protocol.DestructMessage(msg)
 	if err != nil {
 		return nil, nil, err

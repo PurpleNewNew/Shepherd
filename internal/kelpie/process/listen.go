@@ -75,7 +75,7 @@ func sendChildUUIDResponse(mgr *manager.Manager, uuid, parentUUID, route, reques
 		return fmt.Errorf("connection unavailable for %s", uuid)
 	}
 	msg := protocol.NewDownMsg(conn, sess.Secret(), sess.UUID())
-	protocol.SetMessageMeta(msg, sess.ProtocolVersion(), sess.ProtocolFlags())
+	protocol.SetMessageMeta(msg, sess.ProtocolFlags())
 	header := &protocol.Header{Sender: protocol.ADMIN_UUID, Accepter: protocol.TEMP_UUID, MessageType: protocol.CHILDUUIDRES, RouteLen: uint32(len([]byte(route))), Route: route}
 	payload := &protocol.ChildUUIDRes{UUIDLen: uint16(len(uuid)), UUID: uuid, RequestIDLen: uint16(len(requestID)), RequestID: requestID}
 	protocol.ConstructMessage(msg, header, payload, false)

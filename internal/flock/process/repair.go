@@ -168,7 +168,7 @@ func (agent *Agent) handleRepairConn(conn net.Conn) {
 	param.Domain = options.Domain
 	proto := protocol.NewUpProto(param)
 	if err := proto.SNegotiate(); err != nil {
-		logger.Warnf("repair negotiation failed: %v", err)
+		logger.Warnf("repair transport handshake failed: %v", err)
 		_ = conn.Close()
 		return
 	}
@@ -180,7 +180,7 @@ func (agent *Agent) handleRepairConn(conn net.Conn) {
 		return
 	}
 
-	localVersion, localFlags := agent.protocolMeta()
+	localFlags := agent.protocolFlags()
 	if agent.upstreamTransport() != "http" {
 		localFlags &^= protocol.FlagSupportChunked
 	}
@@ -192,18 +192,16 @@ func (agent *Agent) handleRepairConn(conn net.Conn) {
 
 	greet := handshake.RandomGreeting(handshake.RoleAdmin)
 	hiTemplate := &protocol.HIMess{
-		GreetingLen:  uint16(len(greet)),
-		Greeting:     greet,
-		UUIDLen:      uint16(len(activeUUID)),
-		UUID:         activeUUID,
-		IsAdmin:      0,
-		IsReconnect:  1,
-		ProtoVersion: localVersion,
-		ProtoFlags:   localFlags,
+		GreetingLen: uint16(len(greet)),
+		Greeting:    greet,
+		UUIDLen:     uint16(len(activeUUID)),
+		UUID:        activeUUID,
+		IsAdmin:     0,
+		IsReconnect: 1,
+		ProtoFlags:  localFlags,
 	}
 
 	header := &protocol.Header{
-		Version:     localVersion,
 		Flags:       localFlags,
 		Sender:      activeUUID,
 		Accepter:    protocol.ADMIN_UUID,

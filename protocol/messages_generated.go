@@ -51,7 +51,6 @@ func marshalHIMess(msg *HIMess) ([]byte, error) {
 	buf = append(buf, []byte(msg.UUID)...)
 	buf = appendUint16(buf, msg.IsAdmin)
 	buf = appendUint16(buf, msg.IsReconnect)
-	buf = appendUint16(buf, msg.ProtoVersion)
 	buf = appendUint16(buf, msg.ProtoFlags)
 	return buf, nil
 }
@@ -89,11 +88,6 @@ func unmarshalHIMess(data []byte) (*HIMess, error) {
 	msg.IsReconnect = binary.BigEndian.Uint16(data[:2])
 	data = data[2:]
 	if len(data) < 2 {
-		return nil, fmt.Errorf("codec: HIMess.ProtoVersion overflow")
-	}
-	msg.ProtoVersion = binary.BigEndian.Uint16(data[:2])
-	data = data[2:]
-	if len(data) < 2 {
 		return nil, fmt.Errorf("codec: HIMess.ProtoFlags overflow")
 	}
 	msg.ProtoFlags = binary.BigEndian.Uint16(data[:2])
@@ -110,7 +104,6 @@ func marshalUUIDMess(msg *UUIDMess) ([]byte, error) {
 	msg.UUIDLen = uint16(len(msg.UUID))
 	buf = appendUint16(buf, msg.UUIDLen)
 	buf = append(buf, []byte(msg.UUID)...)
-	buf = appendUint16(buf, msg.ProtoVersion)
 	buf = appendUint16(buf, msg.ProtoFlags)
 	return buf, nil
 }
@@ -127,11 +120,6 @@ func unmarshalUUIDMess(data []byte) (*UUIDMess, error) {
 	}
 	msg.UUID = string(data[:uint64(msg.UUIDLen)])
 	data = data[uint64(msg.UUIDLen):]
-	if len(data) < 2 {
-		return nil, fmt.Errorf("codec: UUIDMess.ProtoVersion overflow")
-	}
-	msg.ProtoVersion = binary.BigEndian.Uint16(data[:2])
-	data = data[2:]
 	if len(data) < 2 {
 		return nil, fmt.Errorf("codec: UUIDMess.ProtoFlags overflow")
 	}

@@ -32,7 +32,7 @@ func broadcastOfflineMess(ctx context.Context, mgr *manager.Manager) {
 			return
 		}
 		sMessage := protocol.NewDownMsg(conn, secret, uuid)
-		protocol.SetMessageMeta(sMessage, sess.ProtocolVersion(), sess.ProtocolFlags())
+		protocol.SetMessageMeta(sMessage, sess.ProtocolFlags())
 
 		header := &protocol.Header{
 			Sender:      uuid,
@@ -75,7 +75,7 @@ func broadcastReonlineMess(ctx context.Context, mgr *manager.Manager) {
 			return
 		}
 		sMessage := protocol.NewDownMsg(conn, secret, uuid)
-		protocol.SetMessageMeta(sMessage, sess.ProtocolVersion(), sess.ProtocolFlags())
+		protocol.SetMessageMeta(sMessage, sess.ProtocolFlags())
 
 		header := &protocol.Header{
 			Sender:      uuid,

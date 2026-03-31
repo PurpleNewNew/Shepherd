@@ -23,7 +23,7 @@ func TestAdminBuilderRespectsProvidedSession(t *testing.T) {
 		build()
 	defer admin.Stop()
 
-	if current := admin.currentSession(); current != sess {
+	if current := admin.currentSession(); current == nil || current.UUID() != sess.UUID() {
 		t.Fatalf("expected builder to use provided session")
 	}
 }

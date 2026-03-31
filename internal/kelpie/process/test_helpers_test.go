@@ -1,10 +1,6 @@
 package process
 
-import (
-	"net"
-
-	"codeberg.org/agnoie/shepherd/protocol"
-)
+import "net"
 
 type testSession struct {
 	conn net.Conn
@@ -24,8 +20,6 @@ func (s *testSession) UUID() string { return s.uuid }
 
 func (s *testSession) UpdateConn(conn net.Conn) { s.conn = conn }
 
-func (s *testSession) ProtocolVersion() uint16 { return protocol.CurrentProtocolVersion }
+func (s *testSession) ProtocolFlags() uint16 { return 0 }
 
-func (s *testSession) ProtocolFlags() uint16 { return protocol.DefaultProtocolFlags }
-
-func (s *testSession) SetProtocol(uint16, uint16) {}
+func (s *testSession) SetProtocolFlags(uint16) {}

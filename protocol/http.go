@@ -201,7 +201,7 @@ func (message *HTTPMessage) shouldUseChunked() bool {
 	if isHTTPStreamConn(message.RawMessage.Conn) {
 		return false
 	}
-	return message.RawMessage != nil && message.RawMessage.Flags&FlagSupportChunked != 0 && message.RawMessage.Version >= 1
+	return message.RawMessage != nil && message.RawMessage.Flags&FlagSupportChunked != 0
 }
 
 func (message *HTTPMessage) writeChunkedBody(body []byte) error {

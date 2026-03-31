@@ -26,21 +26,15 @@ const (
 	manualReconnectDelay    = 5 * time.Second
 )
 
-func (agent *Agent) protocolMeta() (uint16, uint16) {
+func (agent *Agent) protocolFlags() uint16 {
 	if agent != nil {
 		if sess := agent.currentSession(); sess != nil {
-			version := sess.ProtocolVersion()
-			flags := sess.ProtocolFlags()
-			if version == 0 {
-				version = protocol.CurrentProtocolVersion
-				if flags == 0 {
-					flags = protocol.DefaultProtocolFlags
-				}
+			if flags := sess.ProtocolFlags(); flags != 0 {
+				return flags
 			}
-			return version, flags
 		}
 	}
-	return protocol.CurrentProtocolVersion, protocol.DefaultProtocolFlags
+	return protocol.DefaultProtocolFlags
 }
 
 func reconnectStrategy(options *initial.Options) reconn.Strategy {
@@ -70,7 +64,7 @@ func (agent *Agent) reconHandshakeSecret(options *initial.Options) string {
 	return options.Secret
 }
 
-func applyNegotiationResult(options *initial.Options, negotiation protocol.Negotiation) error {
+func applyProtocolFlags(options *initial.Options, flags uint16) error {
 	if options == nil {
 		return nil
 	}
@@ -78,7 +72,7 @@ func applyNegotiationResult(options *initial.Options, negotiation protocol.Negot
 	if effectiveUp == "" {
 		effectiveUp = protocol.DefaultTransports().Upstream()
 	}
-	if effectiveUp == "http" && negotiation.Flags&protocol.FlagSupportChunked == 0 {
+	if effectiveUp == "http" && flags&protocol.FlagSupportChunked == 0 {
 		return fmt.Errorf("upstream does not support HTTP chunked transfer")
 	}
 	return nil
@@ -109,28 +103,23 @@ func (agent *Agent) finalizePassiveHandshake(conn net.Conn, options *initial.Opt
 		return nil, fmt.Errorf("invalid handshake greeting")
 	}
 
-	negotiation := protocol.Negotiate(hiTemplate.ProtoVersion, hiTemplate.ProtoFlags, mmess.ProtoVersion, mmess.ProtoFlags)
-	if !negotiation.IsV1() {
-		return nil, fmt.Errorf("incoming connection uses unsupported protocol version %d", mmess.ProtoVersion)
-	}
+	meta := protocol.ResolveProtocolMeta(hiTemplate.ProtoFlags, mmess.ProtoFlags)
 
-	if err := applyNegotiationResult(options, negotiation); err != nil {
-		WarnRuntime(agent.mgr, "AGENT_RECONNECT_NEGOTIATION", true, err, "apply negotiation result failed")
+	if err := applyProtocolFlags(options, meta.Flags); err != nil {
+		WarnRuntime(agent.mgr, "AGENT_RECONNECT_NEGOTIATION", true, err, "apply protocol flags failed")
 		return nil, err
 	}
 
 	if agent.store != nil {
-		agent.store.UpdateProtocol(activeUUID, negotiation.Version, negotiation.Flags)
+		agent.store.UpdateProtocolFlags(activeUUID, meta.Flags)
 	}
 
 	resp := *hiTemplate
-	resp.ProtoVersion = negotiation.Version
-	resp.ProtoFlags = negotiation.Flags
+	resp.ProtoFlags = meta.Flags
 
 	sMessage := protocol.NewUpMsgWithTransport(conn, agent.reconHandshakeSecret(options), protocol.TEMP_UUID, transport)
-	protocol.SetMessageMeta(sMessage, negotiation.Version, negotiation.Flags)
-	header.Version = negotiation.Version
-	header.Flags = negotiation.Flags
+	protocol.SetMessageMeta(sMessage, meta.Flags)
+	header.Flags = meta.Flags
 	protocol.ConstructMessage(sMessage, header, &resp, false)
 	sMessage.SendMessage()
 	return conn, nil
@@ -324,17 +313,16 @@ func (agent *Agent) normalPassiveReconn(ctx context.Context, options *initial.Op
 
 	activeUUID := agent.activeUUID()
 
-	version, flags := agent.protocolMeta()
+	flags := agent.protocolFlags()
 	greet := handshake.RandomGreeting(handshake.RoleAdmin)
 	hiTemplate := &protocol.HIMess{
-		GreetingLen:  uint16(len(greet)),
-		Greeting:     greet,
-		UUIDLen:      uint16(len(activeUUID)),
-		UUID:         activeUUID,
-		IsAdmin:      0,
-		IsReconnect:  1,
-		ProtoVersion: version,
-		ProtoFlags:   flags,
+		GreetingLen: uint16(len(greet)),
+		Greeting:    greet,
+		UUIDLen:     uint16(len(activeUUID)),
+		UUID:        activeUUID,
+		IsAdmin:     0,
+		IsReconnect: 1,
+		ProtoFlags:  flags,
 	}
 
 	var lastErr error
@@ -379,7 +367,6 @@ func (agent *Agent) normalPassiveReconn(ctx context.Context, options *initial.Op
 		}
 
 		header := &protocol.Header{
-			Version:     version,
 			Flags:       flags,
 			Sender:      activeUUID,
 			Accepter:    protocol.ADMIN_UUID,
@@ -430,17 +417,16 @@ func (agent *Agent) soReusePassiveReconn(ctx context.Context, options *initial.O
 
 	activeUUID := agent.activeUUID()
 
-	version, flags := agent.protocolMeta()
+	flags := agent.protocolFlags()
 	greet := handshake.RandomGreeting(handshake.RoleAdmin)
 	hiTemplate := &protocol.HIMess{
-		GreetingLen:  uint16(len(greet)),
-		Greeting:     greet,
-		UUIDLen:      uint16(len(activeUUID)),
-		UUID:         activeUUID,
-		IsAdmin:      0,
-		IsReconnect:  1,
-		ProtoVersion: version,
-		ProtoFlags:   flags,
+		GreetingLen: uint16(len(greet)),
+		Greeting:    greet,
+		UUIDLen:     uint16(len(activeUUID)),
+		UUID:        activeUUID,
+		IsAdmin:     0,
+		IsReconnect: 1,
+		ProtoFlags:  flags,
 	}
 
 	var reuseLastErr error
@@ -489,7 +475,6 @@ func (agent *Agent) soReusePassiveReconn(ctx context.Context, options *initial.O
 		}
 
 		header := &protocol.Header{
-			Version:     version,
 			Flags:       flags,
 			Sender:      activeUUID,
 			Accepter:    protocol.ADMIN_UUID,
@@ -613,16 +598,15 @@ func (agent *Agent) reconnectOnce(ctx context.Context, options *initial.Options,
 	}
 
 	activeUUID := sess.UUID()
-	version, flags := agent.protocolMeta()
+	flags := agent.protocolFlags()
 	hiMess := &protocol.HIMess{
-		GreetingLen:  uint16(len("Shhh...")),
-		Greeting:     "Shhh...",
-		UUIDLen:      uint16(len(activeUUID)),
-		UUID:         activeUUID,
-		IsAdmin:      0,
-		IsReconnect:  1,
-		ProtoVersion: version,
-		ProtoFlags:   flags,
+		GreetingLen: uint16(len("Shhh...")),
+		Greeting:    "Shhh...",
+		UUIDLen:     uint16(len(activeUUID)),
+		UUID:        activeUUID,
+		IsAdmin:     0,
+		IsReconnect: 1,
+		ProtoFlags:  flags,
 	}
 	header := &protocol.Header{
 		Sender:      activeUUID,
@@ -656,7 +640,7 @@ func (agent *Agent) reconnectOnce(ctx context.Context, options *initial.Options,
 		)
 	}
 	sMessage := protocol.NewUpMsgWithTransport(conn, handshakeSecret, protocol.TEMP_UUID, transport)
-	protocol.SetMessageMeta(sMessage, version, flags)
+	protocol.SetMessageMeta(sMessage, flags)
 	protocol.ConstructMessage(sMessage, header, hiMess, false)
 	sMessage.SendMessage()
 
@@ -672,17 +656,13 @@ func (agent *Agent) reconnectOnce(ctx context.Context, options *initial.Options,
 	if fHeader.MessageType == protocol.HI {
 		if mmess, ok := fMessage.(*protocol.HIMess); ok {
 			if handshake.ValidGreeting(handshake.RoleAdmin, mmess.Greeting) && mmess.IsAdmin == 1 {
-				negotiation := protocol.Negotiate(version, flags, mmess.ProtoVersion, mmess.ProtoFlags)
-				if !negotiation.IsV1() {
-					conn.Close()
-					return nil, fmt.Errorf("upstream negotiation returned unsupported version %d", negotiation.Version)
-				}
-				if err := applyNegotiationResult(options, negotiation); err != nil {
+				meta := protocol.ResolveProtocolMeta(flags, mmess.ProtoFlags)
+				if err := applyProtocolFlags(options, meta.Flags); err != nil {
 					conn.Close()
 					return nil, err
 				}
 				if agent.store != nil {
-					agent.store.UpdateProtocol(activeUUID, negotiation.Version, negotiation.Flags)
+					agent.store.UpdateProtocolFlags(activeUUID, meta.Flags)
 				}
 				return conn, nil
 			}

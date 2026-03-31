@@ -62,33 +62,33 @@ func main() {
 	)
 
 	var (
-		conn        net.Conn
-		uuid        string
-		negotiation *protocol.Negotiation
+		conn net.Conn
+		uuid string
+		meta *protocol.ProtocolMeta
 	)
 
 	switch options.Mode {
 	case initial.NORMAL_PASSIVE:
-		conn, uuid, negotiation, err = initial.NormalPassive(options)
+		conn, uuid, meta, err = initial.NormalPassive(options)
 	case initial.NORMAL_RECONNECT_ACTIVE:
 		fallthrough
 	case initial.NORMAL_ACTIVE:
-		conn, uuid, negotiation, err = initial.NormalActive(ctx, options, nil)
+		conn, uuid, meta, err = initial.NormalActive(ctx, options, nil)
 	case initial.SOCKS5_PROXY_RECONNECT_ACTIVE:
 		fallthrough
 	case initial.SOCKS5_PROXY_ACTIVE:
 		proxy := share.NewSocks5Proxy(options.Connect, options.Socks5Proxy, options.Socks5ProxyU, options.Socks5ProxyP)
-		conn, uuid, negotiation, err = initial.NormalActive(ctx, options, proxy)
+		conn, uuid, meta, err = initial.NormalActive(ctx, options, proxy)
 	case initial.HTTP_PROXY_RECONNECT_ACTIVE:
 		fallthrough
 	case initial.HTTP_PROXY_ACTIVE:
 		proxy := share.NewHTTPProxy(options.Connect, options.HttpProxy)
-		conn, uuid, negotiation, err = initial.NormalActive(ctx, options, proxy)
+		conn, uuid, meta, err = initial.NormalActive(ctx, options, proxy)
 	case initial.IPTABLES_REUSE_PASSIVE:
 		defer initial.DeletePortReuseRules(options.Listen, options.ReusePort)
-		conn, uuid, negotiation, err = initial.IPTableReusePassive(options)
+		conn, uuid, meta, err = initial.IPTableReusePassive(options)
 	case initial.SO_REUSE_PASSIVE:
-		conn, uuid, negotiation, err = initial.SoReusePassive(options)
+		conn, uuid, meta, err = initial.SoReusePassive(options)
 	default:
 		err = runtimeerr.New("AGENT_UNKNOWN_MODE", runtimeerr.SeverityFatal, false, "unknown mode %d", options.Mode)
 	}
@@ -101,8 +101,8 @@ func main() {
 	agent.UUID = uuid
 
 	store.InitializeComponent(conn, options.Secret, agent.UUID, options.Upstream, options.Downstream)
-	if negotiation != nil {
-		store.UpdateProtocol(agent.UUID, negotiation.Version, negotiation.Flags)
+	if meta != nil {
+		store.UpdateProtocolFlags(agent.UUID, meta.Flags)
 	}
 	store.SetTLSEnabled(options.TlsEnable)
 	agent.BindSession(store.ActiveSession())

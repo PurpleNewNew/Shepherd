@@ -220,34 +220,26 @@ func (listen *Listen) normalListen(mgr *manager.Manager, options *initial.Option
 			if handshake.ValidGreeting(handshake.RoleAgent, mmess.Greeting) && mmess.IsAdmin == 0 {
 				var childUUID string
 
-				localVersion := protocol.CurrentProtocolVersion
 				localFlags := protocol.DefaultProtocolFlags
 				if sess != nil {
-					if v := sess.ProtocolVersion(); v != 0 {
-						localVersion = v
+					if sess.ProtocolFlags() != 0 {
+						localFlags = sess.ProtocolFlags()
 					}
-					localFlags = sess.ProtocolFlags()
 				}
-				negotiation := protocol.Negotiate(localVersion, localFlags, mmess.ProtoVersion, mmess.ProtoFlags)
-				if !negotiation.IsV1() {
-					conn.Close()
-					WarnRuntime(mgr, "AGENT_LISTEN_PROTOCOL", false, nil, "child handshake uses unsupported protocol version %d", negotiation.Version)
-					continue
-				}
+				meta := protocol.ResolveProtocolMeta(localFlags, mmess.ProtoFlags)
 
 				sLMessage := protocol.NewDownMsg(conn, handshakeSecret, protocol.ADMIN_UUID) // 使用管理员标识
-				protocol.SetMessageMeta(sLMessage, negotiation.Version, negotiation.Flags)
+				protocol.SetMessageMeta(sLMessage, meta.Flags)
 
 				greet := handshake.RandomGreeting(handshake.RoleAdmin)
 				hiMess := &protocol.HIMess{
-					GreetingLen:  uint16(len(greet)),
-					Greeting:     greet,
-					UUIDLen:      uint16(len(protocol.ADMIN_UUID)),
-					UUID:         protocol.ADMIN_UUID,
-					IsAdmin:      1,
-					IsReconnect:  0,
-					ProtoVersion: negotiation.Version,
-					ProtoFlags:   negotiation.Flags,
+					GreetingLen: uint16(len(greet)),
+					Greeting:    greet,
+					UUIDLen:     uint16(len(protocol.ADMIN_UUID)),
+					UUID:        protocol.ADMIN_UUID,
+					IsAdmin:     1,
+					IsReconnect: 0,
+					ProtoFlags:  meta.Flags,
 				}
 
 				hiHeader := &protocol.Header{
@@ -289,7 +281,7 @@ func (listen *Listen) normalListen(mgr *manager.Manager, options *initial.Option
 					}
 
 					if sess != nil {
-						protocol.SetMessageMeta(sUMessage, sess.ProtocolVersion(), sess.ProtocolFlags())
+						protocol.SetMessageMeta(sUMessage, sess.ProtocolFlags())
 					}
 					protocol.ConstructMessage(sUMessage, cUUIDReqHeader, cUUIDMess, false)
 					sUMessage.SendMessage()
@@ -305,14 +297,13 @@ func (listen *Listen) normalListen(mgr *manager.Manager, options *initial.Option
 					}
 
 					uuidMess := &protocol.UUIDMess{
-						UUIDLen:      uint16(len(childUUID)),
-						UUID:         childUUID,
-						ProtoVersion: negotiation.Version,
-						ProtoFlags:   negotiation.Flags,
+						UUIDLen:    uint16(len(childUUID)),
+						UUID:       childUUID,
+						ProtoFlags: meta.Flags,
 					}
 
 					uuidMessage := protocol.NewDownMsg(conn, sessionSecret, protocol.ADMIN_UUID)
-					protocol.SetMessageMeta(uuidMessage, negotiation.Version, negotiation.Flags)
+					protocol.SetMessageMeta(uuidMessage, meta.Flags)
 					protocol.ConstructMessage(uuidMessage, uuidHeader, uuidMess, false)
 					uuidMessage.SendMessage()
 				} else {
@@ -334,7 +325,7 @@ func (listen *Listen) normalListen(mgr *manager.Manager, options *initial.Option
 					}
 
 					if sess != nil {
-						protocol.SetMessageMeta(sUMessage, sess.ProtocolVersion(), sess.ProtocolFlags())
+						protocol.SetMessageMeta(sUMessage, sess.ProtocolFlags())
 					}
 					protocol.ConstructMessage(sUMessage, reheader, reMess, false)
 					sUMessage.SendMessage()
@@ -462,34 +453,26 @@ func (listen *Listen) iptablesListen(mgr *manager.Manager, options *initial.Opti
 			if handshake.ValidGreeting(handshake.RoleAgent, mmess.Greeting) && mmess.IsAdmin == 0 {
 				var childUUID string
 
-				localVersion := protocol.CurrentProtocolVersion
 				localFlags := protocol.DefaultProtocolFlags
 				if sess != nil {
-					if v := sess.ProtocolVersion(); v != 0 {
-						localVersion = v
+					if sess.ProtocolFlags() != 0 {
+						localFlags = sess.ProtocolFlags()
 					}
-					localFlags = sess.ProtocolFlags()
 				}
-				negotiation := protocol.Negotiate(localVersion, localFlags, mmess.ProtoVersion, mmess.ProtoFlags)
-				if !negotiation.IsV1() {
-					conn.Close()
-					WarnRuntime(mgr, "AGENT_LISTEN_PROTOCOL", false, nil, "child handshake uses unsupported protocol version %d", negotiation.Version)
-					continue
-				}
+				meta := protocol.ResolveProtocolMeta(localFlags, mmess.ProtoFlags)
 
 				sLMessage := protocol.NewDownMsg(conn, handshakeSecret, protocol.ADMIN_UUID) // 使用管理员标识
-				protocol.SetMessageMeta(sLMessage, negotiation.Version, negotiation.Flags)
+				protocol.SetMessageMeta(sLMessage, meta.Flags)
 
 				greet := handshake.RandomGreeting(handshake.RoleAdmin)
 				hiMess := &protocol.HIMess{
-					GreetingLen:  uint16(len(greet)),
-					Greeting:     greet,
-					UUIDLen:      uint16(len(protocol.ADMIN_UUID)),
-					UUID:         protocol.ADMIN_UUID,
-					IsAdmin:      1,
-					IsReconnect:  0,
-					ProtoVersion: negotiation.Version,
-					ProtoFlags:   negotiation.Flags,
+					GreetingLen: uint16(len(greet)),
+					Greeting:    greet,
+					UUIDLen:     uint16(len(protocol.ADMIN_UUID)),
+					UUID:        protocol.ADMIN_UUID,
+					IsAdmin:     1,
+					IsReconnect: 0,
+					ProtoFlags:  meta.Flags,
 				}
 
 				hiHeader := &protocol.Header{
@@ -531,7 +514,7 @@ func (listen *Listen) iptablesListen(mgr *manager.Manager, options *initial.Opti
 					}
 
 					if sess != nil {
-						protocol.SetMessageMeta(sUMessage, sess.ProtocolVersion(), sess.ProtocolFlags())
+						protocol.SetMessageMeta(sUMessage, sess.ProtocolFlags())
 					}
 					protocol.ConstructMessage(sUMessage, cUUIDReqHeader, cUUIDMess, false)
 					sUMessage.SendMessage()
@@ -548,14 +531,13 @@ func (listen *Listen) iptablesListen(mgr *manager.Manager, options *initial.Opti
 					}
 
 					uuidMess := &protocol.UUIDMess{
-						UUIDLen:      uint16(len(childUUID)),
-						UUID:         childUUID,
-						ProtoVersion: negotiation.Version,
-						ProtoFlags:   negotiation.Flags,
+						UUIDLen:    uint16(len(childUUID)),
+						UUID:       childUUID,
+						ProtoFlags: meta.Flags,
 					}
 
 					uuidMessage := protocol.NewDownMsg(conn, sessionSecret, protocol.ADMIN_UUID)
-					protocol.SetMessageMeta(uuidMessage, negotiation.Version, negotiation.Flags)
+					protocol.SetMessageMeta(uuidMessage, meta.Flags)
 					protocol.ConstructMessage(uuidMessage, uuidHeader, uuidMess, false)
 					uuidMessage.SendMessage()
 				} else {
@@ -577,7 +559,7 @@ func (listen *Listen) iptablesListen(mgr *manager.Manager, options *initial.Opti
 					}
 
 					if sess != nil {
-						protocol.SetMessageMeta(sUMessage, sess.ProtocolVersion(), sess.ProtocolFlags())
+						protocol.SetMessageMeta(sUMessage, sess.ProtocolFlags())
 					}
 					protocol.ConstructMessage(sUMessage, reheader, reMess, false)
 					sUMessage.SendMessage()
@@ -706,34 +688,26 @@ func (listen *Listen) soReuseListen(mgr *manager.Manager, options *initial.Optio
 			if handshake.ValidGreeting(handshake.RoleAgent, mmess.Greeting) && mmess.IsAdmin == 0 {
 				var childUUID string
 
-				localVersion := protocol.CurrentProtocolVersion
 				localFlags := protocol.DefaultProtocolFlags
 				if sess != nil {
-					if v := sess.ProtocolVersion(); v != 0 {
-						localVersion = v
+					if sess.ProtocolFlags() != 0 {
+						localFlags = sess.ProtocolFlags()
 					}
-					localFlags = sess.ProtocolFlags()
 				}
-				negotiation := protocol.Negotiate(localVersion, localFlags, mmess.ProtoVersion, mmess.ProtoFlags)
-				if !negotiation.IsV1() {
-					conn.Close()
-					WarnRuntime(mgr, "AGENT_LISTEN_PROTOCOL", false, nil, "child handshake uses unsupported protocol version %d", negotiation.Version)
-					continue
-				}
+				meta := protocol.ResolveProtocolMeta(localFlags, mmess.ProtoFlags)
 
 				sLMessage := protocol.NewDownMsg(conn, handshakeSecret, protocol.ADMIN_UUID) // 使用管理员标识
-				protocol.SetMessageMeta(sLMessage, negotiation.Version, negotiation.Flags)
+				protocol.SetMessageMeta(sLMessage, meta.Flags)
 
 				greet := handshake.RandomGreeting(handshake.RoleAdmin)
 				hiMess := &protocol.HIMess{
-					GreetingLen:  uint16(len(greet)),
-					Greeting:     greet,
-					UUIDLen:      uint16(len(protocol.ADMIN_UUID)),
-					UUID:         protocol.ADMIN_UUID,
-					IsAdmin:      1,
-					IsReconnect:  0,
-					ProtoVersion: negotiation.Version,
-					ProtoFlags:   negotiation.Flags,
+					GreetingLen: uint16(len(greet)),
+					Greeting:    greet,
+					UUIDLen:     uint16(len(protocol.ADMIN_UUID)),
+					UUID:        protocol.ADMIN_UUID,
+					IsAdmin:     1,
+					IsReconnect: 0,
+					ProtoFlags:  meta.Flags,
 				}
 
 				hiHeader := &protocol.Header{
@@ -775,7 +749,7 @@ func (listen *Listen) soReuseListen(mgr *manager.Manager, options *initial.Optio
 					}
 
 					if sess != nil {
-						protocol.SetMessageMeta(sUMessage, sess.ProtocolVersion(), sess.ProtocolFlags())
+						protocol.SetMessageMeta(sUMessage, sess.ProtocolFlags())
 					}
 					protocol.ConstructMessage(sUMessage, cUUIDReqHeader, cUUIDMess, false)
 					sUMessage.SendMessage()
@@ -792,14 +766,13 @@ func (listen *Listen) soReuseListen(mgr *manager.Manager, options *initial.Optio
 					}
 
 					uuidMess := &protocol.UUIDMess{
-						UUIDLen:      uint16(len(childUUID)),
-						UUID:         childUUID,
-						ProtoVersion: negotiation.Version,
-						ProtoFlags:   negotiation.Flags,
+						UUIDLen:    uint16(len(childUUID)),
+						UUID:       childUUID,
+						ProtoFlags: meta.Flags,
 					}
 
 					uuidMessage := protocol.NewDownMsg(conn, sessionSecret, protocol.ADMIN_UUID)
-					protocol.SetMessageMeta(uuidMessage, negotiation.Version, negotiation.Flags)
+					protocol.SetMessageMeta(uuidMessage, meta.Flags)
 					protocol.ConstructMessage(uuidMessage, uuidHeader, uuidMess, false)
 					uuidMessage.SendMessage()
 				} else {
@@ -821,7 +794,7 @@ func (listen *Listen) soReuseListen(mgr *manager.Manager, options *initial.Optio
 					}
 
 					if sess != nil {
-						protocol.SetMessageMeta(sUMessage, sess.ProtocolVersion(), sess.ProtocolFlags())
+						protocol.SetMessageMeta(sUMessage, sess.ProtocolFlags())
 					}
 					protocol.ConstructMessage(sUMessage, reheader, reMess, false)
 					sUMessage.SendMessage()

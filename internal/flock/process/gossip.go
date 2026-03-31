@@ -830,7 +830,7 @@ func (agent *Agent) sendGossipToChild(childUUID string, update *protocol.GossipU
 		return
 	}
 	sMessage := protocol.NewDownMsg(conn, sess.Secret(), sess.UUID())
-	protocol.SetMessageMeta(sMessage, sess.ProtocolVersion(), sess.ProtocolFlags())
+	protocol.SetMessageMeta(sMessage, sess.ProtocolFlags())
 	protocol.ConstructMessage(sMessage, header, update, false)
 	sMessage.SendMessage()
 }

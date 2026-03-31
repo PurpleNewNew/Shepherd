@@ -90,11 +90,6 @@ func (t *Transports) resolveDownstreamTransport(uuid string) string {
 }
 
 const (
-	// CurrentProtocolVersion 表示当前主协议版本号
-	CurrentProtocolVersion uint16 = 1
-)
-
-const (
 	FlagSupportChunked uint16 = 0x0002
 )
 
@@ -189,7 +184,6 @@ func DestructMessage(message Message) (*Header, interface{}, error) {
 }
 
 type Header struct {
-	Version     uint16
 	Flags       uint16
 	Sender      string // sender 与 accepter 均固定为 10 字节
 	Accepter    string
@@ -200,53 +194,31 @@ type Header struct {
 }
 
 type HIMess struct {
-	GreetingLen  uint16
-	Greeting     string
-	UUIDLen      uint16
-	UUID         string
-	IsAdmin      uint16
-	IsReconnect  uint16
-	ProtoVersion uint16
-	ProtoFlags   uint16
+	GreetingLen uint16
+	Greeting    string
+	UUIDLen     uint16
+	UUID        string
+	IsAdmin     uint16
+	IsReconnect uint16
+	ProtoFlags  uint16
 }
 
 type UUIDMess struct {
-	UUIDLen      uint16
-	UUID         string
-	ProtoVersion uint16
-	ProtoFlags   uint16
+	UUIDLen    uint16
+	UUID       string
+	ProtoFlags uint16
 }
 
-type Negotiation struct {
-	LocalVersion uint16
-	LocalFlags   uint16
-	PeerVersion  uint16
-	PeerFlags    uint16
-	Version      uint16
-	Flags        uint16
+type ProtocolMeta struct {
+	Flags uint16
 }
 
-func Negotiate(localVersion, localFlags, peerVersion, peerFlags uint16) Negotiation {
-	result := Negotiation{
-		LocalVersion: localVersion,
-		LocalFlags:   localFlags,
-		PeerVersion:  peerVersion,
-		PeerFlags:    peerFlags,
-	}
-	if localVersion == 0 || peerVersion == 0 {
-		return result
-	}
-	version := localVersion
-	if peerVersion < version {
-		version = peerVersion
-	}
-	result.Version = version
-	result.Flags = localFlags & peerFlags
-	return result
+func SharedProtocolFlags(localFlags, peerFlags uint16) uint16 {
+	return localFlags & peerFlags
 }
 
-func (n Negotiation) IsV1() bool {
-	return n.Version >= 1
+func ResolveProtocolMeta(localFlags, peerFlags uint16) ProtocolMeta {
+	return ProtocolMeta{Flags: SharedProtocolFlags(localFlags, peerFlags)}
 }
 
 type ChildUUIDReq struct {
@@ -585,7 +557,6 @@ type MessageComponent struct {
 	UUID       string
 	Conn       net.Conn
 	Secret     string
-	Version    uint16
 	Flags      uint16
 	Upstream   string
 	Downstream string
@@ -661,7 +632,6 @@ func newUpMsgWithTransport(conn net.Conn, secret, uuid, transport string) Messag
 		tMessage.Conn = conn
 		tMessage.UUID = uuid
 		tMessage.CryptoSecret = crypto.KeyPadding([]byte(secret))
-		tMessage.Version = CurrentProtocolVersion
 		tMessage.Flags = DefaultProtocolFlags
 		return tMessage
 	case "ws":
@@ -670,7 +640,6 @@ func newUpMsgWithTransport(conn net.Conn, secret, uuid, transport string) Messag
 		tMessage.RawMessage.Conn = conn
 		tMessage.RawMessage.UUID = uuid
 		tMessage.RawMessage.CryptoSecret = crypto.KeyPadding([]byte(secret))
-		tMessage.RawMessage.Version = CurrentProtocolVersion
 		tMessage.RawMessage.Flags = DefaultProtocolFlags
 		return tMessage
 	case "http":
@@ -678,7 +647,6 @@ func newUpMsgWithTransport(conn net.Conn, secret, uuid, transport string) Messag
 		raw.Conn = conn
 		raw.UUID = uuid
 		raw.CryptoSecret = crypto.KeyPadding([]byte(secret))
-		raw.Version = CurrentProtocolVersion
 		raw.Flags = DefaultProtocolFlags
 		if isHTTPStreamConn(conn) {
 			return raw
@@ -704,7 +672,6 @@ func newDownMsgWithTransport(conn net.Conn, secret, uuid, transport string) Mess
 		tMessage.Conn = conn
 		tMessage.UUID = uuid
 		tMessage.CryptoSecret = crypto.KeyPadding([]byte(secret))
-		tMessage.Version = CurrentProtocolVersion
 		tMessage.Flags = DefaultProtocolFlags
 		return tMessage
 	case "ws":
@@ -713,7 +680,6 @@ func newDownMsgWithTransport(conn net.Conn, secret, uuid, transport string) Mess
 		tMessage.RawMessage.Conn = conn
 		tMessage.RawMessage.UUID = uuid
 		tMessage.RawMessage.CryptoSecret = crypto.KeyPadding([]byte(secret))
-		tMessage.RawMessage.Version = CurrentProtocolVersion
 		tMessage.RawMessage.Flags = DefaultProtocolFlags
 		return tMessage
 	case "http":
@@ -721,7 +687,6 @@ func newDownMsgWithTransport(conn net.Conn, secret, uuid, transport string) Mess
 		raw.Conn = conn
 		raw.UUID = uuid
 		raw.CryptoSecret = crypto.KeyPadding([]byte(secret))
-		raw.Version = CurrentProtocolVersion
 		raw.Flags = DefaultProtocolFlags
 		if isHTTPStreamConn(conn) {
 			return raw
@@ -750,24 +715,21 @@ func normalizeTransport(value string) string {
 	}
 }
 
-func SetMessageMeta(message Message, version, flags uint16) {
-	if version == 0 {
-		version = CurrentProtocolVersion
+func SetMessageMeta(message Message, flags uint16) {
+	if flags == 0 {
+		flags = DefaultProtocolFlags
 	}
 	switch msg := message.(type) {
 	case *RawMessage:
 		if msg != nil {
-			msg.Version = version
 			msg.Flags = flags
 		}
 	case *WSMessage:
 		if msg != nil && msg.RawMessage != nil {
-			msg.RawMessage.Version = version
 			msg.RawMessage.Flags = flags
 		}
 	case *HTTPMessage:
 		if msg != nil && msg.RawMessage != nil {
-			msg.RawMessage.Version = version
 			msg.RawMessage.Flags = flags
 		}
 	}

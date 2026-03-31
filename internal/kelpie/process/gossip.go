@@ -69,7 +69,7 @@ func (admin *Admin) handleGossipRequest(header *protocol.Header, req *protocol.G
 		return
 	}
 	sMessage := protocol.NewDownMsg(sess.Conn(), sess.Secret(), sess.UUID())
-	protocol.SetMessageMeta(sMessage, sess.ProtocolVersion(), sess.ProtocolFlags())
+	protocol.SetMessageMeta(sMessage, sess.ProtocolFlags())
 	outHeader := &protocol.Header{
 		Sender:      sess.UUID(),
 		Accepter:    protocol.TEMP_UUID,
@@ -129,7 +129,7 @@ func (admin *Admin) forwardGossipResponse(resp *protocol.GossipResponse) {
 		return
 	}
 	sMessage := protocol.NewDownMsg(sess.Conn(), sess.Secret(), sess.UUID())
-	protocol.SetMessageMeta(sMessage, sess.ProtocolVersion(), sess.ProtocolFlags())
+	protocol.SetMessageMeta(sMessage, sess.ProtocolFlags())
 	header := &protocol.Header{
 		Sender:      sess.UUID(),
 		Accepter:    protocol.TEMP_UUID,

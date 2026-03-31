@@ -22,7 +22,7 @@ func TestSessionRegistryPrimarySelection(t *testing.T) {
 	}()
 
 	reg.set("ENTRY-1", s1)
-	if got := reg.primary(); got != s1 {
+	if got := reg.primary(); got == nil || got.UUID() != s1.UUID() {
 		t.Fatalf("expected primary to be s1, got %v", got)
 	}
 
@@ -33,11 +33,11 @@ func TestSessionRegistryPrimarySelection(t *testing.T) {
 	}()
 
 	reg.set("ENTRY-2", s2)
-	if got := reg.sessionForComponent("ENTRY-2"); got != s2 {
+	if got := reg.sessionForComponent("ENTRY-2"); got == nil || got.UUID() != s2.UUID() {
 		t.Fatalf("expected session to be s2, got %v", got)
 	}
 	reg.remove("ENTRY-1")
-	if got := reg.primary(); got != s2 {
+	if got := reg.primary(); got == nil || got.UUID() != s2.UUID() {
 		t.Fatalf("expected primary to fall back to s2, got %v", got)
 	}
 	reg.remove("ENTRY-2")

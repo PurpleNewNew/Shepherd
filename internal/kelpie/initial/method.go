@@ -18,15 +18,14 @@ import (
 	"codeberg.org/agnoie/shepherd/protocol"
 )
 
-func dispatchUUID(conn net.Conn, secret, transport string, nego protocol.Negotiation) string {
+func dispatchUUID(conn net.Conn, secret, transport string, meta protocol.ProtocolMeta) string {
 	var sMessage protocol.Message
 
 	uuid := utils.GenerateUUID()
 	uuidMess := &protocol.UUIDMess{
-		UUIDLen:      uint16(len(uuid)),
-		UUID:         uuid,
-		ProtoVersion: nego.Version,
-		ProtoFlags:   nego.Flags,
+		UUIDLen:    uint16(len(uuid)),
+		UUID:       uuid,
+		ProtoFlags: meta.Flags,
 	}
 
 	header := &protocol.Header{
@@ -38,7 +37,7 @@ func dispatchUUID(conn net.Conn, secret, transport string, nego protocol.Negotia
 	}
 
 	sMessage = protocol.NewDownMsgWithTransport(conn, secret, protocol.ADMIN_UUID, transport)
-	protocol.SetMessageMeta(sMessage, nego.Version, nego.Flags)
+	protocol.SetMessageMeta(sMessage, meta.Flags)
 
 	protocol.ConstructMessage(sMessage, header, uuidMess, false)
 	sMessage.SendMessage()
@@ -46,11 +45,10 @@ func dispatchUUID(conn net.Conn, secret, transport string, nego protocol.Negotia
 	return uuid
 }
 
-func NormalActive(userOptions *Options, topo *topology.Topology, proxy share.Proxy) (net.Conn, *protocol.Negotiation, error) {
+func NormalActive(userOptions *Options, topo *topology.Topology, proxy share.Proxy) (net.Conn, *protocol.ProtocolMeta, error) {
 	var sMessage, rMessage protocol.Message
 
 	baseSecret := userOptions.BaseSecret()
-	localVersion := protocol.CurrentProtocolVersion
 	localFlags := protocol.DefaultProtocolFlags
 	if strings.ToLower(userOptions.Downstream) != "http" {
 		localFlags &^= protocol.FlagSupportChunked
@@ -61,18 +59,16 @@ func NormalActive(userOptions *Options, topo *topology.Topology, proxy share.Pro
 	// 对端仍然期望收到“客户端问候”（RoleAgent）。
 	greet := handshake.RandomGreeting(handshake.RoleAgent)
 	hiMess := &protocol.HIMess{
-		GreetingLen:  uint16(len(greet)),
-		Greeting:     greet,
-		UUIDLen:      uint16(len(protocol.ADMIN_UUID)),
-		UUID:         protocol.ADMIN_UUID,
-		IsAdmin:      1,
-		IsReconnect:  0,
-		ProtoVersion: localVersion,
-		ProtoFlags:   localFlags,
+		GreetingLen: uint16(len(greet)),
+		Greeting:    greet,
+		UUIDLen:     uint16(len(protocol.ADMIN_UUID)),
+		UUID:        protocol.ADMIN_UUID,
+		IsAdmin:     1,
+		IsReconnect: 0,
+		ProtoFlags:  localFlags,
 	}
 
 	header := &protocol.Header{
-		Version:     localVersion,
 		Flags:       localFlags,
 		Sender:      protocol.ADMIN_UUID,
 		Accepter:    protocol.TEMP_UUID,
@@ -123,7 +119,7 @@ func NormalActive(userOptions *Options, topo *topology.Topology, proxy share.Pro
 	}
 
 	sMessage = protocol.NewDownMsgWithTransport(conn, handshakeSecret, protocol.ADMIN_UUID, userOptions.Downstream)
-	protocol.SetMessageMeta(sMessage, localVersion, localFlags)
+	protocol.SetMessageMeta(sMessage, localFlags)
 
 	if err := conn.SetWriteDeadline(time.Now().Add(defaults.HandshakeReadTimeout)); err != nil {
 		conn.Close()
@@ -150,24 +146,20 @@ func NormalActive(userOptions *Options, topo *topology.Topology, proxy share.Pro
 		return nil, nil, runtimeerr.Wrap(err, "ADMIN_HANDSHAKE", runtimeerr.SeverityError, true, "fail to connect node %s", addr)
 	}
 
-	negotiation := protocol.Negotiate(localVersion, localFlags, 0, 0)
+	meta := protocol.ProtocolMeta{Flags: 0}
 	if fHeader.MessageType == protocol.HI {
 		mmess := fMessage.(*protocol.HIMess)
-		negotiation = protocol.Negotiate(localVersion, localFlags, mmess.ProtoVersion, mmess.ProtoFlags)
+		meta = protocol.ResolveProtocolMeta(localFlags, mmess.ProtoFlags)
 		// NormalActive 是握手中的“客户端”一侧；对端会返回
 		// “服务端问候”（RoleAdmin）。
 		if handshake.ValidGreeting(handshake.RoleAdmin, mmess.Greeting) && mmess.IsAdmin == 0 {
-			if !negotiation.IsV1() {
-				conn.Close()
-				return nil, nil, runtimeerr.New("ADMIN_PROTOCOL_VERSION", runtimeerr.SeverityError, false, "peer protocol version %d unsupported", mmess.ProtoVersion)
-			}
-			if strings.ToLower(userOptions.Downstream) == "http" && negotiation.Flags&protocol.FlagSupportChunked == 0 {
+			if strings.ToLower(userOptions.Downstream) == "http" && meta.Flags&protocol.FlagSupportChunked == 0 {
 				conn.Close()
 				return nil, nil, runtimeerr.New("ADMIN_HTTP_CHUNKED", runtimeerr.SeverityError, false, "peer does not support HTTP chunked transfer")
 			}
 			userOptions.Secret = handshake.SessionSecret(baseSecret, userOptions.TlsEnable)
 			if mmess.IsReconnect == 0 {
-				childUUID := dispatchUUID(conn, userOptions.Secret, userOptions.Downstream, negotiation)
+				childUUID := dispatchUUID(conn, userOptions.Secret, userOptions.Downstream, meta)
 				node := topology.NewNode(childUUID, conn.RemoteAddr().String())
 				task := &topology.TopoTask{
 					Mode:       topology.ADDNODE,
@@ -192,7 +184,7 @@ func NormalActive(userOptions *Options, topo *topology.Topology, proxy share.Pro
 
 				printer.Success("[*] Connect to node %s successfully! Node id is 0\r\n", conn.RemoteAddr().String())
 				supp.PublishNodeAdded(childUUID)
-				return conn, &negotiation, nil
+				return conn, &meta, nil
 			}
 
 			node := topology.NewNode(mmess.UUID, conn.RemoteAddr().String())
@@ -219,7 +211,7 @@ func NormalActive(userOptions *Options, topo *topology.Topology, proxy share.Pro
 
 			printer.Success("[*] Reconnected to node %s\r\n", conn.RemoteAddr().String())
 			supp.PublishNodeAdded(mmess.UUID)
-			return conn, &negotiation, nil
+			return conn, &meta, nil
 		}
 	}
 
@@ -227,7 +219,7 @@ func NormalActive(userOptions *Options, topo *topology.Topology, proxy share.Pro
 	return nil, nil, runtimeerr.New("ADMIN_ILLEGAL_NODE", runtimeerr.SeverityWarn, false, "target node seems illegal")
 }
 
-func NormalPassive(userOptions *Options, topo *topology.Topology) (net.Conn, *protocol.Negotiation, error) {
+func NormalPassive(userOptions *Options, topo *topology.Topology) (net.Conn, *protocol.ProtocolMeta, error) {
 	listenAddr, _, err := utils.CheckIPPort(userOptions.Listen)
 	if err != nil {
 		return nil, nil, runtimeerr.Wrap(err, "ADMIN_LISTEN_ADDR", runtimeerr.SeverityError, false, "invalid listen address %s", userOptions.Listen)
@@ -245,7 +237,6 @@ func NormalPassive(userOptions *Options, topo *topology.Topology) (net.Conn, *pr
 	var sMessage, rMessage protocol.Message
 
 	baseSecret := userOptions.BaseSecret()
-	localVersion := protocol.CurrentProtocolVersion
 	localFlags := protocol.DefaultProtocolFlags
 	if strings.ToLower(userOptions.Downstream) != "http" {
 		localFlags &^= protocol.FlagSupportChunked
@@ -255,18 +246,16 @@ func NormalPassive(userOptions *Options, topo *topology.Topology) (net.Conn, *pr
 	// 打个招呼!
 	greetAdmin := handshake.RandomGreeting(handshake.RoleAdmin)
 	hiTemplate := &protocol.HIMess{
-		GreetingLen:  uint16(len(greetAdmin)),
-		Greeting:     greetAdmin,
-		UUIDLen:      uint16(len(protocol.ADMIN_UUID)),
-		UUID:         protocol.ADMIN_UUID,
-		IsAdmin:      1,
-		IsReconnect:  0,
-		ProtoVersion: localVersion,
-		ProtoFlags:   localFlags,
+		GreetingLen: uint16(len(greetAdmin)),
+		Greeting:    greetAdmin,
+		UUIDLen:     uint16(len(protocol.ADMIN_UUID)),
+		UUID:        protocol.ADMIN_UUID,
+		IsAdmin:     1,
+		IsReconnect: 0,
+		ProtoFlags:  localFlags,
 	}
 
 	header := &protocol.Header{
-		Version:     localVersion,
 		Flags:       localFlags,
 		Sender:      protocol.ADMIN_UUID,
 		Accepter:    protocol.TEMP_UUID,
@@ -322,14 +311,8 @@ func NormalPassive(userOptions *Options, topo *topology.Topology) (net.Conn, *pr
 		if fHeader.MessageType == protocol.HI {
 			mmess := fMessage.(*protocol.HIMess)
 			if handshake.ValidGreeting(handshake.RoleAgent, mmess.Greeting) && mmess.IsAdmin == 0 {
-				negotiation := protocol.Negotiate(localVersion, localFlags, mmess.ProtoVersion, mmess.ProtoFlags)
-				if !negotiation.IsV1() {
-					conn.Close()
-					printer.Fail("[*] Incoming node uses unsupported protocol version %d\r\n", mmess.ProtoVersion)
-					time.Sleep(time.Second)
-					continue
-				}
-				if strings.ToLower(userOptions.Downstream) == "http" && negotiation.Flags&protocol.FlagSupportChunked == 0 {
+				meta := protocol.ResolveProtocolMeta(localFlags, mmess.ProtoFlags)
+				if strings.ToLower(userOptions.Downstream) == "http" && meta.Flags&protocol.FlagSupportChunked == 0 {
 					conn.Close()
 					printer.Fail("[*] Incoming node does not support HTTP chunked transfer\r\n")
 					time.Sleep(time.Second)
@@ -337,18 +320,16 @@ func NormalPassive(userOptions *Options, topo *topology.Topology) (net.Conn, *pr
 				}
 
 				sMessage = protocol.NewDownMsgWithTransport(conn, handshakeSecret, protocol.ADMIN_UUID, userOptions.Downstream)
-				protocol.SetMessageMeta(sMessage, negotiation.Version, negotiation.Flags)
-				header.Version = negotiation.Version
-				header.Flags = negotiation.Flags
+				protocol.SetMessageMeta(sMessage, meta.Flags)
+				header.Flags = meta.Flags
 				responseHI := *hiTemplate
-				responseHI.ProtoVersion = negotiation.Version
-				responseHI.ProtoFlags = negotiation.Flags
+				responseHI.ProtoFlags = meta.Flags
 				protocol.ConstructMessage(sMessage, header, &responseHI, false)
 				sMessage.SendMessage()
 				userOptions.Secret = handshake.SessionSecret(baseSecret, userOptions.TlsEnable)
 
 				if mmess.IsReconnect == 0 {
-					childUUID := dispatchUUID(conn, userOptions.Secret, userOptions.Downstream, negotiation)
+					childUUID := dispatchUUID(conn, userOptions.Secret, userOptions.Downstream, meta)
 					node := topology.NewNode(childUUID, conn.RemoteAddr().String())
 					task := &topology.TopoTask{
 						Mode:       topology.ADDNODE,
@@ -412,7 +393,7 @@ func NormalPassive(userOptions *Options, topo *topology.Topology) (net.Conn, *pr
 					supp.PublishNodeAdded(mmess.UUID)
 				}
 
-				return conn, &negotiation, nil
+				return conn, &meta, nil
 			}
 		}
 

@@ -19,7 +19,6 @@ func TestRawMessageV1Encoding(t *testing.T) {
 	go func() {
 		defer client.Close()
 		header := &Header{
-			Version:     CurrentProtocolVersion,
 			Flags:       DefaultProtocolFlags,
 			Sender:      ADMIN_UUID,
 			Accepter:    TEMP_UUID,
@@ -27,14 +26,13 @@ func TestRawMessageV1Encoding(t *testing.T) {
 			Route:       TEMP_ROUTE,
 		}
 		hi := &HIMess{
-			GreetingLen:  uint16(len("hi-v1")),
-			Greeting:     "hi-v1",
-			UUIDLen:      uint16(len(ADMIN_UUID)),
-			UUID:         ADMIN_UUID,
-			IsAdmin:      1,
-			IsReconnect:  0,
-			ProtoVersion: CurrentProtocolVersion,
-			ProtoFlags:   DefaultProtocolFlags,
+			GreetingLen: uint16(len("hi-v1")),
+			Greeting:    "hi-v1",
+			UUIDLen:     uint16(len(ADMIN_UUID)),
+			UUID:        ADMIN_UUID,
+			IsAdmin:     1,
+			IsReconnect: 0,
+			ProtoFlags:  DefaultProtocolFlags,
 		}
 		msg := NewDownMsg(client, "phase1-secret", ADMIN_UUID)
 		raw := msg.(*RawMessage)
@@ -51,9 +49,6 @@ func TestRawMessageV1Encoding(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	if header.Version != CurrentProtocolVersion {
-		t.Fatalf("expected version %d, got %d", CurrentProtocolVersion, header.Version)
-	}
 	if header.Flags != DefaultProtocolFlags {
 		t.Fatalf("expected flags %#x, got %#x", DefaultProtocolFlags, header.Flags)
 	}
@@ -63,9 +58,6 @@ func TestRawMessageV1Encoding(t *testing.T) {
 	}
 	if hi.Greeting != "hi-v1" {
 		t.Fatalf("unexpected greeting %s", hi.Greeting)
-	}
-	if hi.ProtoVersion != CurrentProtocolVersion {
-		t.Fatalf("expected proto version %d, got %d", CurrentProtocolVersion, hi.ProtoVersion)
 	}
 	if hi.ProtoFlags != DefaultProtocolFlags {
 		t.Fatalf("unexpected proto flags %#x", hi.ProtoFlags)
@@ -84,7 +76,6 @@ func TestRawUUIDMessageV1Encoding(t *testing.T) {
 	go func() {
 		defer client.Close()
 		header := &Header{
-			Version:     CurrentProtocolVersion,
 			Flags:       DefaultProtocolFlags,
 			Sender:      ADMIN_UUID,
 			Accepter:    TEMP_UUID,
@@ -92,10 +83,9 @@ func TestRawUUIDMessageV1Encoding(t *testing.T) {
 			Route:       TEMP_ROUTE,
 		}
 		uuid := &UUIDMess{
-			UUIDLen:      uint16(len("child")),
-			UUID:         "child",
-			ProtoVersion: CurrentProtocolVersion,
-			ProtoFlags:   DefaultProtocolFlags,
+			UUIDLen:    uint16(len("child")),
+			UUID:       "child",
+			ProtoFlags: DefaultProtocolFlags,
 		}
 		msg := NewDownMsg(client, "phase1-secret", ADMIN_UUID)
 		raw := msg.(*RawMessage)
@@ -112,9 +102,6 @@ func TestRawUUIDMessageV1Encoding(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	if header.Version != CurrentProtocolVersion {
-		t.Fatalf("expected version %d, got %d", CurrentProtocolVersion, header.Version)
-	}
 	if header.Flags != DefaultProtocolFlags {
 		t.Fatalf("expected flags %#x, got %#x", DefaultProtocolFlags, header.Flags)
 	}
@@ -124,9 +111,6 @@ func TestRawUUIDMessageV1Encoding(t *testing.T) {
 	}
 	if uuid.UUID != "child" {
 		t.Fatalf("unexpected uuid %s", uuid.UUID)
-	}
-	if uuid.ProtoVersion != CurrentProtocolVersion {
-		t.Fatalf("expected proto version %d, got %d", CurrentProtocolVersion, uuid.ProtoVersion)
 	}
 	if uuid.ProtoFlags != DefaultProtocolFlags {
 		t.Fatalf("expected proto flags %#x, got %#x", DefaultProtocolFlags, uuid.ProtoFlags)
@@ -145,7 +129,6 @@ func TestRawTempUUIDMultiHopRouteIsPassThroughOnIntermediateHop(t *testing.T) {
 	go func() {
 		defer client.Close()
 		header := &Header{
-			Version:     CurrentProtocolVersion,
 			Flags:       DefaultProtocolFlags,
 			Sender:      ADMIN_UUID,
 			Accepter:    TEMP_UUID,
@@ -153,14 +136,13 @@ func TestRawTempUUIDMultiHopRouteIsPassThroughOnIntermediateHop(t *testing.T) {
 			Route:       "PIVOT:CHILD",
 		}
 		hi := &HIMess{
-			GreetingLen:  uint16(len("hi-multi-hop")),
-			Greeting:     "hi-multi-hop",
-			UUIDLen:      uint16(len(ADMIN_UUID)),
-			UUID:         ADMIN_UUID,
-			IsAdmin:      1,
-			IsReconnect:  0,
-			ProtoVersion: CurrentProtocolVersion,
-			ProtoFlags:   DefaultProtocolFlags,
+			GreetingLen: uint16(len("hi-multi-hop")),
+			Greeting:    "hi-multi-hop",
+			UUIDLen:     uint16(len(ADMIN_UUID)),
+			UUID:        ADMIN_UUID,
+			IsAdmin:     1,
+			IsReconnect: 0,
+			ProtoFlags:  DefaultProtocolFlags,
 		}
 		msg := NewDownMsg(client, "phase1-secret", ADMIN_UUID)
 		raw := msg.(*RawMessage)
@@ -197,7 +179,6 @@ func TestRawTempUUIDSingleHopRouteDecryptsForMatchingUUID(t *testing.T) {
 	go func() {
 		defer client.Close()
 		header := &Header{
-			Version:     CurrentProtocolVersion,
 			Flags:       DefaultProtocolFlags,
 			Sender:      ADMIN_UUID,
 			Accepter:    TEMP_UUID,
@@ -205,14 +186,13 @@ func TestRawTempUUIDSingleHopRouteDecryptsForMatchingUUID(t *testing.T) {
 			Route:       "FINALNODE",
 		}
 		hi := &HIMess{
-			GreetingLen:  uint16(len("hi-final")),
-			Greeting:     "hi-final",
-			UUIDLen:      uint16(len(ADMIN_UUID)),
-			UUID:         ADMIN_UUID,
-			IsAdmin:      1,
-			IsReconnect:  0,
-			ProtoVersion: CurrentProtocolVersion,
-			ProtoFlags:   DefaultProtocolFlags,
+			GreetingLen: uint16(len("hi-final")),
+			Greeting:    "hi-final",
+			UUIDLen:     uint16(len(ADMIN_UUID)),
+			UUID:        ADMIN_UUID,
+			IsAdmin:     1,
+			IsReconnect: 0,
+			ProtoFlags:  DefaultProtocolFlags,
 		}
 		msg := NewDownMsg(client, "phase1-secret", ADMIN_UUID)
 		raw := msg.(*RawMessage)
@@ -246,7 +226,6 @@ func TestRawTempUUIDEmptyRouteDecryptsOnFinalHop(t *testing.T) {
 	go func() {
 		defer client.Close()
 		header := &Header{
-			Version:     CurrentProtocolVersion,
 			Flags:       DefaultProtocolFlags,
 			Sender:      ADMIN_UUID,
 			Accepter:    TEMP_UUID,
@@ -255,14 +234,13 @@ func TestRawTempUUIDEmptyRouteDecryptsOnFinalHop(t *testing.T) {
 			RouteLen:    0,
 		}
 		hi := &HIMess{
-			GreetingLen:  uint16(len("hi-empty-route")),
-			Greeting:     "hi-empty-route",
-			UUIDLen:      uint16(len(ADMIN_UUID)),
-			UUID:         ADMIN_UUID,
-			IsAdmin:      1,
-			IsReconnect:  0,
-			ProtoVersion: CurrentProtocolVersion,
-			ProtoFlags:   DefaultProtocolFlags,
+			GreetingLen: uint16(len("hi-empty-route")),
+			Greeting:    "hi-empty-route",
+			UUIDLen:     uint16(len(ADMIN_UUID)),
+			UUID:        ADMIN_UUID,
+			IsAdmin:     1,
+			IsReconnect: 0,
+			ProtoFlags:  DefaultProtocolFlags,
 		}
 		msg := NewDownMsg(client, "phase1-secret", ADMIN_UUID)
 		raw := msg.(*RawMessage)

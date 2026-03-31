@@ -70,10 +70,10 @@ type Reconnector struct {
 	metrics  reconnMetrics
 	strategy reconn.Strategy
 
-	tryConnect  func(*initial.Options) (net.Conn, *protocol.Negotiation, error)
+	tryConnect  func(*initial.Options) (net.Conn, *protocol.ProtocolMeta, error)
 	updateConn  func(net.Conn)
 	updateTopo  func() error
-	updateProto func(*protocol.Negotiation)
+	updateProto func(*protocol.ProtocolMeta)
 }
 
 func NewReconnector(ctx context.Context, opt *initial.Options, topo *topology.Topology) *Reconnector {
@@ -88,7 +88,7 @@ func NewReconnector(ctx context.Context, opt *initial.Options, topo *topology.To
 	}
 }
 
-func (r *Reconnector) WithDialer(fn func(*initial.Options) (net.Conn, *protocol.Negotiation, error)) *Reconnector {
+func (r *Reconnector) WithDialer(fn func(*initial.Options) (net.Conn, *protocol.ProtocolMeta, error)) *Reconnector {
 	if r != nil {
 		r.tryConnect = fn
 	}
@@ -109,7 +109,7 @@ func (r *Reconnector) WithTopoUpdater(fn func() error) *Reconnector {
 	return r
 }
 
-func (r *Reconnector) WithProtocolUpdater(fn func(*protocol.Negotiation)) *Reconnector {
+func (r *Reconnector) WithProtocolUpdater(fn func(*protocol.ProtocolMeta)) *Reconnector {
 	if r != nil {
 		r.updateProto = fn
 	}
@@ -130,7 +130,7 @@ func (r *Reconnector) Stats() ReconnectStats {
 	}
 }
 
-func (r *Reconnector) Attempt(adminCtx context.Context, options *initial.Options) (net.Conn, *protocol.Negotiation, error) {
+func (r *Reconnector) Attempt(adminCtx context.Context, options *initial.Options) (net.Conn, *protocol.ProtocolMeta, error) {
 	if r == nil {
 		return nil, nil, fmt.Errorf("reconnector not initialised")
 	}
@@ -141,7 +141,7 @@ func (r *Reconnector) Attempt(adminCtx context.Context, options *initial.Options
 		return nil, nil, fmt.Errorf("missing reconnect options")
 	}
 	if r.tryConnect == nil {
-		r.tryConnect = func(opt *initial.Options) (net.Conn, *protocol.Negotiation, error) {
+		r.tryConnect = func(opt *initial.Options) (net.Conn, *protocol.ProtocolMeta, error) {
 			switch opt.Mode {
 			case initial.NORMAL_PASSIVE:
 				return initial.NormalPassive(opt, r.topo)

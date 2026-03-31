@@ -961,7 +961,7 @@ func newDownMsg(sess session.Session) (protocol.Message, bool) {
 		return nil, false
 	}
 	msg := protocol.NewDownMsg(conn, sess.Secret(), sess.UUID())
-	protocol.SetMessageMeta(msg, sess.ProtocolVersion(), sess.ProtocolFlags())
+	protocol.SetMessageMeta(msg, sess.ProtocolFlags())
 	return msg, true
 }
 

@@ -48,21 +48,19 @@ func achieveUUID(conn net.Conn, secret, transport string) (string, error) {
 	return "", runtimeerr.New("AGENT_FETCH_UUID", runtimeerr.SeverityWarn, false, "unexpected message type %d when expecting uuid", fHeader.MessageType)
 }
 
-func NormalActive(ctx context.Context, userOptions *Options, proxy share.Proxy) (net.Conn, string, *protocol.Negotiation, error) {
+func NormalActive(ctx context.Context, userOptions *Options, proxy share.Proxy) (net.Conn, string, *protocol.ProtocolMeta, error) {
 	var sMessage, rMessage protocol.Message
 
 	baseSecret := userOptions.Secret
-	localVersion := protocol.CurrentProtocolVersion
 	localFlags := protocol.DefaultProtocolFlags
 	if strings.ToLower(userOptions.Upstream) != "http" {
 		localFlags &^= protocol.FlagSupportChunked
 	}
 	handshakeSecret := handshake.HandshakeSecret(baseSecret, userOptions.TlsEnable)
 
-	hiMess := handshake.NewHIMess(handshake.RoleAgent, localVersion, localFlags, false)
+	hiMess := handshake.NewHIMess(handshake.RoleAgent, localFlags, false)
 
 	header := &protocol.Header{
-		Version:     localVersion,
 		Flags:       localFlags,
 		Sender:      protocol.TEMP_UUID,
 		Accepter:    protocol.ADMIN_UUID,
@@ -145,7 +143,7 @@ func NormalActive(ctx context.Context, userOptions *Options, proxy share.Proxy) 
 	}
 
 	sMessage = protocol.NewUpMsgWithTransport(conn, handshakeSecret, protocol.TEMP_UUID, userOptions.Upstream)
-	protocol.SetMessageMeta(sMessage, localVersion, localFlags)
+	protocol.SetMessageMeta(sMessage, localFlags)
 	protocol.ConstructMessage(sMessage, header, hiMess, false)
 	_ = conn.SetWriteDeadline(time.Now().Add(defaults.HandshakeReadTimeout))
 	sMessage.SendMessage()
@@ -178,14 +176,8 @@ func NormalActive(ctx context.Context, userOptions *Options, proxy share.Proxy) 
 		conn.Close()
 		return nil, "", nil, trace.Annotate(runtimeerr.New("AGENT_ILLEGAL_ADMIN", runtimeerr.SeverityWarn, false, err.Error()))
 	}
-	negotiation := protocol.Negotiate(localVersion, localFlags, mmess.ProtoVersion, mmess.ProtoFlags)
-	if !negotiation.IsV1() {
-		err := fmt.Errorf("admin protocol version %d unsupported", mmess.ProtoVersion)
-		trace.Record(handshake.CodeNegotiate, err)
-		conn.Close()
-		return nil, "", nil, trace.Annotate(runtimeerr.New("AGENT_PROTOCOL_VERSION", runtimeerr.SeverityError, false, err.Error()))
-	}
-	if strings.ToLower(userOptions.Upstream) == "http" && negotiation.Flags&protocol.FlagSupportChunked == 0 {
+	meta := protocol.ResolveProtocolMeta(localFlags, mmess.ProtoFlags)
+	if strings.ToLower(userOptions.Upstream) == "http" && meta.Flags&protocol.FlagSupportChunked == 0 {
 		err := fmt.Errorf("admin does not support HTTP chunked transfer")
 		trace.Record(handshake.CodeNegotiate, err)
 		conn.Close()
@@ -199,10 +191,10 @@ func NormalActive(ctx context.Context, userOptions *Options, proxy share.Proxy) 
 		return nil, "", nil, trace.Annotate(err)
 	}
 	trace.Record(handshake.CodeComplete, nil)
-	return conn, uuid, &negotiation, nil
+	return conn, uuid, &meta, nil
 }
 
-func NormalPassive(userOptions *Options) (net.Conn, string, *protocol.Negotiation, error) {
+func NormalPassive(userOptions *Options) (net.Conn, string, *protocol.ProtocolMeta, error) {
 	listenAddr, _, err := utils.CheckIPPort(userOptions.Listen)
 	if err != nil {
 		return nil, "", nil, runtimeerr.Wrap(err, "AGENT_LISTEN_ADDR", runtimeerr.SeverityError, false, "invalid listen address %s", userOptions.Listen)
@@ -216,7 +208,6 @@ func NormalPassive(userOptions *Options) (net.Conn, string, *protocol.Negotiatio
 	defer listener.Close()
 
 	baseSecret := userOptions.Secret
-	localVersion := protocol.CurrentProtocolVersion
 	localFlags := protocol.DefaultProtocolFlags
 	if strings.ToLower(userOptions.Upstream) != "http" {
 		localFlags &^= protocol.FlagSupportChunked
@@ -225,18 +216,16 @@ func NormalPassive(userOptions *Options) (net.Conn, string, *protocol.Negotiatio
 
 	greetAdmin := handshake.RandomGreeting(handshake.RoleAdmin)
 	hiTemplate := &protocol.HIMess{
-		GreetingLen:  uint16(len(greetAdmin)),
-		Greeting:     greetAdmin,
-		UUIDLen:      uint16(len(protocol.TEMP_UUID)),
-		UUID:         protocol.TEMP_UUID,
-		IsAdmin:      0,
-		IsReconnect:  0,
-		ProtoVersion: localVersion,
-		ProtoFlags:   localFlags,
+		GreetingLen: uint16(len(greetAdmin)),
+		Greeting:    greetAdmin,
+		UUIDLen:     uint16(len(protocol.TEMP_UUID)),
+		UUID:        protocol.TEMP_UUID,
+		IsAdmin:     0,
+		IsReconnect: 0,
+		ProtoFlags:  localFlags,
 	}
 
 	header := &protocol.Header{
-		Version:     localVersion,
 		Flags:       localFlags,
 		Sender:      protocol.TEMP_UUID,
 		Accepter:    protocol.ADMIN_UUID,
@@ -295,24 +284,18 @@ func NormalPassive(userOptions *Options) (net.Conn, string, *protocol.Negotiatio
 			continue
 		}
 
-		negotiation := protocol.Negotiate(localVersion, localFlags, mmess.ProtoVersion, mmess.ProtoFlags)
-		if !negotiation.IsV1() {
-			conn.Close()
-			return nil, "", nil, runtimeerr.New("AGENT_PROTOCOL_VERSION", runtimeerr.SeverityError, false, "incoming connection uses unsupported protocol version %d", mmess.ProtoVersion)
-		}
-		if strings.ToLower(userOptions.Upstream) == "http" && negotiation.Flags&protocol.FlagSupportChunked == 0 {
+		meta := protocol.ResolveProtocolMeta(localFlags, mmess.ProtoFlags)
+		if strings.ToLower(userOptions.Upstream) == "http" && meta.Flags&protocol.FlagSupportChunked == 0 {
 			conn.Close()
 			logger.Warnf("incoming connection does not support HTTP chunked transfer")
 			continue
 		}
 
 		sMessage := protocol.NewUpMsgWithTransport(conn, handshakeSecret, protocol.TEMP_UUID, userOptions.Upstream)
-		protocol.SetMessageMeta(sMessage, negotiation.Version, negotiation.Flags)
-		header.Version = negotiation.Version
-		header.Flags = negotiation.Flags
+		protocol.SetMessageMeta(sMessage, meta.Flags)
+		header.Flags = meta.Flags
 		hiResp := *hiTemplate
-		hiResp.ProtoVersion = negotiation.Version
-		hiResp.ProtoFlags = negotiation.Flags
+		hiResp.ProtoFlags = meta.Flags
 		protocol.ConstructMessage(sMessage, header, &hiResp, false)
 		sMessage.SendMessage()
 		userOptions.Secret = handshake.SessionSecret(baseSecret, userOptions.TlsEnable)
@@ -323,12 +306,12 @@ func NormalPassive(userOptions *Options) (net.Conn, string, *protocol.Negotiatio
 			return nil, "", nil, err
 		}
 
-		return conn, uuid, &negotiation, nil
+		return conn, uuid, &meta, nil
 	}
 }
 
 // IPTables 复用端口流程
-func IPTableReusePassive(userOptions *Options) (net.Conn, string, *protocol.Negotiation, error) {
+func IPTableReusePassive(userOptions *Options) (net.Conn, string, *protocol.ProtocolMeta, error) {
 	// 先缓存复用所需的密钥，避免 TLS 模式清空 Secret
 	setReuseSecret(userOptions)
 	if err := SetPortReuseRules(userOptions.Listen, userOptions.ReusePort); err != nil {
@@ -336,12 +319,12 @@ func IPTableReusePassive(userOptions *Options) (net.Conn, string, *protocol.Nego
 	}
 	go waitForExit(userOptions.Listen, userOptions.ReusePort)
 
-	conn, uuid, negotiation, err := NormalPassive(userOptions)
+	conn, uuid, meta, err := NormalPassive(userOptions)
 	if err != nil {
 		_ = DeletePortReuseRules(userOptions.Listen, userOptions.ReusePort)
 		return nil, "", nil, err
 	}
-	return conn, uuid, negotiation, err
+	return conn, uuid, meta, err
 }
 
 func waitForExit(localPort, reusedPort string) {
@@ -403,7 +386,7 @@ func SetPortReuseRules(localPort string, reusedPort string) error {
 }
 
 // SO_REUSEPORT 复用端口流程
-func SoReusePassive(userOptions *Options) (net.Conn, string, *protocol.Negotiation, error) {
+func SoReusePassive(userOptions *Options) (net.Conn, string, *protocol.ProtocolMeta, error) {
 	listenAddr := fmt.Sprintf("%s:%s", userOptions.ReuseHost, userOptions.ReusePort)
 
 	listener, err := reuseport.Listen("tcp", listenAddr)
@@ -418,7 +401,6 @@ func SoReusePassive(userOptions *Options) (net.Conn, string, *protocol.Negotiati
 	var sMessage, rMessage protocol.Message
 
 	baseSecret := userOptions.Secret
-	localVersion := protocol.CurrentProtocolVersion
 	localFlags := protocol.DefaultProtocolFlags
 	if strings.ToLower(userOptions.Upstream) != "http" {
 		localFlags &^= protocol.FlagSupportChunked
@@ -427,14 +409,13 @@ func SoReusePassive(userOptions *Options) (net.Conn, string, *protocol.Negotiati
 
 	greetAdmin := handshake.RandomGreeting(handshake.RoleAdmin)
 	hiMess := &protocol.HIMess{
-		GreetingLen:  uint16(len(greetAdmin)),
-		Greeting:     greetAdmin,
-		UUIDLen:      uint16(len(protocol.TEMP_UUID)),
-		UUID:         protocol.TEMP_UUID,
-		IsAdmin:      0,
-		IsReconnect:  0,
-		ProtoVersion: localVersion,
-		ProtoFlags:   localFlags,
+		GreetingLen: uint16(len(greetAdmin)),
+		Greeting:    greetAdmin,
+		UUIDLen:     uint16(len(protocol.TEMP_UUID)),
+		UUID:        protocol.TEMP_UUID,
+		IsAdmin:     0,
+		IsReconnect: 0,
+		ProtoFlags:  localFlags,
 	}
 
 	header := &protocol.Header{
@@ -493,16 +474,15 @@ func SoReusePassive(userOptions *Options) (net.Conn, string, *protocol.Negotiati
 		if fHeader.MessageType == protocol.HI {
 			mmess := fMessage.(*protocol.HIMess)
 			if handshake.ValidGreeting(handshake.RoleAgent, mmess.Greeting) && mmess.IsAdmin == 1 {
-				negotiation := protocol.Negotiate(localVersion, localFlags, mmess.ProtoVersion, mmess.ProtoFlags)
-				if strings.ToLower(userOptions.Upstream) == "http" && negotiation.Flags&protocol.FlagSupportChunked == 0 {
+				meta := protocol.ResolveProtocolMeta(localFlags, mmess.ProtoFlags)
+				if strings.ToLower(userOptions.Upstream) == "http" && meta.Flags&protocol.FlagSupportChunked == 0 {
 					conn.Close()
 					logger.Warnf("incoming connection does not support HTTP chunked transfer")
 					continue
 				}
 				sMessage = protocol.NewUpMsgWithTransport(conn, handshakeSecret, protocol.TEMP_UUID, userOptions.Upstream)
 				hiResp := *hiMess
-				hiResp.ProtoVersion = negotiation.Version
-				hiResp.ProtoFlags = negotiation.Flags
+				hiResp.ProtoFlags = meta.Flags
 				protocol.ConstructMessage(sMessage, header, &hiResp, false)
 				sMessage.SendMessage()
 				userOptions.Secret = handshake.SessionSecret(baseSecret, userOptions.TlsEnable)
@@ -510,7 +490,7 @@ func SoReusePassive(userOptions *Options) (net.Conn, string, *protocol.Negotiati
 				if err != nil {
 					return nil, "", nil, err
 				}
-				return conn, uuid, &negotiation, nil
+				return conn, uuid, &meta, nil
 			}
 		}
 

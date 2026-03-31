@@ -22,10 +22,10 @@ func TestReconnectorAttemptSuccess(t *testing.T) {
 
 	connUpdated := false
 	topoCalled := false
-	var protoSeen *protocol.Negotiation
+	var protoSeen *protocol.ProtocolMeta
 
-	rec.WithDialer(func(*initial.Options) (net.Conn, *protocol.Negotiation, error) {
-		return server, &protocol.Negotiation{Version: 2, Flags: 7}, nil
+	rec.WithDialer(func(*initial.Options) (net.Conn, *protocol.ProtocolMeta, error) {
+		return server, &protocol.ProtocolMeta{Flags: 7}, nil
 	}).WithConnUpdater(func(conn net.Conn) {
 		if conn == server {
 			connUpdated = true
@@ -33,7 +33,7 @@ func TestReconnectorAttemptSuccess(t *testing.T) {
 	}).WithTopoUpdater(func() error {
 		topoCalled = true
 		return nil
-	}).WithProtocolUpdater(func(nego *protocol.Negotiation) {
+	}).WithProtocolUpdater(func(nego *protocol.ProtocolMeta) {
 		protoSeen = nego
 	})
 
@@ -44,8 +44,8 @@ func TestReconnectorAttemptSuccess(t *testing.T) {
 	if conn != server {
 		t.Fatalf("expected returned connection to be server side")
 	}
-	if nego == nil || nego.Version != 2 || nego.Flags != 7 {
-		t.Fatalf("unexpected negotiation: %+v", nego)
+	if nego == nil || nego.Flags != 7 {
+		t.Fatalf("unexpected protocol metadata: %+v", nego)
 	}
 	if !connUpdated {
 		t.Fatalf("connection updater not invoked")
@@ -66,7 +66,7 @@ func TestReconnectorAttemptSuccess(t *testing.T) {
 func TestReconnectorAttemptFailure(t *testing.T) {
 	opt := &initial.Options{Mode: initial.NORMAL_ACTIVE}
 	rec := NewReconnector(context.Background(), opt, nil)
-	rec.WithDialer(func(*initial.Options) (net.Conn, *protocol.Negotiation, error) {
+	rec.WithDialer(func(*initial.Options) (net.Conn, *protocol.ProtocolMeta, error) {
 		return nil, nil, errors.New("dial failed")
 	}).WithConnUpdater(func(net.Conn) {
 		// 失败路径下无需额外动作

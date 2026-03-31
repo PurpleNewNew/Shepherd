@@ -191,14 +191,13 @@ func performAgentHandshake(addr, secret, token string) (net.Conn, string, uint16
 		localFlags &^= protocol.FlagSupportChunked
 	}
 	hi := &protocol.HIMess{
-		GreetingLen:  uint16(len("Shhh...")),
-		Greeting:     "Shhh...",
-		UUIDLen:      uint16(len(protocol.TEMP_UUID)),
-		UUID:         protocol.TEMP_UUID,
-		IsAdmin:      0,
-		IsReconnect:  0,
-		ProtoVersion: protocol.CurrentProtocolVersion,
-		ProtoFlags:   localFlags,
+		GreetingLen: uint16(len("Shhh...")),
+		Greeting:    "Shhh...",
+		UUIDLen:     uint16(len(protocol.TEMP_UUID)),
+		UUID:        protocol.TEMP_UUID,
+		IsAdmin:     0,
+		IsReconnect: 0,
+		ProtoFlags:  localFlags,
 	}
 	header := &protocol.Header{
 		Sender:      protocol.TEMP_UUID,
@@ -232,10 +231,6 @@ func performAgentHandshake(addr, secret, token string) (net.Conn, string, uint16
 	if err != nil {
 		conn.Close()
 		return nil, "", 0, err
-	}
-	if message.ProtoVersion != protocol.CurrentProtocolVersion {
-		conn.Close()
-		return nil, "", 0, fmt.Errorf("unexpected uuid proto version %d", message.ProtoVersion)
 	}
 	if message.ProtoFlags != localFlags {
 		conn.Close()

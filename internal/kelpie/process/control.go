@@ -61,7 +61,7 @@ func (admin *Admin) UpdateNodeMemo(targetUUID, memo string) error {
 		return fmt.Errorf("session unavailable for %s", targetUUID)
 	}
 	msg := protocol.NewDownMsg(sess.Conn(), sess.Secret(), sess.UUID())
-	protocol.SetMessageMeta(msg, sess.ProtocolVersion(), sess.ProtocolFlags())
+	protocol.SetMessageMeta(msg, sess.ProtocolFlags())
 	header := &protocol.Header{
 		Sender:      protocol.ADMIN_UUID,
 		Accepter:    protocol.TEMP_UUID,

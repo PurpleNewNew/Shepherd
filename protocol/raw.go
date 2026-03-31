@@ -14,9 +14,9 @@ import (
 )
 
 const (
-	errCodeRawPrefix  = "PROTOCOL_RAW_PREFIX"
-	errCodeRawVersion = "PROTOCOL_RAW_VERSION"
-	errCodeRawBounds  = "PROTOCOL_RAW_BOUNDS"
+	errCodeRawPrefix = "PROTOCOL_RAW_PREFIX"
+	errCodeRawFlags  = "PROTOCOL_RAW_FLAGS"
+	errCodeRawBounds = "PROTOCOL_RAW_BOUNDS"
 )
 
 var headerMagicBytes = [4]byte{'S', 'W', '1', 0x00}
@@ -36,7 +36,6 @@ type RawMessage struct {
 	UUID         string
 	Conn         net.Conn
 	CryptoSecret []byte
-	Version      uint16
 	Flags        uint16
 	// 准备好的缓冲区
 	HeaderBuffer []byte
@@ -76,22 +75,11 @@ func (message *RawMessage) ConstructData(header *Header, mess interface{}, isPas
 	}
 	header.RouteLen = uint32(len([]byte(header.Route)))
 
-	if message.Version == 0 {
-		message.Version = CurrentProtocolVersion
-	}
 	if message.Flags == 0 {
 		message.Flags = DefaultProtocolFlags
 	}
-	if header.Version == 0 {
-		header.Version = message.Version
-	}
 	if header.Flags == 0 {
 		header.Flags = message.Flags
-	}
-	if header.Version != CurrentProtocolVersion {
-		logger.Errorf("unsupported protocol version %d", header.Version)
-		message.abortConn()
-		return
 	}
 	if header.Flags&^DefaultProtocolFlags != 0 {
 		logger.Errorf("unsupported protocol flags %#x", header.Flags)
@@ -104,11 +92,8 @@ func (message *RawMessage) ConstructData(header *Header, mess interface{}, isPas
 		return
 	}
 	headerBuffer.Write(headerMagicBytes[:])
-	versionBuf := make([]byte, 2)
 	flagsBuf := make([]byte, 2)
-	binary.BigEndian.PutUint16(versionBuf, header.Version)
 	binary.BigEndian.PutUint16(flagsBuf, header.Flags)
-	headerBuffer.Write(versionBuf)
 	headerBuffer.Write(flagsBuf)
 
 	senderBytes := []byte(header.Sender)
@@ -248,7 +233,7 @@ func (message *RawMessage) DeconstructData() (*Header, interface{}, error) {
 
 	// 判断当前节点是否应该解密并反序列化该载荷。
 	//
-	// 旧式的基于 route 的消息会在 Accepter 字段中使用 TEMP_UUID。
+	// 当 Accepter 字段使用 TEMP_UUID 时，载荷按逐跳路由语义转发。
 	// 只有最后一跳才应该解密它们；中间跳点应直接转发加密后的字节，
 	// 这样多跳路由才能在不重复加密的情况下工作。
 	shouldDecrypt := message.UUID == ADMIN_UUID ||
@@ -302,23 +287,15 @@ func (message *RawMessage) readHeaderPrefix(header *Header) error {
 		return runtimeerr.New(errCodeRawPrefix, runtimeerr.SeverityError, false, "不支持的协议帧前缀: %x", prefix)
 	}
 
-	versionBuf := make([]byte, 2)
 	flagsBuf := make([]byte, 2)
 	senderLenBuf := make([]byte, 2)
 	accepterLenBuf := make([]byte, 2)
-	if _, err := io.ReadFull(message.Conn, versionBuf); err != nil {
-		return err
-	}
 	if _, err := io.ReadFull(message.Conn, flagsBuf); err != nil {
 		return err
 	}
-	header.Version = binary.BigEndian.Uint16(versionBuf)
 	header.Flags = binary.BigEndian.Uint16(flagsBuf)
-	if header.Version != CurrentProtocolVersion {
-		return runtimeerr.New(errCodeRawVersion, runtimeerr.SeverityError, false, "协议版本不被支持: %d", header.Version)
-	}
 	if header.Flags&^DefaultProtocolFlags != 0 {
-		return runtimeerr.New(errCodeRawVersion, runtimeerr.SeverityError, false, "协议标志不被支持: %#x", header.Flags)
+		return runtimeerr.New(errCodeRawFlags, runtimeerr.SeverityError, false, "协议标志不被支持: %#x", header.Flags)
 	}
 
 	if _, err := io.ReadFull(message.Conn, senderLenBuf); err != nil {

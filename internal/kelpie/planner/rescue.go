@@ -344,7 +344,7 @@ func (c *RescueCoordinator) dispatchRequest(rescuer, target string, meta *topolo
 	}
 
 	msg := protocol.NewDownMsg(sess.Conn(), sess.Secret(), sess.UUID())
-	protocol.SetMessageMeta(msg, sess.ProtocolVersion(), sess.ProtocolFlags())
+	protocol.SetMessageMeta(msg, sess.ProtocolFlags())
 
 	dialAddr := meta.DialAddress
 	if dialAddr == "" {

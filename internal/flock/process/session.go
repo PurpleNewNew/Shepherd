@@ -15,7 +15,7 @@ func newAgentUpMsg(sess session.Session) (protocol.Message, session.Session, boo
 		return nil, sess, false
 	}
 	msg := protocol.NewUpMsg(conn, sess.Secret(), sess.UUID())
-	protocol.SetMessageMeta(msg, sess.ProtocolVersion(), sess.ProtocolFlags())
+	protocol.SetMessageMeta(msg, sess.ProtocolFlags())
 	return msg, sess, true
 }
 

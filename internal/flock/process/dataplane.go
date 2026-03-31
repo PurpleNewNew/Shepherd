@@ -67,7 +67,7 @@ func (agent *Agent) sendConnInfo() {
 		return
 	}
 	sMessage := protocol.NewUpMsg(conn, secret, uuid)
-	protocol.SetMessageMeta(sMessage, sess.ProtocolVersion(), sess.ProtocolFlags())
+	protocol.SetMessageMeta(sMessage, sess.ProtocolFlags())
 	header := &protocol.Header{
 		Sender:      agent.UUID,
 		Accepter:    protocol.ADMIN_UUID,
@@ -167,7 +167,7 @@ func (agent *Agent) sendChildMessage(msg *ChildrenMess) error {
 		noteSupplementalActivity(msg.targetUUID)
 	}
 	sMessage := protocol.NewDownMsg(conn, sess.Secret(), sess.UUID())
-	protocol.SetMessageMeta(sMessage, sess.ProtocolVersion(), sess.ProtocolFlags())
+	protocol.SetMessageMeta(sMessage, sess.ProtocolFlags())
 	protocol.ConstructMessage(sMessage, msg.cHeader, msg.cMessage, true)
 	sMessage.SendMessage()
 	return nil
@@ -448,7 +448,7 @@ func (agent *Agent) handleDataFromDownstream(conn net.Conn, uuid string, dispatc
 		return
 	}
 	rMessage := protocol.NewDownMsg(conn, sess.Secret(), sess.UUID())
-	protocol.SetMessageMeta(rMessage, sess.ProtocolVersion(), sess.ProtocolFlags())
+	protocol.SetMessageMeta(rMessage, sess.ProtocolFlags())
 	agent.watchConn(ctx, conn)
 
 	for {
@@ -556,7 +556,7 @@ func (agent *Agent) handleDataFromSupplemental(conn net.Conn, linkUUID, peerUUID
 		return
 	}
 	rMessage := protocol.NewDownMsg(conn, sess.Secret(), sess.UUID())
-	protocol.SetMessageMeta(rMessage, sess.ProtocolVersion(), sess.ProtocolFlags())
+	protocol.SetMessageMeta(rMessage, sess.ProtocolFlags())
 	agent.watchConn(ctx, conn)
 	promoted := false
 	defer func() {

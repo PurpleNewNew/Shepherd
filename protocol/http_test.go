@@ -56,7 +56,6 @@ func TestHTTPMessageChunkedRoundTrip(t *testing.T) {
 		Conn:         senderConn,
 		UUID:         TEMP_UUID,
 		CryptoSecret: key,
-		Version:      1,
 		Flags:        DefaultProtocolFlags,
 	}
 	sendMsg := NewHTTPMessage(sendRaw, HTTPConfig{
@@ -65,7 +64,7 @@ func TestHTTPMessageChunkedRoundTrip(t *testing.T) {
 		UserAgent: "UnitTest/1.0",
 		ChunkSize: 8,
 	})
-	SetMessageMeta(sendMsg, 1, DefaultProtocolFlags)
+	SetMessageMeta(sendMsg, DefaultProtocolFlags)
 
 	header := &Header{
 		Sender:      TEMP_UUID,
@@ -75,14 +74,13 @@ func TestHTTPMessageChunkedRoundTrip(t *testing.T) {
 		RouteLen:    uint32(len(TEMP_ROUTE)),
 	}
 	payload := &HIMess{
-		GreetingLen:  uint16(len("Hello")),
-		Greeting:     "Hello",
-		UUIDLen:      uint16(len(TEMP_UUID)),
-		UUID:         TEMP_UUID,
-		IsAdmin:      0,
-		IsReconnect:  0,
-		ProtoVersion: 1,
-		ProtoFlags:   DefaultProtocolFlags,
+		GreetingLen: uint16(len("Hello")),
+		Greeting:    "Hello",
+		UUIDLen:     uint16(len(TEMP_UUID)),
+		UUID:        TEMP_UUID,
+		IsAdmin:     0,
+		IsReconnect: 0,
+		ProtoFlags:  DefaultProtocolFlags,
 	}
 
 	ConstructMessage(sendMsg, header, payload, false)
@@ -98,7 +96,7 @@ func TestHTTPMessageChunkedRoundTrip(t *testing.T) {
 		CryptoSecret: key,
 	}
 	recvMsg := NewHTTPMessage(recvRaw, HTTPConfig{})
-	SetMessageMeta(recvMsg, 1, DefaultProtocolFlags)
+	SetMessageMeta(recvMsg, DefaultProtocolFlags)
 
 	recvMsg.DeconstructHeader()
 	if !headerWantsChunked(recvMsg.headers) {

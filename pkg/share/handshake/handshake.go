@@ -92,7 +92,7 @@ func (t *Transcript) String() string {
 }
 
 // NewHIMess 根据角色构造标准 HI 消息模板。
-func NewHIMess(role Role, version, flags uint16, isReconnect bool) *protocol.HIMess {
+func NewHIMess(role Role, flags uint16, isReconnect bool) *protocol.HIMess {
 	uuid := protocol.TEMP_UUID
 	isAdmin := uint16(0)
 	switch role {
@@ -102,14 +102,13 @@ func NewHIMess(role Role, version, flags uint16, isReconnect bool) *protocol.HIM
 	}
 	greet := RandomGreeting(role)
 	return &protocol.HIMess{
-		GreetingLen:  uint16(len(greet)),
-		Greeting:     greet,
-		UUIDLen:      uint16(len(uuid)),
-		UUID:         uuid,
-		IsAdmin:      isAdmin,
-		IsReconnect:  boolFlag(isReconnect),
-		ProtoVersion: version,
-		ProtoFlags:   flags,
+		GreetingLen: uint16(len(greet)),
+		Greeting:    greet,
+		UUIDLen:     uint16(len(uuid)),
+		UUID:        uuid,
+		IsAdmin:     isAdmin,
+		IsReconnect: boolFlag(isReconnect),
+		ProtoFlags:  flags,
 	}
 }
 

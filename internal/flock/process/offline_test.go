@@ -37,7 +37,7 @@ func TestReconHandshakeSecret(t *testing.T) {
 	}
 }
 
-func TestApplyNegotiationResult(t *testing.T) {
+func TestApplyProtocolFlags(t *testing.T) {
 	prevUp, prevDown := protocol.DefaultTransports().Upstream(), protocol.DefaultTransports().Downstream()
 	protocol.SetDefaultTransports("http", prevDown)
 	defer protocol.SetDefaultTransports(prevUp, prevDown)
@@ -48,16 +48,16 @@ func TestApplyNegotiationResult(t *testing.T) {
 		HTTPUserAgent: "test",
 	}
 
-	negotiation := protocol.Negotiation{Flags: protocol.FlagSupportChunked}
-	if err := applyNegotiationResult(options, negotiation); err != nil {
+	flags := protocol.FlagSupportChunked
+	if err := applyProtocolFlags(options, flags); err != nil {
 		t.Fatalf("expected nil error, got %v", err)
 	}
 	if options.Secret != "s3cr3t" {
 		t.Fatalf("expected secret preserved for TLS, got %q", options.Secret)
 	}
 
-	negotiation = protocol.Negotiation{Flags: 0}
-	if err := applyNegotiationResult(options, negotiation); err == nil {
+	flags = 0
+	if err := applyProtocolFlags(options, flags); err == nil {
 		t.Fatalf("expected error when chunked flag missing")
 	}
 }
@@ -77,7 +77,7 @@ func TestManualActiveReconnectIntegration(t *testing.T) {
 
 	agentUUID := "AGENT-RECONNECT"
 	store.InitializeComponent(nil, secret, agentUUID, "raw", "raw")
-	store.UpdateProtocol(agentUUID, protocol.CurrentProtocolVersion, protocol.DefaultProtocolFlags)
+	store.UpdateProtocolFlags(agentUUID, protocol.DefaultProtocolFlags)
 
 	listenAddr := acquireFreePort(t)
 
@@ -111,16 +111,13 @@ func TestManualActiveReconnectIntegration(t *testing.T) {
 		t.Fatalf("admin passive handshake failed: %v", adminRes.err)
 	}
 	defer adminRes.conn.Close()
-	if adminRes.nego == nil {
-		t.Fatalf("admin negotiation nil")
+	if adminRes.meta == nil {
+		t.Fatalf("admin protocol metadata nil")
 	}
 
-	version, flags, ok := store.ProtocolFor(agentUUID)
+	flags, ok := store.ProtocolFlagsFor(agentUUID)
 	if !ok {
 		t.Fatalf("expected store protocol metadata for %s", agentUUID)
-	}
-	if version != protocol.CurrentProtocolVersion {
-		t.Fatalf("unexpected protocol version: want %d got %d", protocol.CurrentProtocolVersion, version)
 	}
 	if flags&protocol.FlagSupportChunked == 0 {
 		t.Fatalf("expected chunked flag in store metadata, got %#x", flags)
@@ -142,7 +139,7 @@ func acquireFreePort(t *testing.T) string {
 
 type adminHandshakeResult struct {
 	conn net.Conn
-	nego *protocol.Negotiation
+	meta *protocol.ProtocolMeta
 	err  error
 }
 
@@ -178,24 +175,19 @@ func runTestAdminPassive(t *testing.T, listenAddr, token, secret, agentUUID stri
 		}
 
 		handshakeSecret := secret
-		negotiation := protocol.Negotiation{
-			Version: protocol.CurrentProtocolVersion,
-			Flags:   protocol.DefaultProtocolFlags,
-		}
+		meta := protocol.ProtocolMeta{Flags: protocol.DefaultProtocolFlags}
 
 		respHI := &protocol.HIMess{
-			GreetingLen:  uint16(len("Keep silent")),
-			Greeting:     "Keep silent",
-			UUIDLen:      uint16(len(protocol.ADMIN_UUID)),
-			UUID:         protocol.ADMIN_UUID,
-			IsAdmin:      1,
-			IsReconnect:  0,
-			ProtoVersion: negotiation.Version,
-			ProtoFlags:   negotiation.Flags,
+			GreetingLen: uint16(len("Keep silent")),
+			Greeting:    "Keep silent",
+			UUIDLen:     uint16(len(protocol.ADMIN_UUID)),
+			UUID:        protocol.ADMIN_UUID,
+			IsAdmin:     1,
+			IsReconnect: 0,
+			ProtoFlags:  meta.Flags,
 		}
 		hiHeader := &protocol.Header{
-			Version:     negotiation.Version,
-			Flags:       negotiation.Flags,
+			Flags:       meta.Flags,
 			Sender:      protocol.ADMIN_UUID,
 			Accepter:    protocol.TEMP_UUID,
 			MessageType: protocol.HI,
@@ -203,19 +195,17 @@ func runTestAdminPassive(t *testing.T, listenAddr, token, secret, agentUUID stri
 			Route:       protocol.TEMP_ROUTE,
 		}
 		sMessage := protocol.NewDownMsg(conn, handshakeSecret, protocol.ADMIN_UUID)
-		protocol.SetMessageMeta(sMessage, negotiation.Version, negotiation.Flags)
+		protocol.SetMessageMeta(sMessage, meta.Flags)
 		protocol.ConstructMessage(sMessage, hiHeader, respHI, false)
 		sMessage.SendMessage()
 
 		uuidMess := &protocol.UUIDMess{
-			UUIDLen:      uint16(len(agentUUID)),
-			UUID:         agentUUID,
-			ProtoVersion: negotiation.Version,
-			ProtoFlags:   negotiation.Flags,
+			UUIDLen:    uint16(len(agentUUID)),
+			UUID:       agentUUID,
+			ProtoFlags: meta.Flags,
 		}
 		uuidHeader := &protocol.Header{
-			Version:     negotiation.Version,
-			Flags:       negotiation.Flags,
+			Flags:       meta.Flags,
 			Sender:      protocol.ADMIN_UUID,
 			Accepter:    protocol.TEMP_UUID,
 			MessageType: protocol.UUID,
@@ -223,11 +213,11 @@ func runTestAdminPassive(t *testing.T, listenAddr, token, secret, agentUUID stri
 			Route:       protocol.TEMP_ROUTE,
 		}
 		uuidMsg := protocol.NewDownMsg(conn, handshakeSecret, protocol.ADMIN_UUID)
-		protocol.SetMessageMeta(uuidMsg, negotiation.Version, negotiation.Flags)
+		protocol.SetMessageMeta(uuidMsg, meta.Flags)
 		protocol.ConstructMessage(uuidMsg, uuidHeader, uuidMess, false)
 		uuidMsg.SendMessage()
 
-		result <- adminHandshakeResult{conn: conn, nego: &negotiation, err: nil}
+		result <- adminHandshakeResult{conn: conn, meta: &meta, err: nil}
 	}()
 	return result
 }

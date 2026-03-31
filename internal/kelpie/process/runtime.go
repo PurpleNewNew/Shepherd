@@ -94,9 +94,9 @@ func (admin *Admin) ensureReconnector() *Reconnector {
 		}
 		_, err := admin.topoRequest(&topology.TopoTask{Mode: topology.CALCULATE})
 		return err
-	}).WithProtocolUpdater(func(nego *protocol.Negotiation) {
+	}).WithProtocolUpdater(func(nego *protocol.ProtocolMeta) {
 		if admin.store != nil && nego != nil {
-			admin.store.UpdateProtocol(protocol.ADMIN_UUID, nego.Version, nego.Flags)
+			admin.store.UpdateProtocolFlags(protocol.ADMIN_UUID, nego.Flags)
 		}
 	})
 	admin.reconnector = rec

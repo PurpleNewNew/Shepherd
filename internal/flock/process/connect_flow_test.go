@@ -21,6 +21,7 @@ func TestSendConnectDone(t *testing.T) {
 		conn:   spy,
 		secret: "secret",
 		uuid:   "AGENT-TEST",
+		flags:  protocol.DefaultProtocolFlags,
 	}
 
 	agent.sendConnectDone(true)
@@ -91,20 +92,20 @@ type connectMockSession struct {
 	conn   net.Conn
 	secret string
 	uuid   string
+	flags  uint16
 }
 
-func (m *connectMockSession) Conn() net.Conn             { return m.conn }
-func (m *connectMockSession) Secret() string             { return m.secret }
-func (m *connectMockSession) UUID() string               { return m.uuid }
-func (m *connectMockSession) UpdateConn(conn net.Conn)   { m.conn = conn }
-func (m *connectMockSession) ProtocolVersion() uint16    { return protocol.CurrentProtocolVersion }
-func (m *connectMockSession) ProtocolFlags() uint16      { return protocol.DefaultProtocolFlags }
-func (m *connectMockSession) SetProtocol(uint16, uint16) {}
+func (m *connectMockSession) Conn() net.Conn                { return m.conn }
+func (m *connectMockSession) Secret() string                { return m.secret }
+func (m *connectMockSession) UUID() string                  { return m.uuid }
+func (m *connectMockSession) UpdateConn(conn net.Conn)      { m.conn = conn }
+func (m *connectMockSession) ProtocolFlags() uint16         { return m.flags }
+func (m *connectMockSession) SetProtocolFlags(flags uint16) { m.flags = flags }
 
 func decodeConnectFrame(frame []byte, secret string) (*protocol.Header, interface{}, error) {
 	conn := &connectBufferConn{Reader: bytes.NewReader(frame)}
 	msg := protocol.NewUpMsg(conn, secret, protocol.ADMIN_UUID)
-	protocol.SetMessageMeta(msg, protocol.CurrentProtocolVersion, protocol.DefaultProtocolFlags)
+	protocol.SetMessageMeta(msg, protocol.DefaultProtocolFlags)
 	header, payload, err := protocol.DestructMessage(msg)
 	if err != nil {
 		return nil, nil, err

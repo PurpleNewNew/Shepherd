@@ -116,26 +116,23 @@ func (sshTunnel *SSHTunnel) start(mgr *manager.Manager) {
 		Route:       protocol.TEMP_ROUTE,
 	}
 
-	version := protocol.CurrentProtocolVersion
 	flags := protocol.DefaultProtocolFlags
 	if sess != nil {
-		if v := sess.ProtocolVersion(); v != 0 {
-			version = v
+		if sess.ProtocolFlags() != 0 {
+			flags = sess.ProtocolFlags()
 		}
-		flags = sess.ProtocolFlags()
 	}
-	protocol.SetMessageMeta(sLMessage, version, flags)
+	protocol.SetMessageMeta(sLMessage, flags)
 
 	// 假装是管理员
 	hiMess := &protocol.HIMess{
-		GreetingLen:  uint16(len("Shhh...")),
-		Greeting:     "Shhh...",
-		UUIDLen:      uint16(len(protocol.ADMIN_UUID)),
-		UUID:         protocol.ADMIN_UUID,
-		IsAdmin:      1,
-		IsReconnect:  0,
-		ProtoVersion: version,
-		ProtoFlags:   flags,
+		GreetingLen: uint16(len("Shhh...")),
+		Greeting:    "Shhh...",
+		UUIDLen:     uint16(len(protocol.ADMIN_UUID)),
+		UUID:        protocol.ADMIN_UUID,
+		IsAdmin:     1,
+		IsReconnect: 0,
+		ProtoFlags:  flags,
 	}
 
 	protocol.ConstructMessage(sLMessage, hiHeader, hiMess, false)
@@ -152,16 +149,11 @@ func (sshTunnel *SSHTunnel) start(mgr *manager.Manager) {
 		mmess := fMessage.(*protocol.HIMess)
 		if handshake.ValidGreeting(handshake.RoleAdmin, mmess.Greeting) && mmess.IsAdmin == 0 {
 			if sess != nil {
-				if v := sess.ProtocolVersion(); v != 0 {
-					version = v
+				if sess.ProtocolFlags() != 0 {
+					flags = sess.ProtocolFlags()
 				}
-				flags = sess.ProtocolFlags()
 			}
-			negotiation := protocol.Negotiate(version, flags, mmess.ProtoVersion, mmess.ProtoFlags)
-			if !negotiation.IsV1() {
-				conn.Close()
-				return
-			}
+			meta := protocol.ResolveProtocolMeta(flags, mmess.ProtoFlags)
 			childIP := conn.RemoteAddr().String()
 
 			parentUUID := senderUUID
@@ -191,7 +183,7 @@ func (sshTunnel *SSHTunnel) start(mgr *manager.Manager) {
 			}
 
 			if sess != nil {
-				protocol.SetMessageMeta(sUMessage, sess.ProtocolVersion(), sess.ProtocolFlags())
+				protocol.SetMessageMeta(sUMessage, sess.ProtocolFlags())
 			}
 			protocol.ConstructMessage(sUMessage, cUUIDReqHeader, cUUIDMess, false)
 			sUMessage.SendMessage()
@@ -207,13 +199,12 @@ func (sshTunnel *SSHTunnel) start(mgr *manager.Manager) {
 			}
 
 			uuidMess := &protocol.UUIDMess{
-				UUIDLen:      uint16(len(childUUID)),
-				UUID:         childUUID,
-				ProtoVersion: negotiation.Version,
-				ProtoFlags:   negotiation.Flags,
+				UUIDLen:    uint16(len(childUUID)),
+				UUID:       childUUID,
+				ProtoFlags: meta.Flags,
 			}
 
-			protocol.SetMessageMeta(sLMessage, negotiation.Version, negotiation.Flags)
+			protocol.SetMessageMeta(sLMessage, meta.Flags)
 			protocol.ConstructMessage(sLMessage, uuidHeader, uuidMess, false)
 			sLMessage.SendMessage()
 

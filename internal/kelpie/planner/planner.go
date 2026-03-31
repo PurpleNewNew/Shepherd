@@ -164,7 +164,7 @@ type SupplementalPlanner struct {
 	qualityStats     qualityOutcomeStats
 
 	dialerMu     sync.RWMutex
-	repairDialer func(*initial.Options) (net.Conn, *protocol.Negotiation, string, error)
+	repairDialer func(*initial.Options) (net.Conn, *protocol.ProtocolMeta, string, error)
 }
 
 type nodeQualityState struct {
@@ -394,7 +394,7 @@ func (p *SupplementalPlanner) SetBaseOptions(opt *initial.Options) {
 }
 
 // SetRepairDialer 覆盖默认的补链拨号实现，主要用于测试模拟。
-func (p *SupplementalPlanner) SetRepairDialer(dialer func(*initial.Options) (net.Conn, *protocol.Negotiation, string, error)) {
+func (p *SupplementalPlanner) SetRepairDialer(dialer func(*initial.Options) (net.Conn, *protocol.ProtocolMeta, string, error)) {
 	if p == nil {
 		return
 	}
@@ -976,13 +976,13 @@ func (p *SupplementalPlanner) performRepair(uuid string, meta *topology.Result) 
 		p.store.RegisterComponent(conn, opt.Secret, uuid, protocol.DefaultTransports().Upstream(), opt.Downstream)
 		p.store.ActivateComponent(uuid)
 		if nego != nil {
-			p.store.UpdateProtocol(uuid, nego.Version, nego.Flags)
+			p.store.UpdateProtocolFlags(uuid, nego.Flags)
 		}
 	}
 	return nil
 }
 
-func (p *SupplementalPlanner) dialRepair(opt *initial.Options) (net.Conn, *protocol.Negotiation, string, error) {
+func (p *SupplementalPlanner) dialRepair(opt *initial.Options) (net.Conn, *protocol.ProtocolMeta, string, error) {
 	p.dialerMu.RLock()
 	dialer := p.repairDialer
 	p.dialerMu.RUnlock()
@@ -1036,7 +1036,7 @@ func (p *SupplementalPlanner) buildRepairOptions(meta *topology.Result) (*initia
 	return cloneInitialOptions(base), nil
 }
 
-func (p *SupplementalPlanner) directConnect(opt *initial.Options) (net.Conn, *protocol.Negotiation, string, error) {
+func (p *SupplementalPlanner) directConnect(opt *initial.Options) (net.Conn, *protocol.ProtocolMeta, string, error) {
 	if opt == nil {
 		return nil, nil, "", fmt.Errorf("options unavailable")
 	}
@@ -1090,23 +1090,20 @@ func (p *SupplementalPlanner) directConnect(opt *initial.Options) (net.Conn, *pr
 	if strings.TrimSpace(handshakeSecret) == "" {
 		handshakeSecret = opt.Secret
 	}
-	localVersion := protocol.CurrentProtocolVersion
 	localFlags := protocol.DefaultProtocolFlags
 	if downstream != "http" {
 		localFlags &^= protocol.FlagSupportChunked
 	}
 	hiMess := &protocol.HIMess{
-		GreetingLen:  uint16(len("Shhh...")),
-		Greeting:     "Shhh...",
-		UUIDLen:      uint16(len(protocol.ADMIN_UUID)),
-		UUID:         protocol.ADMIN_UUID,
-		IsAdmin:      1,
-		IsReconnect:  0,
-		ProtoVersion: localVersion,
-		ProtoFlags:   localFlags,
+		GreetingLen: uint16(len("Shhh...")),
+		Greeting:    "Shhh...",
+		UUIDLen:     uint16(len(protocol.ADMIN_UUID)),
+		UUID:        protocol.ADMIN_UUID,
+		IsAdmin:     1,
+		IsReconnect: 0,
+		ProtoFlags:  localFlags,
 	}
 	header := &protocol.Header{
-		Version:     localVersion,
 		Flags:       localFlags,
 		Sender:      protocol.ADMIN_UUID,
 		Accepter:    protocol.TEMP_UUID,
@@ -1115,7 +1112,7 @@ func (p *SupplementalPlanner) directConnect(opt *initial.Options) (net.Conn, *pr
 		Route:       protocol.TEMP_ROUTE,
 	}
 	sMessage := protocol.NewDownMsgWithTransport(conn, handshakeSecret, protocol.ADMIN_UUID, downstream)
-	protocol.SetMessageMeta(sMessage, localVersion, localFlags)
+	protocol.SetMessageMeta(sMessage, localFlags)
 	protocol.ConstructMessage(sMessage, header, hiMess, false)
 	sMessage.SendMessage()
 	rMessage := protocol.NewDownMsgWithTransport(conn, handshakeSecret, protocol.ADMIN_UUID, downstream)
@@ -1141,16 +1138,12 @@ func (p *SupplementalPlanner) directConnect(opt *initial.Options) (net.Conn, *pr
 		conn.Close()
 		return nil, nil, "", fmt.Errorf("unexpected HI payload %T", fMessage)
 	}
-	negotiation := protocol.Negotiate(localVersion, localFlags, mmess.ProtoVersion, mmess.ProtoFlags)
-	if !negotiation.IsV1() {
-		conn.Close()
-		return nil, nil, "", fmt.Errorf("peer protocol version %d unsupported", mmess.ProtoVersion)
-	}
-	if downstream == "http" && negotiation.Flags&protocol.FlagSupportChunked == 0 {
+	meta := protocol.ResolveProtocolMeta(localFlags, mmess.ProtoFlags)
+	if downstream == "http" && meta.Flags&protocol.FlagSupportChunked == 0 {
 		conn.Close()
 		return nil, nil, "", fmt.Errorf("peer does not support HTTP chunked transfer")
 	}
-	return conn, &negotiation, strings.TrimSpace(mmess.UUID), nil
+	return conn, &meta, strings.TrimSpace(mmess.UUID), nil
 }
 
 func (p *SupplementalPlanner) recordFailure(uuid, reason string) (attempts int, delay time.Duration, schedule bool, exhausted bool) {

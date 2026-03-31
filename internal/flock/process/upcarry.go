@@ -200,8 +200,8 @@ func (agent *Agent) sendUpCarryItemOnConn(conn net.Conn, secret, uuid string, he
 		return ErrNoUpstreamSession
 	}
 	up := protocol.NewUpMsg(conn, secret, uuid)
-	version, flags := agent.protocolMeta()
-	protocol.SetMessageMeta(up, version, flags)
+	flags := agent.protocolFlags()
+	protocol.SetMessageMeta(up, flags)
 	protocol.ConstructMessage(up, header, payload, passThrough)
 
 	// 尽力改进错误上报：如果能直接访问底层缓冲区，就直接写入，

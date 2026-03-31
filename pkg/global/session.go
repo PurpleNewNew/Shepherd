@@ -60,13 +60,6 @@ func (s *componentSession) UpdateConn(conn net.Conn) {
 	s.store.updateConnFor(s.uuid, conn)
 }
 
-func (s *componentSession) ProtocolVersion() uint16 {
-	if comp := s.component(); comp != nil {
-		return comp.Version
-	}
-	return 0
-}
-
 func (s *componentSession) ProtocolFlags() uint16 {
 	if comp := s.component(); comp != nil {
 		return comp.Flags
@@ -74,9 +67,9 @@ func (s *componentSession) ProtocolFlags() uint16 {
 	return 0
 }
 
-func (s *componentSession) SetProtocol(version, flags uint16) {
+func (s *componentSession) SetProtocolFlags(flags uint16) {
 	if s == nil || s.store == nil || s.uuid == "" {
 		return
 	}
-	s.store.setProtocol(s.uuid, version, flags)
+	s.store.setProtocolFlags(s.uuid, flags)
 }

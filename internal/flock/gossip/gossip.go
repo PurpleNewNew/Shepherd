@@ -850,7 +850,7 @@ func (gm *GossipManager) sendToNeighbor(neighborUUID string, msgType protocol.Go
 	}
 	if sess != nil && sess.Conn() != nil {
 		msg := protocol.NewUpMsg(sess.Conn(), sess.Secret(), sess.UUID())
-		protocol.SetMessageMeta(msg, sess.ProtocolVersion(), sess.ProtocolFlags())
+		protocol.SetMessageMeta(msg, sess.ProtocolFlags())
 		protocol.ConstructMessage(msg, header, data, false)
 		msg.SendMessage()
 		logger.Debugf("sent %d message to neighbor %s", msgType, neighborUUID[:8])

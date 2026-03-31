@@ -152,11 +152,9 @@ func (agent *Agent) performRescue(req *protocol.RescueRequest) (string, error) {
 		sessionSecret = share.DeriveSessionSecret(baseSecret, tlsEnabled)
 	}
 
-	version := protocol.CurrentProtocolVersion
 	flags := protocol.DefaultProtocolFlags
 	if sess != nil {
-		if v := sess.ProtocolVersion(); v != 0 {
-			version = v
+		if sess.ProtocolFlags() != 0 {
 			flags = sess.ProtocolFlags()
 		}
 	}
@@ -173,14 +171,13 @@ func (agent *Agent) performRescue(req *protocol.RescueRequest) (string, error) {
 	}
 
 	hiMess := &protocol.HIMess{
-		GreetingLen:  uint16(len("Shhh...")),
-		Greeting:     "Shhh...",
-		UUIDLen:      uint16(len(protocol.ADMIN_UUID)),
-		UUID:         protocol.ADMIN_UUID,
-		IsAdmin:      1,
-		IsReconnect:  0,
-		ProtoVersion: version,
-		ProtoFlags:   flags,
+		GreetingLen: uint16(len("Shhh...")),
+		Greeting:    "Shhh...",
+		UUIDLen:     uint16(len(protocol.ADMIN_UUID)),
+		UUID:        protocol.ADMIN_UUID,
+		IsAdmin:     1,
+		IsReconnect: 0,
+		ProtoFlags:  flags,
 	}
 
 	var downMsg protocol.Message
@@ -189,7 +186,7 @@ func (agent *Agent) performRescue(req *protocol.RescueRequest) (string, error) {
 	} else {
 		downMsg = protocol.NewDownMsg(conn, handshakeSecret, protocol.ADMIN_UUID)
 	}
-	protocol.SetMessageMeta(downMsg, version, flags)
+	protocol.SetMessageMeta(downMsg, flags)
 	protocol.ConstructMessage(downMsg, hiHeader, hiMess, false)
 	downMsg.SendMessage()
 
@@ -213,10 +210,7 @@ func (agent *Agent) performRescue(req *protocol.RescueRequest) (string, error) {
 		return "", errors.New("rescue: invalid handshake greeting")
 	}
 
-	negotiation := protocol.Negotiate(version, flags, mmess.ProtoVersion, mmess.ProtoFlags)
-	if !negotiation.IsV1() {
-		return "", fmt.Errorf("rescue: unsupported protocol version %d", negotiation.Version)
-	}
+	meta := protocol.ResolveProtocolMeta(flags, mmess.ProtoFlags)
 
 	parentUUID := agent.UUID
 	if sess != nil && sess.UUID() != "" {
@@ -235,7 +229,7 @@ func (agent *Agent) performRescue(req *protocol.RescueRequest) (string, error) {
 			return "", errors.New("rescue: upstream unavailable")
 		}
 		if sessUp != nil {
-			protocol.SetMessageMeta(msg, sessUp.ProtocolVersion(), sessUp.ProtocolFlags())
+			protocol.SetMessageMeta(msg, sessUp.ProtocolFlags())
 		}
 		childIP := conn.RemoteAddr().String()
 		reqHeader := &protocol.Header{
@@ -270,10 +264,9 @@ func (agent *Agent) performRescue(req *protocol.RescueRequest) (string, error) {
 			Route:       protocol.TEMP_ROUTE,
 		}
 		uuidMess := &protocol.UUIDMess{
-			UUIDLen:      uint16(len(childUUID)),
-			UUID:         childUUID,
-			ProtoVersion: negotiation.Version,
-			ProtoFlags:   negotiation.Flags,
+			UUIDLen:    uint16(len(childUUID)),
+			UUID:       childUUID,
+			ProtoFlags: meta.Flags,
 		}
 		uuidMsg := downMsg
 		if sessionSecret != "" && sessionSecret != handshakeSecret {
@@ -283,7 +276,7 @@ func (agent *Agent) performRescue(req *protocol.RescueRequest) (string, error) {
 				uuidMsg = protocol.NewDownMsg(conn, sessionSecret, protocol.ADMIN_UUID)
 			}
 		}
-		protocol.SetMessageMeta(uuidMsg, negotiation.Version, negotiation.Flags)
+		protocol.SetMessageMeta(uuidMsg, meta.Flags)
 		protocol.ConstructMessage(uuidMsg, uuidHeader, uuidMess, false)
 		uuidMsg.SendMessage()
 	} else {
@@ -291,7 +284,7 @@ func (agent *Agent) performRescue(req *protocol.RescueRequest) (string, error) {
 		msg, sessUp, ok := agent.newUpMsg()
 		if ok {
 			if sessUp != nil {
-				protocol.SetMessageMeta(msg, sessUp.ProtocolVersion(), sessUp.ProtocolFlags())
+				protocol.SetMessageMeta(msg, sessUp.ProtocolFlags())
 			}
 			reheader := &protocol.Header{
 				Sender:      parentUUID,
@@ -343,7 +336,7 @@ func (agent *Agent) performRescue(req *protocol.RescueRequest) (string, error) {
 		} else {
 			hbMsg = protocol.NewDownMsg(conn, secret, parentUUID)
 		}
-		protocol.SetMessageMeta(hbMsg, negotiation.Version, negotiation.Flags)
+		protocol.SetMessageMeta(hbMsg, meta.Flags)
 		protocol.ConstructMessage(hbMsg, hbHeader, hb, false)
 		hbMsg.SendMessage()
 	}

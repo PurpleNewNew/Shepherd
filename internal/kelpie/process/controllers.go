@@ -352,7 +352,7 @@ func (admin *Admin) StartControllerListenerAsync(id string) {
 }
 
 // runControllerListener 会在 rec.Bind 上绑定监听，并处理一次被动握手，同时遵守 ctx 取消信号。
-func (admin *Admin) runControllerListener(ctx context.Context, opts *initial.Options, rec ControllerListenerRecord) (net.Conn, *protocol.Negotiation, error) {
+func (admin *Admin) runControllerListener(ctx context.Context, opts *initial.Options, rec ControllerListenerRecord) (net.Conn, *protocol.ProtocolMeta, error) {
 	if opts == nil {
 		return nil, nil, fmt.Errorf("options unavailable")
 	}
@@ -378,7 +378,6 @@ func (admin *Admin) runControllerListener(ctx context.Context, opts *initial.Opt
 	defer close(done)
 
 	baseSecret := opts.BaseSecret()
-	localVersion := protocol.CurrentProtocolVersion
 	localFlags := protocol.DefaultProtocolFlags
 	if strings.ToLower(opts.Downstream) != "http" {
 		localFlags &^= protocol.FlagSupportChunked
@@ -387,18 +386,16 @@ func (admin *Admin) runControllerListener(ctx context.Context, opts *initial.Opt
 	greet := handshake.RandomGreeting(handshake.RoleAdmin)
 
 	hiTemplate := &protocol.HIMess{
-		GreetingLen:  uint16(len(greet)),
-		Greeting:     greet,
-		UUIDLen:      uint16(len(protocol.ADMIN_UUID)),
-		UUID:         protocol.ADMIN_UUID,
-		IsAdmin:      1,
-		IsReconnect:  0,
-		ProtoVersion: localVersion,
-		ProtoFlags:   localFlags,
+		GreetingLen: uint16(len(greet)),
+		Greeting:    greet,
+		UUIDLen:     uint16(len(protocol.ADMIN_UUID)),
+		UUID:        protocol.ADMIN_UUID,
+		IsAdmin:     1,
+		IsReconnect: 0,
+		ProtoFlags:  localFlags,
 	}
 
 	header := &protocol.Header{
-		Version:     localVersion,
 		Flags:       localFlags,
 		Sender:      protocol.ADMIN_UUID,
 		Accepter:    protocol.TEMP_UUID,
@@ -457,14 +454,8 @@ func (admin *Admin) runControllerListener(ctx context.Context, opts *initial.Opt
 		if fHeader.MessageType == protocol.HI {
 			mmess := fMessage.(*protocol.HIMess)
 			if handshake.ValidGreeting(handshake.RoleAgent, mmess.Greeting) && mmess.IsAdmin == 0 {
-				negotiation := protocol.Negotiate(localVersion, localFlags, mmess.ProtoVersion, mmess.ProtoFlags)
-				if !negotiation.IsV1() {
-					conn.Close()
-					printer.Fail("[*] Incoming node uses unsupported protocol version %d\r\n", mmess.ProtoVersion)
-					time.Sleep(time.Second)
-					continue
-				}
-				if strings.ToLower(opts.Downstream) == "http" && negotiation.Flags&protocol.FlagSupportChunked == 0 {
+				meta := protocol.ResolveProtocolMeta(localFlags, mmess.ProtoFlags)
+				if strings.ToLower(opts.Downstream) == "http" && meta.Flags&protocol.FlagSupportChunked == 0 {
 					conn.Close()
 					printer.Fail("[*] Incoming node does not support HTTP chunked transfer\r\n")
 					time.Sleep(time.Second)
@@ -472,12 +463,10 @@ func (admin *Admin) runControllerListener(ctx context.Context, opts *initial.Opt
 				}
 
 				sMessage := protocol.NewDownMsgWithTransport(conn, handshakeSecret, protocol.ADMIN_UUID, opts.Downstream)
-				protocol.SetMessageMeta(sMessage, negotiation.Version, negotiation.Flags)
-				header.Version = negotiation.Version
-				header.Flags = negotiation.Flags
+				protocol.SetMessageMeta(sMessage, meta.Flags)
+				header.Flags = meta.Flags
 				responseHI := *hiTemplate
-				responseHI.ProtoVersion = negotiation.Version
-				responseHI.ProtoFlags = negotiation.Flags
+				responseHI.ProtoFlags = meta.Flags
 				protocol.ConstructMessage(sMessage, header, &responseHI, false)
 				sMessage.SendMessage()
 				opts.Secret = handshake.SessionSecret(baseSecret, opts.TlsEnable)
@@ -488,14 +477,14 @@ func (admin *Admin) runControllerListener(ctx context.Context, opts *initial.Opt
 					}
 					if admin.store != nil {
 						admin.store.InitializeComponent(conn, opts.Secret, protocol.ADMIN_UUID, "raw", downstream)
-						admin.store.UpdateProtocol(protocol.ADMIN_UUID, negotiation.Version, negotiation.Flags)
+						admin.store.UpdateProtocolFlags(protocol.ADMIN_UUID, meta.Flags)
 					}
 					admin.updateSessionConn(conn)
 					admin.watchConn(ctx, conn)
 				}
 
 				if mmess.IsReconnect == 0 {
-					childUUID := dispatchUUIDController(conn, opts.Secret, opts.Downstream, negotiation)
+					childUUID := dispatchUUIDController(conn, opts.Secret, opts.Downstream, meta)
 					activateConn()
 					node := topology.NewNode(childUUID, conn.RemoteAddr().String())
 					task := &topology.TopoTask{
@@ -536,7 +525,7 @@ func (admin *Admin) runControllerListener(ctx context.Context, opts *initial.Opt
 
 					printer.Success("[*] Connection from node %s is set up successfully! Node id is 0\r\n", conn.RemoteAddr().String())
 					supp.PublishNodeAdded(childUUID)
-					return conn, &negotiation, nil
+					return conn, &meta, nil
 				}
 
 				activateConn()
@@ -575,7 +564,7 @@ func (admin *Admin) runControllerListener(ctx context.Context, opts *initial.Opt
 
 				printer.Success("[*] Connection from node %s is re-established!\r\n", conn.RemoteAddr().String())
 				supp.PublishNodeAdded(mmess.UUID)
-				return conn, &negotiation, nil
+				return conn, &meta, nil
 			}
 		}
 
@@ -585,13 +574,12 @@ func (admin *Admin) runControllerListener(ctx context.Context, opts *initial.Opt
 	}
 }
 
-func dispatchUUIDController(conn net.Conn, secret, transport string, nego protocol.Negotiation) string {
+func dispatchUUIDController(conn net.Conn, secret, transport string, meta protocol.ProtocolMeta) string {
 	uuid := utils.GenerateUUID()
 	uuidMess := &protocol.UUIDMess{
-		UUIDLen:      uint16(len(uuid)),
-		UUID:         uuid,
-		ProtoVersion: nego.Version,
-		ProtoFlags:   nego.Flags,
+		UUIDLen:    uint16(len(uuid)),
+		UUID:       uuid,
+		ProtoFlags: meta.Flags,
 	}
 
 	header := &protocol.Header{
@@ -603,7 +591,7 @@ func dispatchUUIDController(conn net.Conn, secret, transport string, nego protoc
 	}
 
 	sMessage := protocol.NewDownMsgWithTransport(conn, secret, protocol.ADMIN_UUID, transport)
-	protocol.SetMessageMeta(sMessage, nego.Version, nego.Flags)
+	protocol.SetMessageMeta(sMessage, meta.Flags)
 
 	protocol.ConstructMessage(sMessage, header, uuidMess, false)
 	sMessage.SendMessage()

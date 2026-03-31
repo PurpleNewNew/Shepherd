@@ -89,10 +89,8 @@ func (agent *Agent) performActiveConnect(addr string) (string, error) {
 		secret = agent.mgr.ActiveSecret()
 	}
 
-	version := protocol.CurrentProtocolVersion
 	flags := protocol.DefaultProtocolFlags
-	if v := sess.ProtocolVersion(); v != 0 {
-		version = v
+	if sess.ProtocolFlags() != 0 {
 		flags = sess.ProtocolFlags()
 	}
 
@@ -104,18 +102,17 @@ func (agent *Agent) performActiveConnect(addr string) (string, error) {
 		Route:       protocol.TEMP_ROUTE,
 	}
 	hiMess := &protocol.HIMess{
-		GreetingLen:  uint16(len("Shhh...")),
-		Greeting:     "Shhh...",
-		UUIDLen:      uint16(len(protocol.ADMIN_UUID)),
-		UUID:         protocol.ADMIN_UUID,
-		IsAdmin:      1,
-		IsReconnect:  0,
-		ProtoVersion: version,
-		ProtoFlags:   flags,
+		GreetingLen: uint16(len("Shhh...")),
+		Greeting:    "Shhh...",
+		UUIDLen:     uint16(len(protocol.ADMIN_UUID)),
+		UUID:        protocol.ADMIN_UUID,
+		IsAdmin:     1,
+		IsReconnect: 0,
+		ProtoFlags:  flags,
 	}
 
 	downMsg := protocol.NewDownMsg(conn, secret, protocol.ADMIN_UUID)
-	protocol.SetMessageMeta(downMsg, version, flags)
+	protocol.SetMessageMeta(downMsg, flags)
 	protocol.ConstructMessage(downMsg, hiHeader, hiMess, false)
 	downMsg.SendMessage()
 
@@ -160,7 +157,7 @@ func (agent *Agent) performActiveConnect(addr string) (string, error) {
 			RequestID:     requestID,
 		}
 		if msg, sessUp, ok := agent.newUpMsg(); ok {
-			protocol.SetMessageMeta(msg, sessUp.ProtocolVersion(), sessUp.ProtocolFlags())
+			protocol.SetMessageMeta(msg, sessUp.ProtocolFlags())
 			protocol.ConstructMessage(msg, reqHeader, reqPayload, false)
 			msg.SendMessage()
 		}
@@ -170,10 +167,7 @@ func (agent *Agent) performActiveConnect(addr string) (string, error) {
 			return "", errors.New("connect: child uuid unavailable")
 		}
 
-		neg := protocol.Negotiate(version, flags, mmess.ProtoVersion, mmess.ProtoFlags)
-		if !neg.IsV1() {
-			return "", fmt.Errorf("connect: unsupported protocol version %d", neg.Version)
-		}
+		meta := protocol.ResolveProtocolMeta(flags, mmess.ProtoFlags)
 		uuidHeader := &protocol.Header{
 			Sender:      protocol.ADMIN_UUID,
 			Accepter:    protocol.TEMP_UUID,
@@ -182,12 +176,11 @@ func (agent *Agent) performActiveConnect(addr string) (string, error) {
 			Route:       protocol.TEMP_ROUTE,
 		}
 		uuidPayload := &protocol.UUIDMess{
-			UUIDLen:      uint16(len(childUUID)),
-			UUID:         childUUID,
-			ProtoVersion: neg.Version,
-			ProtoFlags:   neg.Flags,
+			UUIDLen:    uint16(len(childUUID)),
+			UUID:       childUUID,
+			ProtoFlags: meta.Flags,
 		}
-		protocol.SetMessageMeta(downMsg, neg.Version, neg.Flags)
+		protocol.SetMessageMeta(downMsg, meta.Flags)
 		protocol.ConstructMessage(downMsg, uuidHeader, uuidPayload, false)
 		downMsg.SendMessage()
 	} else {
@@ -208,7 +201,7 @@ func (agent *Agent) performActiveConnect(addr string) (string, error) {
 			IP:            conn.RemoteAddr().String(),
 		}
 		if msg, sessUp, ok := agent.newUpMsg(); ok {
-			protocol.SetMessageMeta(msg, sessUp.ProtocolVersion(), sessUp.ProtocolFlags())
+			protocol.SetMessageMeta(msg, sessUp.ProtocolFlags())
 			protocol.ConstructMessage(msg, reheader, reMess, false)
 			msg.SendMessage()
 		}
@@ -242,7 +235,7 @@ func (agent *Agent) sendConnectDone(ok bool) {
 	if ok {
 		ack.OK = 1
 	}
-	protocol.SetMessageMeta(msg, sess.ProtocolVersion(), sess.ProtocolFlags())
+	protocol.SetMessageMeta(msg, sess.ProtocolFlags())
 	protocol.ConstructMessage(msg, header, ack, false)
 	msg.SendMessage()
 }

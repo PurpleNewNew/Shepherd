@@ -158,8 +158,8 @@ func main() {
 	defer topo.Stop()
 
 	var (
-		conn        net.Conn
-		negotiation *protocol.Negotiation
+		conn net.Conn
+		meta *protocol.ProtocolMeta
 	)
 	// 优先使用 Controller Listener 提供的监听地址；没有初始监听地址时只启动 UI。
 	if options.Mode == initial.NORMAL_PASSIVE || options.Mode == initial.NORMAL_ACTIVE ||
@@ -169,14 +169,14 @@ func main() {
 			printer.Warning("[*] No admin listener configured; Kelpie UI will start without upstream connection\r\n")
 		} else {
 			printer.Warning("[*] Waiting for new connection...\r\n")
-			conn, negotiation, err = connectWithRetry(options, topo)
+			conn, meta, err = connectWithRetry(options, topo)
 			if err != nil {
 				printer.Fail("[*] Failed to establish initial connection: %s\r\n", err)
 				return
 			}
 			store.InitializeComponent(conn, options.Secret, protocol.ADMIN_UUID, transports.Upstream(), options.Downstream)
-			if negotiation != nil {
-				store.UpdateProtocol(protocol.ADMIN_UUID, negotiation.Version, negotiation.Flags)
+			if meta != nil {
+				store.UpdateProtocolFlags(protocol.ADMIN_UUID, meta.Flags)
 			}
 		}
 	} else {
@@ -233,10 +233,10 @@ const (
 	retryBackoffFactor = 2
 )
 
-func connectWithRetry(options *initial.Options, topo *topology.Topology) (net.Conn, *protocol.Negotiation, error) {
+func connectWithRetry(options *initial.Options, topo *topology.Topology) (net.Conn, *protocol.ProtocolMeta, error) {
 	var (
 		conn    net.Conn
-		nego    *protocol.Negotiation
+		meta    *protocol.ProtocolMeta
 		err     error
 		backoff = time.Second
 	)
@@ -246,9 +246,9 @@ func connectWithRetry(options *initial.Options, topo *topology.Topology) (net.Co
 		return initial.NormalPassive(options, topo)
 	case initial.NORMAL_ACTIVE:
 		for attempt := 1; attempt <= maxActiveRetries; attempt++ {
-			conn, nego, err = initial.NormalActive(options, topo, nil)
+			conn, meta, err = initial.NormalActive(options, topo, nil)
 			if err == nil {
-				return conn, nego, nil
+				return conn, meta, nil
 			}
 			printer.Fail("[*] Active connection attempt %d failed: %s\r\n", attempt, err)
 			time.Sleep(backoff)
@@ -257,9 +257,9 @@ func connectWithRetry(options *initial.Options, topo *topology.Topology) (net.Co
 	case initial.SOCKS5_PROXY_ACTIVE:
 		proxy := share.NewSocks5Proxy(options.Connect, options.Socks5Proxy, options.Socks5ProxyU, options.Socks5ProxyP)
 		for attempt := 1; attempt <= maxActiveRetries; attempt++ {
-			conn, nego, err = initial.NormalActive(options, topo, proxy)
+			conn, meta, err = initial.NormalActive(options, topo, proxy)
 			if err == nil {
-				return conn, nego, nil
+				return conn, meta, nil
 			}
 			printer.Fail("[*] Active connection via socks5 attempt %d failed: %s\r\n", attempt, err)
 			time.Sleep(backoff)
@@ -268,9 +268,9 @@ func connectWithRetry(options *initial.Options, topo *topology.Topology) (net.Co
 	case initial.HTTP_PROXY_ACTIVE:
 		proxy := share.NewHTTPProxy(options.Connect, options.HttpProxy)
 		for attempt := 1; attempt <= maxActiveRetries; attempt++ {
-			conn, nego, err = initial.NormalActive(options, topo, proxy)
+			conn, meta, err = initial.NormalActive(options, topo, proxy)
 			if err == nil {
-				return conn, nego, nil
+				return conn, meta, nil
 			}
 			printer.Fail("[*] Active connection via http proxy attempt %d failed: %s\r\n", attempt, err)
 			time.Sleep(backoff)

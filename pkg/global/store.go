@@ -137,7 +137,7 @@ func (s *Store) UpdateActiveConn(conn net.Conn) {
 	}
 }
 
-func (s *Store) UpdateProtocol(uuid string, version, flags uint16) {
+func (s *Store) UpdateProtocolFlags(uuid string, flags uint16) {
 	if s == nil {
 		return
 	}
@@ -147,41 +147,31 @@ func (s *Store) UpdateProtocol(uuid string, version, flags uint16) {
 	if uuid == "" {
 		return
 	}
-	s.componentsStore().setProtocol(uuid, version, flags)
+	s.componentsStore().setProtocolFlags(uuid, flags)
 }
 
-func (s *Store) ProtocolFor(uuid string) (uint16, uint16, bool) {
+func (s *Store) ProtocolFlagsFor(uuid string) (uint16, bool) {
 	if s == nil {
-		return 0, 0, false
+		return 0, false
 	}
-	return s.componentsStore().protocol(uuid)
-}
-
-func (s *Store) ActiveProtocolVersion() uint16 {
-	if s == nil {
-		return 0
-	}
-	v, _ := s.componentsStore().activeProtocol()
-	return v
+	return s.componentsStore().protocolFlags(uuid)
 }
 func (s *Store) ActiveProtocolFlags() uint16 {
 	if s == nil {
 		return 0
 	}
-	_, f := s.componentsStore().activeProtocol()
-	return f
+	return s.componentsStore().activeProtocolFlags()
 }
 
 func (s *Store) ConfigureMessage(msg protocol.Message, uuid string) {
 	if s == nil || msg == nil {
 		return
 	}
-	version, flags, ok := s.ProtocolFor(uuid)
+	flags, ok := s.ProtocolFlagsFor(uuid)
 	if !ok && uuid == "" {
-		version = s.ActiveProtocolVersion()
 		flags = s.ActiveProtocolFlags()
 	}
-	protocol.SetMessageMeta(msg, version, flags)
+	protocol.SetMessageMeta(msg, flags)
 }
 
 func (s *Store) NewDownMsg(conn net.Conn, secret, uuid string) protocol.Message {

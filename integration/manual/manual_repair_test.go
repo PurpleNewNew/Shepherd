@@ -75,18 +75,15 @@ func TestManualRepairRestoresConnection(t *testing.T) {
 
 	done := make(chan struct{})
 	var serverConn net.Conn
-	planner.SetRepairDialer(func(opt *adminInitial.Options) (net.Conn, *protocol.Negotiation, string, error) {
+	planner.SetRepairDialer(func(opt *adminInitial.Options) (net.Conn, *protocol.ProtocolMeta, string, error) {
 		client, server := net.Pipe()
 		serverConn = server
 		go func() {
 			<-done
 			server.Close()
 		}()
-		nego := &protocol.Negotiation{
-			Version: protocol.CurrentProtocolVersion,
-			Flags:   protocol.DefaultProtocolFlags,
-		}
-		return client, nego, nodeUUID, nil
+		meta := &protocol.ProtocolMeta{Flags: protocol.DefaultProtocolFlags}
+		return client, meta, nodeUUID, nil
 	})
 	defer func() {
 		close(done)

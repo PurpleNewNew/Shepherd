@@ -31,11 +31,10 @@ func TestSleepUpdateHandlerEmitsAck(t *testing.T) {
 
 	spy := newSpyConn()
 	mockSess := &mockSession{
-		conn:    spy,
-		secret:  "integration-secret",
-		uuid:    agent.UUID,
-		version: protocol.CurrentProtocolVersion,
-		flags:   protocol.DefaultProtocolFlags,
+		conn:   spy,
+		secret: "integration-secret",
+		uuid:   agent.UUID,
+		flags:  protocol.DefaultProtocolFlags,
 	}
 	agent.BindSession(mockSess)
 
@@ -82,11 +81,10 @@ func TestSleepUpdateHandlerAckFailure(t *testing.T) {
 
 	spy := newSpyConn()
 	mockSess := &mockSession{
-		conn:    spy,
-		secret:  "integration-secret",
-		uuid:    agent.UUID,
-		version: protocol.CurrentProtocolVersion,
-		flags:   protocol.DefaultProtocolFlags,
+		conn:   spy,
+		secret: "integration-secret",
+		uuid:   agent.UUID,
+		flags:  protocol.DefaultProtocolFlags,
 	}
 	agent.BindSession(mockSess)
 
@@ -165,20 +163,18 @@ func (s *spyConn) expectWrite(t *testing.T, timeout time.Duration) []byte {
 }
 
 type mockSession struct {
-	conn    net.Conn
-	secret  string
-	uuid    string
-	version uint16
-	flags   uint16
+	conn   net.Conn
+	secret string
+	uuid   string
+	flags  uint16
 }
 
-func (m *mockSession) Conn() net.Conn           { return m.conn }
-func (m *mockSession) Secret() string           { return m.secret }
-func (m *mockSession) UUID() string             { return m.uuid }
-func (m *mockSession) UpdateConn(conn net.Conn) { m.conn = conn }
-func (m *mockSession) ProtocolVersion() uint16  { return m.version }
-func (m *mockSession) ProtocolFlags() uint16    { return m.flags }
-func (m *mockSession) SetProtocol(v, f uint16)  { m.version, m.flags = v, f }
+func (m *mockSession) Conn() net.Conn            { return m.conn }
+func (m *mockSession) Secret() string            { return m.secret }
+func (m *mockSession) UUID() string              { return m.uuid }
+func (m *mockSession) UpdateConn(conn net.Conn)  { m.conn = conn }
+func (m *mockSession) ProtocolFlags() uint16     { return m.flags }
+func (m *mockSession) SetProtocolFlags(f uint16) { m.flags = f }
 
 var _ session.Session = (*mockSession)(nil)
 
@@ -186,7 +182,7 @@ func decodeUpMessage(t *testing.T, frame []byte, secret string) (*protocol.Heade
 	t.Helper()
 	reader := &bufferConn{Reader: bytes.NewReader(frame)}
 	msg := protocol.NewUpMsg(reader, secret, protocol.ADMIN_UUID)
-	protocol.SetMessageMeta(msg, protocol.CurrentProtocolVersion, protocol.DefaultProtocolFlags)
+	protocol.SetMessageMeta(msg, protocol.DefaultProtocolFlags)
 	header, payload, err := protocol.DestructMessage(msg)
 	if err != nil {
 		t.Fatalf("failed to decode message: %v", err)

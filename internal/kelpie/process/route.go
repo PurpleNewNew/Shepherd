@@ -101,7 +101,7 @@ func (admin *Admin) newDownstreamMessageForRoute(targetUUID, route string) (prot
 		return nil, fmt.Errorf("connection unavailable for %s", targetUUID)
 	}
 	msg := protocol.NewDownMsg(conn, sess.Secret(), sess.UUID())
-	protocol.SetMessageMeta(msg, sess.ProtocolVersion(), sess.ProtocolFlags())
+	protocol.SetMessageMeta(msg, sess.ProtocolFlags())
 	return msg, nil
 }
 

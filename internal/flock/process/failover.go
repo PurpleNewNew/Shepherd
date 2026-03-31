@@ -54,7 +54,7 @@ func (agent *Agent) sendSuppPromotionAck(conn net.Conn, promote *protocol.SuppLi
 		Role:          protocol.SuppPromoteRoleParent,
 	}
 	sMessage := protocol.NewDownMsg(conn, sess.Secret(), sess.UUID())
-	protocol.SetMessageMeta(sMessage, sess.ProtocolVersion(), sess.ProtocolFlags())
+	protocol.SetMessageMeta(sMessage, sess.ProtocolFlags())
 	protocol.ConstructMessage(sMessage, header, ack, false)
 	sMessage.SendMessage()
 }

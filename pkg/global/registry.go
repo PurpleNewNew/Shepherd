@@ -38,7 +38,6 @@ func (cs *componentStore) register(uuid string, conn net.Conn, secret, upstream,
 		Secret:     secret,
 		Conn:       safeConn,
 		UUID:       uuid,
-		Version:    0,
 		Flags:      0,
 		Upstream:   upstream,
 		Downstream: downstream,
@@ -125,16 +124,16 @@ func (cs *componentStore) activeUUID() string {
 	return cs.activeID
 }
 
-func (cs *componentStore) activeProtocol() (uint16, uint16) {
+func (cs *componentStore) activeProtocolFlags() uint16 {
 	if cs == nil {
-		return 0, 0
+		return 0
 	}
 	cs.mu.RLock()
 	defer cs.mu.RUnlock()
 	if cs.MessageComponent != nil {
-		return cs.MessageComponent.Version, cs.MessageComponent.Flags
+		return cs.MessageComponent.Flags
 	}
-	return 0, 0
+	return 0
 }
 
 func (cs *componentStore) remove(uuid string) {
@@ -162,14 +161,13 @@ func (cs *componentStore) remove(uuid string) {
 	}
 }
 
-func (cs *componentStore) setProtocol(uuid string, version, flags uint16) {
+func (cs *componentStore) setProtocolFlags(uuid string, flags uint16) {
 	if cs == nil {
 		return
 	}
 	cs.mu.Lock()
 	defer cs.mu.Unlock()
 	if session, ok := cs.sessions[uuid]; ok {
-		session.Version = version
 		session.Flags = flags
 		if cs.activeID == uuid {
 			cs.MessageComponent = session
@@ -177,16 +175,16 @@ func (cs *componentStore) setProtocol(uuid string, version, flags uint16) {
 	}
 }
 
-func (cs *componentStore) protocol(uuid string) (uint16, uint16, bool) {
+func (cs *componentStore) protocolFlags(uuid string) (uint16, bool) {
 	if cs == nil {
-		return 0, 0, false
+		return 0, false
 	}
 	cs.mu.RLock()
 	defer cs.mu.RUnlock()
 	if session, ok := cs.sessions[uuid]; ok {
-		return session.Version, session.Flags, true
+		return session.Flags, true
 	}
-	return 0, 0, false
+	return 0, false
 }
 
 func (cs *componentStore) session(uuid string) session.Session {

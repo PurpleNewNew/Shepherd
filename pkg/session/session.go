@@ -8,7 +8,6 @@ type Session interface {
 	Secret() string
 	UUID() string
 	UpdateConn(net.Conn)
-	ProtocolVersion() uint16
 	ProtocolFlags() uint16
-	SetProtocol(version, flags uint16)
+	SetProtocolFlags(flags uint16)
 }
