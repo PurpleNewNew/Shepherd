@@ -117,6 +117,60 @@ func TestRawUUIDMessageV1Encoding(t *testing.T) {
 	}
 }
 
+func TestRawMessageExplicitZeroFlags(t *testing.T) {
+	client, server := net.Pipe()
+	defer client.Close()
+	defer server.Close()
+
+	SetDefaultTransports("raw", "raw")
+
+	secret := crypto.KeyPadding([]byte("phase1-secret"))
+
+	go func() {
+		defer client.Close()
+		header := &Header{
+			Sender:      ADMIN_UUID,
+			Accepter:    TEMP_UUID,
+			MessageType: HI,
+			Route:       TEMP_ROUTE,
+		}
+		hi := &HIMess{
+			GreetingLen: uint16(len("hi-zero")),
+			Greeting:    "hi-zero",
+			UUIDLen:     uint16(len(ADMIN_UUID)),
+			UUID:        ADMIN_UUID,
+			IsAdmin:     1,
+			IsReconnect: 0,
+			ProtoFlags:  0,
+		}
+		msg := NewDownMsg(client, "phase1-secret", ADMIN_UUID)
+		raw := msg.(*RawMessage)
+		raw.CryptoSecret = secret
+		SetMessageMeta(msg, 0)
+		ConstructMessage(msg, header, hi, false)
+		msg.SendMessage()
+	}()
+
+	rMsg := NewDownMsg(server, "phase1-secret", TEMP_UUID)
+	raw := rMsg.(*RawMessage)
+	raw.CryptoSecret = secret
+	header, payload, err := DestructMessage(rMsg)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if header.Flags != 0 {
+		t.Fatalf("expected zero header flags, got %#x", header.Flags)
+	}
+	hi, ok := payload.(*HIMess)
+	if !ok {
+		t.Fatalf("unexpected payload type %T", payload)
+	}
+	if hi.ProtoFlags != 0 {
+		t.Fatalf("expected zero proto flags, got %#x", hi.ProtoFlags)
+	}
+}
+
 func TestRawTempUUIDMultiHopRouteIsPassThroughOnIntermediateHop(t *testing.T) {
 	client, server := net.Pipe()
 	defer client.Close()

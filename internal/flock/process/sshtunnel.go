@@ -116,12 +116,7 @@ func (sshTunnel *SSHTunnel) start(mgr *manager.Manager) {
 		Route:       protocol.TEMP_ROUTE,
 	}
 
-	flags := protocol.DefaultProtocolFlags
-	if sess != nil {
-		if sess.ProtocolFlags() != 0 {
-			flags = sess.ProtocolFlags()
-		}
-	}
+	flags := sessionFlagsOrDefault(sess, protocol.DefaultProtocolFlags)
 	protocol.SetMessageMeta(sLMessage, flags)
 
 	// 假装是管理员
@@ -148,11 +143,7 @@ func (sshTunnel *SSHTunnel) start(mgr *manager.Manager) {
 	if fHeader.MessageType == protocol.HI {
 		mmess := fMessage.(*protocol.HIMess)
 		if handshake.ValidGreeting(handshake.RoleAdmin, mmess.Greeting) && mmess.IsAdmin == 0 {
-			if sess != nil {
-				if sess.ProtocolFlags() != 0 {
-					flags = sess.ProtocolFlags()
-				}
-			}
+			flags = sessionFlagsOrDefault(sess, protocol.DefaultProtocolFlags)
 			meta := protocol.ResolveProtocolMeta(flags, mmess.ProtoFlags)
 			childIP := conn.RemoteAddr().String()
 

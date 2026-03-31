@@ -220,12 +220,7 @@ func (listen *Listen) normalListen(mgr *manager.Manager, options *initial.Option
 			if handshake.ValidGreeting(handshake.RoleAgent, mmess.Greeting) && mmess.IsAdmin == 0 {
 				var childUUID string
 
-				localFlags := protocol.DefaultProtocolFlags
-				if sess != nil {
-					if sess.ProtocolFlags() != 0 {
-						localFlags = sess.ProtocolFlags()
-					}
-				}
+				localFlags := sessionFlagsOrDefault(sess, protocol.DefaultProtocolFlags)
 				meta := protocol.ResolveProtocolMeta(localFlags, mmess.ProtoFlags)
 
 				sLMessage := protocol.NewDownMsg(conn, handshakeSecret, protocol.ADMIN_UUID) // 使用管理员标识
@@ -453,12 +448,7 @@ func (listen *Listen) iptablesListen(mgr *manager.Manager, options *initial.Opti
 			if handshake.ValidGreeting(handshake.RoleAgent, mmess.Greeting) && mmess.IsAdmin == 0 {
 				var childUUID string
 
-				localFlags := protocol.DefaultProtocolFlags
-				if sess != nil {
-					if sess.ProtocolFlags() != 0 {
-						localFlags = sess.ProtocolFlags()
-					}
-				}
+				localFlags := sessionFlagsOrDefault(sess, protocol.DefaultProtocolFlags)
 				meta := protocol.ResolveProtocolMeta(localFlags, mmess.ProtoFlags)
 
 				sLMessage := protocol.NewDownMsg(conn, handshakeSecret, protocol.ADMIN_UUID) // 使用管理员标识
@@ -688,12 +678,7 @@ func (listen *Listen) soReuseListen(mgr *manager.Manager, options *initial.Optio
 			if handshake.ValidGreeting(handshake.RoleAgent, mmess.Greeting) && mmess.IsAdmin == 0 {
 				var childUUID string
 
-				localFlags := protocol.DefaultProtocolFlags
-				if sess != nil {
-					if sess.ProtocolFlags() != 0 {
-						localFlags = sess.ProtocolFlags()
-					}
-				}
+				localFlags := sessionFlagsOrDefault(sess, protocol.DefaultProtocolFlags)
 				meta := protocol.ResolveProtocolMeta(localFlags, mmess.ProtoFlags)
 
 				sLMessage := protocol.NewDownMsg(conn, handshakeSecret, protocol.ADMIN_UUID) // 使用管理员标识

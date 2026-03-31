@@ -28,11 +28,7 @@ const (
 
 func (agent *Agent) protocolFlags() uint16 {
 	if agent != nil {
-		if sess := agent.currentSession(); sess != nil {
-			if flags := sess.ProtocolFlags(); flags != 0 {
-				return flags
-			}
-		}
+		return sessionFlagsOrDefault(agent.currentSession(), protocol.DefaultProtocolFlags)
 	}
 	return protocol.DefaultProtocolFlags
 }

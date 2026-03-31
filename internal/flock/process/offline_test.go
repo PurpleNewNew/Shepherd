@@ -62,6 +62,16 @@ func TestApplyProtocolFlags(t *testing.T) {
 	}
 }
 
+func TestProtocolFlagsPreserveZeroSessionFlags(t *testing.T) {
+	agent := &Agent{
+		session: &connectMockSession{flags: 0},
+	}
+
+	if got := agent.protocolFlags(); got != 0 {
+		t.Fatalf("expected zero protocol flags, got %#x", got)
+	}
+}
+
 func TestManualActiveReconnectIntegration(t *testing.T) {
 	secret := "manual-active-reconnect"
 	token := share.GeneratePreAuthToken(secret)

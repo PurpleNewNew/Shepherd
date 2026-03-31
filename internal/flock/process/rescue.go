@@ -152,12 +152,7 @@ func (agent *Agent) performRescue(req *protocol.RescueRequest) (string, error) {
 		sessionSecret = share.DeriveSessionSecret(baseSecret, tlsEnabled)
 	}
 
-	flags := protocol.DefaultProtocolFlags
-	if sess != nil {
-		if sess.ProtocolFlags() != 0 {
-			flags = sess.ProtocolFlags()
-		}
-	}
+	flags := sessionFlagsOrDefault(sess, protocol.DefaultProtocolFlags)
 	if req.Transport != "http" {
 		flags &^= protocol.FlagSupportChunked
 	}

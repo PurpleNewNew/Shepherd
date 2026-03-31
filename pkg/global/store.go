@@ -156,12 +156,6 @@ func (s *Store) ProtocolFlagsFor(uuid string) (uint16, bool) {
 	}
 	return s.componentsStore().protocolFlags(uuid)
 }
-func (s *Store) ActiveProtocolFlags() uint16 {
-	if s == nil {
-		return 0
-	}
-	return s.componentsStore().activeProtocolFlags()
-}
 
 func (s *Store) ConfigureMessage(msg protocol.Message, uuid string) {
 	if s == nil || msg == nil {
@@ -169,7 +163,13 @@ func (s *Store) ConfigureMessage(msg protocol.Message, uuid string) {
 	}
 	flags, ok := s.ProtocolFlagsFor(uuid)
 	if !ok && uuid == "" {
-		flags = s.ActiveProtocolFlags()
+		activeUUID := s.ActiveUUID()
+		if activeUUID != "" {
+			flags, ok = s.ProtocolFlagsFor(activeUUID)
+		}
+	}
+	if !ok {
+		return
 	}
 	protocol.SetMessageMeta(msg, flags)
 }

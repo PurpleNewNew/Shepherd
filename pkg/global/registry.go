@@ -124,18 +124,6 @@ func (cs *componentStore) activeUUID() string {
 	return cs.activeID
 }
 
-func (cs *componentStore) activeProtocolFlags() uint16 {
-	if cs == nil {
-		return 0
-	}
-	cs.mu.RLock()
-	defer cs.mu.RUnlock()
-	if cs.MessageComponent != nil {
-		return cs.MessageComponent.Flags
-	}
-	return 0
-}
-
 func (cs *componentStore) remove(uuid string) {
 	if cs == nil {
 		return

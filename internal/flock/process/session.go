@@ -19,6 +19,13 @@ func newAgentUpMsg(sess session.Session) (protocol.Message, session.Session, boo
 	return msg, sess, true
 }
 
+func sessionFlagsOrDefault(sess session.Session, fallback uint16) uint16 {
+	if sess == nil {
+		return fallback
+	}
+	return sess.ProtocolFlags()
+}
+
 func activeSession(mgr *manager.Manager) session.Session {
 	if mgr != nil {
 		if sess := mgr.ActiveSession(); sess != nil {

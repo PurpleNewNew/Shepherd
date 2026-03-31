@@ -89,10 +89,7 @@ func (agent *Agent) performActiveConnect(addr string) (string, error) {
 		secret = agent.mgr.ActiveSecret()
 	}
 
-	flags := protocol.DefaultProtocolFlags
-	if sess.ProtocolFlags() != 0 {
-		flags = sess.ProtocolFlags()
-	}
+	flags := sessionFlagsOrDefault(sess, protocol.DefaultProtocolFlags)
 
 	hiHeader := &protocol.Header{
 		Sender:      protocol.ADMIN_UUID,

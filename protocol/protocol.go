@@ -716,21 +716,21 @@ func normalizeTransport(value string) string {
 }
 
 func SetMessageMeta(message Message, flags uint16) {
-	if flags == 0 {
-		flags = DefaultProtocolFlags
-	}
 	switch msg := message.(type) {
 	case *RawMessage:
 		if msg != nil {
 			msg.Flags = flags
+			msg.flagsSet = true
 		}
 	case *WSMessage:
 		if msg != nil && msg.RawMessage != nil {
 			msg.RawMessage.Flags = flags
+			msg.RawMessage.flagsSet = true
 		}
 	case *HTTPMessage:
 		if msg != nil && msg.RawMessage != nil {
 			msg.RawMessage.Flags = flags
+			msg.RawMessage.flagsSet = true
 		}
 	}
 }

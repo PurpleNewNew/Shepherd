@@ -37,6 +37,7 @@ type RawMessage struct {
 	Conn         net.Conn
 	CryptoSecret []byte
 	Flags        uint16
+	flagsSet     bool
 	// 准备好的缓冲区
 	HeaderBuffer []byte
 	DataBuffer   []byte
@@ -75,11 +76,15 @@ func (message *RawMessage) ConstructData(header *Header, mess interface{}, isPas
 	}
 	header.RouteLen = uint32(len([]byte(header.Route)))
 
-	if message.Flags == 0 {
-		message.Flags = DefaultProtocolFlags
-	}
 	if header.Flags == 0 {
-		header.Flags = message.Flags
+		switch {
+		case message.flagsSet:
+			header.Flags = message.Flags
+		case message.Flags != 0:
+			header.Flags = message.Flags
+		default:
+			header.Flags = DefaultProtocolFlags
+		}
 	}
 	if header.Flags&^DefaultProtocolFlags != 0 {
 		logger.Errorf("unsupported protocol flags %#x", header.Flags)
