@@ -45,14 +45,14 @@ var (
 	errPTYUnsupported = errors.New("pty unsupported")
 )
 
-// V2: Shell 会话通过 STREAM_OPEN(kind=shell) 发起
+// Shell 会话通过 STREAM_OPEN(kind=shell) 发起。
 type ShellReqWithStream struct {
 	SessionID string
 	Mode      uint16
 	Resume    bool
 }
 
-// ShellCommandMsg 在 V2 中作为本地消息类型，通过 ShellManager 传递命令文本。
+// ShellCommandMsg 作为本地消息类型，通过 ShellManager 传递命令文本。
 type ShellCommandMsg struct {
 	SessionID string
 	Command   string
@@ -351,7 +351,7 @@ func streamShellOutput(mgr *manager.Manager, session *manager.ShellSession) {
 	}
 
 	buffer := make([]byte, 4096)
-	// V2: 若该 session 绑定了 streamID，则输出走 STREAM_DATA
+	// 若该 session 绑定了 streamID，则输出走 STREAM_DATA。
 	var streamID uint32
 	if mgr != nil && mgr.ShellManager != nil {
 		streamID = mgr.ShellManager.StreamForSession(session.ID)

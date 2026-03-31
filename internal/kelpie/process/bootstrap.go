@@ -176,8 +176,6 @@ func (admin *Admin) initControllerListeners(store ControllerListenerPersistence)
 func (admin *Admin) startManagers(ctx context.Context) {
 	go DispatchListenMess(ctx, admin.mgr, admin.topology)
 	go DispatchConnectMess(ctx, admin.mgr)
-	// V2: SOCKS/Forward/Backward/File 全部走 Stream，不再启动 legacy 分发器
-	// V2: SSHTunnel 通过 Stream，不再启动 legacy 分发器
 	go DispatchInfoMess(ctx, admin.mgr, admin.topology)
 	go DispatchChildrenMess(ctx, admin.mgr, admin.topology, admin.onNodeReonline)
 	if admin.options != nil && admin.options.Heartbeat {

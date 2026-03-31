@@ -384,10 +384,11 @@ func (admin *Admin) runControllerListener(ctx context.Context, opts *initial.Opt
 		localFlags &^= protocol.FlagSupportChunked
 	}
 	handshakeSecret := handshake.HandshakeSecret(baseSecret, opts.TlsEnable)
+	greet := handshake.RandomGreeting(handshake.RoleAdmin)
 
 	hiTemplate := &protocol.HIMess{
-		GreetingLen:  uint16(len("Keep slient")),
-		Greeting:     "Keep slient",
+		GreetingLen:  uint16(len(greet)),
+		Greeting:     greet,
 		UUIDLen:      uint16(len(protocol.ADMIN_UUID)),
 		UUID:         protocol.ADMIN_UUID,
 		IsAdmin:      1,

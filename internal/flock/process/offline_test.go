@@ -184,8 +184,8 @@ func runTestAdminPassive(t *testing.T, listenAddr, token, secret, agentUUID stri
 		}
 
 		respHI := &protocol.HIMess{
-			GreetingLen:  uint16(len("Keep slient")),
-			Greeting:     "Keep slient",
+			GreetingLen:  uint16(len("Keep silent")),
+			Greeting:     "Keep silent",
 			UUIDLen:      uint16(len(protocol.ADMIN_UUID)),
 			UUID:         protocol.ADMIN_UUID,
 			IsAdmin:      1,

@@ -8,6 +8,7 @@ import (
 
 	"codeberg.org/agnoie/shepherd/internal/flock/initial"
 	"codeberg.org/agnoie/shepherd/pkg/share"
+	"codeberg.org/agnoie/shepherd/pkg/share/handshake"
 	"codeberg.org/agnoie/shepherd/pkg/share/transport"
 	"codeberg.org/agnoie/shepherd/protocol"
 )
@@ -190,9 +191,10 @@ func (agent *Agent) handleRepairConn(conn net.Conn) {
 		activeUUID = agent.UUID
 	}
 
+	greet := handshake.RandomGreeting(handshake.RoleAdmin)
 	hiTemplate := &protocol.HIMess{
-		GreetingLen:  uint16(len("Keep slient")),
-		Greeting:     "Keep slient",
+		GreetingLen:  uint16(len(greet)),
+		Greeting:     greet,
 		UUIDLen:      uint16(len(activeUUID)),
 		UUID:         activeUUID,
 		IsAdmin:      0,

@@ -111,13 +111,8 @@ func NewTCPServer(cfg Config, tokens *TokenStore) *tcpServer {
 	return &tcpServer{cfg: cfg, tokens: tokens, admin: cfg.Admin}
 }
 
-// ListenAndServe 兼容旧接口。
+// ListenAndServe 监听并处理 TCP 链接（可选 TLS）。
 func (s *tcpServer) ListenAndServe(ctx context.Context) error {
-	return s.ListenAndServeTCP(ctx)
-}
-
-// ListenAndServeTCP 监听并处理 TCP 链接（可选 TLS）。
-func (s *tcpServer) ListenAndServeTCP(ctx context.Context) error {
 	if s == nil {
 		return fmt.Errorf("tcp server nil")
 	}
@@ -340,11 +335,11 @@ func (s *tcpServer) runUpload(ctx context.Context, conn net.Conn, writer *sync.M
 					}
 				}()
 
-					// Once a token has been consumed and the stream is established, completion should
-					// not be constrained by token expiry. Otherwise large-but-valid transfers may be
-					// aborted solely because close propagation exceeded remaining token TTL.
-					wait := estimateUploadCloseWait(st.meta, written)
-					select {
+				// Once a token has been consumed and the stream is established, completion should
+				// not be constrained by token expiry. Otherwise large-but-valid transfers may be
+				// aborted solely because close propagation exceeded remaining token TTL.
+				wait := estimateUploadCloseWait(st.meta, written)
+				select {
 				case err := <-readDone:
 					if err == nil || errors.Is(err, io.EOF) {
 						sendCloseLocked(writer, conn, st.open.StreamID, 0, "OK")

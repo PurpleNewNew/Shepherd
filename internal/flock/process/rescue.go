@@ -11,6 +11,7 @@ import (
 	"codeberg.org/agnoie/shepherd/internal/flock/manager"
 	"codeberg.org/agnoie/shepherd/pkg/bus"
 	"codeberg.org/agnoie/shepherd/pkg/share"
+	"codeberg.org/agnoie/shepherd/pkg/share/handshake"
 	"codeberg.org/agnoie/shepherd/pkg/share/transport"
 	"codeberg.org/agnoie/shepherd/pkg/utils"
 	"codeberg.org/agnoie/shepherd/protocol"
@@ -208,7 +209,7 @@ func (agent *Agent) performRescue(req *protocol.RescueRequest) (string, error) {
 		return "", errors.New("rescue: unexpected handshake response")
 	}
 	mmess, ok := fMessage.(*protocol.HIMess)
-	if !ok || mmess.Greeting != "Keep slient" || mmess.IsAdmin != 0 {
+	if !ok || !handshake.ValidGreeting(handshake.RoleAdmin, mmess.Greeting) || mmess.IsAdmin != 0 {
 		return "", errors.New("rescue: invalid handshake greeting")
 	}
 

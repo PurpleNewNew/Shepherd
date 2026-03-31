@@ -98,10 +98,10 @@ type Agent struct {
 	// during churn in duty-cycled/self-heal traces.
 	upCarryMu    sync.Mutex
 	upCarryQueue []*upCarryItem
-	// Stream sessions (V2)
+	// Stream sessions
 	streamMu sync.Mutex
 	streams  map[uint32]*streamState
-	// File streams (V2)
+	// File streams
 	fileMu   sync.Mutex
 	fileByID map[uint32]*fileStream
 	// Proxy streams (CONNECT bridge)
@@ -434,7 +434,7 @@ func (agent *Agent) Run() {
 	agent.startCarryForward()
 	// 运行调度器以分发各种消息
 	go DispatchListenMess(ctx, agent.mgr, agent.options)
-	// V2: Stream-only data plane；保留 SSH/Shell 管理器用于会话生命周期
+	// SSH/Shell 管理器保留本地会话生命周期管理。
 	go DispatchSSHMess(ctx, agent.mgr)
 	go DispatchShellMess(ctx, agent.mgr, agent.options)
 	go DispatchOfflineMess(agent)
@@ -444,7 +444,6 @@ func (agent *Agent) Run() {
 	go agent.waitingSupplemental()
 	// 处理来自上游的数据
 	agent.handleDataFromUpstream()
-	//agent.handleDataFromDownstream()
 }
 
 func withOrigin(ctx context.Context, origin string) context.Context {

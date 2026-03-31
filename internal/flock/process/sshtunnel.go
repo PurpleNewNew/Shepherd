@@ -7,6 +7,7 @@ import (
 
 	"codeberg.org/agnoie/shepherd/internal/flock/manager"
 	"codeberg.org/agnoie/shepherd/pkg/share"
+	"codeberg.org/agnoie/shepherd/pkg/share/handshake"
 	"codeberg.org/agnoie/shepherd/pkg/utils"
 	"codeberg.org/agnoie/shepherd/protocol"
 
@@ -149,7 +150,7 @@ func (sshTunnel *SSHTunnel) start(mgr *manager.Manager) {
 
 	if fHeader.MessageType == protocol.HI {
 		mmess := fMessage.(*protocol.HIMess)
-		if mmess.Greeting == "Keep slient" && mmess.IsAdmin == 0 {
+		if handshake.ValidGreeting(handshake.RoleAdmin, mmess.Greeting) && mmess.IsAdmin == 0 {
 			if sess != nil {
 				if v := sess.ProtocolVersion(); v != 0 {
 					version = v

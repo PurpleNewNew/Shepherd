@@ -26,12 +26,6 @@ func (agent *Agent) setupRouter() {
 		return
 	}
 	agent.router = bus.NewRouter()
-	// V2: 会话创建与数据通道均走 STREAM_*，移除 SHELLWINSZ 路由
-	// V2: SSH 走 DTN-Stream，移除 legacy SSHREQ/SSHCOMMAND 下行入口
-	// V2: SSHTunnel 通过 DTN-Stream，不再接收 legacy SSHTUNNELREQ
-	// V2: 文件传输走 DTN-Stream，不再接收 legacy file 消息
-	// V2: SOCKS 通过 DTN-Stream，不再接收 legacy SOCKS 消息
-	// V2: forward/backward 通过 DTN-Stream，不再接收 legacy 消息
 	agent.registerMailboxHandlers(
 		"listen",
 		agent.mgr.ListenManager.Enqueue,
@@ -56,9 +50,7 @@ func (agent *Agent) setupRouter() {
 	agent.router.Register(uint16(protocol.RESCUE_REQUEST), agent.rescueRequestHandler())
 	agent.router.Register(protocol.SHUTDOWN, agent.shutdownHandler())
 	agent.router.Register(protocol.HEARTBEAT, agent.ignoreHandler())
-	// DTN data plane (experimental)
 	agent.router.Register(uint16(protocol.DTN_DATA), agent.dtnDataHandler())
-	// STREAM_* (V2) placeholders
 	agent.router.Register(uint16(protocol.STREAM_OPEN), agent.streamOpenHandler())
 	agent.router.Register(uint16(protocol.STREAM_DATA), agent.streamDataHandler())
 	agent.router.Register(uint16(protocol.STREAM_ACK), agent.streamAckHandler())

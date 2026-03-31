@@ -18,7 +18,7 @@ import (
 	"codeberg.org/agnoie/shepherd/protocol"
 )
 
-// V2: 改为基于 STREAM_* 的集成测试（无需 legacy SHELL* 帧）。
+// 基于 STREAM_* 的 shell 集成测试。
 func TestShellStreamSessionMaintainsState(t *testing.T) {
 	if runtime.GOOS == "windows" {
 		t.Skip("shell stream integration test not supported on Windows")

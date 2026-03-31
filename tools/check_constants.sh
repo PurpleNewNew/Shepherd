@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Simple guardrail to catch legacy magic numbers that should rely on config/defaults.
-# Extend PATTERNS as new constants migrate.
+# Simple guardrail to catch magic numbers that should rely on config/defaults.
+# Extend PATTERNS as new constants are centralized.
 PATTERNS=(
   "30720"
 )

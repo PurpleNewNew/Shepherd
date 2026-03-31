@@ -111,8 +111,8 @@ func main() {
 		lootContentStore = store
 	}
 
-	// 仅保留 teamserver 模式：优先从 controller_listeners 表中选择监听地址，驱动 Kelpie 与 Flock 的入口，
-	// 不再依赖 CLI -l/-c 和用户态登录。若不存在 pending 监听器，则仅启动 UI，等待后续配置。
+	// Teamserver 启动时优先从 controller_listeners 表中选择监听地址；
+	// 若暂无 pending 监听器，则仅启动 UI，等待后续配置。
 	if records, err := sqlStore.LoadControllerListeners(); err != nil {
 		printer.Fail("[*] Failed to load controller listeners: %v\r\n", err)
 		return
@@ -141,11 +141,11 @@ func main() {
 		topo.MarkAllOffline()
 		supp.RestoreSupplementalLinks(snapshot.SupplementalLinks)
 	}
-	// 基于 CLI 的 sleep 参数配置离线判定策略：
-	// sleep=0 -> 使用短容忍窗口（1s）近似“立刻”置离线；sleep>0 -> 基于周期 + 小幅保护时间
+	// 基于 sleep 参数配置离线判定策略：
+	// sleep=0 使用默认离线容忍窗口；sleep>0 在默认容忍之外叠加周期预算。
 	if options.SleepSeconds >= 0 { // 允许 0 值
-		// Mimic CS-style beacon: when sleep 未知/为 0，采用更宽松的默认离线容忍，
-		// 避免短暂静默就被判离线，留给节点后续自报 sleep profile。
+		// sleep 未知或为 0 时保留默认容忍，避免短暂静默就被判离线，
+		// 留给节点后续自报 sleep profile。
 		zeroGrace := defaults.NodeStaleTimeout
 		sleep := time.Duration(options.SleepSeconds) * time.Second
 		topo.ConfigureStalePolicy(sleep, zeroGrace)
@@ -157,7 +157,7 @@ func main() {
 		conn        net.Conn
 		negotiation *protocol.Negotiation
 	)
-	// Teamserver 模式优先使用 Controller Listener 提供的 Listen 地址；否则退回到旧的 -l/-c 模式。
+	// 优先使用 Controller Listener 提供的监听地址；没有初始监听地址时只启动 UI。
 	if options.Mode == initial.NORMAL_PASSIVE || options.Mode == initial.NORMAL_ACTIVE ||
 		options.Mode == initial.SOCKS5_PROXY_ACTIVE || options.Mode == initial.HTTP_PROXY_ACTIVE {
 		if strings.TrimSpace(options.Listen) == "" && options.Mode == initial.NORMAL_PASSIVE {

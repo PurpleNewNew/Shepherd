@@ -118,7 +118,7 @@ func (s *Store) ensureCollabSchema() error {
 			return fmt.Errorf("init collaboration schema: %w", err)
 		}
 	}
-	// 向后兼容：为已有表补充多租字段。
+	// 为已有数据库补充多租字段。
 	if err := s.ensureColumn("audit_logs", "tenant", "TEXT"); err != nil {
 		return err
 	}

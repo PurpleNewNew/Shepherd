@@ -27,7 +27,7 @@ type SSH struct {
 	Password    string
 	Certificate []byte
 	mgr         *manager.Manager
-	// V2 stream output
+	// SSH 输出绑定到 stream 时使用的状态。
 	streamID uint32
 	txSeq    uint32
 }
@@ -38,7 +38,7 @@ func newSSH(mgr *manager.Manager) *SSH {
 	return ssh
 }
 
-// SSHReqMsg 是 V2 模式下的本地 SSH 请求结构，不再经过协议层。
+// SSHReqMsg 是本地 SSH 请求结构，不经过协议层。
 type SSHReqMsg struct {
 	Method      uint16
 	Addr        string
@@ -47,7 +47,7 @@ type SSHReqMsg struct {
 	Certificate []byte
 }
 
-// SSHReqWithStream 允许在 V2 模式下附带 streamID 来承载 SSH 输出。
+// SSHReqWithStream 允许附带 streamID 来承载 SSH 输出。
 type SSHReqWithStream struct {
 	Req      *SSHReqMsg
 	StreamID uint32

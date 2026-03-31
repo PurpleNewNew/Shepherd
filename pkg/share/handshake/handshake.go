@@ -20,7 +20,7 @@ const (
 )
 
 var (
-	adminGreetings = []string{"Keep slient", "Keep silent"}
+	adminGreetings = []string{"Keep silent"}
 	agentGreetings = []string{"Shhh...", "Shh...", "Shhh."}
 )
 

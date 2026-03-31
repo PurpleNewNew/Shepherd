@@ -43,7 +43,7 @@ func (f *Future) Await(ctx context.Context) (*Result, error) {
 	}
 }
 
-// Service 封装拓扑对象，并基于旧版通道接口提供异步辅助方法。
+// Service 封装拓扑对象，并提供异步辅助方法。
 type Service struct {
 	topo *Topology
 }

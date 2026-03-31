@@ -142,7 +142,7 @@ const (
 	DTN_DATA
 	DTN_ACK
 	DTN_PULL
-	// Unified Stream (V2): DTN-Stream control/data
+	// Stream control/data over DTN.
 	STREAM_OPEN
 	STREAM_DATA
 	STREAM_ACK
@@ -281,7 +281,7 @@ type MyMemo struct {
 	Memo    string
 }
 
-// DTNData carries a DTN bundle payload (experimental).
+// DTNData carries a DTN bundle payload.
 type DTNData struct {
 	BundleIDLen uint16
 	BundleID    string
@@ -289,7 +289,7 @@ type DTNData struct {
 	Payload     []byte
 }
 
-// DTNAck acknowledges a DTN bundle delivery (experimental).
+// DTNAck acknowledges a DTN bundle delivery.
 type DTNAck struct {
 	BundleIDLen uint16
 	BundleID    string
@@ -303,7 +303,7 @@ type DTNPull struct {
 	Limit uint16
 }
 
-// --- V2 Stream messages (DTN-Stream) ---
+// --- Stream messages (DTN-Stream) ---
 // StreamOpen negotiates a new stream with basic options (key=value;...)
 type StreamOpen struct {
 	StreamID   uint32

@@ -239,9 +239,10 @@ func (listen *Listen) normalListen(mgr *manager.Manager, options *initial.Option
 				sLMessage := protocol.NewDownMsg(conn, handshakeSecret, protocol.ADMIN_UUID) // 使用管理员标识
 				protocol.SetMessageMeta(sLMessage, negotiation.Version, negotiation.Flags)
 
+				greet := handshake.RandomGreeting(handshake.RoleAdmin)
 				hiMess := &protocol.HIMess{
-					GreetingLen:  uint16(len("Keep slient")),
-					Greeting:     "Keep slient",
+					GreetingLen:  uint16(len(greet)),
+					Greeting:     greet,
 					UUIDLen:      uint16(len(protocol.ADMIN_UUID)),
 					UUID:         protocol.ADMIN_UUID,
 					IsAdmin:      1,
@@ -480,9 +481,10 @@ func (listen *Listen) iptablesListen(mgr *manager.Manager, options *initial.Opti
 				sLMessage := protocol.NewDownMsg(conn, handshakeSecret, protocol.ADMIN_UUID) // 使用管理员标识
 				protocol.SetMessageMeta(sLMessage, negotiation.Version, negotiation.Flags)
 
+				greet := handshake.RandomGreeting(handshake.RoleAdmin)
 				hiMess := &protocol.HIMess{
-					GreetingLen:  uint16(len("Keep slient")),
-					Greeting:     "Keep slient",
+					GreetingLen:  uint16(len(greet)),
+					Greeting:     greet,
 					UUIDLen:      uint16(len(protocol.ADMIN_UUID)),
 					UUID:         protocol.ADMIN_UUID,
 					IsAdmin:      1,
@@ -723,9 +725,10 @@ func (listen *Listen) soReuseListen(mgr *manager.Manager, options *initial.Optio
 				sLMessage := protocol.NewDownMsg(conn, handshakeSecret, protocol.ADMIN_UUID) // 使用管理员标识
 				protocol.SetMessageMeta(sLMessage, negotiation.Version, negotiation.Flags)
 
+				greet := handshake.RandomGreeting(handshake.RoleAdmin)
 				hiMess := &protocol.HIMess{
-					GreetingLen:  uint16(len("Keep slient")),
-					Greeting:     "Keep slient",
+					GreetingLen:  uint16(len(greet)),
+					Greeting:     greet,
 					UUIDLen:      uint16(len(protocol.ADMIN_UUID)),
 					UUID:         protocol.ADMIN_UUID,
 					IsAdmin:      1,

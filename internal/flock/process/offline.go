@@ -13,6 +13,7 @@ import (
 	"codeberg.org/agnoie/shepherd/internal/flock/manager"
 	"codeberg.org/agnoie/shepherd/pkg/config/defaults"
 	"codeberg.org/agnoie/shepherd/pkg/share"
+	"codeberg.org/agnoie/shepherd/pkg/share/handshake"
 	reconn "codeberg.org/agnoie/shepherd/pkg/share/reconnect"
 	"codeberg.org/agnoie/shepherd/pkg/share/transport"
 	"codeberg.org/agnoie/shepherd/pkg/utils"
@@ -105,7 +106,7 @@ func (agent *Agent) finalizePassiveHandshake(conn net.Conn, options *initial.Opt
 	}
 
 	mmess, ok := fMessage.(*protocol.HIMess)
-	if !ok || mmess.Greeting != "Shhh..." || mmess.IsAdmin != 1 {
+	if !ok || !handshake.ValidGreeting(handshake.RoleAgent, mmess.Greeting) || mmess.IsAdmin != 1 {
 		return nil, fmt.Errorf("invalid handshake greeting")
 	}
 
@@ -328,9 +329,10 @@ func (agent *Agent) normalPassiveReconn(ctx context.Context, options *initial.Op
 	activeUUID := agent.activeUUID()
 
 	version, flags := agent.protocolMeta()
+	greet := handshake.RandomGreeting(handshake.RoleAdmin)
 	hiTemplate := &protocol.HIMess{
-		GreetingLen:  uint16(len("Keep slient")),
-		Greeting:     "Keep slient",
+		GreetingLen:  uint16(len(greet)),
+		Greeting:     greet,
 		UUIDLen:      uint16(len(activeUUID)),
 		UUID:         activeUUID,
 		IsAdmin:      0,
@@ -433,9 +435,10 @@ func (agent *Agent) soReusePassiveReconn(ctx context.Context, options *initial.O
 	activeUUID := agent.activeUUID()
 
 	version, flags := agent.protocolMeta()
+	greet := handshake.RandomGreeting(handshake.RoleAdmin)
 	hiTemplate := &protocol.HIMess{
-		GreetingLen:  uint16(len("Keep slient")),
-		Greeting:     "Keep slient",
+		GreetingLen:  uint16(len(greet)),
+		Greeting:     greet,
 		UUIDLen:      uint16(len(activeUUID)),
 		UUID:         activeUUID,
 		IsAdmin:      0,
@@ -672,7 +675,7 @@ func (agent *Agent) reconnectOnce(ctx context.Context, options *initial.Options,
 
 	if fHeader.MessageType == protocol.HI {
 		if mmess, ok := fMessage.(*protocol.HIMess); ok {
-			if mmess.Greeting == "Keep slient" && mmess.IsAdmin == 1 {
+			if handshake.ValidGreeting(handshake.RoleAdmin, mmess.Greeting) && mmess.IsAdmin == 1 {
 				negotiation := protocol.Negotiate(version, flags, mmess.ProtoVersion, mmess.ProtoFlags)
 				if !negotiation.IsV1() {
 					conn.Close()

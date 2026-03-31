@@ -53,7 +53,7 @@ type shellManager struct {
 	sessionMu     sync.Mutex
 	sessions      map[string]*ShellSession
 	idleTimeout   time.Duration
-	// V2: 将 shell sessionID 映射到 streamID，用于输出走 STREAM_DATA
+	// 将 shell sessionID 映射到 streamID，用于输出走 STREAM_DATA。
 	streamBySessionID map[string]uint32
 	seqBySessionID    map[string]uint32
 }

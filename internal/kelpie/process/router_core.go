@@ -68,12 +68,6 @@ func (core *routerCore) bootstrap() {
 		return
 	}
 	core.registerMailboxHandlers("info", core.manager.InfoManager.Enqueue, protocol.MYINFO)
-	// V2: Shell 通过 DTN-Stream，不再接收 SHELLRES/SHELLRESULT/SHELLEXIT
-	// V2: SSH 走 DTN-Stream，移除 legacy SSHRES/SSHRESULT/SSHEXIT 路由
-	// V2: SSHTunnel 通过 DTN-Stream，不再接收 SSHTUNNELRES
-	// V2: 文件传输走 DTN-Stream，移除 legacy file 路由
-	// V2: SOCKS 通过 DTN-Stream，移除 legacy SOCKS 路由
-	// V2: forward/backward 走 DTN-Stream，移除 legacy forward/backward 路由
 	core.registerMailboxHandlers(
 		"listen",
 		core.manager.ListenManager.Enqueue,
@@ -96,7 +90,6 @@ func (core *routerCore) bootstrap() {
 	core.bus.Register(uint16(protocol.RUNTIMELOG), core.dispatchRuntimeLog())
 	core.bus.Register(uint16(protocol.NODECONNINFO), core.dispatchNodeConnInfo())
 	core.bus.Register(uint16(protocol.RESCUE_RESPONSE), core.dispatchRescueResponse())
-	// DTN ACK (experimental)
 	core.bus.Register(uint16(protocol.DTN_ACK), core.dispatchDTNAck())
 	core.bus.Register(uint16(protocol.STREAM_OPEN), core.dispatchStreamOpen())
 	core.bus.Register(uint16(protocol.STREAM_DATA), core.dispatchStreamData())
@@ -319,8 +312,6 @@ func (core *routerCore) dispatchSleepUpdateAck() bus.Handler {
 		return nil
 	}
 }
-
-// Pin-awake retired in V2
 
 func (core *routerCore) dispatchNodeConnInfo() bus.Handler {
 	return func(ctx context.Context, header *protocol.Header, payload interface{}) error {

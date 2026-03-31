@@ -46,7 +46,7 @@ type Options struct {
 	PreAuthToken  string
 	MFAPin        string
 	// SleepSeconds: 期望的短连接唤醒周期（秒）。
-	// 0 表示长连接（常唤醒），用于离线判定的“立即/极短”策略。
+	// 0 表示长连接，离线判定使用默认容忍窗口。
 	SleepSeconds   int
 	UIBackend      string
 	UIListen       string

@@ -1111,10 +1111,6 @@ func (admin *Admin) ShellSessionID(uuid string) string {
 	return sessionID
 }
 
-// SendShellWindowSize forwards shell resize hints to the active session.
-// RequestPinAwake asks a node to stay awake for duration seconds.
-// Pin-awake retired in V2; no RequestPinAwake.
-
 // DTNStats implements DTNController
 func (admin *Admin) DTNStats() (uint64, uint64, uint64, uint64) {
 	if admin == nil {
@@ -2355,7 +2351,6 @@ func (admin *Admin) bootstrapRuntime() {
 		router.Register(uint16(protocol.GOSSIP_UPDATE), admin.dispatchGossipUpdate())
 		router.Register(uint16(protocol.GOSSIP_REQUEST), admin.dispatchGossipRequest())
 		router.Register(uint16(protocol.GOSSIP_RESPONSE), admin.dispatchGossipResponse())
-		// DTN pull (experimental)
 		router.Register(uint16(protocol.DTN_PULL), admin.dispatchDTNPull())
 	}
 	admin.initSupplementalPlanner(ctx)

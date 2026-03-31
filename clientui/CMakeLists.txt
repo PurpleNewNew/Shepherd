@@ -69,7 +69,7 @@ set(STOCKMAN_CORE_INCLUDE
         include/Stockman/Stockman.hpp
         include/Stockman/CmdLine.hpp
 
-        # Dialogs（Kelpie 版 About/Connect，Listener/Payload 会在后续阶段瘦身或移除）
+        # Dialogs
         include/UserInterface/Dialogs/About.hpp
         include/UserInterface/Dialogs/Connect.hpp
 
