@@ -348,15 +348,12 @@ namespace StockmanNamespace
         mutable std::mutex streamMutex_;
         QHash<QString, std::weak_ptr<ProxyStreamHandle>> activeStreams_;
 
-        template <typename Service, typename Request, typename Response>
-        using UnaryMethod = grpc::Status (typename Service::Stub::*)(grpc::ClientContext*, const Request&, Response*);
-
         std::optional<RpcConfig> rpcConfig(QString& errorMessage) const;
-        template <typename Service, typename Request, typename Response>
+        template <typename Service, typename Request, typename Response, typename Method>
         bool invokeUnary(QString& errorMessage,
                          const Request& req,
                          Response* resp,
-                         UnaryMethod<Service, Request, Response> method) const;
+                         Method method) const;
 
         std::shared_ptr<ProxyStreamHandle> createProxyStream(const QString& targetUuid,
                                                              const QString& sessionId,

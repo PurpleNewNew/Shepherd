@@ -38,27 +38,21 @@ endif()
 include_directories( include )
 include_directories( generated )
 include_directories( generated/proto )
-include_directories( ${Protobuf_INCLUDE_DIRS} )
-include_directories( external/spdlog/include )
-include_directories( external/json/include )
-include_directories( external/toml )
 
 ##
 ## find qt / protobuf / grpc packages
 ##
 find_package( Qt${QT_VERSION} COMPONENTS ${REQUIRED_LIBS} REQUIRED )
 
-# Force CMake to use the system libprotobuf toolchain (3.21.x)
-# instead of any newer protoc binary that might be on $PATH.
-if (EXISTS "/usr/bin/protoc")
-    set(Protobuf_PROTOC_EXECUTABLE "/usr/bin/protoc")
-endif()
-# gRPC 的 CMake 包会以 CONFIG 模式依赖 Protobuf；这里也用 CONFIG 模式以避免
-# FindProtobuf(module) 与 protobuf-config(config) 混用导致的 target 重定义冲突。
+# 统一使用各依赖自带的 CMake config，避免 FindProtobuf(module) 与
+# protobuf-config(config) 混用造成 target 重定义。
 find_package( Protobuf CONFIG REQUIRED )
 find_package( gRPC CONFIG REQUIRED )
 find_package( Threads REQUIRED )
 find_package( fmt CONFIG REQUIRED )
+find_package( spdlog CONFIG REQUIRED )
+find_package( nlohmann_json CONFIG REQUIRED )
+find_package( tomlplusplus CONFIG REQUIRED )
 
 set(STOCKMAN_CORE_INCLUDE
         # Core Kelpie / DB / service
@@ -162,6 +156,7 @@ target_link_libraries(
     protobuf::libprotobuf
     Threads::Threads
     fmt::fmt
-    # spdlog::spdlog
-    # spdlog::spdlog_header_only
+    spdlog::spdlog_header_only
+    nlohmann_json::nlohmann_json
+    tomlplusplus::tomlplusplus
 )

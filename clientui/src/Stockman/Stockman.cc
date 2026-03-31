@@ -1,7 +1,6 @@
 #include <Stockman/Stockman.hpp>
 #include <Stockman/CmdLine.hpp>
 
-#define TOML_IMPLEMENTATION
 #include <toml++/toml.hpp>
 
 #include <memory>

@@ -308,11 +308,11 @@ std::optional<KelpieController::RpcConfig> KelpieController::rpcConfig(QString& 
     return cfg;
 }
 
-template <typename Service, typename Request, typename Response>
+template <typename Service, typename Request, typename Response, typename Method>
 bool KelpieController::invokeUnary(QString& errorMessage,
                                    const Request& req,
                                    Response* resp,
-                                   UnaryMethod<Service, Request, Response> method) const
+                                   Method method) const
 {
     auto rpc = rpcConfig(errorMessage);
     if ( !rpc )
