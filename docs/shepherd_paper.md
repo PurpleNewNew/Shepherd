@@ -71,6 +71,8 @@ f(n)=\min\left(F_{\max}, F_{\text{base}} + \lceil \log_2 n \rceil\right),
 * 扩展 Kelpie 拓扑的离线判定，使其利用各节点的睡眠计划；
 * 借鉴朱利军等对哈希相位的改进，在 Shepherd 中实现可配置方案。
 
+说明：上述连接管理、离线判定与发送时机控制目前采用 sleep-aware 的启发式近似实现。`ExpectedWaitMsAt`、`RecommendSendDelay`、路径睡眠预算和补链离线探测阈值用于降低误判和窗口错过概率，但并不宣称构成严格的全局最优调度或最优离线判定。
+
 ### 4.4 安全握手
 
 * 为 `pkg/share/handshake` 提供结构化返回值与安全日志；
