@@ -142,16 +142,11 @@ namespace StockmanNamespace::UserInterface
         QPushButton*      applyRoutingButton_;
         QTableWidget*     diagnosticsTable_;
         QTableWidget*     dtnBundleTable_;
-        QTableWidget*     dtnPolicyTable_;
         QLabel*           dtnStatsLabel_;
         QLineEdit*        dtnPayloadInput_;
         QLineEdit*        dtnTtlInput_;
-        QLineEdit*        dtnPolicyKeyInput_;
-        QLineEdit*        dtnPolicyValueInput_;
         QComboBox*        dtnPriorityBox_;
         QSpinBox*         dtnLimitSpin_;
-        QPushButton*      refreshDtnPolicyButton_;
-        QPushButton*      applyDtnPolicyButton_;
         QLabel*           selectedNodeLabel_;
         QLineEdit*        nodeCommandInput_;
         QPushButton*      nodeCommandButton_;
@@ -296,8 +291,6 @@ namespace StockmanNamespace::UserInterface
         void applyRoutingStrategy();
         void refreshStreamDiagnostics();
         void refreshDtn();
-        void refreshDtnPolicy();
-        void applyDtnPolicy();
         void enqueueDtn();
         void startForwardProxy();
         void startBackwardProxy();

@@ -518,13 +518,13 @@ namespace StockmanNamespace::UserInterface
 	                    switch (res.routingStrategy)
 	                    {
 	                    case kelpieui::v1::ROUTING_STRATEGY_HOPS:
-	                        strategyLabel = tr("Hops (BFS)");
+	                        strategyLabel = tr("Hops (BFS, Baseline)");
 	                        break;
 	                    case kelpieui::v1::ROUTING_STRATEGY_WEIGHT:
-	                        strategyLabel = tr("Weight (Dijkstra)");
+	                        strategyLabel = tr("Weight (Dijkstra, Experimental)");
 	                        break;
 	                    case kelpieui::v1::ROUTING_STRATEGY_LATENCY:
-	                        strategyLabel = tr("Latency (ETTD)");
+	                        strategyLabel = tr("Latency (ETTD, Default)");
 	                        break;
 	                    default:
 	                        break;
@@ -848,15 +848,14 @@ namespace StockmanNamespace::UserInterface
 	        }
 
 	        const QString targetUuid = currentNodeUuid_.trimmed();
-	        if ( targetUuid.isEmpty() )
-	        {
-	            dtnStatsLabel_->setText(tr("DTN stats: select a node"));
-	            dtnBundleTable_->setRowCount(0);
-	            if ( diagnosticsTable_ != nullptr ) { diagnosticsTable_->setRowCount(0);
+        if ( targetUuid.isEmpty() )
+        {
+            dtnStatsLabel_->setText(tr("DTN stats: select a node"));
+            dtnBundleTable_->setRowCount(0);
+            if ( diagnosticsTable_ != nullptr ) { diagnosticsTable_->setRowCount(0);
 }
-	            refreshDtnPolicy();
-	            return;
-	        }
+            return;
+        }
 
 	        dtnBundleTable_->setEnabled(false);
 	        dtnStatsLabel_->setText(tr("DTN stats: loading..."));
@@ -959,138 +958,10 @@ namespace StockmanNamespace::UserInterface
 		                }
 
 	                if ( diagnosticsTable_ )
-	                {
-	                    diagnosticsTable_->setRowCount(0);
-	                    refreshDiagnosticsForNode(res.targetUuid);
-	                    refreshStreamDiagnostics();
-	                }
-	                refreshDtnPolicy();
-	            });
-	    }
-
-	    void KelpiePanel::refreshDtnPolicy()
-	    {
-	        auto* ctrl = controller();
-	        if ( (ctrl == nullptr) || (dtnPolicyTable_ == nullptr) )
-	        {
-	            return;
-	        }
-	        dtnPolicyTable_->setEnabled(false);
-	        const uint64_t epoch = ctrl->ConnectionEpoch();
-
-	        struct Result {
-	            uint64_t epoch{0};
-	            bool ok{false};
-	            QString error;
-	            std::map<std::string, std::string> entries;
-	        };
-
-	        runAsync<Result>(
-	            this,
-	            [ctrl, epoch]() {
-	                Result res;
-	                res.epoch = epoch;
-	                QString error;
-	                std::map<std::string, std::string> entries;
-	                res.ok = ctrl->GetDtnPolicy(&entries, error);
-	                res.error = error;
-	                res.entries = std::move(entries);
-	                return res;
-	            },
-	            [this](const Result& res) {
-	                if ( dtnPolicyTable_ ) { dtnPolicyTable_->setEnabled(true);
-}
-
-	                auto* ctrl = controller();
-	                if ( ctrl == nullptr || ctrl->ConnectionEpoch() != res.epoch )
-	                {
-	                    return;
-	                }
-		                if ( !res.ok )
-		                {
-		                    toastError(tr("DTN policy error: %1").arg(res.error));
-		                    if ( dtnPolicyTable_ ) { dtnPolicyTable_->setRowCount(0);
-}
-		                    return;
-	                }
-
-	                dtnPolicyTable_->setRowCount(static_cast<int>(res.entries.size()));
-	                int row = 0;
-	                for (const auto& [key, value] : res.entries)
-	                {
-	                    dtnPolicyTable_->setItem(row, 0, new QTableWidgetItem(QString::fromStdString(key)));
-	                    dtnPolicyTable_->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(value)));
-	                    ++row;
-	                }
-	                if ( dtnPolicyKeyInput_ && dtnPolicyKeyInput_->text().trimmed().isEmpty() )
-	                {
-	                    dtnPolicyKeyInput_->setText(QStringLiteral("max_inflight_per_target"));
-	                }
-	            });
-	    }
-
-    void KelpiePanel::applyDtnPolicy()
-    {
-        auto* ctrl = controller();
-        if ( ctrl == nullptr )
-        {
-            return;
-        }
-        const QString key = (dtnPolicyKeyInput_ != nullptr) ? dtnPolicyKeyInput_->text().trimmed() : QString();
-        const QString value = (dtnPolicyValueInput_ != nullptr) ? dtnPolicyValueInput_->text().trimmed() : QString();
-        if ( key.isEmpty() || value.isEmpty() )
-        {
-            toastWarn(tr("DTN policy key/value required"));
-            return;
-        }
-        setWidgetsEnabled({applyDtnPolicyButton_, dtnPolicyKeyInput_, dtnPolicyValueInput_, dtnPolicyTable_}, false);
-        toastInfo(tr("Updating DTN policy..."));
-        const uint64_t epoch = ctrl->ConnectionEpoch();
-        struct Result {
-            uint64_t epoch{0};
-            QString key;
-            QString value;
-            bool ok{false};
-            QString error;
-            std::map<std::string, std::string> entries;
-        };
-        runAsync<Result>(
-            this,
-            [ctrl, epoch, key, value]() {
-                Result res;
-                res.epoch = epoch;
-                res.key = key;
-                res.value = value;
-                QString error;
-                std::map<std::string, std::string> entries;
-                res.ok = ctrl->UpdateDtnPolicy(key, value, &entries, error);
-                res.error = error;
-                res.entries = std::move(entries);
-                return res;
-            },
-            [this](const Result& res) {
-                setWidgetsEnabled({applyDtnPolicyButton_, dtnPolicyKeyInput_, dtnPolicyValueInput_, dtnPolicyTable_}, true);
-                auto* ctrl = controller();
-                if ( ctrl == nullptr || ctrl->ConnectionEpoch() != res.epoch )
                 {
-                    return;
-                }
-                if ( !res.ok )
-                {
-                    toastError(tr("Update DTN policy failed: %1").arg(res.error));
-                    return;
-                }
-                toastInfo(tr("DTN policy updated: %1=%2").arg(res.key, res.value));
-                if ( dtnPolicyTable_ )
-                {
-                    dtnPolicyTable_->setRowCount(static_cast<int>(res.entries.size()));
-                    int row = 0;
-                    for (const auto& [k, v] : res.entries)
-                    {
-                        dtnPolicyTable_->setItem(row, 0, new QTableWidgetItem(QString::fromStdString(k)));
-                        dtnPolicyTable_->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(v)));
-                        ++row;
-                    }
+                    diagnosticsTable_->setRowCount(0);
+                    refreshDiagnosticsForNode(res.targetUuid);
+                    refreshStreamDiagnostics();
                 }
             });
     }

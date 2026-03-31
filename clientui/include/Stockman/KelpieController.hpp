@@ -239,11 +239,6 @@ namespace StockmanNamespace
                                int64_t ttlSeconds,
                                QString* bundleId,
                                QString& errorMessage);
-        bool GetDtnPolicy(std::map<std::string, std::string>* entries, QString& errorMessage);
-        bool UpdateDtnPolicy(const QString& key,
-                             const QString& value,
-                             std::map<std::string, std::string>* entries,
-                             QString& errorMessage);
         bool GetRoutingStrategy(kelpieui::v1::RoutingStrategy* strategy, QString& errorMessage);
         bool SetRoutingStrategy(kelpieui::v1::RoutingStrategy strategy, QString& errorMessage);
 

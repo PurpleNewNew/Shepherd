@@ -34,7 +34,6 @@ namespace StockmanNamespace::UserInterface
         wireWorkspaceActions();
         wireTopologyInteractions();
 
-        refreshDtnPolicy();
         refreshStatePage((stateTabs_ != nullptr) ? stateTabs_->currentWidget() : nullptr);
 
         StockmanNamespace::Util::NormalizeInteractiveControls(this);

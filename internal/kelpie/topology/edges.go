@@ -149,6 +149,7 @@ func (topology *Topology) setEdgeWeight(task *TopoTask) {
 				topology.persistEdge(task.NeighborUUID, task.UUID, edgeType, weight)
 			}
 		}
+		topology.ScheduleCalculate()
 	}
 
 	topology.ResultChan <- &topoResult{}

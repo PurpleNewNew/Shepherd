@@ -52,8 +52,6 @@ static const char* KelpieUIService_method_names[] = {
   "/kelpieui.v1.KelpieUIService/GetDtnQueueStats",
   "/kelpieui.v1.KelpieUIService/ListDtnBundles",
   "/kelpieui.v1.KelpieUIService/EnqueueDtnPayload",
-  "/kelpieui.v1.KelpieUIService/GetDtnPolicy",
-  "/kelpieui.v1.KelpieUIService/UpdateDtnPolicy",
   "/kelpieui.v1.KelpieUIService/GetRoutingStrategy",
   "/kelpieui.v1.KelpieUIService/SetRoutingStrategy",
   "/kelpieui.v1.KelpieUIService/NodeStatus",
@@ -102,19 +100,17 @@ KelpieUIService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& ch
   , rpcmethod_GetDtnQueueStats_(KelpieUIService_method_names[25], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_ListDtnBundles_(KelpieUIService_method_names[26], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_EnqueueDtnPayload_(KelpieUIService_method_names[27], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetDtnPolicy_(KelpieUIService_method_names[28], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_UpdateDtnPolicy_(KelpieUIService_method_names[29], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetRoutingStrategy_(KelpieUIService_method_names[30], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_SetRoutingStrategy_(KelpieUIService_method_names[31], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_NodeStatus_(KelpieUIService_method_names[32], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_ListNetworks_(KelpieUIService_method_names[33], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_UseNetwork_(KelpieUIService_method_names[34], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_ResetNetwork_(KelpieUIService_method_names[35], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_SetNodeNetwork_(KelpieUIService_method_names[36], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_PruneOffline_(KelpieUIService_method_names[37], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_SendChatMessage_(KelpieUIService_method_names[38], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_ListChatMessages_(KelpieUIService_method_names[39], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_ListAuditLogs_(KelpieUIService_method_names[40], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetRoutingStrategy_(KelpieUIService_method_names[28], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_SetRoutingStrategy_(KelpieUIService_method_names[29], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_NodeStatus_(KelpieUIService_method_names[30], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_ListNetworks_(KelpieUIService_method_names[31], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_UseNetwork_(KelpieUIService_method_names[32], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_ResetNetwork_(KelpieUIService_method_names[33], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_SetNodeNetwork_(KelpieUIService_method_names[34], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_PruneOffline_(KelpieUIService_method_names[35], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_SendChatMessage_(KelpieUIService_method_names[36], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_ListChatMessages_(KelpieUIService_method_names[37], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_ListAuditLogs_(KelpieUIService_method_names[38], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status KelpieUIService::Stub::GetSnapshot(::grpc::ClientContext* context, const ::kelpieui::v1::SnapshotRequest& request, ::kelpieui::v1::SnapshotResponse* response) {
@@ -747,52 +743,6 @@ void KelpieUIService::Stub::async::EnqueueDtnPayload(::grpc::ClientContext* cont
   return result;
 }
 
-::grpc::Status KelpieUIService::Stub::GetDtnPolicy(::grpc::ClientContext* context, const ::kelpieui::v1::GetDtnPolicyRequest& request, ::kelpieui::v1::GetDtnPolicyResponse* response) {
-  return ::grpc::internal::BlockingUnaryCall< ::kelpieui::v1::GetDtnPolicyRequest, ::kelpieui::v1::GetDtnPolicyResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_GetDtnPolicy_, context, request, response);
-}
-
-void KelpieUIService::Stub::async::GetDtnPolicy(::grpc::ClientContext* context, const ::kelpieui::v1::GetDtnPolicyRequest* request, ::kelpieui::v1::GetDtnPolicyResponse* response, std::function<void(::grpc::Status)> f) {
-  ::grpc::internal::CallbackUnaryCall< ::kelpieui::v1::GetDtnPolicyRequest, ::kelpieui::v1::GetDtnPolicyResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_GetDtnPolicy_, context, request, response, std::move(f));
-}
-
-void KelpieUIService::Stub::async::GetDtnPolicy(::grpc::ClientContext* context, const ::kelpieui::v1::GetDtnPolicyRequest* request, ::kelpieui::v1::GetDtnPolicyResponse* response, ::grpc::ClientUnaryReactor* reactor) {
-  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_GetDtnPolicy_, context, request, response, reactor);
-}
-
-::grpc::ClientAsyncResponseReader< ::kelpieui::v1::GetDtnPolicyResponse>* KelpieUIService::Stub::PrepareAsyncGetDtnPolicyRaw(::grpc::ClientContext* context, const ::kelpieui::v1::GetDtnPolicyRequest& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::kelpieui::v1::GetDtnPolicyResponse, ::kelpieui::v1::GetDtnPolicyRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_GetDtnPolicy_, context, request);
-}
-
-::grpc::ClientAsyncResponseReader< ::kelpieui::v1::GetDtnPolicyResponse>* KelpieUIService::Stub::AsyncGetDtnPolicyRaw(::grpc::ClientContext* context, const ::kelpieui::v1::GetDtnPolicyRequest& request, ::grpc::CompletionQueue* cq) {
-  auto* result =
-    this->PrepareAsyncGetDtnPolicyRaw(context, request, cq);
-  result->StartCall();
-  return result;
-}
-
-::grpc::Status KelpieUIService::Stub::UpdateDtnPolicy(::grpc::ClientContext* context, const ::kelpieui::v1::UpdateDtnPolicyRequest& request, ::kelpieui::v1::UpdateDtnPolicyResponse* response) {
-  return ::grpc::internal::BlockingUnaryCall< ::kelpieui::v1::UpdateDtnPolicyRequest, ::kelpieui::v1::UpdateDtnPolicyResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_UpdateDtnPolicy_, context, request, response);
-}
-
-void KelpieUIService::Stub::async::UpdateDtnPolicy(::grpc::ClientContext* context, const ::kelpieui::v1::UpdateDtnPolicyRequest* request, ::kelpieui::v1::UpdateDtnPolicyResponse* response, std::function<void(::grpc::Status)> f) {
-  ::grpc::internal::CallbackUnaryCall< ::kelpieui::v1::UpdateDtnPolicyRequest, ::kelpieui::v1::UpdateDtnPolicyResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_UpdateDtnPolicy_, context, request, response, std::move(f));
-}
-
-void KelpieUIService::Stub::async::UpdateDtnPolicy(::grpc::ClientContext* context, const ::kelpieui::v1::UpdateDtnPolicyRequest* request, ::kelpieui::v1::UpdateDtnPolicyResponse* response, ::grpc::ClientUnaryReactor* reactor) {
-  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_UpdateDtnPolicy_, context, request, response, reactor);
-}
-
-::grpc::ClientAsyncResponseReader< ::kelpieui::v1::UpdateDtnPolicyResponse>* KelpieUIService::Stub::PrepareAsyncUpdateDtnPolicyRaw(::grpc::ClientContext* context, const ::kelpieui::v1::UpdateDtnPolicyRequest& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::kelpieui::v1::UpdateDtnPolicyResponse, ::kelpieui::v1::UpdateDtnPolicyRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_UpdateDtnPolicy_, context, request);
-}
-
-::grpc::ClientAsyncResponseReader< ::kelpieui::v1::UpdateDtnPolicyResponse>* KelpieUIService::Stub::AsyncUpdateDtnPolicyRaw(::grpc::ClientContext* context, const ::kelpieui::v1::UpdateDtnPolicyRequest& request, ::grpc::CompletionQueue* cq) {
-  auto* result =
-    this->PrepareAsyncUpdateDtnPolicyRaw(context, request, cq);
-  result->StartCall();
-  return result;
-}
-
 ::grpc::Status KelpieUIService::Stub::GetRoutingStrategy(::grpc::ClientContext* context, const ::kelpieui::v1::GetRoutingStrategyRequest& request, ::kelpieui::v1::GetRoutingStrategyResponse* response) {
   return ::grpc::internal::BlockingUnaryCall< ::kelpieui::v1::GetRoutingStrategyRequest, ::kelpieui::v1::GetRoutingStrategyResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_GetRoutingStrategy_, context, request, response);
 }
@@ -1330,26 +1280,6 @@ KelpieUIService::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       KelpieUIService_method_names[28],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
-      new ::grpc::internal::RpcMethodHandler< KelpieUIService::Service, ::kelpieui::v1::GetDtnPolicyRequest, ::kelpieui::v1::GetDtnPolicyResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
-          [](KelpieUIService::Service* service,
-             ::grpc::ServerContext* ctx,
-             const ::kelpieui::v1::GetDtnPolicyRequest* req,
-             ::kelpieui::v1::GetDtnPolicyResponse* resp) {
-               return service->GetDtnPolicy(ctx, req, resp);
-             }, this)));
-  AddMethod(new ::grpc::internal::RpcServiceMethod(
-      KelpieUIService_method_names[29],
-      ::grpc::internal::RpcMethod::NORMAL_RPC,
-      new ::grpc::internal::RpcMethodHandler< KelpieUIService::Service, ::kelpieui::v1::UpdateDtnPolicyRequest, ::kelpieui::v1::UpdateDtnPolicyResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
-          [](KelpieUIService::Service* service,
-             ::grpc::ServerContext* ctx,
-             const ::kelpieui::v1::UpdateDtnPolicyRequest* req,
-             ::kelpieui::v1::UpdateDtnPolicyResponse* resp) {
-               return service->UpdateDtnPolicy(ctx, req, resp);
-             }, this)));
-  AddMethod(new ::grpc::internal::RpcServiceMethod(
-      KelpieUIService_method_names[30],
-      ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< KelpieUIService::Service, ::kelpieui::v1::GetRoutingStrategyRequest, ::kelpieui::v1::GetRoutingStrategyResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](KelpieUIService::Service* service,
              ::grpc::ServerContext* ctx,
@@ -1358,7 +1288,7 @@ KelpieUIService::Service::Service() {
                return service->GetRoutingStrategy(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      KelpieUIService_method_names[31],
+      KelpieUIService_method_names[29],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< KelpieUIService::Service, ::kelpieui::v1::SetRoutingStrategyRequest, ::kelpieui::v1::SetRoutingStrategyResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](KelpieUIService::Service* service,
@@ -1368,7 +1298,7 @@ KelpieUIService::Service::Service() {
                return service->SetRoutingStrategy(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      KelpieUIService_method_names[32],
+      KelpieUIService_method_names[30],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< KelpieUIService::Service, ::kelpieui::v1::NodeStatusRequest, ::kelpieui::v1::NodeStatusResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](KelpieUIService::Service* service,
@@ -1378,7 +1308,7 @@ KelpieUIService::Service::Service() {
                return service->NodeStatus(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      KelpieUIService_method_names[33],
+      KelpieUIService_method_names[31],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< KelpieUIService::Service, ::kelpieui::v1::ListNetworksRequest, ::kelpieui::v1::ListNetworksResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](KelpieUIService::Service* service,
@@ -1388,7 +1318,7 @@ KelpieUIService::Service::Service() {
                return service->ListNetworks(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      KelpieUIService_method_names[34],
+      KelpieUIService_method_names[32],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< KelpieUIService::Service, ::kelpieui::v1::UseNetworkRequest, ::kelpieui::v1::UseNetworkResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](KelpieUIService::Service* service,
@@ -1398,7 +1328,7 @@ KelpieUIService::Service::Service() {
                return service->UseNetwork(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      KelpieUIService_method_names[35],
+      KelpieUIService_method_names[33],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< KelpieUIService::Service, ::kelpieui::v1::ResetNetworkRequest, ::kelpieui::v1::ResetNetworkResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](KelpieUIService::Service* service,
@@ -1408,7 +1338,7 @@ KelpieUIService::Service::Service() {
                return service->ResetNetwork(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      KelpieUIService_method_names[36],
+      KelpieUIService_method_names[34],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< KelpieUIService::Service, ::kelpieui::v1::SetNodeNetworkRequest, ::kelpieui::v1::SetNodeNetworkResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](KelpieUIService::Service* service,
@@ -1418,7 +1348,7 @@ KelpieUIService::Service::Service() {
                return service->SetNodeNetwork(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      KelpieUIService_method_names[37],
+      KelpieUIService_method_names[35],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< KelpieUIService::Service, ::kelpieui::v1::PruneOfflineRequest, ::kelpieui::v1::PruneOfflineResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](KelpieUIService::Service* service,
@@ -1428,7 +1358,7 @@ KelpieUIService::Service::Service() {
                return service->PruneOffline(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      KelpieUIService_method_names[38],
+      KelpieUIService_method_names[36],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< KelpieUIService::Service, ::kelpieui::v1::SendChatMessageRequest, ::kelpieui::v1::SendChatMessageResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](KelpieUIService::Service* service,
@@ -1438,7 +1368,7 @@ KelpieUIService::Service::Service() {
                return service->SendChatMessage(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      KelpieUIService_method_names[39],
+      KelpieUIService_method_names[37],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< KelpieUIService::Service, ::kelpieui::v1::ListChatMessagesRequest, ::kelpieui::v1::ListChatMessagesResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](KelpieUIService::Service* service,
@@ -1448,7 +1378,7 @@ KelpieUIService::Service::Service() {
                return service->ListChatMessages(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      KelpieUIService_method_names[40],
+      KelpieUIService_method_names[38],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< KelpieUIService::Service, ::kelpieui::v1::ListAuditLogsRequest, ::kelpieui::v1::ListAuditLogsResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](KelpieUIService::Service* service,
@@ -1651,20 +1581,6 @@ KelpieUIService::Service::~Service() {
 }
 
 ::grpc::Status KelpieUIService::Service::EnqueueDtnPayload(::grpc::ServerContext* context, const ::kelpieui::v1::EnqueueDtnPayloadRequest* request, ::kelpieui::v1::EnqueueDtnPayloadResponse* response) {
-  (void) context;
-  (void) request;
-  (void) response;
-  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-}
-
-::grpc::Status KelpieUIService::Service::GetDtnPolicy(::grpc::ServerContext* context, const ::kelpieui::v1::GetDtnPolicyRequest* request, ::kelpieui::v1::GetDtnPolicyResponse* response) {
-  (void) context;
-  (void) request;
-  (void) response;
-  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-}
-
-::grpc::Status KelpieUIService::Service::UpdateDtnPolicy(::grpc::ServerContext* context, const ::kelpieui::v1::UpdateDtnPolicyRequest* request, ::kelpieui::v1::UpdateDtnPolicyResponse* response) {
   (void) context;
   (void) request;
   (void) response;

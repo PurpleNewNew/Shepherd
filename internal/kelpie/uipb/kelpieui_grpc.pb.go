@@ -47,8 +47,6 @@ const (
 	KelpieUIService_GetDtnQueueStats_FullMethodName      = "/kelpieui.v1.KelpieUIService/GetDtnQueueStats"
 	KelpieUIService_ListDtnBundles_FullMethodName        = "/kelpieui.v1.KelpieUIService/ListDtnBundles"
 	KelpieUIService_EnqueueDtnPayload_FullMethodName     = "/kelpieui.v1.KelpieUIService/EnqueueDtnPayload"
-	KelpieUIService_GetDtnPolicy_FullMethodName          = "/kelpieui.v1.KelpieUIService/GetDtnPolicy"
-	KelpieUIService_UpdateDtnPolicy_FullMethodName       = "/kelpieui.v1.KelpieUIService/UpdateDtnPolicy"
 	KelpieUIService_GetRoutingStrategy_FullMethodName    = "/kelpieui.v1.KelpieUIService/GetRoutingStrategy"
 	KelpieUIService_SetRoutingStrategy_FullMethodName    = "/kelpieui.v1.KelpieUIService/SetRoutingStrategy"
 	KelpieUIService_NodeStatus_FullMethodName            = "/kelpieui.v1.KelpieUIService/NodeStatus"
@@ -94,8 +92,6 @@ type KelpieUIServiceClient interface {
 	GetDtnQueueStats(ctx context.Context, in *GetDtnQueueStatsRequest, opts ...grpc.CallOption) (*GetDtnQueueStatsResponse, error)
 	ListDtnBundles(ctx context.Context, in *ListDtnBundlesRequest, opts ...grpc.CallOption) (*ListDtnBundlesResponse, error)
 	EnqueueDtnPayload(ctx context.Context, in *EnqueueDtnPayloadRequest, opts ...grpc.CallOption) (*EnqueueDtnPayloadResponse, error)
-	GetDtnPolicy(ctx context.Context, in *GetDtnPolicyRequest, opts ...grpc.CallOption) (*GetDtnPolicyResponse, error)
-	UpdateDtnPolicy(ctx context.Context, in *UpdateDtnPolicyRequest, opts ...grpc.CallOption) (*UpdateDtnPolicyResponse, error)
 	GetRoutingStrategy(ctx context.Context, in *GetRoutingStrategyRequest, opts ...grpc.CallOption) (*GetRoutingStrategyResponse, error)
 	SetRoutingStrategy(ctx context.Context, in *SetRoutingStrategyRequest, opts ...grpc.CallOption) (*SetRoutingStrategyResponse, error)
 	NodeStatus(ctx context.Context, in *NodeStatusRequest, opts ...grpc.CallOption) (*NodeStatusResponse, error)
@@ -409,26 +405,6 @@ func (c *kelpieUIServiceClient) EnqueueDtnPayload(ctx context.Context, in *Enque
 	return out, nil
 }
 
-func (c *kelpieUIServiceClient) GetDtnPolicy(ctx context.Context, in *GetDtnPolicyRequest, opts ...grpc.CallOption) (*GetDtnPolicyResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetDtnPolicyResponse)
-	err := c.cc.Invoke(ctx, KelpieUIService_GetDtnPolicy_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *kelpieUIServiceClient) UpdateDtnPolicy(ctx context.Context, in *UpdateDtnPolicyRequest, opts ...grpc.CallOption) (*UpdateDtnPolicyResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UpdateDtnPolicyResponse)
-	err := c.cc.Invoke(ctx, KelpieUIService_UpdateDtnPolicy_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *kelpieUIServiceClient) GetRoutingStrategy(ctx context.Context, in *GetRoutingStrategyRequest, opts ...grpc.CallOption) (*GetRoutingStrategyResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetRoutingStrategyResponse)
@@ -571,8 +547,6 @@ type KelpieUIServiceServer interface {
 	GetDtnQueueStats(context.Context, *GetDtnQueueStatsRequest) (*GetDtnQueueStatsResponse, error)
 	ListDtnBundles(context.Context, *ListDtnBundlesRequest) (*ListDtnBundlesResponse, error)
 	EnqueueDtnPayload(context.Context, *EnqueueDtnPayloadRequest) (*EnqueueDtnPayloadResponse, error)
-	GetDtnPolicy(context.Context, *GetDtnPolicyRequest) (*GetDtnPolicyResponse, error)
-	UpdateDtnPolicy(context.Context, *UpdateDtnPolicyRequest) (*UpdateDtnPolicyResponse, error)
 	GetRoutingStrategy(context.Context, *GetRoutingStrategyRequest) (*GetRoutingStrategyResponse, error)
 	SetRoutingStrategy(context.Context, *SetRoutingStrategyRequest) (*SetRoutingStrategyResponse, error)
 	NodeStatus(context.Context, *NodeStatusRequest) (*NodeStatusResponse, error)
@@ -677,12 +651,6 @@ func (UnimplementedKelpieUIServiceServer) ListDtnBundles(context.Context, *ListD
 }
 func (UnimplementedKelpieUIServiceServer) EnqueueDtnPayload(context.Context, *EnqueueDtnPayloadRequest) (*EnqueueDtnPayloadResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EnqueueDtnPayload not implemented")
-}
-func (UnimplementedKelpieUIServiceServer) GetDtnPolicy(context.Context, *GetDtnPolicyRequest) (*GetDtnPolicyResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetDtnPolicy not implemented")
-}
-func (UnimplementedKelpieUIServiceServer) UpdateDtnPolicy(context.Context, *UpdateDtnPolicyRequest) (*UpdateDtnPolicyResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateDtnPolicy not implemented")
 }
 func (UnimplementedKelpieUIServiceServer) GetRoutingStrategy(context.Context, *GetRoutingStrategyRequest) (*GetRoutingStrategyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRoutingStrategy not implemented")
@@ -1224,42 +1192,6 @@ func _KelpieUIService_EnqueueDtnPayload_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KelpieUIService_GetDtnPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetDtnPolicyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(KelpieUIServiceServer).GetDtnPolicy(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: KelpieUIService_GetDtnPolicy_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KelpieUIServiceServer).GetDtnPolicy(ctx, req.(*GetDtnPolicyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _KelpieUIService_UpdateDtnPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateDtnPolicyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(KelpieUIServiceServer).UpdateDtnPolicy(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: KelpieUIService_UpdateDtnPolicy_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KelpieUIServiceServer).UpdateDtnPolicy(ctx, req.(*UpdateDtnPolicyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _KelpieUIService_GetRoutingStrategy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetRoutingStrategyRequest)
 	if err := dec(in); err != nil {
@@ -1568,14 +1500,6 @@ var KelpieUIService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "EnqueueDtnPayload",
 			Handler:    _KelpieUIService_EnqueueDtnPayload_Handler,
-		},
-		{
-			MethodName: "GetDtnPolicy",
-			Handler:    _KelpieUIService_GetDtnPolicy_Handler,
-		},
-		{
-			MethodName: "UpdateDtnPolicy",
-			Handler:    _KelpieUIService_UpdateDtnPolicy_Handler,
 		},
 		{
 			MethodName: "GetRoutingStrategy",

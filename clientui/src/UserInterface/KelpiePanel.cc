@@ -442,7 +442,6 @@ namespace StockmanNamespace::UserInterface
         if ( page == transportPage_ )
         {
             refreshDtn();
-            refreshDtnPolicy();
             return;
         }
         if ( page == resiliencePage_ )

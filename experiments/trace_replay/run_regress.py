@@ -117,7 +117,6 @@ class TraceSpec:
     expected_dataplane_roundtrip: int
     expected_stream_proxy: int
     expected_kelpie_restart: int
-    expected_dtn_policy: int
     expected_wait_memo: int
     expected_wait_node_status: int
     expected_io_burst: int
@@ -140,7 +139,6 @@ def _load_trace_spec(path: Path) -> TraceSpec:
     expected_dataplane_roundtrip = 0
     expected_stream_proxy = 0
     expected_kelpie_restart = 0
-    expected_dtn_policy = 0
     expected_wait_memo = 0
     expected_wait_node_status = 0
     expected_io_burst = 0
@@ -220,8 +218,6 @@ def _load_trace_spec(path: Path) -> TraceSpec:
                 expected_stream_proxy += 1
             elif typ == "kelpie_restart":
                 expected_kelpie_restart += 1
-            elif typ == "dtn_policy":
-                expected_dtn_policy += 1
             elif typ == "wait_memo":
                 expected_wait_memo += 1
             elif typ == "wait_node_status":
@@ -276,7 +272,6 @@ def _load_trace_spec(path: Path) -> TraceSpec:
         expected_dataplane_roundtrip=expected_dataplane_roundtrip,
         expected_stream_proxy=expected_stream_proxy,
         expected_kelpie_restart=expected_kelpie_restart,
-        expected_dtn_policy=expected_dtn_policy,
         expected_wait_memo=expected_wait_memo,
         expected_wait_node_status=expected_wait_node_status,
         expected_io_burst=expected_io_burst,
@@ -473,7 +468,6 @@ class RunResult:
     restart_fail: int
     ok: bool
     run_dir: str
-    expected_dtn_policy: int = 0
     expected_wait_memo: int = 0
     expected_wait_node_status: int = 0
     expected_io_burst: int = 0
@@ -490,8 +484,6 @@ class RunResult:
     expired_delta: int = 0
     order_ok: int = 0
     order_fail: int = 0
-    dtn_policy_ok: int = 0
-    dtn_policy_fail: int = 0
     wait_memo_ok: int = 0
     wait_memo_fail: int = 0
     wait_node_status_ok: int = 0
@@ -733,8 +725,6 @@ def _run_one(
     sp_fail = int(trace_results.get("stream_proxy", {}).get("fail", 0))
     kr_ok = int(trace_results.get("kelpie_restart", {}).get("ok", 0))
     kr_fail = int(trace_results.get("kelpie_restart", {}).get("fail", 0))
-    pol_ok = int(trace_results.get("dtn_policy", {}).get("ok", 0))
-    pol_fail = int(trace_results.get("dtn_policy", {}).get("fail", 0))
     memo_ok = int(trace_results.get("wait_memo", {}).get("ok", 0))
     memo_fail = int(trace_results.get("wait_memo", {}).get("fail", 0))
     st_ok = int(trace_results.get("wait_node_status", {}).get("ok", 0))
@@ -816,9 +806,6 @@ def _run_one(
     if not (kr_ok == trace.expected_kelpie_restart and kr_fail == 0):
         ok = False
         errs.append(f"kelpie_restart mismatch: expected={trace.expected_kelpie_restart} ok={kr_ok} fail={kr_fail}")
-    if not (pol_ok == trace.expected_dtn_policy and pol_fail == 0):
-        ok = False
-        errs.append(f"dtn_policy mismatch: expected={trace.expected_dtn_policy} ok={pol_ok} fail={pol_fail}")
     if not (memo_ok == trace.expected_wait_memo and memo_fail == 0):
         ok = False
         errs.append(f"wait_memo mismatch: expected={trace.expected_wait_memo} ok={memo_ok} fail={memo_fail}")
@@ -860,7 +847,6 @@ def _run_one(
         expected_dataplane_roundtrip=trace.expected_dataplane_roundtrip,
         expected_stream_proxy=trace.expected_stream_proxy,
         expected_kelpie_restart=trace.expected_kelpie_restart,
-        expected_dtn_policy=trace.expected_dtn_policy,
         expected_wait_memo=trace.expected_wait_memo,
         expected_wait_node_status=trace.expected_wait_node_status,
         expected_io_burst=trace.expected_io_burst,
@@ -889,8 +875,6 @@ def _run_one(
         stream_fail=sp_fail,
         restart_ok=kr_ok,
         restart_fail=kr_fail,
-        dtn_policy_ok=pol_ok,
-        dtn_policy_fail=pol_fail,
         wait_memo_ok=memo_ok,
         wait_memo_fail=memo_fail,
         wait_node_status_ok=st_ok,

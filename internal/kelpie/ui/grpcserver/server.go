@@ -122,8 +122,6 @@ type service struct {
 	queueStatsOverride         func(target string) (dtn.QueueStats, error)
 	listBundlesOverride        func(target string, limit int) ([]dtn.BundleSummary, error)
 	enqueueDtnOverride         func(target, data string, priority dtn.Priority, ttl time.Duration) (string, error)
-	dtnPolicyOverride          func() map[string]string
-	setDtnPolicyOverride       func(key, value string) error
 	dtnMetricsOverride         func() (dtn.QueueStats, time.Time)
 	dtnStatsOverride           func() (uint64, uint64, uint64, uint64)
 	sessionsOverride           func(process.SessionFilter) []process.SessionInfo
@@ -245,32 +243,6 @@ func (s *service) enqueueDtnPayload(target, payload string, priority dtn.Priorit
 		return "", fmt.Errorf("admin unavailable")
 	}
 	return s.admin.EnqueueDiagnostic(target, payload, priority, ttl)
-}
-
-func (s *service) dtnPolicy() map[string]string {
-	if s == nil {
-		return nil
-	}
-	if s.dtnPolicyOverride != nil {
-		return s.dtnPolicyOverride()
-	}
-	if s.admin == nil {
-		return nil
-	}
-	return s.admin.DTNPolicy()
-}
-
-func (s *service) setDtnPolicy(key, value string) error {
-	if s == nil {
-		return fmt.Errorf("service unavailable")
-	}
-	if s.setDtnPolicyOverride != nil {
-		return s.setDtnPolicyOverride(key, value)
-	}
-	if s.admin == nil {
-		return fmt.Errorf("admin unavailable")
-	}
-	return s.admin.SetDTNPolicy(key, value)
 }
 
 func (s *service) dtnMetricsSnapshot() (dtn.QueueStats, time.Time) {
@@ -745,35 +717,6 @@ func (s *service) EnqueueDtnPayload(ctx context.Context, req *uipb.EnqueueDtnPay
 		return nil, status.Errorf(codes.Internal, "enqueue failed: %v", err)
 	}
 	return &uipb.EnqueueDtnPayloadResponse{BundleId: id}, nil
-}
-
-func (s *service) GetDtnPolicy(ctx context.Context, _ *uipb.GetDtnPolicyRequest) (*uipb.GetDtnPolicyResponse, error) {
-	if s == nil || s.admin == nil {
-		return nil, status.Error(codes.Unavailable, "admin unavailable")
-	}
-	entries := s.dtnPolicy()
-	return &uipb.GetDtnPolicyResponse{Entries: entries}, nil
-}
-
-func (s *service) UpdateDtnPolicy(ctx context.Context, req *uipb.UpdateDtnPolicyRequest) (*uipb.UpdateDtnPolicyResponse, error) {
-	if s == nil || s.admin == nil {
-		return nil, status.Error(codes.Unavailable, "admin unavailable")
-	}
-	if req == nil {
-		return nil, status.Error(codes.InvalidArgument, "missing request")
-	}
-	key := strings.TrimSpace(req.GetKey())
-	value := strings.TrimSpace(req.GetValue())
-	if key == "" {
-		return nil, status.Error(codes.InvalidArgument, "policy key required")
-	}
-	if value == "" {
-		return nil, status.Error(codes.InvalidArgument, "policy value required")
-	}
-	if err := s.setDtnPolicy(key, value); err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "update failed: %v", err)
-	}
-	return &uipb.UpdateDtnPolicyResponse{Entries: s.dtnPolicy()}, nil
 }
 
 func (s *service) GetRoutingStrategy(ctx context.Context, _ *uipb.GetRoutingStrategyRequest) (*uipb.GetRoutingStrategyResponse, error) {
@@ -1619,14 +1562,14 @@ func mapProtoDtnPriority(p uipb.DtnPriority) dtn.Priority {
 
 func mapRoutingStrategyToProto(strategy topology.RoutingStrategy) uipb.RoutingStrategy {
 	switch strategy {
+	case topology.RoutingByHops:
+		return uipb.RoutingStrategy_ROUTING_STRATEGY_HOPS
 	case topology.RoutingByWeight:
 		return uipb.RoutingStrategy_ROUTING_STRATEGY_WEIGHT
 	case topology.RoutingByLatency:
 		return uipb.RoutingStrategy_ROUTING_STRATEGY_LATENCY
-	case topology.RoutingByHops:
-		fallthrough
 	default:
-		return uipb.RoutingStrategy_ROUTING_STRATEGY_HOPS
+		return uipb.RoutingStrategy_ROUTING_STRATEGY_LATENCY
 	}
 }
 
@@ -1639,9 +1582,9 @@ func mapProtoRoutingStrategy(strategy uipb.RoutingStrategy) (topology.RoutingStr
 	case uipb.RoutingStrategy_ROUTING_STRATEGY_LATENCY:
 		return topology.RoutingByLatency, nil
 	case uipb.RoutingStrategy_ROUTING_STRATEGY_UNSPECIFIED:
-		return topology.RoutingByHops, nil
+		return topology.RoutingByLatency, nil
 	default:
-		return topology.RoutingByHops, fmt.Errorf("unknown routing strategy")
+		return topology.RoutingByLatency, fmt.Errorf("unknown routing strategy")
 	}
 }
 

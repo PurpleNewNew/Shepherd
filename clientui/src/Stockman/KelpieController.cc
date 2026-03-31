@@ -658,45 +658,6 @@ bool KelpieController::invokeUnary(QString& errorMessage,
         return true;
     }
 
-    bool KelpieController::GetDtnPolicy(std::map<std::string, std::string>* entries, QString& errorMessage)
-    {
-        kelpieui::v1::GetDtnPolicyRequest req;
-        kelpieui::v1::GetDtnPolicyResponse resp;
-        if ( !invokeUnary<kelpieui::v1::KelpieUIService>(
-                 errorMessage, req, &resp, &kelpieui::v1::KelpieUIService::Stub::GetDtnPolicy) )
-        {
-            return false;
-        }
-        if ( entries != nullptr )
-        {
-            entries->clear();
-            entries->insert(resp.entries().begin(), resp.entries().end());
-        }
-        return true;
-    }
-
-    bool KelpieController::UpdateDtnPolicy(const QString& key,
-                                           const QString& value,
-                                           std::map<std::string, std::string>* entries,
-                                           QString& errorMessage)
-    {
-        kelpieui::v1::UpdateDtnPolicyRequest req;
-        req.set_key(key.toStdString());
-        req.set_value(value.toStdString());
-        kelpieui::v1::UpdateDtnPolicyResponse resp;
-        if ( !invokeUnary<kelpieui::v1::KelpieUIService>(
-                 errorMessage, req, &resp, &kelpieui::v1::KelpieUIService::Stub::UpdateDtnPolicy) )
-        {
-            return false;
-        }
-        if ( entries != nullptr )
-        {
-            entries->clear();
-            entries->insert(resp.entries().begin(), resp.entries().end());
-        }
-        return true;
-    }
-
     bool KelpieController::GetRoutingStrategy(kelpieui::v1::RoutingStrategy* strategy, QString& errorMessage)
     {
         kelpieui::v1::GetRoutingStrategyRequest req;

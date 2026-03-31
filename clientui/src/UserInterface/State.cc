@@ -441,31 +441,6 @@ namespace StockmanNamespace::UserInterface
         enqueueLayout->addWidget(enqueueDtnButton_);
         dtnLayout->addLayout(enqueueLayout);
 
-        dtnLayout->addWidget(new QLabel(tr("Policy"), transportPage_));
-        dtnPolicyTable_ = new QTableWidget(transportPage_);
-        dtnPolicyTable_->setColumnCount(2);
-        dtnPolicyTable_->setHorizontalHeaderLabels({tr("Key"), tr("Value")});
-        dtnPolicyTable_->horizontalHeader()->setStretchLastSection(true);
-        dtnPolicyTable_->setEditTriggers(QAbstractItemView::NoEditTriggers);
-        dtnPolicyTable_->setSelectionBehavior(QAbstractItemView::SelectRows);
-        dtnPolicyTable_->setSelectionMode(QAbstractItemView::SingleSelection);
-        dtnLayout->addWidget(dtnPolicyTable_);
-
-        auto* dtnPolicyLayout = new QHBoxLayout();
-        dtnPolicyKeyInput_ = new QLineEdit(transportPage_);
-        dtnPolicyKeyInput_->setPlaceholderText(tr("Policy key (e.g., max_inflight_per_target)"));
-        dtnPolicyValueInput_ = new QLineEdit(transportPage_);
-        dtnPolicyValueInput_->setPlaceholderText(tr("Policy value"));
-        applyDtnPolicyButton_ = new QPushButton(tr("Apply Policy"), transportPage_);
-        refreshDtnPolicyButton_ = new QPushButton(tr("Refresh Policy"), transportPage_);
-        dtnPolicyLayout->addWidget(new QLabel(tr("Key:"), transportPage_));
-        dtnPolicyLayout->addWidget(dtnPolicyKeyInput_);
-        dtnPolicyLayout->addWidget(new QLabel(tr("Value:"), transportPage_));
-        dtnPolicyLayout->addWidget(dtnPolicyValueInput_);
-        dtnPolicyLayout->addWidget(applyDtnPolicyButton_);
-        dtnPolicyLayout->addWidget(refreshDtnPolicyButton_);
-        dtnLayout->addLayout(dtnPolicyLayout);
-
         stateTabs_->addTab(transportPage_, tr("Transport"));
     }
 
@@ -521,9 +496,10 @@ namespace StockmanNamespace::UserInterface
 
         auto* routingLayout = new QHBoxLayout();
         routingStrategyBox_ = new QComboBox(strategyPage_);
-        routingStrategyBox_->addItem(tr("Hops (BFS)"), kelpieui::v1::ROUTING_STRATEGY_HOPS);
-        routingStrategyBox_->addItem(tr("Weight (Dijkstra)"), kelpieui::v1::ROUTING_STRATEGY_WEIGHT);
-        routingStrategyBox_->addItem(tr("Latency (ETTD)"), kelpieui::v1::ROUTING_STRATEGY_LATENCY);
+        routingStrategyBox_->addItem(tr("Latency (ETTD, Default)"), kelpieui::v1::ROUTING_STRATEGY_LATENCY);
+        routingStrategyBox_->addItem(tr("Hops (BFS, Baseline)"), kelpieui::v1::ROUTING_STRATEGY_HOPS);
+        routingStrategyBox_->addItem(tr("Weight (Dijkstra, Experimental)"), kelpieui::v1::ROUTING_STRATEGY_WEIGHT);
+        routingStrategyBox_->setCurrentIndex(0);
         applyRoutingButton_ = new QPushButton(tr("Apply Routing"), strategyPage_);
         routingLayout->addWidget(new QLabel(tr("Routing:"), strategyPage_));
         routingLayout->addWidget(routingStrategyBox_);

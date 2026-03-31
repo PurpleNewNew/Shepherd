@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net"
-	"strconv"
 	"strings"
 	"time"
 
@@ -54,7 +53,6 @@ func (admin *Admin) initDTN(ctx context.Context) {
 	}
 	admin.dtnInflight = make(map[string]*dtnInflightRecord)
 	// 默认 inflight 数应足以维持 stream/dataplane 吞吐。
-	// 在测试边界场景时，trace 可以通过 dtn_policy 收紧该值。
 	admin.dtnMaxInflightPerTarget = 16
 	admin.dtnSprayThreshold = 0.6
 	admin.dtnFocusThreshold = 0.85
@@ -601,36 +599,4 @@ func (admin *Admin) DTNMetricsSnapshot() (dtn.QueueStats, time.Time) {
 	snapshot := admin.dtnMetrics
 	admin.dtnMetricsMu.RUnlock()
 	return snapshot.Stats, snapshot.Captured
-}
-
-// DTNPolicy 实现 DTNController。
-func (admin *Admin) DTNPolicy() map[string]string {
-	if admin == nil {
-		return map[string]string{}
-	}
-	enq, drp, exp := admin.dtnManager.Metrics()
-	return map[string]string{
-		"max_inflight_per_target": fmt.Sprintf("%d", admin.dtnMaxInflightPerTarget),
-		"queue_enqueued":          fmt.Sprintf("%d", enq),
-		"queue_dropped":           fmt.Sprintf("%d", drp),
-		"queue_expired":           fmt.Sprintf("%d", exp),
-	}
-}
-
-// SetDTNPolicy 实现 DTNController。
-func (admin *Admin) SetDTNPolicy(key, value string) error {
-	if admin == nil {
-		return fmt.Errorf("admin unavailable")
-	}
-	switch strings.ToLower(strings.TrimSpace(key)) {
-	case "max_inflight_per_target":
-		v, err := strconv.Atoi(value)
-		if err != nil || v < 0 || v > 64 {
-			return fmt.Errorf("invalid value: %s", value)
-		}
-		admin.dtnMaxInflightPerTarget = v
-		return nil
-	default:
-		return fmt.Errorf("unknown key: %s", key)
-	}
 }

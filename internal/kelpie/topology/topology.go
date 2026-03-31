@@ -273,7 +273,7 @@ func NewTopology() *Topology {
 	topology.routeInfo = make(map[string]*RouteInfo)
 	topology.targetNetworks = make(map[string]string)
 	topology.networks = make(map[string]*Network)
-	topology.routingStrategy.Store(int32(RoutingByHops)) // 默认使用BFS路由
+	topology.routingStrategy.Store(int32(RoutingByLatency)) // 默认使用 ETTD 路由
 	topology.history = make(map[string]int)
 	topology.uuidIndex = make(map[string]int)
 	topology.lastUpdateTime = time.Now()
@@ -311,7 +311,7 @@ func (topology *Topology) Service() *Service {
 // RoutingStrategy 返回当前的路由策略。
 func (topology *Topology) RoutingStrategy() RoutingStrategy {
 	if topology == nil {
-		return RoutingByHops
+		return RoutingByLatency
 	}
 	return RoutingStrategy(topology.routingStrategy.Load())
 }

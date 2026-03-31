@@ -234,6 +234,109 @@ func TestReonlinePreservesSleepMetadata(t *testing.T) {
 	}
 }
 
+func TestLatencyRoutingRecalculatesOnTimingUpdate(t *testing.T) {
+	topology := NewTopology()
+	go topology.Run()
+	defer topology.Stop()
+
+	adminNode := NewNode(protocol.ADMIN_UUID, "127.0.0.1")
+	waitForTask(t, topology, &TopoTask{Mode: ADDNODE, Target: adminNode, IsFirst: true})
+
+	fast := NewNode("FAST", "10.0.0.1")
+	slow := NewNode("SLOW", "10.0.0.2")
+	target := NewNode("TARGET", "10.0.0.3")
+	waitForTask(t, topology, &TopoTask{Mode: ADDNODE, Target: fast, ParentUUID: protocol.ADMIN_UUID})
+	waitForTask(t, topology, &TopoTask{Mode: ADDNODE, Target: slow, ParentUUID: protocol.ADMIN_UUID})
+	waitForTask(t, topology, &TopoTask{Mode: ADDNODE, Target: target, ParentUUID: fast.uuid})
+	waitForTask(t, topology, &TopoTask{Mode: ADDEDGE, UUID: protocol.ADMIN_UUID, NeighborUUID: fast.uuid})
+	waitForTask(t, topology, &TopoTask{Mode: ADDEDGE, UUID: protocol.ADMIN_UUID, NeighborUUID: slow.uuid})
+	waitForTask(t, topology, &TopoTask{Mode: ADDEDGE, UUID: fast.uuid, NeighborUUID: target.uuid})
+	waitForTask(t, topology, &TopoTask{Mode: ADDEDGE, UUID: slow.uuid, NeighborUUID: target.uuid})
+
+	waitForTask(t, topology, &TopoTask{Mode: UPDATEDETAIL, UUID: fast.uuid, LatencyMs: 10})
+	waitForTask(t, topology, &TopoTask{Mode: UPDATEDETAIL, UUID: slow.uuid, LatencyMs: 80})
+	waitForTask(t, topology, &TopoTask{Mode: UPDATEDETAIL, UUID: target.uuid, LatencyMs: 10})
+	waitForTask(t, topology, &TopoTask{Mode: SETROUTINGSTRATEGY, UUIDNum: int(RoutingByLatency)})
+
+	waitForRouteDisplay(t, topology, target.uuid, fast.uuid+":"+target.uuid)
+
+	waitForTask(t, topology, &TopoTask{
+		Mode:         UPDATEDETAIL,
+		UUID:         fast.uuid,
+		SleepSeconds: 30,
+		WorkSeconds:  5,
+		NextWakeUnix: time.Now().Add(3 * time.Second).Unix(),
+	})
+
+	waitForRouteDisplay(t, topology, target.uuid, slow.uuid+":"+target.uuid)
+}
+
+func TestLatencyRoutingRecalculatesOnLatencyUpdate(t *testing.T) {
+	topology := NewTopology()
+	go topology.Run()
+	defer topology.Stop()
+
+	adminNode := NewNode(protocol.ADMIN_UUID, "127.0.0.1")
+	waitForTask(t, topology, &TopoTask{Mode: ADDNODE, Target: adminNode, IsFirst: true})
+
+	fast := NewNode("FAST", "10.0.0.1")
+	slow := NewNode("SLOW", "10.0.0.2")
+	target := NewNode("TARGET", "10.0.0.3")
+	waitForTask(t, topology, &TopoTask{Mode: ADDNODE, Target: fast, ParentUUID: protocol.ADMIN_UUID})
+	waitForTask(t, topology, &TopoTask{Mode: ADDNODE, Target: slow, ParentUUID: protocol.ADMIN_UUID})
+	waitForTask(t, topology, &TopoTask{Mode: ADDNODE, Target: target, ParentUUID: fast.uuid})
+	waitForTask(t, topology, &TopoTask{Mode: ADDEDGE, UUID: protocol.ADMIN_UUID, NeighborUUID: fast.uuid})
+	waitForTask(t, topology, &TopoTask{Mode: ADDEDGE, UUID: protocol.ADMIN_UUID, NeighborUUID: slow.uuid})
+	waitForTask(t, topology, &TopoTask{Mode: ADDEDGE, UUID: fast.uuid, NeighborUUID: target.uuid})
+	waitForTask(t, topology, &TopoTask{Mode: ADDEDGE, UUID: slow.uuid, NeighborUUID: target.uuid})
+
+	waitForTask(t, topology, &TopoTask{Mode: UPDATEDETAIL, UUID: fast.uuid, LatencyMs: 10})
+	waitForTask(t, topology, &TopoTask{Mode: UPDATEDETAIL, UUID: slow.uuid, LatencyMs: 40})
+	waitForTask(t, topology, &TopoTask{Mode: UPDATEDETAIL, UUID: target.uuid, LatencyMs: 10})
+	waitForTask(t, topology, &TopoTask{Mode: SETROUTINGSTRATEGY, UUIDNum: int(RoutingByLatency)})
+
+	waitForRouteDisplay(t, topology, target.uuid, fast.uuid+":"+target.uuid)
+
+	waitForTask(t, topology, &TopoTask{Mode: UPDATEDETAIL, UUID: fast.uuid, LatencyMs: 400})
+
+	waitForRouteDisplay(t, topology, target.uuid, slow.uuid+":"+target.uuid)
+}
+
+func TestWeightedRoutingRecalculatesOnEdgeWeightChange(t *testing.T) {
+	topology := NewTopology()
+	go topology.Run()
+	defer topology.Stop()
+
+	adminNode := NewNode(protocol.ADMIN_UUID, "127.0.0.1")
+	waitForTask(t, topology, &TopoTask{Mode: ADDNODE, Target: adminNode, IsFirst: true})
+
+	fast := NewNode("FAST", "10.0.0.1")
+	slow := NewNode("SLOW", "10.0.0.2")
+	target := NewNode("TARGET", "10.0.0.3")
+	waitForTask(t, topology, &TopoTask{Mode: ADDNODE, Target: fast, ParentUUID: protocol.ADMIN_UUID})
+	waitForTask(t, topology, &TopoTask{Mode: ADDNODE, Target: slow, ParentUUID: protocol.ADMIN_UUID})
+	waitForTask(t, topology, &TopoTask{Mode: ADDNODE, Target: target, ParentUUID: fast.uuid})
+	waitForTask(t, topology, &TopoTask{Mode: ADDEDGE, UUID: protocol.ADMIN_UUID, NeighborUUID: fast.uuid})
+	waitForTask(t, topology, &TopoTask{Mode: ADDEDGE, UUID: protocol.ADMIN_UUID, NeighborUUID: slow.uuid})
+	waitForTask(t, topology, &TopoTask{Mode: ADDEDGE, UUID: fast.uuid, NeighborUUID: target.uuid})
+	waitForTask(t, topology, &TopoTask{Mode: ADDEDGE, UUID: slow.uuid, NeighborUUID: target.uuid})
+
+	waitForTask(t, topology, &TopoTask{Mode: SETEDGEWEIGHT, UUID: protocol.ADMIN_UUID, NeighborUUID: fast.uuid, Weight: 1})
+	waitForTask(t, topology, &TopoTask{Mode: SETEDGEWEIGHT, UUID: fast.uuid, NeighborUUID: target.uuid, Weight: 1})
+	waitForTask(t, topology, &TopoTask{Mode: SETEDGEWEIGHT, UUID: protocol.ADMIN_UUID, NeighborUUID: slow.uuid, Weight: 7})
+	waitForTask(t, topology, &TopoTask{Mode: SETEDGEWEIGHT, UUID: slow.uuid, NeighborUUID: target.uuid, Weight: 7})
+	waitForTask(t, topology, &TopoTask{Mode: SETROUTINGSTRATEGY, UUIDNum: int(RoutingByWeight)})
+
+	waitForRouteDisplay(t, topology, target.uuid, fast.uuid+":"+target.uuid)
+
+	waitForTask(t, topology, &TopoTask{Mode: SETEDGEWEIGHT, UUID: protocol.ADMIN_UUID, NeighborUUID: fast.uuid, Weight: 9})
+	waitForTask(t, topology, &TopoTask{Mode: SETEDGEWEIGHT, UUID: fast.uuid, NeighborUUID: target.uuid, Weight: 9})
+	waitForTask(t, topology, &TopoTask{Mode: SETEDGEWEIGHT, UUID: protocol.ADMIN_UUID, NeighborUUID: slow.uuid, Weight: 1})
+	waitForTask(t, topology, &TopoTask{Mode: SETEDGEWEIGHT, UUID: slow.uuid, NeighborUUID: target.uuid, Weight: 1})
+
+	waitForRouteDisplay(t, topology, target.uuid, slow.uuid+":"+target.uuid)
+}
+
 func TestTopologyHighVolumeTasks(t *testing.T) {
 	topology := NewTopology()
 	go topology.Run()
@@ -352,4 +455,21 @@ func waitForTask(t *testing.T, topology *Topology, task *TopoTask) *topoResult {
 		t.Fatalf("timeout waiting for task %+v", task)
 	}
 	return nil
+}
+
+func waitForRouteDisplay(t *testing.T, topology *Topology, uuid, expected string) {
+	t.Helper()
+	deadline := time.Now().Add(3 * time.Second)
+	for time.Now().Before(deadline) {
+		info := topology.RouteInfo(uuid)
+		if info != nil && info.Display == expected {
+			return
+		}
+		time.Sleep(25 * time.Millisecond)
+	}
+	info := topology.RouteInfo(uuid)
+	if info == nil {
+		t.Fatalf("expected route %s for %s, got nil", expected, uuid)
+	}
+	t.Fatalf("expected route %s for %s, got %s", expected, uuid, info.Display)
 }

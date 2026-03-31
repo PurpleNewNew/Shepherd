@@ -49,10 +49,6 @@ type traceEvent struct {
 	Priority   string `json:"priority,omitempty"`    // low|normal|high
 	TTLSeconds int64  `json:"ttl_seconds,omitempty"` // <=0 uses server defaults
 
-	// dtn_policy 事件
-	Key   string `json:"key,omitempty"`
-	Value string `json:"value,omitempty"`
-
 	// dataplane_roundtrip（stream_proxy 也会复用）
 	Path      string `json:"path,omitempty"`
 	Expect    string `json:"expect,omitempty"`
@@ -565,42 +561,6 @@ func main() {
 						"error":          fmt.Sprintf("EnqueueDtnPayload(%s) failed: %v", strings.TrimSpace(evt.Target), err),
 					})
 				}
-			case "dtn_policy":
-				key := strings.TrimSpace(evt.Key)
-				value := strings.TrimSpace(evt.Value)
-				if key == "" || value == "" {
-					_ = metricsW.Write(map[string]any{
-						"kind":           "trace_error",
-						"since_start_ms": time.Since(startMono).Milliseconds(),
-						"at":             time.Now().UTC().Format(time.RFC3339Nano),
-						"error":          "dtn_policy missing key/value",
-					})
-					continue
-				}
-				_ = metricsW.Write(map[string]any{
-					"kind":           "trace_action",
-					"since_start_ms": time.Since(startMono).Milliseconds(),
-					"at":             time.Now().UTC().Format(time.RFC3339Nano),
-					"action":         "dtn_policy",
-					"key":            key,
-					"value":          value,
-				})
-				start := time.Now()
-				err := updateDtnPolicyWithRetry(ctx, uiClient, *uiToken, key, value, 6*time.Second)
-				rec := map[string]any{
-					"kind":           "trace_result",
-					"since_start_ms": time.Since(startMono).Milliseconds(),
-					"at":             time.Now().UTC().Format(time.RFC3339Nano),
-					"action":         "dtn_policy",
-					"key":            key,
-					"value":          value,
-					"elapsed_ms":     time.Since(start).Milliseconds(),
-					"ok":             err == nil,
-				}
-				if err != nil {
-					rec["error"] = err.Error()
-				}
-				_ = metricsW.Write(rec)
 			case "dtn_expect_order":
 				// 在 runner 中这里不做额外动作：顺序性由 run_regress.py 通过检查 Kelpie 日志来断言。
 				// 保留这个分支，是为了避免生成过多无意义的 trace_error 记录。
@@ -2020,46 +1980,6 @@ func enqueueDtnWithRetry(ctx context.Context, ui uipb.KelpieUIServiceClient, tok
 			return lastErr
 		}
 		_, err := ui.EnqueueDtnPayload(withToken(ctx, token), req)
-		if err == nil {
-			return nil
-		}
-		lastErr = err
-		lower := strings.ToLower(err.Error())
-		if strings.Contains(lower, "route unavailable") ||
-			strings.Contains(lower, "session unavailable") ||
-			strings.Contains(lower, "connection unavailable") {
-			time.Sleep(150 * time.Millisecond)
-			continue
-		}
-		return err
-	}
-}
-
-func updateDtnPolicyWithRetry(ctx context.Context, ui uipb.KelpieUIServiceClient, token, key, value string, timeout time.Duration) error {
-	if ui == nil {
-		return fmt.Errorf("ui client unavailable")
-	}
-	key = strings.TrimSpace(key)
-	value = strings.TrimSpace(value)
-	if key == "" || value == "" {
-		return fmt.Errorf("invalid dtn policy request")
-	}
-	if timeout <= 0 {
-		timeout = 6 * time.Second
-	}
-	deadline := time.Now().Add(timeout)
-	var lastErr error
-	for {
-		if ctx.Err() != nil {
-			return ctx.Err()
-		}
-		if time.Now().After(deadline) {
-			if lastErr == nil {
-				lastErr = fmt.Errorf("timeout updating DTN policy: %s", key)
-			}
-			return lastErr
-		}
-		_, err := ui.UpdateDtnPolicy(withToken(ctx, token), &uipb.UpdateDtnPolicyRequest{Key: key, Value: value})
 		if err == nil {
 			return nil
 		}

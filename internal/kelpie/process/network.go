@@ -203,7 +203,7 @@ func (admin *Admin) SupplementalRepairs() ([]RepairStatusSnapshot, error) {
 // RoutingStrategy 返回当前拓扑的路由策略。
 func (admin *Admin) RoutingStrategy() topology.RoutingStrategy {
 	if admin == nil || admin.topology == nil {
-		return topology.RoutingByHops
+		return topology.RoutingByLatency
 	}
 	return admin.topology.RoutingStrategy()
 }

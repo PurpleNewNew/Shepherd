@@ -64,13 +64,8 @@ SOAK_PROFILES = {
         "kelpie_restart_recovery_n3",
         "io_burst_after_kelpie_restart_n3",
     ],
-    # 深挖：三条“最容易出隐性 bug 且可本机稳定复现”的线：
-    # - DTN 队列语义（capacity drop / TTL expire）
-    # - stream/dataplane 并发 + 中断
-    # - Gossip 规模/分区（用 memo 收敛做可观测断言）
+    # 深挖：围绕 IO 中断/恢复与 Gossip 收敛的高风险场景。
     "deep": [
-        "dtn_queue_ttl_expire_n3",
-        "dtn_queue_capacity_drop_n3",
         "io_burst_interrupt_target_n3",
         "kelpie_restart_recovery_n3",
         "dataplane_token_replay_n3",
@@ -80,8 +75,6 @@ SOAK_PROFILES = {
     ],
     # 深挖加强版：在 deep 的基础上加入更深子树断链自愈（kill n2）与重启后 IO burst。
     "deep_plus": [
-        "dtn_queue_ttl_expire_n3",
-        "dtn_queue_capacity_drop_n3",
         "io_burst_interrupt_target_n3",
         "kelpie_restart_recovery_n3",
         "io_burst_after_kelpie_restart_n3",
@@ -93,14 +86,8 @@ SOAK_PROFILES = {
     ],
     # 深挖（更狠）：在 deep_plus 的基础上再提高覆盖密度，适合过夜跑。
     "deep_hard": [
-        "dtn_queue_ttl_expire_n3",
-        "dtn_queue_capacity_drop_n3",
-        "dtn_priority_order_n3",
-        "dtn_backpressure_fairness_n3",
-        "dtn_hold_ttl_interaction_n3",
         "io_burst_interrupt_target_n3",
         "io_burst_heal_kill_parent_n3",
-        "dtn_persist_kelpie_restart_n3",
         "kelpie_restart_recovery_n3",
         "io_burst_after_kelpie_restart_n3",
         "dataplane_token_replay_n3",
@@ -115,12 +102,6 @@ SOAK_PROFILES = {
         "dtn_mid_sleep_kill_parent_n1",
         "dtn_deepchain_leaf_sleep_kill_parent_n3",
         "dtn_burst_leaf_sleep_kill_parent_n2",
-        "dtn_queue_ttl_expire_n3",
-        "dtn_queue_capacity_drop_n3",
-        "dtn_priority_order_n3",
-        "dtn_backpressure_fairness_n3",
-        "dtn_hold_ttl_interaction_n3",
-        "dtn_persist_kelpie_restart_n3",
         "kelpie_restart_recovery_n3",
         "io_burst_after_kelpie_restart_n3",
         "io_burst_heavy_after_kelpie_restart_n3",
@@ -144,12 +125,6 @@ SOAK_PROFILES = {
         "dtn_mid_sleep_kill_parent_n1",
         "dtn_deepchain_leaf_sleep_kill_parent_n3",
         "dtn_burst_leaf_sleep_kill_parent_n2",
-        "dtn_queue_ttl_expire_n3",
-        "dtn_queue_capacity_drop_n3",
-        "dtn_priority_order_n3",
-        "dtn_backpressure_fairness_n3",
-        "dtn_hold_ttl_interaction_n3",
-        "dtn_persist_kelpie_restart_n3",
         "kelpie_restart_recovery_n3",
         "io_burst_after_kelpie_restart_n3",
         "io_burst_heavy_after_kelpie_restart_n3",

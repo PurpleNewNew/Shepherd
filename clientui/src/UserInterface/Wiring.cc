@@ -53,8 +53,6 @@ namespace StockmanNamespace::UserInterface
         connect(taskingPage_->startSshTunnelButton, &QPushButton::clicked, this, &KelpiePanel::startSshTunnel);
 
         connect(refreshDtnButton_, &QPushButton::clicked, this, &KelpiePanel::refreshDtn);
-        connect(refreshDtnPolicyButton_, &QPushButton::clicked, this, &KelpiePanel::refreshDtnPolicy);
-        connect(applyDtnPolicyButton_, &QPushButton::clicked, this, &KelpiePanel::applyDtnPolicy);
         connect(enqueueDtnButton_, &QPushButton::clicked, this, &KelpiePanel::enqueueDtn);
 
         connect(startForwardButton_, &QPushButton::clicked, this, &KelpiePanel::startForwardProxy);
@@ -92,23 +90,6 @@ namespace StockmanNamespace::UserInterface
         });
         connect(streams_.pingButton, &QPushButton::clicked, this, &KelpiePanel::streamPing);
 
-        connect(dtnPolicyTable_, &QTableWidget::itemSelectionChanged, this, [this]() {
-            if ( !dtnPolicyTable_ || !dtnPolicyKeyInput_ || !dtnPolicyValueInput_ )
-            {
-                return;
-            }
-            const int row = dtnPolicyTable_->currentRow();
-            if ( row < 0 )
-            {
-                return;
-            }
-            auto* keyItem = dtnPolicyTable_->item(row, 0);
-            auto* valueItem = dtnPolicyTable_->item(row, 1);
-            if ( keyItem ) { dtnPolicyKeyInput_->setText(keyItem->text());
-}
-            if ( valueItem ) { dtnPolicyValueInput_->setText(valueItem->text());
-}
-        });
     }
 
     void KelpiePanel::wireWorkspaceActions()

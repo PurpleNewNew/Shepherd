@@ -197,12 +197,10 @@ E[T_w] = \frac{T_{sleep}^2}{2(T_{sleep}+T_{work})}.
 | --- | --- | --- | --- | --- | --- |
 | B0 | 无睡眠时的 DTN 基线 | `sleep/work=0/0` | 交付率、时延均值/方差 | `dtn_sleep_effect_baseline.jsonl` | 已完成 |
 | A1 | 睡眠强度对交付时延影响 | `sleep/work=8/2,16/2` | 同 B0 + 与理论 \(E[T_w]\) 偏差 | `dtn_sleep_effect_sleep8_work2.jsonl`、`dtn_sleep_effect_sleep16_work2.jsonl` | 已完成 |
-| A2 | DTN 并发窗口对队列行为影响 | `max_inflight_per_target` | queue depth、drop/expire、延迟 | Trace 事件 `dtn_policy` + `UpdateDtnPolicy` | 已具备接口，待系统性扫参 |
-| A3 | 队列语义正确性（TTL/容量） | trace 场景切换 | `dropped_total`、`expired_total`、顺序约束 | `dtn_queue_ttl_expire_n3.jsonl`、`dtn_queue_capacity_drop_n3.jsonl` + `run_regress.py` 断言 | 已具备回归脚手架 |
 | A4 | 补链策略贡献度 | 是否启用自动补链/repair | 重连成功率、恢复时延 | `SupplementalPlanner.SetEnabled()` 暴露到实验入口 | 待补齐（M1） |
 | A5 | Gossip 自适应策略贡献度 | 动态 fanout/TTL vs 固定值 | 收敛时间、带宽放大、稳定性 | `dynamicFanout()`/`dynamicTTL()` 增加实验开关 | 待补齐（M1） |
 
-结论：中期已完成 B0/A1 的“可复现对照”，并具备 A2/A3 的自动回归基础；A4/A5 需要在后半程补实验开关后形成完整消融矩阵。
+结论：中期已完成 B0/A1 的“可复现对照”；A4/A5 需要在后半程补实验开关后形成完整消融矩阵。
 
 ### 7.3 硬指标 3：规模与真实性是否有清晰升级路线
 

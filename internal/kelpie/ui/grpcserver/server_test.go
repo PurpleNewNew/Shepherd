@@ -499,8 +499,8 @@ func TestRoutingStrategyHandlers(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	if resp.GetStrategy() != uipb.RoutingStrategy_ROUTING_STRATEGY_HOPS {
-		t.Fatalf("expected default hops strategy, got %v", resp.GetStrategy())
+	if resp.GetStrategy() != uipb.RoutingStrategy_ROUTING_STRATEGY_LATENCY {
+		t.Fatalf("expected default latency strategy, got %v", resp.GetStrategy())
 	}
 
 	if _, err := svc.SetRoutingStrategy(context.Background(), &uipb.SetRoutingStrategyRequest{
@@ -817,40 +817,5 @@ func TestEnqueueDtnPayloadHandler(t *testing.T) {
 	}
 	if !called || resp.GetBundleId() != "bundle-123" {
 		t.Fatalf("enqueue override not invoked correctly: %+v", resp)
-	}
-}
-
-func TestDtnPolicyHandlers(t *testing.T) {
-	svc := &service{admin: &process.Admin{}}
-	if _, err := svc.UpdateDtnPolicy(context.Background(), nil); status.Code(err) != codes.InvalidArgument {
-		t.Fatalf("expected invalid argument for nil request, got %v", err)
-	}
-	if _, err := svc.UpdateDtnPolicy(context.Background(), &uipb.UpdateDtnPolicyRequest{Key: "", Value: "1"}); status.Code(err) != codes.InvalidArgument {
-		t.Fatalf("expected invalid argument for missing key, got %v", err)
-	}
-	svc.dtnPolicyOverride = func() map[string]string {
-		return map[string]string{"max_inflight_per_target": "4"}
-	}
-	called := false
-	svc.setDtnPolicyOverride = func(key, value string) error {
-		called = true
-		if key != "max_inflight_per_target" || value != "8" {
-			return fmt.Errorf("bad args")
-		}
-		return nil
-	}
-	resp, err := svc.UpdateDtnPolicy(context.Background(), &uipb.UpdateDtnPolicyRequest{Key: "max_inflight_per_target", Value: "8"})
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-	if !called || resp.GetEntries()["max_inflight_per_target"] != "4" {
-		t.Fatalf("unexpected policy response: %+v", resp.GetEntries())
-	}
-	respGet, err := svc.GetDtnPolicy(context.Background(), &uipb.GetDtnPolicyRequest{})
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-	if len(respGet.GetEntries()) == 0 {
-		t.Fatalf("expected policy entries")
 	}
 }

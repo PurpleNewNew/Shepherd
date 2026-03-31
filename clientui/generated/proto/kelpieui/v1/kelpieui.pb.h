@@ -213,18 +213,6 @@ class EnqueueDtnPayloadResponse;
 struct EnqueueDtnPayloadResponseDefaultTypeInternal;
 extern EnqueueDtnPayloadResponseDefaultTypeInternal _EnqueueDtnPayloadResponse_default_instance_;
 extern const ::google::protobuf::internal::ClassDataFull EnqueueDtnPayloadResponse_class_data_;
-class GetDtnPolicyRequest;
-struct GetDtnPolicyRequestDefaultTypeInternal;
-extern GetDtnPolicyRequestDefaultTypeInternal _GetDtnPolicyRequest_default_instance_;
-extern const ::google::protobuf::internal::ClassDataFull GetDtnPolicyRequest_class_data_;
-class GetDtnPolicyResponse;
-struct GetDtnPolicyResponseDefaultTypeInternal;
-extern GetDtnPolicyResponseDefaultTypeInternal _GetDtnPolicyResponse_default_instance_;
-extern const ::google::protobuf::internal::ClassDataFull GetDtnPolicyResponse_class_data_;
-class GetDtnPolicyResponse_EntriesEntry_DoNotUse;
-struct GetDtnPolicyResponse_EntriesEntry_DoNotUseDefaultTypeInternal;
-extern GetDtnPolicyResponse_EntriesEntry_DoNotUseDefaultTypeInternal _GetDtnPolicyResponse_EntriesEntry_DoNotUse_default_instance_;
-extern const ::google::protobuf::internal::ClassDataFull GetDtnPolicyResponse_EntriesEntry_DoNotUse_class_data_;
 class GetDtnQueueStatsRequest;
 struct GetDtnQueueStatsRequestDefaultTypeInternal;
 extern GetDtnQueueStatsRequestDefaultTypeInternal _GetDtnQueueStatsRequest_default_instance_;
@@ -777,18 +765,6 @@ class UpdateControllerListenerResponse;
 struct UpdateControllerListenerResponseDefaultTypeInternal;
 extern UpdateControllerListenerResponseDefaultTypeInternal _UpdateControllerListenerResponse_default_instance_;
 extern const ::google::protobuf::internal::ClassDataFull UpdateControllerListenerResponse_class_data_;
-class UpdateDtnPolicyRequest;
-struct UpdateDtnPolicyRequestDefaultTypeInternal;
-extern UpdateDtnPolicyRequestDefaultTypeInternal _UpdateDtnPolicyRequest_default_instance_;
-extern const ::google::protobuf::internal::ClassDataFull UpdateDtnPolicyRequest_class_data_;
-class UpdateDtnPolicyResponse;
-struct UpdateDtnPolicyResponseDefaultTypeInternal;
-extern UpdateDtnPolicyResponseDefaultTypeInternal _UpdateDtnPolicyResponse_default_instance_;
-extern const ::google::protobuf::internal::ClassDataFull UpdateDtnPolicyResponse_class_data_;
-class UpdateDtnPolicyResponse_EntriesEntry_DoNotUse;
-struct UpdateDtnPolicyResponse_EntriesEntry_DoNotUseDefaultTypeInternal;
-extern UpdateDtnPolicyResponse_EntriesEntry_DoNotUseDefaultTypeInternal _UpdateDtnPolicyResponse_EntriesEntry_DoNotUse_default_instance_;
-extern const ::google::protobuf::internal::ClassDataFull UpdateDtnPolicyResponse_EntriesEntry_DoNotUse_class_data_;
 class UpdateNodeMemoRequest;
 struct UpdateNodeMemoRequestDefaultTypeInternal;
 extern UpdateNodeMemoRequestDefaultTypeInternal _UpdateNodeMemoRequest_default_instance_;
@@ -1891,7 +1867,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED WatchEventsRequest final : public :
     return *reinterpret_cast<const WatchEventsRequest*>(
         &_WatchEventsRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 67;
+  static constexpr int kIndexInFileMessages = 61;
   friend void swap(WatchEventsRequest& a, WatchEventsRequest& b) { a.Swap(&b); }
   inline void Swap(WatchEventsRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -2102,7 +2078,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED UseNetworkResponse final : public :
     return *reinterpret_cast<const UseNetworkResponse*>(
         &_UseNetworkResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 162;
+  static constexpr int kIndexInFileMessages = 156;
   friend void swap(UseNetworkResponse& a, UseNetworkResponse& b) { a.Swap(&b); }
   inline void Swap(UseNetworkResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -2303,7 +2279,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED UseNetworkRequest final : public ::
     return *reinterpret_cast<const UseNetworkRequest*>(
         &_UseNetworkRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 161;
+  static constexpr int kIndexInFileMessages = 155;
   friend void swap(UseNetworkRequest& a, UseNetworkRequest& b) { a.Swap(&b); }
   inline void Swap(UseNetworkRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -2503,7 +2479,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED UpdateSleepResponse final : public 
     return *reinterpret_cast<const UpdateSleepResponse*>(
         &_UpdateSleepResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 146;
+  static constexpr int kIndexInFileMessages = 140;
   friend void swap(UpdateSleepResponse& a, UpdateSleepResponse& b) { a.Swap(&b); }
   inline void Swap(UpdateSleepResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -2641,7 +2617,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED UpdateSleepRequest final : public :
     return *reinterpret_cast<const UpdateSleepRequest*>(
         &_UpdateSleepRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 145;
+  static constexpr int kIndexInFileMessages = 139;
   friend void swap(UpdateSleepRequest& a, UpdateSleepRequest& b) { a.Swap(&b); }
   inline void Swap(UpdateSleepRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -2883,7 +2859,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED UpdateNodeMemoResponse final : publ
     return *reinterpret_cast<const UpdateNodeMemoResponse*>(
         &_UpdateNodeMemoResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 119;
+  static constexpr int kIndexInFileMessages = 113;
   friend void swap(UpdateNodeMemoResponse& a, UpdateNodeMemoResponse& b) { a.Swap(&b); }
   inline void Swap(UpdateNodeMemoResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -3021,7 +2997,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED UpdateNodeMemoRequest final : publi
     return *reinterpret_cast<const UpdateNodeMemoRequest*>(
         &_UpdateNodeMemoRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 118;
+  static constexpr int kIndexInFileMessages = 112;
   friend void swap(UpdateNodeMemoRequest& a, UpdateNodeMemoRequest& b) { a.Swap(&b); }
   inline void Swap(UpdateNodeMemoRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -3183,263 +3159,6 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED UpdateNodeMemoRequest final : publi
 extern const ::google::protobuf::internal::ClassDataFull UpdateNodeMemoRequest_class_data_;
 // -------------------------------------------------------------------
 
-class PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED UpdateDtnPolicyResponse_EntriesEntry_DoNotUse final
-    : public ::google::protobuf::internal::MapEntry<::std::string, ::std::string,
-                             ::google::protobuf::internal::WireFormatLite::TYPE_STRING,
-                             ::google::protobuf::internal::WireFormatLite::TYPE_STRING> {
- public:
-  using SuperType =
-      ::google::protobuf::internal::MapEntry<::std::string, ::std::string,
-                      ::google::protobuf::internal::WireFormatLite::TYPE_STRING,
-                      ::google::protobuf::internal::WireFormatLite::TYPE_STRING>;
-  UpdateDtnPolicyResponse_EntriesEntry_DoNotUse();
-  template <typename = void>
-  explicit constexpr UpdateDtnPolicyResponse_EntriesEntry_DoNotUse(::google::protobuf::internal::ConstantInitialized);
-  explicit UpdateDtnPolicyResponse_EntriesEntry_DoNotUse(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-  static constexpr const void* PROTOBUF_NONNULL internal_default_instance() {
-    return &_UpdateDtnPolicyResponse_EntriesEntry_DoNotUse_default_instance_;
-  }
-
-
-  static constexpr auto InternalGenerateClassData_();
-
- private:
-  friend class ::google::protobuf::MessageLite;
-  friend struct ::TableStruct_kelpieui_2fv1_2fkelpieui_2eproto;
-
-  friend class ::google::protobuf::internal::TcParser;
-  static const ::google::protobuf::internal::TcParseTable<1, 2,
-                                   0, 65,
-                                   2>
-      _table_;
-
-  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
-  static void* PROTOBUF_NONNULL PlacementNew_(
-      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
-      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-  static constexpr auto InternalNewImpl_();
-};
-extern const ::google::protobuf::internal::ClassDataFull UpdateDtnPolicyResponse_EntriesEntry_DoNotUse_class_data_;
-// -------------------------------------------------------------------
-
-class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED UpdateDtnPolicyRequest final : public ::google::protobuf::Message
-/* @@protoc_insertion_point(class_definition:kelpieui.v1.UpdateDtnPolicyRequest) */ {
- public:
-  inline UpdateDtnPolicyRequest() : UpdateDtnPolicyRequest(nullptr) {}
-  ~UpdateDtnPolicyRequest() PROTOBUF_FINAL;
-
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-  void operator delete(UpdateDtnPolicyRequest* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
-    SharedDtor(*msg);
-    ::google::protobuf::internal::SizedDelete(msg, sizeof(UpdateDtnPolicyRequest));
-  }
-#endif
-
-  template <typename = void>
-  explicit constexpr UpdateDtnPolicyRequest(::google::protobuf::internal::ConstantInitialized);
-
-  inline UpdateDtnPolicyRequest(const UpdateDtnPolicyRequest& from) : UpdateDtnPolicyRequest(nullptr, from) {}
-  inline UpdateDtnPolicyRequest(UpdateDtnPolicyRequest&& from) noexcept
-      : UpdateDtnPolicyRequest(nullptr, ::std::move(from)) {}
-  inline UpdateDtnPolicyRequest& operator=(const UpdateDtnPolicyRequest& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline UpdateDtnPolicyRequest& operator=(UpdateDtnPolicyRequest&& from) noexcept {
-    if (this == &from) return *this;
-    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  [[nodiscard]] inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
-      ABSL_ATTRIBUTE_LIFETIME_BOUND {
-    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
-  }
-  [[nodiscard]] inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL
-  mutable_unknown_fields() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
-  }
-
-  [[nodiscard]] static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
-    return GetDescriptor();
-  }
-  [[nodiscard]] static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL
-  GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
-  }
-  [[nodiscard]] static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
-    return default_instance().GetMetadata().reflection;
-  }
-  [[nodiscard]] static const UpdateDtnPolicyRequest& default_instance() {
-    return *reinterpret_cast<const UpdateDtnPolicyRequest*>(
-        &_UpdateDtnPolicyRequest_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages = 19;
-  friend void swap(UpdateDtnPolicyRequest& a, UpdateDtnPolicyRequest& b) { a.Swap(&b); }
-  inline void Swap(UpdateDtnPolicyRequest* PROTOBUF_NONNULL other) {
-    if (other == this) return;
-    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
-      InternalSwap(other);
-    } else {
-      ::google::protobuf::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(UpdateDtnPolicyRequest* PROTOBUF_NONNULL other) {
-    if (other == this) return;
-    ABSL_DCHECK(GetArena() == other->GetArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  [[nodiscard]] UpdateDtnPolicyRequest* PROTOBUF_NONNULL
-  New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
-    return ::google::protobuf::Message::DefaultConstruct<UpdateDtnPolicyRequest>(arena);
-  }
-  using ::google::protobuf::Message::CopyFrom;
-  void CopyFrom(const UpdateDtnPolicyRequest& from);
-  using ::google::protobuf::Message::MergeFrom;
-  void MergeFrom(const UpdateDtnPolicyRequest& from) { UpdateDtnPolicyRequest::MergeImpl(*this, from); }
-
-  private:
-  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
-                        const ::google::protobuf::MessageLite& from_msg);
-
-  public:
-  [[nodiscard]] bool IsInitialized() const {
-    return true;
-  }
-  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
-  #if defined(PROTOBUF_CUSTOM_VTABLE)
-  private:
-  [[nodiscard]] static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
-  [[nodiscard]] static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
-      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
-      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
-
-  public:
-  [[nodiscard]] ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
-  [[nodiscard]] ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
-      ::uint8_t* PROTOBUF_NONNULL target,
-      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
-    return _InternalSerialize(*this, target, stream);
-  }
-  #else   // PROTOBUF_CUSTOM_VTABLE
-  [[nodiscard]] ::size_t ByteSizeLong() const final;
-  [[nodiscard]] ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
-      ::uint8_t* PROTOBUF_NONNULL target,
-      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
-  #endif  // PROTOBUF_CUSTOM_VTABLE
-  [[nodiscard]] int GetCachedSize() const {
-    return _impl_._cached_size_.Get();
-  }
-
-  private:
-  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-  static void SharedDtor(MessageLite& self);
-  void InternalSwap(UpdateDtnPolicyRequest* PROTOBUF_NONNULL other);
- private:
-  template <typename T>
-  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
-  static ::absl::string_view FullMessageName() { return "kelpieui.v1.UpdateDtnPolicyRequest"; }
-
-  explicit UpdateDtnPolicyRequest(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-  UpdateDtnPolicyRequest(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const UpdateDtnPolicyRequest& from);
-  UpdateDtnPolicyRequest(
-      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, UpdateDtnPolicyRequest&& from) noexcept
-      : UpdateDtnPolicyRequest(arena) {
-    *this = ::std::move(from);
-  }
-  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
-  static void* PROTOBUF_NONNULL PlacementNew_(
-      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
-      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-  static constexpr auto InternalNewImpl_();
-
- public:
-  static constexpr auto InternalGenerateClassData_();
-
-  [[nodiscard]] ::google::protobuf::Metadata GetMetadata() const;
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-  enum : int {
-    kKeyFieldNumber = 1,
-    kValueFieldNumber = 2,
-  };
-  // string key = 1;
-  void clear_key() ;
-  [[nodiscard]] const ::std::string& key() const;
-  template <typename Arg_ = const ::std::string&, typename... Args_>
-  void set_key(Arg_&& arg, Args_... args);
-  ::std::string* PROTOBUF_NONNULL mutable_key();
-  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_key();
-  void set_allocated_key(::std::string* PROTOBUF_NULLABLE value);
-
-  private:
-  const ::std::string& _internal_key() const;
-  PROTOBUF_ALWAYS_INLINE void _internal_set_key(const ::std::string& value);
-  ::std::string* PROTOBUF_NONNULL _internal_mutable_key();
-
-  public:
-  // string value = 2;
-  void clear_value() ;
-  [[nodiscard]] const ::std::string& value() const;
-  template <typename Arg_ = const ::std::string&, typename... Args_>
-  void set_value(Arg_&& arg, Args_... args);
-  ::std::string* PROTOBUF_NONNULL mutable_value();
-  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_value();
-  void set_allocated_value(::std::string* PROTOBUF_NULLABLE value);
-
-  private:
-  const ::std::string& _internal_value() const;
-  PROTOBUF_ALWAYS_INLINE void _internal_set_value(const ::std::string& value);
-  ::std::string* PROTOBUF_NONNULL _internal_mutable_value();
-
-  public:
-  // @@protoc_insertion_point(class_scope:kelpieui.v1.UpdateDtnPolicyRequest)
- private:
-  class _Internal;
-  friend class ::google::protobuf::internal::TcParser;
-  static const ::google::protobuf::internal::TcParseTable<1, 2,
-                                   0, 51,
-                                   2>
-      _table_;
-
-  friend class ::google::protobuf::MessageLite;
-  friend class ::google::protobuf::Arena;
-  friend ::google::protobuf::internal::PrivateAccess;
-  template <typename T>
-  friend class ::google::protobuf::Arena::InternalHelper;
-  using InternalArenaConstructable_ = void;
-  using DestructorSkippable_ = void;
-  struct Impl_ {
-    inline explicit constexpr Impl_(::google::protobuf::internal::InternalVisibility visibility,
-                                    ::google::protobuf::internal::ConstantInitialized) noexcept;
-    inline explicit Impl_(
-        ::google::protobuf::internal::InternalVisibility visibility,
-        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-    inline explicit Impl_(
-        ::google::protobuf::internal::InternalVisibility visibility,
-        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
-        const UpdateDtnPolicyRequest& from_msg);
-    ::google::protobuf::internal::HasBits<1> _has_bits_;
-    ::google::protobuf::internal::CachedSize _cached_size_;
-    ::google::protobuf::internal::ArenaStringPtr key_;
-    ::google::protobuf::internal::ArenaStringPtr value_;
-    PROTOBUF_TSAN_DECLARE_MEMBER
-  };
-  union { Impl_ _impl_; };
-  friend struct ::TableStruct_kelpieui_2fv1_2fkelpieui_2eproto;
-};
-
-extern const ::google::protobuf::internal::ClassDataFull UpdateDtnPolicyRequest_class_data_;
-// -------------------------------------------------------------------
-
 class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED TerminateSessionResponse final : public ::google::protobuf::Message
 /* @@protoc_insertion_point(class_definition:kelpieui.v1.TerminateSessionResponse) */ {
  public:
@@ -3496,7 +3215,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED TerminateSessionResponse final : pu
     return *reinterpret_cast<const TerminateSessionResponse*>(
         &_TerminateSessionResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 139;
+  static constexpr int kIndexInFileMessages = 133;
   friend void swap(TerminateSessionResponse& a, TerminateSessionResponse& b) { a.Swap(&b); }
   inline void Swap(TerminateSessionResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -3692,7 +3411,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED TerminateSessionRequest final : pub
     return *reinterpret_cast<const TerminateSessionRequest*>(
         &_TerminateSessionRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 138;
+  static constexpr int kIndexInFileMessages = 132;
   friend void swap(TerminateSessionRequest& a, TerminateSessionRequest& b) { a.Swap(&b); }
   inline void Swap(TerminateSessionRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -3910,7 +3629,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SupplementalStatus final : public :
     return *reinterpret_cast<const SupplementalStatus*>(
         &_SupplementalStatus_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 169;
+  static constexpr int kIndexInFileMessages = 163;
   friend void swap(SupplementalStatus& a, SupplementalStatus& b) { a.Swap(&b); }
   inline void Swap(SupplementalStatus* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -4142,7 +3861,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SupplementalQuality final : public 
     return *reinterpret_cast<const SupplementalQuality*>(
         &_SupplementalQuality_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 175;
+  static constexpr int kIndexInFileMessages = 169;
   friend void swap(SupplementalQuality& a, SupplementalQuality& b) { a.Swap(&b); }
   inline void Swap(SupplementalQuality* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -4444,7 +4163,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SupplementalMetrics final : public 
     return *reinterpret_cast<const SupplementalMetrics*>(
         &_SupplementalMetrics_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 170;
+  static constexpr int kIndexInFileMessages = 164;
   friend void swap(SupplementalMetrics& a, SupplementalMetrics& b) { a.Swap(&b); }
   inline void Swap(SupplementalMetrics* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -4792,7 +4511,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SupplementalEvent final : public ::
     return *reinterpret_cast<const SupplementalEvent*>(
         &_SupplementalEvent_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 172;
+  static constexpr int kIndexInFileMessages = 166;
   friend void swap(SupplementalEvent& a, SupplementalEvent& b) { a.Swap(&b); }
   inline void Swap(SupplementalEvent* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -5089,7 +4808,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SupplementalEmpty final : public ::
     return *reinterpret_cast<const SupplementalEmpty*>(
         &_SupplementalEmpty_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 177;
+  static constexpr int kIndexInFileMessages = 171;
   friend void swap(SupplementalEmpty& a, SupplementalEmpty& b) { a.Swap(&b); }
   inline void Swap(SupplementalEmpty* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -5265,7 +4984,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StreamStatsRequest final : public :
     return *reinterpret_cast<const StreamStatsRequest*>(
         &_StreamStatsRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 150;
+  static constexpr int kIndexInFileMessages = 144;
   friend void swap(StreamStatsRequest& a, StreamStatsRequest& b) { a.Swap(&b); }
   inline void Swap(StreamStatsRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -5403,7 +5122,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StreamStatInfo final : public ::goo
     return *reinterpret_cast<const StreamStatInfo*>(
         &_StreamStatInfo_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 149;
+  static constexpr int kIndexInFileMessages = 143;
   friend void swap(StreamStatInfo& a, StreamStatInfo& b) { a.Swap(&b); }
   inline void Swap(StreamStatInfo* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -5712,7 +5431,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StreamPingResponse final : public :
     return *reinterpret_cast<const StreamPingResponse*>(
         &_StreamPingResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 155;
+  static constexpr int kIndexInFileMessages = 149;
   friend void swap(StreamPingResponse& a, StreamPingResponse& b) { a.Swap(&b); }
   inline void Swap(StreamPingResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -5850,7 +5569,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StreamPingRequest final : public ::
     return *reinterpret_cast<const StreamPingRequest*>(
         &_StreamPingRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 154;
+  static constexpr int kIndexInFileMessages = 148;
   friend void swap(StreamPingRequest& a, StreamPingRequest& b) { a.Swap(&b); }
   inline void Swap(StreamPingRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -6074,7 +5793,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StreamDiagnosticsRequest final : pu
     return *reinterpret_cast<const StreamDiagnosticsRequest*>(
         &_StreamDiagnosticsRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 152;
+  static constexpr int kIndexInFileMessages = 146;
   friend void swap(StreamDiagnosticsRequest& a, StreamDiagnosticsRequest& b) { a.Swap(&b); }
   inline void Swap(StreamDiagnosticsRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -6251,7 +5970,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StreamControl final : public ::goog
     return *reinterpret_cast<const StreamControl*>(
         &_StreamControl_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 81;
+  static constexpr int kIndexInFileMessages = 75;
   friend void swap(StreamControl& a, StreamControl& b) { a.Swap(&b); }
   inline void Swap(StreamControl* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -6552,7 +6271,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StopForwardProxyResponse final : pu
     return *reinterpret_cast<const StopForwardProxyResponse*>(
         &_StopForwardProxyResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 123;
+  static constexpr int kIndexInFileMessages = 117;
   friend void swap(StopForwardProxyResponse& a, StopForwardProxyResponse& b) { a.Swap(&b); }
   inline void Swap(StopForwardProxyResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -6748,7 +6467,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StopForwardProxyRequest final : pub
     return *reinterpret_cast<const StopForwardProxyRequest*>(
         &_StopForwardProxyRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 122;
+  static constexpr int kIndexInFileMessages = 116;
   friend void swap(StopForwardProxyRequest& a, StopForwardProxyRequest& b) { a.Swap(&b); }
   inline void Swap(StopForwardProxyRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -6966,7 +6685,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StopBackwardProxyResponse final : p
     return *reinterpret_cast<const StopBackwardProxyResponse*>(
         &_StopBackwardProxyResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 127;
+  static constexpr int kIndexInFileMessages = 121;
   friend void swap(StopBackwardProxyResponse& a, StopBackwardProxyResponse& b) { a.Swap(&b); }
   inline void Swap(StopBackwardProxyResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -7162,7 +6881,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StopBackwardProxyRequest final : pu
     return *reinterpret_cast<const StopBackwardProxyRequest*>(
         &_StopBackwardProxyRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 126;
+  static constexpr int kIndexInFileMessages = 120;
   friend void swap(StopBackwardProxyRequest& a, StopBackwardProxyRequest& b) { a.Swap(&b); }
   inline void Swap(StopBackwardProxyRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -7379,7 +7098,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StartSshTunnelResponse final : publ
     return *reinterpret_cast<const StartSshTunnelResponse*>(
         &_StartSshTunnelResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 179;
+  static constexpr int kIndexInFileMessages = 173;
   friend void swap(StartSshTunnelResponse& a, StartSshTunnelResponse& b) { a.Swap(&b); }
   inline void Swap(StartSshTunnelResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -7517,7 +7236,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StartSshTunnelRequest final : publi
     return *reinterpret_cast<const StartSshTunnelRequest*>(
         &_StartSshTunnelRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 178;
+  static constexpr int kIndexInFileMessages = 172;
   friend void swap(StartSshTunnelRequest& a, StartSshTunnelRequest& b) { a.Swap(&b); }
   inline void Swap(StartSshTunnelRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -7815,7 +7534,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StartSshSessionRequest final : publ
     return *reinterpret_cast<const StartSshSessionRequest*>(
         &_StartSshSessionRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 88;
+  static constexpr int kIndexInFileMessages = 82;
   friend void swap(StartSshSessionRequest& a, StartSshSessionRequest& b) { a.Swap(&b); }
   inline void Swap(StartSshSessionRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -8079,7 +7798,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StartSocksProxyRequest final : publ
     return *reinterpret_cast<const StartSocksProxyRequest*>(
         &_StartSocksProxyRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 86;
+  static constexpr int kIndexInFileMessages = 80;
   friend void swap(StartSocksProxyRequest& a, StartSocksProxyRequest& b) { a.Swap(&b); }
   inline void Swap(StartSocksProxyRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -8326,7 +8045,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StartShellRequest final : public ::
     return *reinterpret_cast<const StartShellRequest*>(
         &_StartShellRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 84;
+  static constexpr int kIndexInFileMessages = 78;
   friend void swap(StartShellRequest& a, StartShellRequest& b) { a.Swap(&b); }
   inline void Swap(StartShellRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -8556,7 +8275,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StartForwardProxyRequest final : pu
     return *reinterpret_cast<const StartForwardProxyRequest*>(
         &_StartForwardProxyRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 120;
+  static constexpr int kIndexInFileMessages = 114;
   friend void swap(StartForwardProxyRequest& a, StartForwardProxyRequest& b) { a.Swap(&b); }
   inline void Swap(StartForwardProxyRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -8791,7 +8510,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StartDialResponse final : public ::
     return *reinterpret_cast<const StartDialResponse*>(
         &_StartDialResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 108;
+  static constexpr int kIndexInFileMessages = 102;
   friend void swap(StartDialResponse& a, StartDialResponse& b) { a.Swap(&b); }
   inline void Swap(StartDialResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -9038,7 +8757,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StartDialRequest final : public ::g
     return *reinterpret_cast<const StartDialRequest*>(
         &_StartDialRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 107;
+  static constexpr int kIndexInFileMessages = 101;
   friend void swap(StartDialRequest& a, StartDialRequest& b) { a.Swap(&b); }
   inline void Swap(StartDialRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -9273,7 +8992,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StartBackwardProxyRequest final : p
     return *reinterpret_cast<const StartBackwardProxyRequest*>(
         &_StartBackwardProxyRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 124;
+  static constexpr int kIndexInFileMessages = 118;
   friend void swap(StartBackwardProxyRequest& a, StartBackwardProxyRequest& b) { a.Swap(&b); }
   inline void Swap(StartBackwardProxyRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -9645,7 +9364,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SleepProfile final : public ::googl
     return *reinterpret_cast<const SleepProfile*>(
         &_SleepProfile_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 99;
+  static constexpr int kIndexInFileMessages = 93;
   friend void swap(SleepProfile& a, SleepProfile& b) { a.Swap(&b); }
   inline void Swap(SleepProfile* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -10007,7 +9726,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SleepEvent final : public ::google:
     return *reinterpret_cast<const SleepEvent*>(
         &_SleepEvent_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 98;
+  static constexpr int kIndexInFileMessages = 92;
   friend void swap(SleepEvent& a, SleepEvent& b) { a.Swap(&b); }
   inline void Swap(SleepEvent* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -10315,7 +10034,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ShutdownNodeResponse final : public
     return *reinterpret_cast<const ShutdownNodeResponse*>(
         &_ShutdownNodeResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 148;
+  static constexpr int kIndexInFileMessages = 142;
   friend void swap(ShutdownNodeResponse& a, ShutdownNodeResponse& b) { a.Swap(&b); }
   inline void Swap(ShutdownNodeResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -10453,7 +10172,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ShutdownNodeRequest final : public 
     return *reinterpret_cast<const ShutdownNodeRequest*>(
         &_ShutdownNodeRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 147;
+  static constexpr int kIndexInFileMessages = 141;
   friend void swap(ShutdownNodeRequest& a, ShutdownNodeRequest& b) { a.Swap(&b); }
   inline void Swap(ShutdownNodeRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -10654,7 +10373,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SetRoutingStrategyResponse final : 
     return *reinterpret_cast<const SetRoutingStrategyResponse*>(
         &_SetRoutingStrategyResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 25;
+  static constexpr int kIndexInFileMessages = 19;
   friend void swap(SetRoutingStrategyResponse& a, SetRoutingStrategyResponse& b) { a.Swap(&b); }
   inline void Swap(SetRoutingStrategyResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -10850,7 +10569,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SetRoutingStrategyRequest final : p
     return *reinterpret_cast<const SetRoutingStrategyRequest*>(
         &_SetRoutingStrategyRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 24;
+  static constexpr int kIndexInFileMessages = 18;
   friend void swap(SetRoutingStrategyRequest& a, SetRoutingStrategyRequest& b) { a.Swap(&b); }
   inline void Swap(SetRoutingStrategyRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -11045,7 +10764,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SetNodeNetworkResponse final : publ
     return *reinterpret_cast<const SetNodeNetworkResponse*>(
         &_SetNodeNetworkResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 166;
+  static constexpr int kIndexInFileMessages = 160;
   friend void swap(SetNodeNetworkResponse& a, SetNodeNetworkResponse& b) { a.Swap(&b); }
   inline void Swap(SetNodeNetworkResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -11183,7 +10902,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SetNodeNetworkRequest final : publi
     return *reinterpret_cast<const SetNodeNetworkRequest*>(
         &_SetNodeNetworkRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 165;
+  static constexpr int kIndexInFileMessages = 159;
   friend void swap(SetNodeNetworkRequest& a, SetNodeNetworkRequest& b) { a.Swap(&b); }
   inline void Swap(SetNodeNetworkRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -11401,7 +11120,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SessionProcess final : public ::goo
     return *reinterpret_cast<const SessionProcess*>(
         &_SessionProcess_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 142;
+  static constexpr int kIndexInFileMessages = 136;
   friend void swap(SessionProcess& a, SessionProcess& b) { a.Swap(&b); }
   inline void Swap(SessionProcess* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -11687,7 +11406,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SessionMetric final : public ::goog
     return *reinterpret_cast<const SessionMetric*>(
         &_SessionMetric_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 141;
+  static constexpr int kIndexInFileMessages = 135;
   friend void swap(SessionMetric& a, SessionMetric& b) { a.Swap(&b); }
   inline void Swap(SessionMetric* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -11905,7 +11624,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SessionIssue final : public ::googl
     return *reinterpret_cast<const SessionIssue*>(
         &_SessionIssue_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 143;
+  static constexpr int kIndexInFileMessages = 137;
   friend void swap(SessionIssue& a, SessionIssue& b) { a.Swap(&b); }
   inline void Swap(SessionIssue* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -12179,7 +11898,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SessionDiagnosticsRequest final : p
     return *reinterpret_cast<const SessionDiagnosticsRequest*>(
         &_SessionDiagnosticsRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 140;
+  static constexpr int kIndexInFileMessages = 134;
   friend void swap(SessionDiagnosticsRequest& a, SessionDiagnosticsRequest& b) { a.Swap(&b); }
   inline void Swap(SessionDiagnosticsRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -12404,7 +12123,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SendChatMessageRequest final : publ
     return *reinterpret_cast<const SendChatMessageRequest*>(
         &_SendChatMessageRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 72;
+  static constexpr int kIndexInFileMessages = 66;
   friend void swap(SendChatMessageRequest& a, SendChatMessageRequest& b) { a.Swap(&b); }
   inline void Swap(SendChatMessageRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -12605,7 +12324,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED RouterMetric final : public ::googl
     return *reinterpret_cast<const RouterMetric*>(
         &_RouterMetric_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 26;
+  static constexpr int kIndexInFileMessages = 20;
   friend void swap(RouterMetric& a, RouterMetric& b) { a.Swap(&b); }
   inline void Swap(RouterMetric* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -12837,7 +12556,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ResetNetworkResponse final : public
     return *reinterpret_cast<const ResetNetworkResponse*>(
         &_ResetNetworkResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 164;
+  static constexpr int kIndexInFileMessages = 158;
   friend void swap(ResetNetworkResponse& a, ResetNetworkResponse& b) { a.Swap(&b); }
   inline void Swap(ResetNetworkResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -13037,7 +12756,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ResetNetworkRequest final : public 
     return *reinterpret_cast<const ResetNetworkRequest*>(
         &_ResetNetworkRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 163;
+  static constexpr int kIndexInFileMessages = 157;
   friend void swap(ResetNetworkRequest& a, ResetNetworkRequest& b) { a.Swap(&b); }
   inline void Swap(ResetNetworkRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -13175,7 +12894,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED RepairStatus final : public ::googl
     return *reinterpret_cast<const RepairStatus*>(
         &_RepairStatus_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 102;
+  static constexpr int kIndexInFileMessages = 96;
   friend void swap(RepairStatus& a, RepairStatus& b) { a.Swap(&b); }
   inline void Swap(RepairStatus* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -13451,7 +13170,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED RepairSessionResponse final : publi
     return *reinterpret_cast<const RepairSessionResponse*>(
         &_RepairSessionResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 135;
+  static constexpr int kIndexInFileMessages = 129;
   friend void swap(RepairSessionResponse& a, RepairSessionResponse& b) { a.Swap(&b); }
   inline void Swap(RepairSessionResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -13664,7 +13383,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED RepairSessionRequest final : public
     return *reinterpret_cast<const RepairSessionRequest*>(
         &_RepairSessionRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 134;
+  static constexpr int kIndexInFileMessages = 128;
   friend void swap(RepairSessionRequest& a, RepairSessionRequest& b) { a.Swap(&b); }
   inline void Swap(RepairSessionRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -13894,7 +13613,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ReconnectSessionResponse final : pu
     return *reinterpret_cast<const ReconnectSessionResponse*>(
         &_ReconnectSessionResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 137;
+  static constexpr int kIndexInFileMessages = 131;
   friend void swap(ReconnectSessionResponse& a, ReconnectSessionResponse& b) { a.Swap(&b); }
   inline void Swap(ReconnectSessionResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -14107,7 +13826,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ReconnectSessionRequest final : pub
     return *reinterpret_cast<const ReconnectSessionRequest*>(
         &_ReconnectSessionRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 136;
+  static constexpr int kIndexInFileMessages = 130;
   friend void swap(ReconnectSessionRequest& a, ReconnectSessionRequest& b) { a.Swap(&b); }
   inline void Swap(ReconnectSessionRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -14325,7 +14044,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ReconnectMetrics final : public ::g
     return *reinterpret_cast<const ReconnectMetrics*>(
         &_ReconnectMetrics_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 27;
+  static constexpr int kIndexInFileMessages = 21;
   friend void swap(ReconnectMetrics& a, ReconnectMetrics& b) { a.Swap(&b); }
   inline void Swap(ReconnectMetrics* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -14562,7 +14281,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED PruneOfflineResponse final : public
     return *reinterpret_cast<const PruneOfflineResponse*>(
         &_PruneOfflineResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 168;
+  static constexpr int kIndexInFileMessages = 162;
   friend void swap(PruneOfflineResponse& a, PruneOfflineResponse& b) { a.Swap(&b); }
   inline void Swap(PruneOfflineResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -14757,7 +14476,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED PruneOfflineRequest final : public 
     return *reinterpret_cast<const PruneOfflineRequest*>(
         &_PruneOfflineRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 167;
+  static constexpr int kIndexInFileMessages = 161;
   friend void swap(PruneOfflineRequest& a, PruneOfflineRequest& b) { a.Swap(&b); }
   inline void Swap(PruneOfflineRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -15051,7 +14770,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED NodeStatusRequest final : public ::
     return *reinterpret_cast<const NodeStatusRequest*>(
         &_NodeStatusRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 156;
+  static constexpr int kIndexInFileMessages = 150;
   friend void swap(NodeStatusRequest& a, NodeStatusRequest& b) { a.Swap(&b); }
   inline void Swap(NodeStatusRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -15252,7 +14971,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED NodeInfo final : public ::google::p
     return *reinterpret_cast<const NodeInfo*>(
         &_NodeInfo_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 31;
+  static constexpr int kIndexInFileMessages = 25;
   friend void swap(NodeInfo& a, NodeInfo& b) { a.Swap(&b); }
   inline void Swap(NodeInfo* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -15623,7 +15342,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED NetworkInfo final : public ::google
     return *reinterpret_cast<const NetworkInfo*>(
         &_NetworkInfo_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 158;
+  static constexpr int kIndexInFileMessages = 152;
   friend void swap(NetworkInfo& a, NetworkInfo& b) { a.Swap(&b); }
   inline void Swap(NetworkInfo* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -15863,7 +15582,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED MarkSessionRequest final : public :
     return *reinterpret_cast<const MarkSessionRequest*>(
         &_MarkSessionRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 132;
+  static constexpr int kIndexInFileMessages = 126;
   friend void swap(MarkSessionRequest& a, MarkSessionRequest& b) { a.Swap(&b); }
   inline void Swap(MarkSessionRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -16132,7 +15851,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED LogEntry final : public ::google::p
     return *reinterpret_cast<const LogEntry*>(
         &_LogEntry_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 35;
+  static constexpr int kIndexInFileMessages = 29;
   friend void swap(LogEntry& a, LogEntry& b) { a.Swap(&b); }
   inline void Swap(LogEntry* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -16401,7 +16120,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListSupplementalQualityRequest fina
     return *reinterpret_cast<const ListSupplementalQualityRequest*>(
         &_ListSupplementalQualityRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 174;
+  static constexpr int kIndexInFileMessages = 168;
   friend void swap(ListSupplementalQualityRequest& a, ListSupplementalQualityRequest& b) { a.Swap(&b); }
   inline void Swap(ListSupplementalQualityRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -16624,7 +16343,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListSupplementalEventsRequest final
     return *reinterpret_cast<const ListSupplementalEventsRequest*>(
         &_ListSupplementalEventsRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 171;
+  static constexpr int kIndexInFileMessages = 165;
   friend void swap(ListSupplementalEventsRequest& a, ListSupplementalEventsRequest& b) { a.Swap(&b); }
   inline void Swap(ListSupplementalEventsRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -16819,7 +16538,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListSleepProfilesRequest final : pu
     return *reinterpret_cast<const ListSleepProfilesRequest*>(
         &_ListSleepProfilesRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 100;
+  static constexpr int kIndexInFileMessages = 94;
   friend void swap(ListSleepProfilesRequest& a, ListSleepProfilesRequest& b) { a.Swap(&b); }
   inline void Swap(ListSleepProfilesRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -16957,7 +16676,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListSessionsRequest final : public 
     return *reinterpret_cast<const ListSessionsRequest*>(
         &_ListSessionsRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 130;
+  static constexpr int kIndexInFileMessages = 124;
   friend void swap(ListSessionsRequest& a, ListSessionsRequest& b) { a.Swap(&b); }
   inline void Swap(ListSessionsRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -17202,7 +16921,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListRepairsRequest final : public :
     return *reinterpret_cast<const ListRepairsRequest*>(
         &_ListRepairsRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 103;
+  static constexpr int kIndexInFileMessages = 97;
   friend void swap(ListRepairsRequest& a, ListRepairsRequest& b) { a.Swap(&b); }
   inline void Swap(ListRepairsRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -17339,7 +17058,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListProxiesRequest final : public :
     return *reinterpret_cast<const ListProxiesRequest*>(
         &_ListProxiesRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 95;
+  static constexpr int kIndexInFileMessages = 89;
   friend void swap(ListProxiesRequest& a, ListProxiesRequest& b) { a.Swap(&b); }
   inline void Swap(ListProxiesRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -17477,7 +17196,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListPivotListenersRequest final : p
     return *reinterpret_cast<const ListPivotListenersRequest*>(
         &_ListPivotListenersRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 50;
+  static constexpr int kIndexInFileMessages = 44;
   friend void swap(ListPivotListenersRequest& a, ListPivotListenersRequest& b) { a.Swap(&b); }
   inline void Swap(ListPivotListenersRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -17959,7 +17678,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListNetworksRequest final : public 
     return *reinterpret_cast<const ListNetworksRequest*>(
         &_ListNetworksRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 159;
+  static constexpr int kIndexInFileMessages = 153;
   friend void swap(ListNetworksRequest& a, ListNetworksRequest& b) { a.Swap(&b); }
   inline void Swap(ListNetworksRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -18097,7 +17816,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListLootRequest final : public ::go
     return *reinterpret_cast<const ListLootRequest*>(
         &_ListLootRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 54;
+  static constexpr int kIndexInFileMessages = 48;
   friend void swap(ListLootRequest& a, ListLootRequest& b) { a.Swap(&b); }
   inline void Swap(ListLootRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -18578,7 +18297,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListDialRequest final : public ::go
     return *reinterpret_cast<const ListDialRequest*>(
         &_ListDialRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 111;
+  static constexpr int kIndexInFileMessages = 105;
   friend void swap(ListDialRequest& a, ListDialRequest& b) { a.Swap(&b); }
   inline void Swap(ListDialRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -18715,7 +18434,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListControllerListenersRequest fina
     return *reinterpret_cast<const ListControllerListenersRequest*>(
         &_ListControllerListenersRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 42;
+  static constexpr int kIndexInFileMessages = 36;
   friend void swap(ListControllerListenersRequest& a, ListControllerListenersRequest& b) { a.Swap(&b); }
   inline void Swap(ListControllerListenersRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -18853,7 +18572,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListChatMessagesRequest final : pub
     return *reinterpret_cast<const ListChatMessagesRequest*>(
         &_ListChatMessagesRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 74;
+  static constexpr int kIndexInFileMessages = 68;
   friend void swap(ListChatMessagesRequest& a, ListChatMessagesRequest& b) { a.Swap(&b); }
   inline void Swap(ListChatMessagesRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -19066,7 +18785,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListAuditLogsRequest final : public
     return *reinterpret_cast<const ListAuditLogsRequest*>(
         &_ListAuditLogsRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 116;
+  static constexpr int kIndexInFileMessages = 110;
   friend void swap(ListAuditLogsRequest& a, ListAuditLogsRequest& b) { a.Swap(&b); }
   inline void Swap(ListAuditLogsRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -19548,7 +19267,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED GetRoutingStrategyResponse final : 
     return *reinterpret_cast<const GetRoutingStrategyResponse*>(
         &_GetRoutingStrategyResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 23;
+  static constexpr int kIndexInFileMessages = 17;
   friend void swap(GetRoutingStrategyResponse& a, GetRoutingStrategyResponse& b) { a.Swap(&b); }
   inline void Swap(GetRoutingStrategyResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -19743,7 +19462,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED GetRoutingStrategyRequest final : p
     return *reinterpret_cast<const GetRoutingStrategyRequest*>(
         &_GetRoutingStrategyRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 22;
+  static constexpr int kIndexInFileMessages = 16;
   friend void swap(GetRoutingStrategyRequest& a, GetRoutingStrategyRequest& b) { a.Swap(&b); }
   inline void Swap(GetRoutingStrategyRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -19881,7 +19600,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED GetMetricsRequest final : public ::
     return *reinterpret_cast<const GetMetricsRequest*>(
         &_GetMetricsRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 28;
+  static constexpr int kIndexInFileMessages = 22;
   friend void swap(GetMetricsRequest& a, GetMetricsRequest& b) { a.Swap(&b); }
   inline void Swap(GetMetricsRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -20089,7 +19808,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED GetLootRequest final : public ::goo
     return *reinterpret_cast<const GetLootRequest*>(
         &_GetLootRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 59;
+  static constexpr int kIndexInFileMessages = 53;
   friend void swap(GetLootRequest& a, GetLootRequest& b) { a.Swap(&b); }
   inline void Swap(GetLootRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -20433,182 +20152,6 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED GetDtnQueueStatsRequest final : pub
 };
 
 extern const ::google::protobuf::internal::ClassDataFull GetDtnQueueStatsRequest_class_data_;
-// -------------------------------------------------------------------
-
-class PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED GetDtnPolicyResponse_EntriesEntry_DoNotUse final
-    : public ::google::protobuf::internal::MapEntry<::std::string, ::std::string,
-                             ::google::protobuf::internal::WireFormatLite::TYPE_STRING,
-                             ::google::protobuf::internal::WireFormatLite::TYPE_STRING> {
- public:
-  using SuperType =
-      ::google::protobuf::internal::MapEntry<::std::string, ::std::string,
-                      ::google::protobuf::internal::WireFormatLite::TYPE_STRING,
-                      ::google::protobuf::internal::WireFormatLite::TYPE_STRING>;
-  GetDtnPolicyResponse_EntriesEntry_DoNotUse();
-  template <typename = void>
-  explicit constexpr GetDtnPolicyResponse_EntriesEntry_DoNotUse(::google::protobuf::internal::ConstantInitialized);
-  explicit GetDtnPolicyResponse_EntriesEntry_DoNotUse(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-  static constexpr const void* PROTOBUF_NONNULL internal_default_instance() {
-    return &_GetDtnPolicyResponse_EntriesEntry_DoNotUse_default_instance_;
-  }
-
-
-  static constexpr auto InternalGenerateClassData_();
-
- private:
-  friend class ::google::protobuf::MessageLite;
-  friend struct ::TableStruct_kelpieui_2fv1_2fkelpieui_2eproto;
-
-  friend class ::google::protobuf::internal::TcParser;
-  static const ::google::protobuf::internal::TcParseTable<1, 2,
-                                   0, 62,
-                                   2>
-      _table_;
-
-  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
-  static void* PROTOBUF_NONNULL PlacementNew_(
-      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
-      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-  static constexpr auto InternalNewImpl_();
-};
-extern const ::google::protobuf::internal::ClassDataFull GetDtnPolicyResponse_EntriesEntry_DoNotUse_class_data_;
-// -------------------------------------------------------------------
-
-class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED GetDtnPolicyRequest final : public ::google::protobuf::internal::ZeroFieldsBase
-/* @@protoc_insertion_point(class_definition:kelpieui.v1.GetDtnPolicyRequest) */ {
- public:
-  inline GetDtnPolicyRequest() : GetDtnPolicyRequest(nullptr) {}
-
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-  void operator delete(GetDtnPolicyRequest* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
-    SharedDtor(*msg);
-    ::google::protobuf::internal::SizedDelete(msg, sizeof(GetDtnPolicyRequest));
-  }
-#endif
-
-  template <typename = void>
-  explicit constexpr GetDtnPolicyRequest(::google::protobuf::internal::ConstantInitialized);
-
-  inline GetDtnPolicyRequest(const GetDtnPolicyRequest& from) : GetDtnPolicyRequest(nullptr, from) {}
-  inline GetDtnPolicyRequest(GetDtnPolicyRequest&& from) noexcept
-      : GetDtnPolicyRequest(nullptr, ::std::move(from)) {}
-  inline GetDtnPolicyRequest& operator=(const GetDtnPolicyRequest& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline GetDtnPolicyRequest& operator=(GetDtnPolicyRequest&& from) noexcept {
-    if (this == &from) return *this;
-    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  [[nodiscard]] inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
-      ABSL_ATTRIBUTE_LIFETIME_BOUND {
-    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
-  }
-  [[nodiscard]] inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL
-  mutable_unknown_fields() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
-  }
-
-  [[nodiscard]] static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
-    return GetDescriptor();
-  }
-  [[nodiscard]] static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL
-  GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
-  }
-  [[nodiscard]] static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
-    return default_instance().GetMetadata().reflection;
-  }
-  [[nodiscard]] static const GetDtnPolicyRequest& default_instance() {
-    return *reinterpret_cast<const GetDtnPolicyRequest*>(
-        &_GetDtnPolicyRequest_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages = 16;
-  friend void swap(GetDtnPolicyRequest& a, GetDtnPolicyRequest& b) { a.Swap(&b); }
-  inline void Swap(GetDtnPolicyRequest* PROTOBUF_NONNULL other) {
-    if (other == this) return;
-    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
-      InternalSwap(other);
-    } else {
-      ::google::protobuf::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(GetDtnPolicyRequest* PROTOBUF_NONNULL other) {
-    if (other == this) return;
-    ABSL_DCHECK(GetArena() == other->GetArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  [[nodiscard]] GetDtnPolicyRequest* PROTOBUF_NONNULL
-  New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
-    return ::google::protobuf::internal::ZeroFieldsBase::DefaultConstruct<GetDtnPolicyRequest>(arena);
-  }
-  using ::google::protobuf::internal::ZeroFieldsBase::CopyFrom;
-  inline void CopyFrom(const GetDtnPolicyRequest& from) {
-    ::google::protobuf::internal::ZeroFieldsBase::CopyImpl(*this, from);
-  }
-  using ::google::protobuf::internal::ZeroFieldsBase::MergeFrom;
-  void MergeFrom(const GetDtnPolicyRequest& from) {
-    ::google::protobuf::internal::ZeroFieldsBase::MergeImpl(*this, from);
-  }
-
-  public:
-  [[nodiscard]] bool IsInitialized() const {
-    return true;
-  }
- private:
-  template <typename T>
-  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
-  static ::absl::string_view FullMessageName() { return "kelpieui.v1.GetDtnPolicyRequest"; }
-
-  explicit GetDtnPolicyRequest(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-  GetDtnPolicyRequest(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const GetDtnPolicyRequest& from);
-  GetDtnPolicyRequest(
-      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, GetDtnPolicyRequest&& from) noexcept
-      : GetDtnPolicyRequest(arena) {
-    *this = ::std::move(from);
-  }
-  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
-  static void* PROTOBUF_NONNULL PlacementNew_(
-      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
-      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-  static constexpr auto InternalNewImpl_();
-
- public:
-  static constexpr auto InternalGenerateClassData_();
-
-  [[nodiscard]] ::google::protobuf::Metadata GetMetadata() const;
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-  // @@protoc_insertion_point(class_scope:kelpieui.v1.GetDtnPolicyRequest)
- private:
-  class _Internal;
-  friend class ::google::protobuf::internal::TcParser;
-  static const ::google::protobuf::internal::TcParseTable<0, 0,
-                                   0, 0,
-                                   2>
-      _table_;
-
-  friend class ::google::protobuf::MessageLite;
-  friend class ::google::protobuf::Arena;
-  friend ::google::protobuf::internal::PrivateAccess;
-  template <typename T>
-  friend class ::google::protobuf::Arena::InternalHelper;
-  using InternalArenaConstructable_ = void;
-  using DestructorSkippable_ = void;
-  friend struct ::TableStruct_kelpieui_2fv1_2fkelpieui_2eproto;
-};
-
-extern const ::google::protobuf::internal::ClassDataFull GetDtnPolicyRequest_class_data_;
 // -------------------------------------------------------------------
 
 class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED EnqueueDtnPayloadResponse final : public ::google::protobuf::Message
@@ -21110,7 +20653,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED Edge final : public ::google::proto
     return *reinterpret_cast<const Edge*>(
         &_Edge_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 32;
+  static constexpr int kIndexInFileMessages = 26;
   friend void swap(Edge& a, Edge& b) { a.Swap(&b); }
   inline void Swap(Edge* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -21689,7 +21232,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED DialStatus final : public ::google:
     return *reinterpret_cast<const DialStatus*>(
         &_DialStatus_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 112;
+  static constexpr int kIndexInFileMessages = 106;
   friend void swap(DialStatus& a, DialStatus& b) { a.Swap(&b); }
   inline void Swap(DialStatus* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -22020,7 +21563,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED DeletePivotListenerResponse final :
     return *reinterpret_cast<const DeletePivotListenerResponse*>(
         &_DeletePivotListenerResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 66;
+  static constexpr int kIndexInFileMessages = 60;
   friend void swap(DeletePivotListenerResponse& a, DeletePivotListenerResponse& b) { a.Swap(&b); }
   inline void Swap(DeletePivotListenerResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -22158,7 +21701,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED DeletePivotListenerRequest final : 
     return *reinterpret_cast<const DeletePivotListenerRequest*>(
         &_DeletePivotListenerRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 65;
+  static constexpr int kIndexInFileMessages = 59;
   friend void swap(DeletePivotListenerRequest& a, DeletePivotListenerRequest& b) { a.Swap(&b); }
   inline void Swap(DeletePivotListenerRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -22359,7 +21902,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED DeleteControllerListenerRequest fin
     return *reinterpret_cast<const DeleteControllerListenerRequest*>(
         &_DeleteControllerListenerRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 48;
+  static constexpr int kIndexInFileMessages = 42;
   friend void swap(DeleteControllerListenerRequest& a, DeleteControllerListenerRequest& b) { a.Swap(&b); }
   inline void Swap(DeleteControllerListenerRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -22560,7 +22103,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ControllerListenerSpec final : publ
     return *reinterpret_cast<const ControllerListenerSpec*>(
         &_ControllerListenerSpec_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 40;
+  static constexpr int kIndexInFileMessages = 34;
   friend void swap(ControllerListenerSpec& a, ControllerListenerSpec& b) { a.Swap(&b); }
   inline void Swap(ControllerListenerSpec* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -22778,7 +22321,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ControllerListener final : public :
     return *reinterpret_cast<const ControllerListener*>(
         &_ControllerListener_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 41;
+  static constexpr int kIndexInFileMessages = 35;
   friend void swap(ControllerListener& a, ControllerListener& b) { a.Swap(&b); }
   inline void Swap(ControllerListener* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -23075,7 +22618,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED CloseStreamResponse final : public 
     return *reinterpret_cast<const CloseStreamResponse*>(
         &_CloseStreamResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 106;
+  static constexpr int kIndexInFileMessages = 100;
   friend void swap(CloseStreamResponse& a, CloseStreamResponse& b) { a.Swap(&b); }
   inline void Swap(CloseStreamResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -23213,7 +22756,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED CloseStreamRequest final : public :
     return *reinterpret_cast<const CloseStreamRequest*>(
         &_CloseStreamRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 105;
+  static constexpr int kIndexInFileMessages = 99;
   friend void swap(CloseStreamRequest& a, CloseStreamRequest& b) { a.Swap(&b); }
   inline void Swap(CloseStreamRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -23426,7 +22969,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ChatMessage final : public ::google
     return *reinterpret_cast<const ChatMessage*>(
         &_ChatMessage_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 70;
+  static constexpr int kIndexInFileMessages = 64;
   friend void swap(ChatMessage& a, ChatMessage& b) { a.Swap(&b); }
   inline void Swap(ChatMessage* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -23695,7 +23238,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED CancelDialResponse final : public :
     return *reinterpret_cast<const CancelDialResponse*>(
         &_CancelDialResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 110;
+  static constexpr int kIndexInFileMessages = 104;
   friend void swap(CancelDialResponse& a, CancelDialResponse& b) { a.Swap(&b); }
   inline void Swap(CancelDialResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -23908,7 +23451,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED CancelDialRequest final : public ::
     return *reinterpret_cast<const CancelDialRequest*>(
         &_CancelDialRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 109;
+  static constexpr int kIndexInFileMessages = 103;
   friend void swap(CancelDialRequest& a, CancelDialRequest& b) { a.Swap(&b); }
   inline void Swap(CancelDialRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -24109,7 +23652,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED AuditLogEntry final : public ::goog
     return *reinterpret_cast<const AuditLogEntry*>(
         &_AuditLogEntry_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 114;
+  static constexpr int kIndexInFileMessages = 108;
   friend void swap(AuditLogEntry& a, AuditLogEntry& b) { a.Swap(&b); }
   inline void Swap(AuditLogEntry* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -24407,208 +23950,6 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED AuditLogEntry final : public ::goog
 extern const ::google::protobuf::internal::ClassDataFull AuditLogEntry_class_data_;
 // -------------------------------------------------------------------
 
-class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED UpdateDtnPolicyResponse final : public ::google::protobuf::Message
-/* @@protoc_insertion_point(class_definition:kelpieui.v1.UpdateDtnPolicyResponse) */ {
- public:
-  inline UpdateDtnPolicyResponse() : UpdateDtnPolicyResponse(nullptr) {}
-  ~UpdateDtnPolicyResponse() PROTOBUF_FINAL;
-
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-  void operator delete(UpdateDtnPolicyResponse* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
-    SharedDtor(*msg);
-    ::google::protobuf::internal::SizedDelete(msg, sizeof(UpdateDtnPolicyResponse));
-  }
-#endif
-
-  template <typename = void>
-  explicit constexpr UpdateDtnPolicyResponse(::google::protobuf::internal::ConstantInitialized);
-
-  inline UpdateDtnPolicyResponse(const UpdateDtnPolicyResponse& from) : UpdateDtnPolicyResponse(nullptr, from) {}
-  inline UpdateDtnPolicyResponse(UpdateDtnPolicyResponse&& from) noexcept
-      : UpdateDtnPolicyResponse(nullptr, ::std::move(from)) {}
-  inline UpdateDtnPolicyResponse& operator=(const UpdateDtnPolicyResponse& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline UpdateDtnPolicyResponse& operator=(UpdateDtnPolicyResponse&& from) noexcept {
-    if (this == &from) return *this;
-    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  [[nodiscard]] inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
-      ABSL_ATTRIBUTE_LIFETIME_BOUND {
-    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
-  }
-  [[nodiscard]] inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL
-  mutable_unknown_fields() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
-  }
-
-  [[nodiscard]] static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
-    return GetDescriptor();
-  }
-  [[nodiscard]] static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL
-  GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
-  }
-  [[nodiscard]] static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
-    return default_instance().GetMetadata().reflection;
-  }
-  [[nodiscard]] static const UpdateDtnPolicyResponse& default_instance() {
-    return *reinterpret_cast<const UpdateDtnPolicyResponse*>(
-        &_UpdateDtnPolicyResponse_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages = 21;
-  friend void swap(UpdateDtnPolicyResponse& a, UpdateDtnPolicyResponse& b) { a.Swap(&b); }
-  inline void Swap(UpdateDtnPolicyResponse* PROTOBUF_NONNULL other) {
-    if (other == this) return;
-    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
-      InternalSwap(other);
-    } else {
-      ::google::protobuf::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(UpdateDtnPolicyResponse* PROTOBUF_NONNULL other) {
-    if (other == this) return;
-    ABSL_DCHECK(GetArena() == other->GetArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  [[nodiscard]] UpdateDtnPolicyResponse* PROTOBUF_NONNULL
-  New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
-    return ::google::protobuf::Message::DefaultConstruct<UpdateDtnPolicyResponse>(arena);
-  }
-  using ::google::protobuf::Message::CopyFrom;
-  void CopyFrom(const UpdateDtnPolicyResponse& from);
-  using ::google::protobuf::Message::MergeFrom;
-  void MergeFrom(const UpdateDtnPolicyResponse& from) { UpdateDtnPolicyResponse::MergeImpl(*this, from); }
-
-  private:
-  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
-                        const ::google::protobuf::MessageLite& from_msg);
-
-  public:
-  [[nodiscard]] bool IsInitialized() const {
-    return true;
-  }
-  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
-  #if defined(PROTOBUF_CUSTOM_VTABLE)
-  private:
-  [[nodiscard]] static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
-  [[nodiscard]] static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
-      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
-      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
-
-  public:
-  [[nodiscard]] ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
-  [[nodiscard]] ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
-      ::uint8_t* PROTOBUF_NONNULL target,
-      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
-    return _InternalSerialize(*this, target, stream);
-  }
-  #else   // PROTOBUF_CUSTOM_VTABLE
-  [[nodiscard]] ::size_t ByteSizeLong() const final;
-  [[nodiscard]] ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
-      ::uint8_t* PROTOBUF_NONNULL target,
-      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
-  #endif  // PROTOBUF_CUSTOM_VTABLE
-  [[nodiscard]] int GetCachedSize() const {
-    return _impl_._cached_size_.Get();
-  }
-
-  private:
-  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-  static void SharedDtor(MessageLite& self);
-  void InternalSwap(UpdateDtnPolicyResponse* PROTOBUF_NONNULL other);
- private:
-  template <typename T>
-  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
-  static ::absl::string_view FullMessageName() { return "kelpieui.v1.UpdateDtnPolicyResponse"; }
-
-  explicit UpdateDtnPolicyResponse(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-  UpdateDtnPolicyResponse(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const UpdateDtnPolicyResponse& from);
-  UpdateDtnPolicyResponse(
-      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, UpdateDtnPolicyResponse&& from) noexcept
-      : UpdateDtnPolicyResponse(arena) {
-    *this = ::std::move(from);
-  }
-  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
-  static void* PROTOBUF_NONNULL PlacementNew_(
-      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
-      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-  static constexpr auto InternalNewImpl_();
-
- public:
-  static constexpr auto InternalGenerateClassData_();
-
-  [[nodiscard]] ::google::protobuf::Metadata GetMetadata() const;
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-  enum : int {
-    kEntriesFieldNumber = 1,
-  };
-  // map<string, string> entries = 1;
-  [[nodiscard]] int entries_size()
-      const;
-  private:
-  int _internal_entries_size() const;
-
-  public:
-  void clear_entries() ;
-  [[nodiscard]] const ::google::protobuf::Map<::std::string, ::std::string>& entries() const;
-  [[nodiscard]] ::google::protobuf::Map<::std::string, ::std::string>* PROTOBUF_NONNULL mutable_entries();
-
-  private:
-  const ::google::protobuf::Map<::std::string, ::std::string>& _internal_entries() const;
-  ::google::protobuf::Map<::std::string, ::std::string>* PROTOBUF_NONNULL _internal_mutable_entries();
-
-  public:
-  // @@protoc_insertion_point(class_scope:kelpieui.v1.UpdateDtnPolicyResponse)
- private:
-  class _Internal;
-  friend class ::google::protobuf::internal::TcParser;
-  static const ::google::protobuf::internal::TcParseTable<0, 1,
-                                   1, 51,
-                                   2>
-      _table_;
-
-  friend class ::google::protobuf::MessageLite;
-  friend class ::google::protobuf::Arena;
-  friend ::google::protobuf::internal::PrivateAccess;
-  template <typename T>
-  friend class ::google::protobuf::Arena::InternalHelper;
-  using InternalArenaConstructable_ = void;
-  using DestructorSkippable_ = void;
-  struct Impl_ {
-    inline explicit constexpr Impl_(::google::protobuf::internal::InternalVisibility visibility,
-                                    ::google::protobuf::internal::ConstantInitialized) noexcept;
-    inline explicit Impl_(
-        ::google::protobuf::internal::InternalVisibility visibility,
-        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-    inline explicit Impl_(
-        ::google::protobuf::internal::InternalVisibility visibility,
-        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
-        const UpdateDtnPolicyResponse& from_msg);
-    ::google::protobuf::internal::HasBits<1> _has_bits_;
-    ::google::protobuf::internal::CachedSize _cached_size_;
-    ::google::protobuf::internal::MapField<UpdateDtnPolicyResponse_EntriesEntry_DoNotUse, ::std::string, ::std::string> entries_;
-    PROTOBUF_TSAN_DECLARE_MEMBER
-  };
-  union { Impl_ _impl_; };
-  friend struct ::TableStruct_kelpieui_2fv1_2fkelpieui_2eproto;
-};
-
-extern const ::google::protobuf::internal::ClassDataFull UpdateDtnPolicyResponse_class_data_;
-// -------------------------------------------------------------------
-
 class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED UpdateControllerListenerResponse final : public ::google::protobuf::Message
 /* @@protoc_insertion_point(class_definition:kelpieui.v1.UpdateControllerListenerResponse) */ {
  public:
@@ -24665,7 +24006,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED UpdateControllerListenerResponse fi
     return *reinterpret_cast<const UpdateControllerListenerResponse*>(
         &_UpdateControllerListenerResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 47;
+  static constexpr int kIndexInFileMessages = 41;
   friend void swap(UpdateControllerListenerResponse& a, UpdateControllerListenerResponse& b) { a.Swap(&b); }
   inline void Swap(UpdateControllerListenerResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -24867,7 +24208,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED UpdateControllerListenerRequest fin
     return *reinterpret_cast<const UpdateControllerListenerRequest*>(
         &_UpdateControllerListenerRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 46;
+  static constexpr int kIndexInFileMessages = 40;
   friend void swap(UpdateControllerListenerRequest& a, UpdateControllerListenerRequest& b) { a.Swap(&b); }
   inline void Swap(UpdateControllerListenerRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -25098,7 +24439,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SubmitLootRequest final : public ::
     return *reinterpret_cast<const SubmitLootRequest*>(
         &_SubmitLootRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 57;
+  static constexpr int kIndexInFileMessages = 51;
   friend void swap(SubmitLootRequest& a, SubmitLootRequest& b) { a.Swap(&b); }
   inline void Swap(SubmitLootRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -25470,7 +24811,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StreamStatsResponse final : public 
     return *reinterpret_cast<const StreamStatsResponse*>(
         &_StreamStatsResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 151;
+  static constexpr int kIndexInFileMessages = 145;
   friend void swap(StreamStatsResponse& a, StreamStatsResponse& b) { a.Swap(&b); }
   inline void Swap(StreamStatsResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -25676,7 +25017,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StreamResponse final : public ::goo
     return *reinterpret_cast<const StreamResponse*>(
         &_StreamResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 92;
+  static constexpr int kIndexInFileMessages = 86;
   friend void swap(StreamResponse& a, StreamResponse& b) { a.Swap(&b); }
   inline void Swap(StreamResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -25929,7 +25270,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StreamRequest final : public ::goog
     return *reinterpret_cast<const StreamRequest*>(
         &_StreamRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 91;
+  static constexpr int kIndexInFileMessages = 85;
   friend void swap(StreamRequest& a, StreamRequest& b) { a.Swap(&b); }
   inline void Swap(StreamRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -26200,7 +25541,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StreamDiag final : public ::google:
     return *reinterpret_cast<const StreamDiag*>(
         &_StreamDiag_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 34;
+  static constexpr int kIndexInFileMessages = 28;
   friend void swap(StreamDiag& a, StreamDiag& b) { a.Swap(&b); }
   inline void Swap(StreamDiag* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -26571,7 +25912,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SessionInfo final : public ::google
     return *reinterpret_cast<const SessionInfo*>(
         &_SessionInfo_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 129;
+  static constexpr int kIndexInFileMessages = 123;
   friend void swap(SessionInfo& a, SessionInfo& b) { a.Swap(&b); }
   inline void Swap(SessionInfo* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -27021,7 +26362,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SendChatMessageResponse final : pub
     return *reinterpret_cast<const SendChatMessageResponse*>(
         &_SendChatMessageResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 73;
+  static constexpr int kIndexInFileMessages = 67;
   friend void swap(SendChatMessageResponse& a, SendChatMessageResponse& b) { a.Swap(&b); }
   inline void Swap(SendChatMessageResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -27223,7 +26564,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ProxyStreamHandle final : public ::
     return *reinterpret_cast<const ProxyStreamHandle*>(
         &_ProxyStreamHandle_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 83;
+  static constexpr int kIndexInFileMessages = 77;
   friend void swap(ProxyStreamHandle& a, ProxyStreamHandle& b) { a.Swap(&b); }
   inline void Swap(ProxyStreamHandle* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -27476,7 +26817,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ProxyInfo final : public ::google::
     return *reinterpret_cast<const ProxyInfo*>(
         &_ProxyInfo_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 94;
+  static constexpr int kIndexInFileMessages = 88;
   friend void swap(ProxyInfo& a, ProxyInfo& b) { a.Swap(&b); }
   inline void Swap(ProxyInfo* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -27763,7 +27104,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED PivotListenerSpec final : public ::
     return *reinterpret_cast<const PivotListenerSpec*>(
         &_PivotListenerSpec_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 39;
+  static constexpr int kIndexInFileMessages = 33;
   friend void swap(PivotListenerSpec& a, PivotListenerSpec& b) { a.Swap(&b); }
   inline void Swap(PivotListenerSpec* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -28028,7 +27369,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED PivotListener final : public ::goog
     return *reinterpret_cast<const PivotListener*>(
         &_PivotListener_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 37;
+  static constexpr int kIndexInFileMessages = 31;
   friend void swap(PivotListener& a, PivotListener& b) { a.Swap(&b); }
   inline void Swap(PivotListener* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -28395,7 +27736,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED NodeEvent final : public ::google::
     return *reinterpret_cast<const NodeEvent*>(
         &_NodeEvent_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 77;
+  static constexpr int kIndexInFileMessages = 71;
   friend void swap(NodeEvent& a, NodeEvent& b) { a.Swap(&b); }
   inline void Swap(NodeEvent* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -28631,7 +27972,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED LootItem final : public ::google::p
     return *reinterpret_cast<const LootItem*>(
         &_LootItem_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 53;
+  static constexpr int kIndexInFileMessages = 47;
   friend void swap(LootItem& a, LootItem& b) { a.Swap(&b); }
   inline void Swap(LootItem* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -29037,7 +28378,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListSupplementalQualityResponse fin
     return *reinterpret_cast<const ListSupplementalQualityResponse*>(
         &_ListSupplementalQualityResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 176;
+  static constexpr int kIndexInFileMessages = 170;
   friend void swap(ListSupplementalQualityResponse& a, ListSupplementalQualityResponse& b) { a.Swap(&b); }
   inline void Swap(ListSupplementalQualityResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -29243,7 +28584,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListSupplementalEventsResponse fina
     return *reinterpret_cast<const ListSupplementalEventsResponse*>(
         &_ListSupplementalEventsResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 173;
+  static constexpr int kIndexInFileMessages = 167;
   friend void swap(ListSupplementalEventsResponse& a, ListSupplementalEventsResponse& b) { a.Swap(&b); }
   inline void Swap(ListSupplementalEventsResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -29449,7 +28790,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListSleepProfilesResponse final : p
     return *reinterpret_cast<const ListSleepProfilesResponse*>(
         &_ListSleepProfilesResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 101;
+  static constexpr int kIndexInFileMessages = 95;
   friend void swap(ListSleepProfilesResponse& a, ListSleepProfilesResponse& b) { a.Swap(&b); }
   inline void Swap(ListSleepProfilesResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -29655,7 +28996,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListRepairsResponse final : public 
     return *reinterpret_cast<const ListRepairsResponse*>(
         &_ListRepairsResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 104;
+  static constexpr int kIndexInFileMessages = 98;
   friend void swap(ListRepairsResponse& a, ListRepairsResponse& b) { a.Swap(&b); }
   inline void Swap(ListRepairsResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -30067,7 +29408,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListNetworksResponse final : public
     return *reinterpret_cast<const ListNetworksResponse*>(
         &_ListNetworksResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 160;
+  static constexpr int kIndexInFileMessages = 154;
   friend void swap(ListNetworksResponse& a, ListNetworksResponse& b) { a.Swap(&b); }
   inline void Swap(ListNetworksResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -30496,7 +29837,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListDialResponse final : public ::g
     return *reinterpret_cast<const ListDialResponse*>(
         &_ListDialResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 113;
+  static constexpr int kIndexInFileMessages = 107;
   friend void swap(ListDialResponse& a, ListDialResponse& b) { a.Swap(&b); }
   inline void Swap(ListDialResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -30702,7 +30043,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListControllerListenersResponse fin
     return *reinterpret_cast<const ListControllerListenersResponse*>(
         &_ListControllerListenersResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 43;
+  static constexpr int kIndexInFileMessages = 37;
   friend void swap(ListControllerListenersResponse& a, ListControllerListenersResponse& b) { a.Swap(&b); }
   inline void Swap(ListControllerListenersResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -30908,7 +30249,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListChatMessagesResponse final : pu
     return *reinterpret_cast<const ListChatMessagesResponse*>(
         &_ListChatMessagesResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 75;
+  static constexpr int kIndexInFileMessages = 69;
   friend void swap(ListChatMessagesResponse& a, ListChatMessagesResponse& b) { a.Swap(&b); }
   inline void Swap(ListChatMessagesResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -31114,7 +30455,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListAuditLogsResponse final : publi
     return *reinterpret_cast<const ListAuditLogsResponse*>(
         &_ListAuditLogsResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 117;
+  static constexpr int kIndexInFileMessages = 111;
   friend void swap(ListAuditLogsResponse& a, ListAuditLogsResponse& b) { a.Swap(&b); }
   inline void Swap(ListAuditLogsResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -31507,208 +30848,6 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED GetTopologyResponse final : public 
 };
 
 extern const ::google::protobuf::internal::ClassDataFull GetTopologyResponse_class_data_;
-// -------------------------------------------------------------------
-
-class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED GetDtnPolicyResponse final : public ::google::protobuf::Message
-/* @@protoc_insertion_point(class_definition:kelpieui.v1.GetDtnPolicyResponse) */ {
- public:
-  inline GetDtnPolicyResponse() : GetDtnPolicyResponse(nullptr) {}
-  ~GetDtnPolicyResponse() PROTOBUF_FINAL;
-
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-  void operator delete(GetDtnPolicyResponse* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
-    SharedDtor(*msg);
-    ::google::protobuf::internal::SizedDelete(msg, sizeof(GetDtnPolicyResponse));
-  }
-#endif
-
-  template <typename = void>
-  explicit constexpr GetDtnPolicyResponse(::google::protobuf::internal::ConstantInitialized);
-
-  inline GetDtnPolicyResponse(const GetDtnPolicyResponse& from) : GetDtnPolicyResponse(nullptr, from) {}
-  inline GetDtnPolicyResponse(GetDtnPolicyResponse&& from) noexcept
-      : GetDtnPolicyResponse(nullptr, ::std::move(from)) {}
-  inline GetDtnPolicyResponse& operator=(const GetDtnPolicyResponse& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline GetDtnPolicyResponse& operator=(GetDtnPolicyResponse&& from) noexcept {
-    if (this == &from) return *this;
-    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  [[nodiscard]] inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
-      ABSL_ATTRIBUTE_LIFETIME_BOUND {
-    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
-  }
-  [[nodiscard]] inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL
-  mutable_unknown_fields() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
-  }
-
-  [[nodiscard]] static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
-    return GetDescriptor();
-  }
-  [[nodiscard]] static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL
-  GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
-  }
-  [[nodiscard]] static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
-    return default_instance().GetMetadata().reflection;
-  }
-  [[nodiscard]] static const GetDtnPolicyResponse& default_instance() {
-    return *reinterpret_cast<const GetDtnPolicyResponse*>(
-        &_GetDtnPolicyResponse_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages = 18;
-  friend void swap(GetDtnPolicyResponse& a, GetDtnPolicyResponse& b) { a.Swap(&b); }
-  inline void Swap(GetDtnPolicyResponse* PROTOBUF_NONNULL other) {
-    if (other == this) return;
-    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
-      InternalSwap(other);
-    } else {
-      ::google::protobuf::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(GetDtnPolicyResponse* PROTOBUF_NONNULL other) {
-    if (other == this) return;
-    ABSL_DCHECK(GetArena() == other->GetArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  [[nodiscard]] GetDtnPolicyResponse* PROTOBUF_NONNULL
-  New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
-    return ::google::protobuf::Message::DefaultConstruct<GetDtnPolicyResponse>(arena);
-  }
-  using ::google::protobuf::Message::CopyFrom;
-  void CopyFrom(const GetDtnPolicyResponse& from);
-  using ::google::protobuf::Message::MergeFrom;
-  void MergeFrom(const GetDtnPolicyResponse& from) { GetDtnPolicyResponse::MergeImpl(*this, from); }
-
-  private:
-  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
-                        const ::google::protobuf::MessageLite& from_msg);
-
-  public:
-  [[nodiscard]] bool IsInitialized() const {
-    return true;
-  }
-  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
-  #if defined(PROTOBUF_CUSTOM_VTABLE)
-  private:
-  [[nodiscard]] static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
-  [[nodiscard]] static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
-      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
-      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
-
-  public:
-  [[nodiscard]] ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
-  [[nodiscard]] ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
-      ::uint8_t* PROTOBUF_NONNULL target,
-      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
-    return _InternalSerialize(*this, target, stream);
-  }
-  #else   // PROTOBUF_CUSTOM_VTABLE
-  [[nodiscard]] ::size_t ByteSizeLong() const final;
-  [[nodiscard]] ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
-      ::uint8_t* PROTOBUF_NONNULL target,
-      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
-  #endif  // PROTOBUF_CUSTOM_VTABLE
-  [[nodiscard]] int GetCachedSize() const {
-    return _impl_._cached_size_.Get();
-  }
-
-  private:
-  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-  static void SharedDtor(MessageLite& self);
-  void InternalSwap(GetDtnPolicyResponse* PROTOBUF_NONNULL other);
- private:
-  template <typename T>
-  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
-  static ::absl::string_view FullMessageName() { return "kelpieui.v1.GetDtnPolicyResponse"; }
-
-  explicit GetDtnPolicyResponse(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-  GetDtnPolicyResponse(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const GetDtnPolicyResponse& from);
-  GetDtnPolicyResponse(
-      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, GetDtnPolicyResponse&& from) noexcept
-      : GetDtnPolicyResponse(arena) {
-    *this = ::std::move(from);
-  }
-  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
-  static void* PROTOBUF_NONNULL PlacementNew_(
-      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
-      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-  static constexpr auto InternalNewImpl_();
-
- public:
-  static constexpr auto InternalGenerateClassData_();
-
-  [[nodiscard]] ::google::protobuf::Metadata GetMetadata() const;
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-  enum : int {
-    kEntriesFieldNumber = 1,
-  };
-  // map<string, string> entries = 1;
-  [[nodiscard]] int entries_size()
-      const;
-  private:
-  int _internal_entries_size() const;
-
-  public:
-  void clear_entries() ;
-  [[nodiscard]] const ::google::protobuf::Map<::std::string, ::std::string>& entries() const;
-  [[nodiscard]] ::google::protobuf::Map<::std::string, ::std::string>* PROTOBUF_NONNULL mutable_entries();
-
-  private:
-  const ::google::protobuf::Map<::std::string, ::std::string>& _internal_entries() const;
-  ::google::protobuf::Map<::std::string, ::std::string>* PROTOBUF_NONNULL _internal_mutable_entries();
-
-  public:
-  // @@protoc_insertion_point(class_scope:kelpieui.v1.GetDtnPolicyResponse)
- private:
-  class _Internal;
-  friend class ::google::protobuf::internal::TcParser;
-  static const ::google::protobuf::internal::TcParseTable<0, 1,
-                                   1, 48,
-                                   2>
-      _table_;
-
-  friend class ::google::protobuf::MessageLite;
-  friend class ::google::protobuf::Arena;
-  friend ::google::protobuf::internal::PrivateAccess;
-  template <typename T>
-  friend class ::google::protobuf::Arena::InternalHelper;
-  using InternalArenaConstructable_ = void;
-  using DestructorSkippable_ = void;
-  struct Impl_ {
-    inline explicit constexpr Impl_(::google::protobuf::internal::InternalVisibility visibility,
-                                    ::google::protobuf::internal::ConstantInitialized) noexcept;
-    inline explicit Impl_(
-        ::google::protobuf::internal::InternalVisibility visibility,
-        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-    inline explicit Impl_(
-        ::google::protobuf::internal::InternalVisibility visibility,
-        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
-        const GetDtnPolicyResponse& from_msg);
-    ::google::protobuf::internal::HasBits<1> _has_bits_;
-    ::google::protobuf::internal::CachedSize _cached_size_;
-    ::google::protobuf::internal::MapField<GetDtnPolicyResponse_EntriesEntry_DoNotUse, ::std::string, ::std::string> entries_;
-    PROTOBUF_TSAN_DECLARE_MEMBER
-  };
-  union { Impl_ _impl_; };
-  friend struct ::TableStruct_kelpieui_2fv1_2fkelpieui_2eproto;
-};
-
-extern const ::google::protobuf::internal::ClassDataFull GetDtnPolicyResponse_class_data_;
 // -------------------------------------------------------------------
 
 class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED DtnQueueStats final : public ::google::protobuf::Message
@@ -32121,7 +31260,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED DialEvent final : public ::google::
     return *reinterpret_cast<const DialEvent*>(
         &_DialEvent_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 76;
+  static constexpr int kIndexInFileMessages = 70;
   friend void swap(DialEvent& a, DialEvent& b) { a.Swap(&b); }
   inline void Swap(DialEvent* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -32359,7 +31498,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED DeleteControllerListenerResponse fi
     return *reinterpret_cast<const DeleteControllerListenerResponse*>(
         &_DeleteControllerListenerResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 49;
+  static constexpr int kIndexInFileMessages = 43;
   friend void swap(DeleteControllerListenerResponse& a, DeleteControllerListenerResponse& b) { a.Swap(&b); }
   inline void Swap(DeleteControllerListenerResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -32561,7 +31700,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED CreateControllerListenerResponse fi
     return *reinterpret_cast<const CreateControllerListenerResponse*>(
         &_CreateControllerListenerResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 45;
+  static constexpr int kIndexInFileMessages = 39;
   friend void swap(CreateControllerListenerResponse& a, CreateControllerListenerResponse& b) { a.Swap(&b); }
   inline void Swap(CreateControllerListenerResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -32763,7 +31902,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED CreateControllerListenerRequest fin
     return *reinterpret_cast<const CreateControllerListenerRequest*>(
         &_CreateControllerListenerRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 44;
+  static constexpr int kIndexInFileMessages = 38;
   friend void swap(CreateControllerListenerRequest& a, CreateControllerListenerRequest& b) { a.Swap(&b); }
   inline void Swap(CreateControllerListenerRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -32965,7 +32104,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ChatEvent final : public ::google::
     return *reinterpret_cast<const ChatEvent*>(
         &_ChatEvent_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 71;
+  static constexpr int kIndexInFileMessages = 65;
   friend void swap(ChatEvent& a, ChatEvent& b) { a.Swap(&b); }
   inline void Swap(ChatEvent* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -33167,7 +32306,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED AuditEvent final : public ::google:
     return *reinterpret_cast<const AuditEvent*>(
         &_AuditEvent_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 115;
+  static constexpr int kIndexInFileMessages = 109;
   friend void swap(AuditEvent& a, AuditEvent& b) { a.Swap(&b); }
   inline void Swap(AuditEvent* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -33369,7 +32508,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED UpdatePivotListenerResponse final :
     return *reinterpret_cast<const UpdatePivotListenerResponse*>(
         &_UpdatePivotListenerResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 64;
+  static constexpr int kIndexInFileMessages = 58;
   friend void swap(UpdatePivotListenerResponse& a, UpdatePivotListenerResponse& b) { a.Swap(&b); }
   inline void Swap(UpdatePivotListenerResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -33571,7 +32710,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED UpdatePivotListenerRequest final : 
     return *reinterpret_cast<const UpdatePivotListenerRequest*>(
         &_UpdatePivotListenerRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 63;
+  static constexpr int kIndexInFileMessages = 57;
   friend void swap(UpdatePivotListenerRequest& a, UpdatePivotListenerRequest& b) { a.Swap(&b); }
   inline void Swap(UpdatePivotListenerRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -33807,7 +32946,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SubmitLootResponse final : public :
     return *reinterpret_cast<const SubmitLootResponse*>(
         &_SubmitLootResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 58;
+  static constexpr int kIndexInFileMessages = 52;
   friend void swap(SubmitLootResponse& a, SubmitLootResponse& b) { a.Swap(&b); }
   inline void Swap(SubmitLootResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -34009,7 +33148,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StreamEvent final : public ::google
     return *reinterpret_cast<const StreamEvent*>(
         &_StreamEvent_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 78;
+  static constexpr int kIndexInFileMessages = 72;
   friend void swap(StreamEvent& a, StreamEvent& b) { a.Swap(&b); }
   inline void Swap(StreamEvent* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -34262,7 +33401,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StreamDiagnosticsResponse final : p
     return *reinterpret_cast<const StreamDiagnosticsResponse*>(
         &_StreamDiagnosticsResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 153;
+  static constexpr int kIndexInFileMessages = 147;
   friend void swap(StreamDiagnosticsResponse& a, StreamDiagnosticsResponse& b) { a.Swap(&b); }
   inline void Swap(StreamDiagnosticsResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -34468,7 +33607,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StartSshSessionResponse final : pub
     return *reinterpret_cast<const StartSshSessionResponse*>(
         &_StartSshSessionResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 89;
+  static constexpr int kIndexInFileMessages = 83;
   friend void swap(StartSshSessionResponse& a, StartSshSessionResponse& b) { a.Swap(&b); }
   inline void Swap(StartSshSessionResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -34670,7 +33809,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StartSocksProxyResponse final : pub
     return *reinterpret_cast<const StartSocksProxyResponse*>(
         &_StartSocksProxyResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 87;
+  static constexpr int kIndexInFileMessages = 81;
   friend void swap(StartSocksProxyResponse& a, StartSocksProxyResponse& b) { a.Swap(&b); }
   inline void Swap(StartSocksProxyResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -34872,7 +34011,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StartShellResponse final : public :
     return *reinterpret_cast<const StartShellResponse*>(
         &_StartShellResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 85;
+  static constexpr int kIndexInFileMessages = 79;
   friend void swap(StartShellResponse& a, StartShellResponse& b) { a.Swap(&b); }
   inline void Swap(StartShellResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -35074,7 +34213,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StartForwardProxyResponse final : p
     return *reinterpret_cast<const StartForwardProxyResponse*>(
         &_StartForwardProxyResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 121;
+  static constexpr int kIndexInFileMessages = 115;
   friend void swap(StartForwardProxyResponse& a, StartForwardProxyResponse& b) { a.Swap(&b); }
   inline void Swap(StartForwardProxyResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -35327,7 +34466,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StartBackwardProxyResponse final : 
     return *reinterpret_cast<const StartBackwardProxyResponse*>(
         &_StartBackwardProxyResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 125;
+  static constexpr int kIndexInFileMessages = 119;
   friend void swap(StartBackwardProxyResponse& a, StartBackwardProxyResponse& b) { a.Swap(&b); }
   inline void Swap(StartBackwardProxyResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -35918,7 +35057,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SessionEvent final : public ::googl
     return *reinterpret_cast<const SessionEvent*>(
         &_SessionEvent_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 80;
+  static constexpr int kIndexInFileMessages = 74;
   friend void swap(SessionEvent& a, SessionEvent& b) { a.Swap(&b); }
   inline void Swap(SessionEvent* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -36192,7 +35331,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SessionDiagnosticsResponse final : 
     return *reinterpret_cast<const SessionDiagnosticsResponse*>(
         &_SessionDiagnosticsResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 144;
+  static constexpr int kIndexInFileMessages = 138;
   friend void swap(SessionDiagnosticsResponse& a, SessionDiagnosticsResponse& b) { a.Swap(&b); }
   inline void Swap(SessionDiagnosticsResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -36460,7 +35599,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ProxyEvent final : public ::google:
     return *reinterpret_cast<const ProxyEvent*>(
         &_ProxyEvent_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 97;
+  static constexpr int kIndexInFileMessages = 91;
   friend void swap(ProxyEvent& a, ProxyEvent& b) { a.Swap(&b); }
   inline void Swap(ProxyEvent* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -36713,7 +35852,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED PivotListenerEvent final : public :
     return *reinterpret_cast<const PivotListenerEvent*>(
         &_PivotListenerEvent_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 79;
+  static constexpr int kIndexInFileMessages = 73;
   friend void swap(PivotListenerEvent& a, PivotListenerEvent& b) { a.Swap(&b); }
   inline void Swap(PivotListenerEvent* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -36949,7 +36088,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED NodeStatusResponse final : public :
     return *reinterpret_cast<const NodeStatusResponse*>(
         &_NodeStatusResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 157;
+  static constexpr int kIndexInFileMessages = 151;
   friend void swap(NodeStatusResponse& a, NodeStatusResponse& b) { a.Swap(&b); }
   inline void Swap(NodeStatusResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -37195,7 +36334,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED MarkSessionResponse final : public 
     return *reinterpret_cast<const MarkSessionResponse*>(
         &_MarkSessionResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 133;
+  static constexpr int kIndexInFileMessages = 127;
   friend void swap(MarkSessionResponse& a, MarkSessionResponse& b) { a.Swap(&b); }
   inline void Swap(MarkSessionResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -37397,7 +36536,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED LootEvent final : public ::google::
     return *reinterpret_cast<const LootEvent*>(
         &_LootEvent_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 69;
+  static constexpr int kIndexInFileMessages = 63;
   friend void swap(LootEvent& a, LootEvent& b) { a.Swap(&b); }
   inline void Swap(LootEvent* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -37631,7 +36770,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListSessionsResponse final : public
     return *reinterpret_cast<const ListSessionsResponse*>(
         &_ListSessionsResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 131;
+  static constexpr int kIndexInFileMessages = 125;
   friend void swap(ListSessionsResponse& a, ListSessionsResponse& b) { a.Swap(&b); }
   inline void Swap(ListSessionsResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -37837,7 +36976,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListProxiesResponse final : public 
     return *reinterpret_cast<const ListProxiesResponse*>(
         &_ListProxiesResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 96;
+  static constexpr int kIndexInFileMessages = 90;
   friend void swap(ListProxiesResponse& a, ListProxiesResponse& b) { a.Swap(&b); }
   inline void Swap(ListProxiesResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -38043,7 +37182,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListPivotListenersResponse final : 
     return *reinterpret_cast<const ListPivotListenersResponse*>(
         &_ListPivotListenersResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 51;
+  static constexpr int kIndexInFileMessages = 45;
   friend void swap(ListPivotListenersResponse& a, ListPivotListenersResponse& b) { a.Swap(&b); }
   inline void Swap(ListPivotListenersResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -38249,7 +37388,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListLootResponse final : public ::g
     return *reinterpret_cast<const ListLootResponse*>(
         &_ListLootResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 55;
+  static constexpr int kIndexInFileMessages = 49;
   friend void swap(ListLootResponse& a, ListLootResponse& b) { a.Swap(&b); }
   inline void Swap(ListLootResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -38455,7 +37594,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED GetLootResponse final : public ::go
     return *reinterpret_cast<const GetLootResponse*>(
         &_GetLootResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 60;
+  static constexpr int kIndexInFileMessages = 54;
   friend void swap(GetLootResponse& a, GetLootResponse& b) { a.Swap(&b); }
   inline void Swap(GetLootResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -38876,7 +38015,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED DtnMetrics final : public ::google:
     return *reinterpret_cast<const DtnMetrics*>(
         &_DtnMetrics_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 30;
+  static constexpr int kIndexInFileMessages = 24;
   friend void swap(DtnMetrics& a, DtnMetrics& b) { a.Swap(&b); }
   inline void Swap(DtnMetrics* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -39143,7 +38282,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED CreatePivotListenerResponse final :
     return *reinterpret_cast<const CreatePivotListenerResponse*>(
         &_CreatePivotListenerResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 62;
+  static constexpr int kIndexInFileMessages = 56;
   friend void swap(CreatePivotListenerResponse& a, CreatePivotListenerResponse& b) { a.Swap(&b); }
   inline void Swap(CreatePivotListenerResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -39345,7 +38484,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED CreatePivotListenerRequest final : 
     return *reinterpret_cast<const CreatePivotListenerRequest*>(
         &_CreatePivotListenerRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 61;
+  static constexpr int kIndexInFileMessages = 55;
   friend void swap(CreatePivotListenerRequest& a, CreatePivotListenerRequest& b) { a.Swap(&b); }
   inline void Swap(CreatePivotListenerRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -39579,7 +38718,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED UiEvent final : public ::google::pr
     kLootEvent = 13,
     PAYLOAD_NOT_SET = 0,
   };
-  static constexpr int kIndexInFileMessages = 68;
+  static constexpr int kIndexInFileMessages = 62;
   friend void swap(UiEvent& a, UiEvent& b) { a.Swap(&b); }
   inline void Swap(UiEvent* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -40249,7 +39388,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED GetMetricsResponse final : public :
     return *reinterpret_cast<const GetMetricsResponse*>(
         &_GetMetricsResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 29;
+  static constexpr int kIndexInFileMessages = 23;
   friend void swap(GetMetricsResponse& a, GetMetricsResponse& b) { a.Swap(&b); }
   inline void Swap(GetMetricsResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -42952,220 +42091,6 @@ inline void EnqueueDtnPayloadResponse::set_allocated_bundle_id(::std::string* PR
     _impl_.bundle_id_.Set("", GetArena());
   }
   // @@protoc_insertion_point(field_set_allocated:kelpieui.v1.EnqueueDtnPayloadResponse.bundle_id)
-}
-
-// -------------------------------------------------------------------
-
-// GetDtnPolicyRequest
-
-// -------------------------------------------------------------------
-
-// -------------------------------------------------------------------
-
-// GetDtnPolicyResponse
-
-// map<string, string> entries = 1;
-inline int GetDtnPolicyResponse::_internal_entries_size() const {
-  return _internal_entries().size();
-}
-inline int GetDtnPolicyResponse::entries_size() const {
-  return _internal_entries_size();
-}
-inline void GetDtnPolicyResponse::clear_entries() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.entries_.Clear();
-  ClearHasBitForRepeated(_impl_._has_bits_[0],
-                  0x00000001U);
-}
-inline const ::google::protobuf::Map<::std::string, ::std::string>& GetDtnPolicyResponse::_internal_entries() const {
-  ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.entries_.GetMap();
-}
-inline const ::google::protobuf::Map<::std::string, ::std::string>& GetDtnPolicyResponse::entries() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_map:kelpieui.v1.GetDtnPolicyResponse.entries)
-  return _internal_entries();
-}
-inline ::google::protobuf::Map<::std::string, ::std::string>* PROTOBUF_NONNULL GetDtnPolicyResponse::_internal_mutable_entries() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  return _impl_.entries_.MutableMap();
-}
-inline ::google::protobuf::Map<::std::string, ::std::string>* PROTOBUF_NONNULL GetDtnPolicyResponse::mutable_entries()
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  SetHasBitForRepeated(_impl_._has_bits_[0], 0x00000001U);
-  // @@protoc_insertion_point(field_mutable_map:kelpieui.v1.GetDtnPolicyResponse.entries)
-  return _internal_mutable_entries();
-}
-
-// -------------------------------------------------------------------
-
-// UpdateDtnPolicyRequest
-
-// string key = 1;
-inline void UpdateDtnPolicyRequest::clear_key() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.key_.ClearToEmpty();
-  ClearHasBit(_impl_._has_bits_[0],
-                  0x00000001U);
-}
-inline const ::std::string& UpdateDtnPolicyRequest::key() const
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_get:kelpieui.v1.UpdateDtnPolicyRequest.key)
-  return _internal_key();
-}
-template <typename Arg_, typename... Args_>
-PROTOBUF_ALWAYS_INLINE void UpdateDtnPolicyRequest::set_key(Arg_&& arg, Args_... args) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
-  _impl_.key_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
-  // @@protoc_insertion_point(field_set:kelpieui.v1.UpdateDtnPolicyRequest.key)
-}
-inline ::std::string* PROTOBUF_NONNULL UpdateDtnPolicyRequest::mutable_key()
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
-  ::std::string* _s = _internal_mutable_key();
-  // @@protoc_insertion_point(field_mutable:kelpieui.v1.UpdateDtnPolicyRequest.key)
-  return _s;
-}
-inline const ::std::string& UpdateDtnPolicyRequest::_internal_key() const {
-  ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.key_.Get();
-}
-inline void UpdateDtnPolicyRequest::_internal_set_key(const ::std::string& value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.key_.Set(value, GetArena());
-}
-inline ::std::string* PROTOBUF_NONNULL UpdateDtnPolicyRequest::_internal_mutable_key() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  return _impl_.key_.Mutable( GetArena());
-}
-inline ::std::string* PROTOBUF_NULLABLE UpdateDtnPolicyRequest::release_key() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  // @@protoc_insertion_point(field_release:kelpieui.v1.UpdateDtnPolicyRequest.key)
-  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000001U)) {
-    return nullptr;
-  }
-  ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
-  auto* released = _impl_.key_.Release();
-  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
-    _impl_.key_.Set("", GetArena());
-  }
-  return released;
-}
-inline void UpdateDtnPolicyRequest::set_allocated_key(::std::string* PROTOBUF_NULLABLE value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  if (value != nullptr) {
-    SetHasBit(_impl_._has_bits_[0], 0x00000001U);
-  } else {
-    ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
-  }
-  _impl_.key_.SetAllocated(value, GetArena());
-  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.key_.IsDefault()) {
-    _impl_.key_.Set("", GetArena());
-  }
-  // @@protoc_insertion_point(field_set_allocated:kelpieui.v1.UpdateDtnPolicyRequest.key)
-}
-
-// string value = 2;
-inline void UpdateDtnPolicyRequest::clear_value() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.value_.ClearToEmpty();
-  ClearHasBit(_impl_._has_bits_[0],
-                  0x00000002U);
-}
-inline const ::std::string& UpdateDtnPolicyRequest::value() const
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_get:kelpieui.v1.UpdateDtnPolicyRequest.value)
-  return _internal_value();
-}
-template <typename Arg_, typename... Args_>
-PROTOBUF_ALWAYS_INLINE void UpdateDtnPolicyRequest::set_value(Arg_&& arg, Args_... args) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  SetHasBit(_impl_._has_bits_[0], 0x00000002U);
-  _impl_.value_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
-  // @@protoc_insertion_point(field_set:kelpieui.v1.UpdateDtnPolicyRequest.value)
-}
-inline ::std::string* PROTOBUF_NONNULL UpdateDtnPolicyRequest::mutable_value()
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  SetHasBit(_impl_._has_bits_[0], 0x00000002U);
-  ::std::string* _s = _internal_mutable_value();
-  // @@protoc_insertion_point(field_mutable:kelpieui.v1.UpdateDtnPolicyRequest.value)
-  return _s;
-}
-inline const ::std::string& UpdateDtnPolicyRequest::_internal_value() const {
-  ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.value_.Get();
-}
-inline void UpdateDtnPolicyRequest::_internal_set_value(const ::std::string& value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.value_.Set(value, GetArena());
-}
-inline ::std::string* PROTOBUF_NONNULL UpdateDtnPolicyRequest::_internal_mutable_value() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  return _impl_.value_.Mutable( GetArena());
-}
-inline ::std::string* PROTOBUF_NULLABLE UpdateDtnPolicyRequest::release_value() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  // @@protoc_insertion_point(field_release:kelpieui.v1.UpdateDtnPolicyRequest.value)
-  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000002U)) {
-    return nullptr;
-  }
-  ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
-  auto* released = _impl_.value_.Release();
-  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
-    _impl_.value_.Set("", GetArena());
-  }
-  return released;
-}
-inline void UpdateDtnPolicyRequest::set_allocated_value(::std::string* PROTOBUF_NULLABLE value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  if (value != nullptr) {
-    SetHasBit(_impl_._has_bits_[0], 0x00000002U);
-  } else {
-    ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
-  }
-  _impl_.value_.SetAllocated(value, GetArena());
-  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.value_.IsDefault()) {
-    _impl_.value_.Set("", GetArena());
-  }
-  // @@protoc_insertion_point(field_set_allocated:kelpieui.v1.UpdateDtnPolicyRequest.value)
-}
-
-// -------------------------------------------------------------------
-
-// -------------------------------------------------------------------
-
-// UpdateDtnPolicyResponse
-
-// map<string, string> entries = 1;
-inline int UpdateDtnPolicyResponse::_internal_entries_size() const {
-  return _internal_entries().size();
-}
-inline int UpdateDtnPolicyResponse::entries_size() const {
-  return _internal_entries_size();
-}
-inline void UpdateDtnPolicyResponse::clear_entries() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.entries_.Clear();
-  ClearHasBitForRepeated(_impl_._has_bits_[0],
-                  0x00000001U);
-}
-inline const ::google::protobuf::Map<::std::string, ::std::string>& UpdateDtnPolicyResponse::_internal_entries() const {
-  ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.entries_.GetMap();
-}
-inline const ::google::protobuf::Map<::std::string, ::std::string>& UpdateDtnPolicyResponse::entries() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_map:kelpieui.v1.UpdateDtnPolicyResponse.entries)
-  return _internal_entries();
-}
-inline ::google::protobuf::Map<::std::string, ::std::string>* PROTOBUF_NONNULL UpdateDtnPolicyResponse::_internal_mutable_entries() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  return _impl_.entries_.MutableMap();
-}
-inline ::google::protobuf::Map<::std::string, ::std::string>* PROTOBUF_NONNULL UpdateDtnPolicyResponse::mutable_entries()
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  SetHasBitForRepeated(_impl_._has_bits_[0], 0x00000001U);
-  // @@protoc_insertion_point(field_mutable_map:kelpieui.v1.UpdateDtnPolicyResponse.entries)
-  return _internal_mutable_entries();
 }
 
 // -------------------------------------------------------------------

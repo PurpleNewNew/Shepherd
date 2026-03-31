@@ -215,55 +215,6 @@ struct UpdateNodeMemoRequestDefaultTypeInternal {
 
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 UpdateNodeMemoRequestDefaultTypeInternal _UpdateNodeMemoRequest_default_instance_;
-template <typename>
-constexpr UpdateDtnPolicyResponse_EntriesEntry_DoNotUse::UpdateDtnPolicyResponse_EntriesEntry_DoNotUse(::_pbi::ConstantInitialized)
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-    : UpdateDtnPolicyResponse_EntriesEntry_DoNotUse::MapEntry(UpdateDtnPolicyResponse_EntriesEntry_DoNotUse_class_data_.base()){}
-#else   // PROTOBUF_CUSTOM_VTABLE
-    : UpdateDtnPolicyResponse_EntriesEntry_DoNotUse::MapEntry() {
-}
-#endif  // PROTOBUF_CUSTOM_VTABLE
-struct UpdateDtnPolicyResponse_EntriesEntry_DoNotUseDefaultTypeInternal {
-  constexpr UpdateDtnPolicyResponse_EntriesEntry_DoNotUseDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
-  ~UpdateDtnPolicyResponse_EntriesEntry_DoNotUseDefaultTypeInternal() {}
-  union {
-    UpdateDtnPolicyResponse_EntriesEntry_DoNotUse _instance;
-  };
-};
-
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 UpdateDtnPolicyResponse_EntriesEntry_DoNotUseDefaultTypeInternal _UpdateDtnPolicyResponse_EntriesEntry_DoNotUse_default_instance_;
-
-inline constexpr UpdateDtnPolicyRequest::Impl_::Impl_(
-    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
-    ::_pbi::ConstantInitialized) noexcept
-      : _cached_size_{0},
-        key_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
-        value_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()) {}
-
-template <typename>
-constexpr UpdateDtnPolicyRequest::UpdateDtnPolicyRequest(::_pbi::ConstantInitialized)
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-    : ::google::protobuf::Message(UpdateDtnPolicyRequest_class_data_.base()),
-#else   // PROTOBUF_CUSTOM_VTABLE
-    : ::google::protobuf::Message(),
-#endif  // PROTOBUF_CUSTOM_VTABLE
-      _impl_(internal_visibility(), ::_pbi::ConstantInitialized()) {
-}
-struct UpdateDtnPolicyRequestDefaultTypeInternal {
-  constexpr UpdateDtnPolicyRequestDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
-  ~UpdateDtnPolicyRequestDefaultTypeInternal() {}
-  union {
-    UpdateDtnPolicyRequest _instance;
-  };
-};
-
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 UpdateDtnPolicyRequestDefaultTypeInternal _UpdateDtnPolicyRequest_default_instance_;
 
 inline constexpr TerminateSessionResponse::Impl_::Impl_(
     [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
@@ -2756,42 +2707,6 @@ struct GetDtnQueueStatsRequestDefaultTypeInternal {
 
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 GetDtnQueueStatsRequestDefaultTypeInternal _GetDtnQueueStatsRequest_default_instance_;
-template <typename>
-constexpr GetDtnPolicyResponse_EntriesEntry_DoNotUse::GetDtnPolicyResponse_EntriesEntry_DoNotUse(::_pbi::ConstantInitialized)
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-    : GetDtnPolicyResponse_EntriesEntry_DoNotUse::MapEntry(GetDtnPolicyResponse_EntriesEntry_DoNotUse_class_data_.base()){}
-#else   // PROTOBUF_CUSTOM_VTABLE
-    : GetDtnPolicyResponse_EntriesEntry_DoNotUse::MapEntry() {
-}
-#endif  // PROTOBUF_CUSTOM_VTABLE
-struct GetDtnPolicyResponse_EntriesEntry_DoNotUseDefaultTypeInternal {
-  constexpr GetDtnPolicyResponse_EntriesEntry_DoNotUseDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
-  ~GetDtnPolicyResponse_EntriesEntry_DoNotUseDefaultTypeInternal() {}
-  union {
-    GetDtnPolicyResponse_EntriesEntry_DoNotUse _instance;
-  };
-};
-
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 GetDtnPolicyResponse_EntriesEntry_DoNotUseDefaultTypeInternal _GetDtnPolicyResponse_EntriesEntry_DoNotUse_default_instance_;
-template <typename>
-constexpr GetDtnPolicyRequest::GetDtnPolicyRequest(::_pbi::ConstantInitialized)
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-    : ::google::protobuf::internal::ZeroFieldsBase(GetDtnPolicyRequest_class_data_.base()){}
-#else   // PROTOBUF_CUSTOM_VTABLE
-    : ::google::protobuf::internal::ZeroFieldsBase() {
-}
-#endif  // PROTOBUF_CUSTOM_VTABLE
-struct GetDtnPolicyRequestDefaultTypeInternal {
-  constexpr GetDtnPolicyRequestDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
-  ~GetDtnPolicyRequestDefaultTypeInternal() {}
-  union {
-    GetDtnPolicyRequest _instance;
-  };
-};
-
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 GetDtnPolicyRequestDefaultTypeInternal _GetDtnPolicyRequest_default_instance_;
 
 inline constexpr EnqueueDtnPayloadResponse::Impl_::Impl_(
     [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
@@ -3346,40 +3261,6 @@ struct AuditLogEntryDefaultTypeInternal {
 
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 AuditLogEntryDefaultTypeInternal _AuditLogEntry_default_instance_;
-
-inline constexpr UpdateDtnPolicyResponse::Impl_::Impl_(
-    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
-    ::_pbi::ConstantInitialized) noexcept
-      : _cached_size_{0},
-        #ifdef PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_MAP_FIELD
-        entries_{visibility, ::_pbi::InternalMetadataOffset::Build<
-            ::kelpieui::v1::UpdateDtnPolicyResponse,
-            PROTOBUF_FIELD_OFFSET(::kelpieui::v1::UpdateDtnPolicyResponse, _impl_.entries_)>()
-        }
-        #else
-        entries_ {}
-        #endif
-     {}
-
-template <typename>
-constexpr UpdateDtnPolicyResponse::UpdateDtnPolicyResponse(::_pbi::ConstantInitialized)
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-    : ::google::protobuf::Message(UpdateDtnPolicyResponse_class_data_.base()),
-#else   // PROTOBUF_CUSTOM_VTABLE
-    : ::google::protobuf::Message(),
-#endif  // PROTOBUF_CUSTOM_VTABLE
-      _impl_(internal_visibility(), ::_pbi::ConstantInitialized()) {
-}
-struct UpdateDtnPolicyResponseDefaultTypeInternal {
-  constexpr UpdateDtnPolicyResponseDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
-  ~UpdateDtnPolicyResponseDefaultTypeInternal() {}
-  union {
-    UpdateDtnPolicyResponse _instance;
-  };
-};
-
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 UpdateDtnPolicyResponseDefaultTypeInternal _UpdateDtnPolicyResponse_default_instance_;
 
 inline constexpr UpdateControllerListenerResponse::Impl_::Impl_(
     [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
@@ -4487,40 +4368,6 @@ struct GetTopologyResponseDefaultTypeInternal {
 
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 GetTopologyResponseDefaultTypeInternal _GetTopologyResponse_default_instance_;
-
-inline constexpr GetDtnPolicyResponse::Impl_::Impl_(
-    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
-    ::_pbi::ConstantInitialized) noexcept
-      : _cached_size_{0},
-        #ifdef PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_MAP_FIELD
-        entries_{visibility, ::_pbi::InternalMetadataOffset::Build<
-            ::kelpieui::v1::GetDtnPolicyResponse,
-            PROTOBUF_FIELD_OFFSET(::kelpieui::v1::GetDtnPolicyResponse, _impl_.entries_)>()
-        }
-        #else
-        entries_ {}
-        #endif
-     {}
-
-template <typename>
-constexpr GetDtnPolicyResponse::GetDtnPolicyResponse(::_pbi::ConstantInitialized)
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-    : ::google::protobuf::Message(GetDtnPolicyResponse_class_data_.base()),
-#else   // PROTOBUF_CUSTOM_VTABLE
-    : ::google::protobuf::Message(),
-#endif  // PROTOBUF_CUSTOM_VTABLE
-      _impl_(internal_visibility(), ::_pbi::ConstantInitialized()) {
-}
-struct GetDtnPolicyResponseDefaultTypeInternal {
-  constexpr GetDtnPolicyResponseDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
-  ~GetDtnPolicyResponseDefaultTypeInternal() {}
-  union {
-    GetDtnPolicyResponse _instance;
-  };
-};
-
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 GetDtnPolicyResponseDefaultTypeInternal _GetDtnPolicyResponse_default_instance_;
 
 inline constexpr DtnQueueStats::Impl_::Impl_(
     [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
@@ -5876,38 +5723,6 @@ const ::uint32_t
         0,
         0x000, // bitmap
         0x081, // bitmap
-        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::GetDtnPolicyResponse_EntriesEntry_DoNotUse, _impl_._has_bits_),
-        5, // hasbit index offset
-        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::GetDtnPolicyResponse_EntriesEntry_DoNotUse, _impl_.key_),
-        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::GetDtnPolicyResponse_EntriesEntry_DoNotUse, _impl_.value_),
-        0,
-        1,
-        0x081, // bitmap
-        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::GetDtnPolicyResponse, _impl_._has_bits_),
-        4, // hasbit index offset
-        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::GetDtnPolicyResponse, _impl_.entries_),
-        0,
-        0x081, // bitmap
-        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::UpdateDtnPolicyRequest, _impl_._has_bits_),
-        5, // hasbit index offset
-        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::UpdateDtnPolicyRequest, _impl_.key_),
-        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::UpdateDtnPolicyRequest, _impl_.value_),
-        0,
-        1,
-        0x081, // bitmap
-        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::UpdateDtnPolicyResponse_EntriesEntry_DoNotUse, _impl_._has_bits_),
-        5, // hasbit index offset
-        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::UpdateDtnPolicyResponse_EntriesEntry_DoNotUse, _impl_.key_),
-        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::UpdateDtnPolicyResponse_EntriesEntry_DoNotUse, _impl_.value_),
-        0,
-        1,
-        0x081, // bitmap
-        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::UpdateDtnPolicyResponse, _impl_._has_bits_),
-        4, // hasbit index offset
-        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::UpdateDtnPolicyResponse, _impl_.entries_),
-        0,
-        0x000, // bitmap
-        0x081, // bitmap
         PROTOBUF_FIELD_OFFSET(::kelpieui::v1::GetRoutingStrategyResponse, _impl_._has_bits_),
         4, // hasbit index offset
         PROTOBUF_FIELD_OFFSET(::kelpieui::v1::GetRoutingStrategyResponse, _impl_.strategy_),
@@ -7254,170 +7069,164 @@ static const ::_pbi::MigrationSchema
         {121, sizeof(::kelpieui::v1::ListDtnBundlesResponse)},
         {126, sizeof(::kelpieui::v1::EnqueueDtnPayloadRequest)},
         {137, sizeof(::kelpieui::v1::EnqueueDtnPayloadResponse)},
-        {142, sizeof(::kelpieui::v1::GetDtnPolicyRequest)},
-        {143, sizeof(::kelpieui::v1::GetDtnPolicyResponse_EntriesEntry_DoNotUse)},
-        {150, sizeof(::kelpieui::v1::GetDtnPolicyResponse)},
-        {155, sizeof(::kelpieui::v1::UpdateDtnPolicyRequest)},
-        {162, sizeof(::kelpieui::v1::UpdateDtnPolicyResponse_EntriesEntry_DoNotUse)},
-        {169, sizeof(::kelpieui::v1::UpdateDtnPolicyResponse)},
-        {174, sizeof(::kelpieui::v1::GetRoutingStrategyRequest)},
-        {175, sizeof(::kelpieui::v1::GetRoutingStrategyResponse)},
-        {180, sizeof(::kelpieui::v1::SetRoutingStrategyRequest)},
-        {185, sizeof(::kelpieui::v1::SetRoutingStrategyResponse)},
-        {190, sizeof(::kelpieui::v1::RouterMetric)},
-        {201, sizeof(::kelpieui::v1::ReconnectMetrics)},
-        {212, sizeof(::kelpieui::v1::GetMetricsRequest)},
-        {219, sizeof(::kelpieui::v1::GetMetricsResponse)},
-        {228, sizeof(::kelpieui::v1::DtnMetrics)},
-        {243, sizeof(::kelpieui::v1::NodeInfo)},
-        {268, sizeof(::kelpieui::v1::Edge)},
-        {277, sizeof(::kelpieui::v1::StreamDiag_MetadataEntry_DoNotUse)},
-        {284, sizeof(::kelpieui::v1::StreamDiag)},
-        {313, sizeof(::kelpieui::v1::LogEntry)},
-        {326, sizeof(::kelpieui::v1::PivotListener_MetadataEntry_DoNotUse)},
-        {333, sizeof(::kelpieui::v1::PivotListener)},
-        {358, sizeof(::kelpieui::v1::PivotListenerSpec_MetadataEntry_DoNotUse)},
-        {365, sizeof(::kelpieui::v1::PivotListenerSpec)},
-        {378, sizeof(::kelpieui::v1::ControllerListenerSpec)},
-        {385, sizeof(::kelpieui::v1::ControllerListener)},
-        {402, sizeof(::kelpieui::v1::ListControllerListenersRequest)},
-        {403, sizeof(::kelpieui::v1::ListControllerListenersResponse)},
-        {408, sizeof(::kelpieui::v1::CreateControllerListenerRequest)},
-        {413, sizeof(::kelpieui::v1::CreateControllerListenerResponse)},
-        {418, sizeof(::kelpieui::v1::UpdateControllerListenerRequest)},
-        {427, sizeof(::kelpieui::v1::UpdateControllerListenerResponse)},
-        {432, sizeof(::kelpieui::v1::DeleteControllerListenerRequest)},
-        {437, sizeof(::kelpieui::v1::DeleteControllerListenerResponse)},
-        {442, sizeof(::kelpieui::v1::ListPivotListenersRequest)},
-        {451, sizeof(::kelpieui::v1::ListPivotListenersResponse)},
-        {456, sizeof(::kelpieui::v1::LootItem_MetadataEntry_DoNotUse)},
-        {463, sizeof(::kelpieui::v1::LootItem)},
-        {492, sizeof(::kelpieui::v1::ListLootRequest)},
-        {505, sizeof(::kelpieui::v1::ListLootResponse)},
-        {510, sizeof(::kelpieui::v1::SubmitLootRequest_MetadataEntry_DoNotUse)},
-        {517, sizeof(::kelpieui::v1::SubmitLootRequest)},
-        {542, sizeof(::kelpieui::v1::SubmitLootResponse)},
-        {547, sizeof(::kelpieui::v1::GetLootRequest)},
-        {552, sizeof(::kelpieui::v1::GetLootResponse)},
-        {559, sizeof(::kelpieui::v1::CreatePivotListenerRequest)},
-        {566, sizeof(::kelpieui::v1::CreatePivotListenerResponse)},
-        {571, sizeof(::kelpieui::v1::UpdatePivotListenerRequest)},
-        {580, sizeof(::kelpieui::v1::UpdatePivotListenerResponse)},
-        {585, sizeof(::kelpieui::v1::DeletePivotListenerRequest)},
-        {590, sizeof(::kelpieui::v1::DeletePivotListenerResponse)},
-        {591, sizeof(::kelpieui::v1::WatchEventsRequest)},
-        {596, sizeof(::kelpieui::v1::UiEvent)},
-        {611, sizeof(::kelpieui::v1::LootEvent)},
-        {618, sizeof(::kelpieui::v1::ChatMessage)},
-        {631, sizeof(::kelpieui::v1::ChatEvent)},
-        {636, sizeof(::kelpieui::v1::SendChatMessageRequest)},
-        {641, sizeof(::kelpieui::v1::SendChatMessageResponse)},
-        {646, sizeof(::kelpieui::v1::ListChatMessagesRequest)},
-        {653, sizeof(::kelpieui::v1::ListChatMessagesResponse)},
-        {658, sizeof(::kelpieui::v1::DialEvent)},
-        {665, sizeof(::kelpieui::v1::NodeEvent)},
-        {672, sizeof(::kelpieui::v1::StreamEvent)},
-        {681, sizeof(::kelpieui::v1::PivotListenerEvent)},
-        {688, sizeof(::kelpieui::v1::SessionEvent)},
-        {699, sizeof(::kelpieui::v1::StreamControl)},
-        {716, sizeof(::kelpieui::v1::ProxyStreamHandle_OptionsEntry_DoNotUse)},
-        {723, sizeof(::kelpieui::v1::ProxyStreamHandle)},
-        {734, sizeof(::kelpieui::v1::StartShellRequest)},
-        {743, sizeof(::kelpieui::v1::StartShellResponse)},
-        {748, sizeof(::kelpieui::v1::StartSocksProxyRequest)},
-        {759, sizeof(::kelpieui::v1::StartSocksProxyResponse)},
-        {764, sizeof(::kelpieui::v1::StartSshSessionRequest)},
-        {777, sizeof(::kelpieui::v1::StartSshSessionResponse)},
-        {782, sizeof(::kelpieui::v1::StreamRequest_OptionsEntry_DoNotUse)},
-        {789, sizeof(::kelpieui::v1::StreamRequest)},
-        {802, sizeof(::kelpieui::v1::StreamResponse)},
-        {813, sizeof(::kelpieui::v1::ProxyInfo_MetadataEntry_DoNotUse)},
-        {820, sizeof(::kelpieui::v1::ProxyInfo)},
-        {835, sizeof(::kelpieui::v1::ListProxiesRequest)},
-        {836, sizeof(::kelpieui::v1::ListProxiesResponse)},
-        {841, sizeof(::kelpieui::v1::ProxyEvent)},
-        {850, sizeof(::kelpieui::v1::SleepEvent)},
-        {867, sizeof(::kelpieui::v1::SleepProfile)},
-        {892, sizeof(::kelpieui::v1::ListSleepProfilesRequest)},
-        {893, sizeof(::kelpieui::v1::ListSleepProfilesResponse)},
-        {898, sizeof(::kelpieui::v1::RepairStatus)},
-        {913, sizeof(::kelpieui::v1::ListRepairsRequest)},
-        {914, sizeof(::kelpieui::v1::ListRepairsResponse)},
-        {919, sizeof(::kelpieui::v1::CloseStreamRequest)},
-        {926, sizeof(::kelpieui::v1::CloseStreamResponse)},
-        {927, sizeof(::kelpieui::v1::StartDialRequest)},
-        {936, sizeof(::kelpieui::v1::StartDialResponse)},
-        {947, sizeof(::kelpieui::v1::CancelDialRequest)},
-        {952, sizeof(::kelpieui::v1::CancelDialResponse)},
-        {959, sizeof(::kelpieui::v1::ListDialRequest)},
-        {960, sizeof(::kelpieui::v1::DialStatus)},
-        {981, sizeof(::kelpieui::v1::ListDialResponse)},
-        {986, sizeof(::kelpieui::v1::AuditLogEntry)},
-        {1009, sizeof(::kelpieui::v1::AuditEvent)},
-        {1014, sizeof(::kelpieui::v1::ListAuditLogsRequest)},
-        {1027, sizeof(::kelpieui::v1::ListAuditLogsResponse)},
-        {1032, sizeof(::kelpieui::v1::UpdateNodeMemoRequest)},
-        {1039, sizeof(::kelpieui::v1::UpdateNodeMemoResponse)},
-        {1040, sizeof(::kelpieui::v1::StartForwardProxyRequest)},
-        {1049, sizeof(::kelpieui::v1::StartForwardProxyResponse)},
-        {1060, sizeof(::kelpieui::v1::StopForwardProxyRequest)},
-        {1067, sizeof(::kelpieui::v1::StopForwardProxyResponse)},
-        {1072, sizeof(::kelpieui::v1::StartBackwardProxyRequest)},
-        {1081, sizeof(::kelpieui::v1::StartBackwardProxyResponse)},
-        {1092, sizeof(::kelpieui::v1::StopBackwardProxyRequest)},
-        {1099, sizeof(::kelpieui::v1::StopBackwardProxyResponse)},
-        {1104, sizeof(::kelpieui::v1::SessionInfo_MetadataEntry_DoNotUse)},
-        {1111, sizeof(::kelpieui::v1::SessionInfo)},
-        {1148, sizeof(::kelpieui::v1::ListSessionsRequest)},
-        {1157, sizeof(::kelpieui::v1::ListSessionsResponse)},
-        {1162, sizeof(::kelpieui::v1::MarkSessionRequest)},
-        {1171, sizeof(::kelpieui::v1::MarkSessionResponse)},
-        {1176, sizeof(::kelpieui::v1::RepairSessionRequest)},
-        {1185, sizeof(::kelpieui::v1::RepairSessionResponse)},
-        {1192, sizeof(::kelpieui::v1::ReconnectSessionRequest)},
-        {1199, sizeof(::kelpieui::v1::ReconnectSessionResponse)},
-        {1206, sizeof(::kelpieui::v1::TerminateSessionRequest)},
-        {1213, sizeof(::kelpieui::v1::TerminateSessionResponse)},
-        {1218, sizeof(::kelpieui::v1::SessionDiagnosticsRequest)},
-        {1227, sizeof(::kelpieui::v1::SessionMetric)},
-        {1234, sizeof(::kelpieui::v1::SessionProcess)},
-        {1249, sizeof(::kelpieui::v1::SessionIssue)},
-        {1258, sizeof(::kelpieui::v1::SessionDiagnosticsResponse)},
-        {1269, sizeof(::kelpieui::v1::UpdateSleepRequest)},
-        {1280, sizeof(::kelpieui::v1::UpdateSleepResponse)},
-        {1281, sizeof(::kelpieui::v1::ShutdownNodeRequest)},
-        {1286, sizeof(::kelpieui::v1::ShutdownNodeResponse)},
-        {1287, sizeof(::kelpieui::v1::StreamStatInfo)},
-        {1302, sizeof(::kelpieui::v1::StreamStatsRequest)},
-        {1303, sizeof(::kelpieui::v1::StreamStatsResponse)},
-        {1308, sizeof(::kelpieui::v1::StreamDiagnosticsRequest)},
-        {1309, sizeof(::kelpieui::v1::StreamDiagnosticsResponse)},
-        {1314, sizeof(::kelpieui::v1::StreamPingRequest)},
-        {1323, sizeof(::kelpieui::v1::StreamPingResponse)},
-        {1324, sizeof(::kelpieui::v1::NodeStatusRequest)},
-        {1329, sizeof(::kelpieui::v1::NodeStatusResponse)},
-        {1338, sizeof(::kelpieui::v1::NetworkInfo)},
-        {1347, sizeof(::kelpieui::v1::ListNetworksRequest)},
-        {1348, sizeof(::kelpieui::v1::ListNetworksResponse)},
-        {1355, sizeof(::kelpieui::v1::UseNetworkRequest)},
-        {1360, sizeof(::kelpieui::v1::UseNetworkResponse)},
-        {1365, sizeof(::kelpieui::v1::ResetNetworkRequest)},
-        {1366, sizeof(::kelpieui::v1::ResetNetworkResponse)},
-        {1371, sizeof(::kelpieui::v1::SetNodeNetworkRequest)},
-        {1378, sizeof(::kelpieui::v1::SetNodeNetworkResponse)},
-        {1379, sizeof(::kelpieui::v1::PruneOfflineRequest)},
-        {1380, sizeof(::kelpieui::v1::PruneOfflineResponse)},
-        {1385, sizeof(::kelpieui::v1::SupplementalStatus)},
-        {1396, sizeof(::kelpieui::v1::SupplementalMetrics)},
-        {1423, sizeof(::kelpieui::v1::ListSupplementalEventsRequest)},
-        {1428, sizeof(::kelpieui::v1::SupplementalEvent)},
-        {1445, sizeof(::kelpieui::v1::ListSupplementalEventsResponse)},
-        {1450, sizeof(::kelpieui::v1::ListSupplementalQualityRequest)},
-        {1457, sizeof(::kelpieui::v1::SupplementalQuality)},
-        {1478, sizeof(::kelpieui::v1::ListSupplementalQualityResponse)},
-        {1483, sizeof(::kelpieui::v1::SupplementalEmpty)},
-        {1484, sizeof(::kelpieui::v1::StartSshTunnelRequest)},
-        {1501, sizeof(::kelpieui::v1::StartSshTunnelResponse)},
+        {142, sizeof(::kelpieui::v1::GetRoutingStrategyRequest)},
+        {143, sizeof(::kelpieui::v1::GetRoutingStrategyResponse)},
+        {148, sizeof(::kelpieui::v1::SetRoutingStrategyRequest)},
+        {153, sizeof(::kelpieui::v1::SetRoutingStrategyResponse)},
+        {158, sizeof(::kelpieui::v1::RouterMetric)},
+        {169, sizeof(::kelpieui::v1::ReconnectMetrics)},
+        {180, sizeof(::kelpieui::v1::GetMetricsRequest)},
+        {187, sizeof(::kelpieui::v1::GetMetricsResponse)},
+        {196, sizeof(::kelpieui::v1::DtnMetrics)},
+        {211, sizeof(::kelpieui::v1::NodeInfo)},
+        {236, sizeof(::kelpieui::v1::Edge)},
+        {245, sizeof(::kelpieui::v1::StreamDiag_MetadataEntry_DoNotUse)},
+        {252, sizeof(::kelpieui::v1::StreamDiag)},
+        {281, sizeof(::kelpieui::v1::LogEntry)},
+        {294, sizeof(::kelpieui::v1::PivotListener_MetadataEntry_DoNotUse)},
+        {301, sizeof(::kelpieui::v1::PivotListener)},
+        {326, sizeof(::kelpieui::v1::PivotListenerSpec_MetadataEntry_DoNotUse)},
+        {333, sizeof(::kelpieui::v1::PivotListenerSpec)},
+        {346, sizeof(::kelpieui::v1::ControllerListenerSpec)},
+        {353, sizeof(::kelpieui::v1::ControllerListener)},
+        {370, sizeof(::kelpieui::v1::ListControllerListenersRequest)},
+        {371, sizeof(::kelpieui::v1::ListControllerListenersResponse)},
+        {376, sizeof(::kelpieui::v1::CreateControllerListenerRequest)},
+        {381, sizeof(::kelpieui::v1::CreateControllerListenerResponse)},
+        {386, sizeof(::kelpieui::v1::UpdateControllerListenerRequest)},
+        {395, sizeof(::kelpieui::v1::UpdateControllerListenerResponse)},
+        {400, sizeof(::kelpieui::v1::DeleteControllerListenerRequest)},
+        {405, sizeof(::kelpieui::v1::DeleteControllerListenerResponse)},
+        {410, sizeof(::kelpieui::v1::ListPivotListenersRequest)},
+        {419, sizeof(::kelpieui::v1::ListPivotListenersResponse)},
+        {424, sizeof(::kelpieui::v1::LootItem_MetadataEntry_DoNotUse)},
+        {431, sizeof(::kelpieui::v1::LootItem)},
+        {460, sizeof(::kelpieui::v1::ListLootRequest)},
+        {473, sizeof(::kelpieui::v1::ListLootResponse)},
+        {478, sizeof(::kelpieui::v1::SubmitLootRequest_MetadataEntry_DoNotUse)},
+        {485, sizeof(::kelpieui::v1::SubmitLootRequest)},
+        {510, sizeof(::kelpieui::v1::SubmitLootResponse)},
+        {515, sizeof(::kelpieui::v1::GetLootRequest)},
+        {520, sizeof(::kelpieui::v1::GetLootResponse)},
+        {527, sizeof(::kelpieui::v1::CreatePivotListenerRequest)},
+        {534, sizeof(::kelpieui::v1::CreatePivotListenerResponse)},
+        {539, sizeof(::kelpieui::v1::UpdatePivotListenerRequest)},
+        {548, sizeof(::kelpieui::v1::UpdatePivotListenerResponse)},
+        {553, sizeof(::kelpieui::v1::DeletePivotListenerRequest)},
+        {558, sizeof(::kelpieui::v1::DeletePivotListenerResponse)},
+        {559, sizeof(::kelpieui::v1::WatchEventsRequest)},
+        {564, sizeof(::kelpieui::v1::UiEvent)},
+        {579, sizeof(::kelpieui::v1::LootEvent)},
+        {586, sizeof(::kelpieui::v1::ChatMessage)},
+        {599, sizeof(::kelpieui::v1::ChatEvent)},
+        {604, sizeof(::kelpieui::v1::SendChatMessageRequest)},
+        {609, sizeof(::kelpieui::v1::SendChatMessageResponse)},
+        {614, sizeof(::kelpieui::v1::ListChatMessagesRequest)},
+        {621, sizeof(::kelpieui::v1::ListChatMessagesResponse)},
+        {626, sizeof(::kelpieui::v1::DialEvent)},
+        {633, sizeof(::kelpieui::v1::NodeEvent)},
+        {640, sizeof(::kelpieui::v1::StreamEvent)},
+        {649, sizeof(::kelpieui::v1::PivotListenerEvent)},
+        {656, sizeof(::kelpieui::v1::SessionEvent)},
+        {667, sizeof(::kelpieui::v1::StreamControl)},
+        {684, sizeof(::kelpieui::v1::ProxyStreamHandle_OptionsEntry_DoNotUse)},
+        {691, sizeof(::kelpieui::v1::ProxyStreamHandle)},
+        {702, sizeof(::kelpieui::v1::StartShellRequest)},
+        {711, sizeof(::kelpieui::v1::StartShellResponse)},
+        {716, sizeof(::kelpieui::v1::StartSocksProxyRequest)},
+        {727, sizeof(::kelpieui::v1::StartSocksProxyResponse)},
+        {732, sizeof(::kelpieui::v1::StartSshSessionRequest)},
+        {745, sizeof(::kelpieui::v1::StartSshSessionResponse)},
+        {750, sizeof(::kelpieui::v1::StreamRequest_OptionsEntry_DoNotUse)},
+        {757, sizeof(::kelpieui::v1::StreamRequest)},
+        {770, sizeof(::kelpieui::v1::StreamResponse)},
+        {781, sizeof(::kelpieui::v1::ProxyInfo_MetadataEntry_DoNotUse)},
+        {788, sizeof(::kelpieui::v1::ProxyInfo)},
+        {803, sizeof(::kelpieui::v1::ListProxiesRequest)},
+        {804, sizeof(::kelpieui::v1::ListProxiesResponse)},
+        {809, sizeof(::kelpieui::v1::ProxyEvent)},
+        {818, sizeof(::kelpieui::v1::SleepEvent)},
+        {835, sizeof(::kelpieui::v1::SleepProfile)},
+        {860, sizeof(::kelpieui::v1::ListSleepProfilesRequest)},
+        {861, sizeof(::kelpieui::v1::ListSleepProfilesResponse)},
+        {866, sizeof(::kelpieui::v1::RepairStatus)},
+        {881, sizeof(::kelpieui::v1::ListRepairsRequest)},
+        {882, sizeof(::kelpieui::v1::ListRepairsResponse)},
+        {887, sizeof(::kelpieui::v1::CloseStreamRequest)},
+        {894, sizeof(::kelpieui::v1::CloseStreamResponse)},
+        {895, sizeof(::kelpieui::v1::StartDialRequest)},
+        {904, sizeof(::kelpieui::v1::StartDialResponse)},
+        {915, sizeof(::kelpieui::v1::CancelDialRequest)},
+        {920, sizeof(::kelpieui::v1::CancelDialResponse)},
+        {927, sizeof(::kelpieui::v1::ListDialRequest)},
+        {928, sizeof(::kelpieui::v1::DialStatus)},
+        {949, sizeof(::kelpieui::v1::ListDialResponse)},
+        {954, sizeof(::kelpieui::v1::AuditLogEntry)},
+        {977, sizeof(::kelpieui::v1::AuditEvent)},
+        {982, sizeof(::kelpieui::v1::ListAuditLogsRequest)},
+        {995, sizeof(::kelpieui::v1::ListAuditLogsResponse)},
+        {1000, sizeof(::kelpieui::v1::UpdateNodeMemoRequest)},
+        {1007, sizeof(::kelpieui::v1::UpdateNodeMemoResponse)},
+        {1008, sizeof(::kelpieui::v1::StartForwardProxyRequest)},
+        {1017, sizeof(::kelpieui::v1::StartForwardProxyResponse)},
+        {1028, sizeof(::kelpieui::v1::StopForwardProxyRequest)},
+        {1035, sizeof(::kelpieui::v1::StopForwardProxyResponse)},
+        {1040, sizeof(::kelpieui::v1::StartBackwardProxyRequest)},
+        {1049, sizeof(::kelpieui::v1::StartBackwardProxyResponse)},
+        {1060, sizeof(::kelpieui::v1::StopBackwardProxyRequest)},
+        {1067, sizeof(::kelpieui::v1::StopBackwardProxyResponse)},
+        {1072, sizeof(::kelpieui::v1::SessionInfo_MetadataEntry_DoNotUse)},
+        {1079, sizeof(::kelpieui::v1::SessionInfo)},
+        {1116, sizeof(::kelpieui::v1::ListSessionsRequest)},
+        {1125, sizeof(::kelpieui::v1::ListSessionsResponse)},
+        {1130, sizeof(::kelpieui::v1::MarkSessionRequest)},
+        {1139, sizeof(::kelpieui::v1::MarkSessionResponse)},
+        {1144, sizeof(::kelpieui::v1::RepairSessionRequest)},
+        {1153, sizeof(::kelpieui::v1::RepairSessionResponse)},
+        {1160, sizeof(::kelpieui::v1::ReconnectSessionRequest)},
+        {1167, sizeof(::kelpieui::v1::ReconnectSessionResponse)},
+        {1174, sizeof(::kelpieui::v1::TerminateSessionRequest)},
+        {1181, sizeof(::kelpieui::v1::TerminateSessionResponse)},
+        {1186, sizeof(::kelpieui::v1::SessionDiagnosticsRequest)},
+        {1195, sizeof(::kelpieui::v1::SessionMetric)},
+        {1202, sizeof(::kelpieui::v1::SessionProcess)},
+        {1217, sizeof(::kelpieui::v1::SessionIssue)},
+        {1226, sizeof(::kelpieui::v1::SessionDiagnosticsResponse)},
+        {1237, sizeof(::kelpieui::v1::UpdateSleepRequest)},
+        {1248, sizeof(::kelpieui::v1::UpdateSleepResponse)},
+        {1249, sizeof(::kelpieui::v1::ShutdownNodeRequest)},
+        {1254, sizeof(::kelpieui::v1::ShutdownNodeResponse)},
+        {1255, sizeof(::kelpieui::v1::StreamStatInfo)},
+        {1270, sizeof(::kelpieui::v1::StreamStatsRequest)},
+        {1271, sizeof(::kelpieui::v1::StreamStatsResponse)},
+        {1276, sizeof(::kelpieui::v1::StreamDiagnosticsRequest)},
+        {1277, sizeof(::kelpieui::v1::StreamDiagnosticsResponse)},
+        {1282, sizeof(::kelpieui::v1::StreamPingRequest)},
+        {1291, sizeof(::kelpieui::v1::StreamPingResponse)},
+        {1292, sizeof(::kelpieui::v1::NodeStatusRequest)},
+        {1297, sizeof(::kelpieui::v1::NodeStatusResponse)},
+        {1306, sizeof(::kelpieui::v1::NetworkInfo)},
+        {1315, sizeof(::kelpieui::v1::ListNetworksRequest)},
+        {1316, sizeof(::kelpieui::v1::ListNetworksResponse)},
+        {1323, sizeof(::kelpieui::v1::UseNetworkRequest)},
+        {1328, sizeof(::kelpieui::v1::UseNetworkResponse)},
+        {1333, sizeof(::kelpieui::v1::ResetNetworkRequest)},
+        {1334, sizeof(::kelpieui::v1::ResetNetworkResponse)},
+        {1339, sizeof(::kelpieui::v1::SetNodeNetworkRequest)},
+        {1346, sizeof(::kelpieui::v1::SetNodeNetworkResponse)},
+        {1347, sizeof(::kelpieui::v1::PruneOfflineRequest)},
+        {1348, sizeof(::kelpieui::v1::PruneOfflineResponse)},
+        {1353, sizeof(::kelpieui::v1::SupplementalStatus)},
+        {1364, sizeof(::kelpieui::v1::SupplementalMetrics)},
+        {1391, sizeof(::kelpieui::v1::ListSupplementalEventsRequest)},
+        {1396, sizeof(::kelpieui::v1::SupplementalEvent)},
+        {1413, sizeof(::kelpieui::v1::ListSupplementalEventsResponse)},
+        {1418, sizeof(::kelpieui::v1::ListSupplementalQualityRequest)},
+        {1425, sizeof(::kelpieui::v1::SupplementalQuality)},
+        {1446, sizeof(::kelpieui::v1::ListSupplementalQualityResponse)},
+        {1451, sizeof(::kelpieui::v1::SupplementalEmpty)},
+        {1452, sizeof(::kelpieui::v1::StartSshTunnelRequest)},
+        {1469, sizeof(::kelpieui::v1::StartSshTunnelResponse)},
 };
 static const ::_pb::Message* PROTOBUF_NONNULL const file_default_instances[] = {
     &::kelpieui::v1::_SnapshotRequest_default_instance_._instance,
@@ -7436,12 +7245,6 @@ static const ::_pb::Message* PROTOBUF_NONNULL const file_default_instances[] = {
     &::kelpieui::v1::_ListDtnBundlesResponse_default_instance_._instance,
     &::kelpieui::v1::_EnqueueDtnPayloadRequest_default_instance_._instance,
     &::kelpieui::v1::_EnqueueDtnPayloadResponse_default_instance_._instance,
-    &::kelpieui::v1::_GetDtnPolicyRequest_default_instance_._instance,
-    &::kelpieui::v1::_GetDtnPolicyResponse_EntriesEntry_DoNotUse_default_instance_._instance,
-    &::kelpieui::v1::_GetDtnPolicyResponse_default_instance_._instance,
-    &::kelpieui::v1::_UpdateDtnPolicyRequest_default_instance_._instance,
-    &::kelpieui::v1::_UpdateDtnPolicyResponse_EntriesEntry_DoNotUse_default_instance_._instance,
-    &::kelpieui::v1::_UpdateDtnPolicyResponse_default_instance_._instance,
     &::kelpieui::v1::_GetRoutingStrategyRequest_default_instance_._instance,
     &::kelpieui::v1::_GetRoutingStrategyResponse_default_instance_._instance,
     &::kelpieui::v1::_SetRoutingStrategyRequest_default_instance_._instance,
@@ -7646,638 +7449,624 @@ const char descriptor_table_protodef_kelpieui_2fv1_2fkelpieui_2eproto[] ABSL_ATT
     "uuid\030\001 \001(\t\022\017\n\007payload\030\002 \001(\t\022*\n\010priority\030"
     "\003 \001(\0162\030.kelpieui.v1.DtnPriority\022\023\n\013ttl_s"
     "econds\030\004 \001(\003\".\n\031EnqueueDtnPayloadRespons"
-    "e\022\021\n\tbundle_id\030\001 \001(\t\"\025\n\023GetDtnPolicyRequ"
-    "est\"\207\001\n\024GetDtnPolicyResponse\022\?\n\007entries\030"
-    "\001 \003(\0132..kelpieui.v1.GetDtnPolicyResponse"
-    ".EntriesEntry\032.\n\014EntriesEntry\022\013\n\003key\030\001 \001"
-    "(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"4\n\026UpdateDtnPolicy"
-    "Request\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t\"\215\001\n\027"
-    "UpdateDtnPolicyResponse\022B\n\007entries\030\001 \003(\013"
-    "21.kelpieui.v1.UpdateDtnPolicyResponse.E"
-    "ntriesEntry\032.\n\014EntriesEntry\022\013\n\003key\030\001 \001(\t"
-    "\022\r\n\005value\030\002 \001(\t:\0028\001\"\033\n\031GetRoutingStrateg"
-    "yRequest\"L\n\032GetRoutingStrategyResponse\022."
-    "\n\010strategy\030\001 \001(\0162\034.kelpieui.v1.RoutingSt"
-    "rategy\"K\n\031SetRoutingStrategyRequest\022.\n\010s"
-    "trategy\030\001 \001(\0162\034.kelpieui.v1.RoutingStrat"
-    "egy\"L\n\032SetRoutingStrategyResponse\022.\n\010str"
-    "ategy\030\001 \001(\0162\034.kelpieui.v1.RoutingStrateg"
-    "y\"W\n\014RouterMetric\022\024\n\014message_type\030\001 \001(\r\022"
-    "\022\n\ndispatched\030\002 \001(\004\022\016\n\006errors\030\003 \001(\004\022\r\n\005d"
-    "rops\030\004 \001(\004\"[\n\020ReconnectMetrics\022\020\n\010attemp"
-    "ts\030\001 \001(\004\022\017\n\007success\030\002 \001(\004\022\020\n\010failures\030\003 "
-    "\001(\004\022\022\n\nlast_error\030\004 \001(\t\"F\n\021GetMetricsReq"
-    "uest\022\026\n\016include_router\030\001 \001(\010\022\031\n\021include_"
-    "reconnect\030\002 \001(\010\"\257\001\n\022GetMetricsResponse\0221"
-    "\n\016router_metrics\030\001 \003(\0132\031.kelpieui.v1.Rou"
-    "terMetric\0228\n\021reconnect_metrics\030\002 \001(\0132\035.k"
-    "elpieui.v1.ReconnectMetrics\022,\n\013dtn_metri"
-    "cs\030\003 \001(\0132\027.kelpieui.v1.DtnMetrics\"\231\001\n\nDt"
-    "nMetrics\0220\n\014global_queue\030\001 \001(\0132\032.kelpieu"
-    "i.v1.DtnQueueStats\022\020\n\010enqueued\030\002 \001(\004\022\021\n\t"
-    "delivered\030\003 \001(\004\022\016\n\006failed\030\004 \001(\004\022\017\n\007retri"
-    "ed\030\005 \001(\004\022\023\n\013captured_at\030\006 \001(\t\"\313\001\n\010NodeIn"
-    "fo\022\014\n\004uuid\030\001 \001(\t\022\r\n\005alias\030\002 \001(\t\022\023\n\013paren"
-    "t_uuid\030\003 \001(\t\022\016\n\006status\030\004 \001(\t\022\017\n\007network\030"
-    "\005 \001(\t\022\r\n\005sleep\030\006 \001(\t\022\014\n\004memo\030\007 \001(\t\022\r\n\005de"
-    "pth\030\t \001(\005\022\014\n\004tags\030\n \003(\t\022\026\n\016active_stream"
-    "s\030\013 \001(\r\022\024\n\014work_profile\030\014 \001(\tJ\004\010\010\020\t\"E\n\004E"
-    "dge\022\023\n\013parent_uuid\030\001 \001(\t\022\022\n\nchild_uuid\030\002"
-    " \001(\t\022\024\n\014supplemental\030\003 \001(\010\"\303\002\n\nStreamDia"
-    "g\022\021\n\tstream_id\030\001 \001(\r\022\023\n\013target_uuid\030\002 \001("
-    "\t\022\014\n\004kind\030\003 \001(\t\022\020\n\010outbound\030\004 \001(\010\022\017\n\007pen"
-    "ding\030\005 \001(\r\022\020\n\010inflight\030\006 \001(\r\022\016\n\006window\030\007"
-    " \001(\r\022\013\n\003seq\030\010 \001(\r\022\013\n\003ack\030\t \001(\r\022\013\n\003rto\030\n "
-    "\001(\t\022\025\n\rlast_activity\030\013 \001(\t\022\022\n\nsession_id"
-    "\030\014 \001(\t\0227\n\010metadata\030\r \003(\0132%.kelpieui.v1.S"
-    "treamDiag.MetadataEntry\032/\n\rMetadataEntry"
-    "\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"\\\n\010LogE"
-    "ntry\022\n\n\002id\030\001 \001(\t\022\r\n\005level\030\002 \001(\t\022\017\n\007messa"
-    "ge\030\003 \001(\t\022\021\n\tnode_uuid\030\004 \001(\t\022\021\n\ttimestamp"
-    "\030\005 \001(\t\"\317\002\n\rPivotListener\022\023\n\013listener_id\030"
-    "\001 \001(\t\022\023\n\013target_uuid\030\002 \001(\t\022\r\n\005route\030\003 \001("
-    "\t\022\020\n\010protocol\030\004 \001(\t\022\014\n\004bind\030\005 \001(\t\022,\n\004mod"
-    "e\030\006 \001(\0162\036.kelpieui.v1.PivotListenerMode\022"
-    "\016\n\006status\030\007 \001(\t\022\022\n\nlast_error\030\010 \001(\t\022:\n\010m"
-    "etadata\030\t \003(\0132(.kelpieui.v1.PivotListene"
-    "r.MetadataEntry\022\022\n\ncreated_at\030\n \001(\t\022\022\n\nu"
-    "pdated_at\030\013 \001(\t\032/\n\rMetadataEntry\022\013\n\003key\030"
-    "\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"\350\001\n\021PivotListen"
-    "erSpec\022\020\n\010protocol\030\001 \001(\t\022\014\n\004bind\030\002 \001(\t\022,"
-    "\n\004mode\030\003 \001(\0162\036.kelpieui.v1.PivotListener"
-    "Mode\022>\n\010metadata\030\004 \003(\0132,.kelpieui.v1.Piv"
-    "otListenerSpec.MetadataEntry\022\024\n\014auth_pay"
-    "load\030\005 \001(\014\032/\n\rMetadataEntry\022\013\n\003key\030\001 \001(\t"
-    "\022\r\n\005value\030\002 \001(\t:\0028\001\"8\n\026ControllerListene"
-    "rSpec\022\014\n\004bind\030\001 \001(\t\022\020\n\010protocol\030\002 \001(\t\"\274\001"
-    "\n\022ControllerListener\022\023\n\013listener_id\030\001 \001("
-    "\t\022\014\n\004bind\030\002 \001(\t\022\020\n\010protocol\030\003 \001(\t\0225\n\006sta"
-    "tus\030\004 \001(\0162%.kelpieui.v1.ControllerListen"
-    "erStatus\022\022\n\nlast_error\030\005 \001(\t\022\022\n\ncreated_"
-    "at\030\006 \001(\t\022\022\n\nupdated_at\030\007 \001(\t\" \n\036ListCont"
-    "rollerListenersRequest\"U\n\037ListController"
-    "ListenersResponse\0222\n\tlisteners\030\001 \003(\0132\037.k"
-    "elpieui.v1.ControllerListener\"T\n\037CreateC"
-    "ontrollerListenerRequest\0221\n\004spec\030\001 \001(\0132#"
-    ".kelpieui.v1.ControllerListenerSpec\"U\n C"
-    "reateControllerListenerResponse\0221\n\010liste"
-    "ner\030\001 \001(\0132\037.kelpieui.v1.ControllerListen"
-    "er\"\250\001\n\037UpdateControllerListenerRequest\022\023"
-    "\n\013listener_id\030\001 \001(\t\0221\n\004spec\030\002 \001(\0132#.kelp"
-    "ieui.v1.ControllerListenerSpec\022=\n\016desire"
-    "d_status\030\003 \001(\0162%.kelpieui.v1.ControllerL"
-    "istenerStatus\"U\n UpdateControllerListene"
-    "rResponse\0221\n\010listener\030\001 \001(\0132\037.kelpieui.v"
-    "1.ControllerListener\"6\n\037DeleteController"
-    "ListenerRequest\022\023\n\013listener_id\030\001 \001(\t\"U\n "
-    "DeleteControllerListenerResponse\0221\n\010list"
+    "e\022\021\n\tbundle_id\030\001 \001(\t\"\033\n\031GetRoutingStrate"
+    "gyRequest\"L\n\032GetRoutingStrategyResponse\022"
+    ".\n\010strategy\030\001 \001(\0162\034.kelpieui.v1.RoutingS"
+    "trategy\"K\n\031SetRoutingStrategyRequest\022.\n\010"
+    "strategy\030\001 \001(\0162\034.kelpieui.v1.RoutingStra"
+    "tegy\"L\n\032SetRoutingStrategyResponse\022.\n\010st"
+    "rategy\030\001 \001(\0162\034.kelpieui.v1.RoutingStrate"
+    "gy\"W\n\014RouterMetric\022\024\n\014message_type\030\001 \001(\r"
+    "\022\022\n\ndispatched\030\002 \001(\004\022\016\n\006errors\030\003 \001(\004\022\r\n\005"
+    "drops\030\004 \001(\004\"[\n\020ReconnectMetrics\022\020\n\010attem"
+    "pts\030\001 \001(\004\022\017\n\007success\030\002 \001(\004\022\020\n\010failures\030\003"
+    " \001(\004\022\022\n\nlast_error\030\004 \001(\t\"F\n\021GetMetricsRe"
+    "quest\022\026\n\016include_router\030\001 \001(\010\022\031\n\021include"
+    "_reconnect\030\002 \001(\010\"\257\001\n\022GetMetricsResponse\022"
+    "1\n\016router_metrics\030\001 \003(\0132\031.kelpieui.v1.Ro"
+    "uterMetric\0228\n\021reconnect_metrics\030\002 \001(\0132\035."
+    "kelpieui.v1.ReconnectMetrics\022,\n\013dtn_metr"
+    "ics\030\003 \001(\0132\027.kelpieui.v1.DtnMetrics\"\231\001\n\nD"
+    "tnMetrics\0220\n\014global_queue\030\001 \001(\0132\032.kelpie"
+    "ui.v1.DtnQueueStats\022\020\n\010enqueued\030\002 \001(\004\022\021\n"
+    "\tdelivered\030\003 \001(\004\022\016\n\006failed\030\004 \001(\004\022\017\n\007retr"
+    "ied\030\005 \001(\004\022\023\n\013captured_at\030\006 \001(\t\"\313\001\n\010NodeI"
+    "nfo\022\014\n\004uuid\030\001 \001(\t\022\r\n\005alias\030\002 \001(\t\022\023\n\013pare"
+    "nt_uuid\030\003 \001(\t\022\016\n\006status\030\004 \001(\t\022\017\n\007network"
+    "\030\005 \001(\t\022\r\n\005sleep\030\006 \001(\t\022\014\n\004memo\030\007 \001(\t\022\r\n\005d"
+    "epth\030\t \001(\005\022\014\n\004tags\030\n \003(\t\022\026\n\016active_strea"
+    "ms\030\013 \001(\r\022\024\n\014work_profile\030\014 \001(\tJ\004\010\010\020\t\"E\n\004"
+    "Edge\022\023\n\013parent_uuid\030\001 \001(\t\022\022\n\nchild_uuid\030"
+    "\002 \001(\t\022\024\n\014supplemental\030\003 \001(\010\"\303\002\n\nStreamDi"
+    "ag\022\021\n\tstream_id\030\001 \001(\r\022\023\n\013target_uuid\030\002 \001"
+    "(\t\022\014\n\004kind\030\003 \001(\t\022\020\n\010outbound\030\004 \001(\010\022\017\n\007pe"
+    "nding\030\005 \001(\r\022\020\n\010inflight\030\006 \001(\r\022\016\n\006window\030"
+    "\007 \001(\r\022\013\n\003seq\030\010 \001(\r\022\013\n\003ack\030\t \001(\r\022\013\n\003rto\030\n"
+    " \001(\t\022\025\n\rlast_activity\030\013 \001(\t\022\022\n\nsession_i"
+    "d\030\014 \001(\t\0227\n\010metadata\030\r \003(\0132%.kelpieui.v1."
+    "StreamDiag.MetadataEntry\032/\n\rMetadataEntr"
+    "y\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"\\\n\010Log"
+    "Entry\022\n\n\002id\030\001 \001(\t\022\r\n\005level\030\002 \001(\t\022\017\n\007mess"
+    "age\030\003 \001(\t\022\021\n\tnode_uuid\030\004 \001(\t\022\021\n\ttimestam"
+    "p\030\005 \001(\t\"\317\002\n\rPivotListener\022\023\n\013listener_id"
+    "\030\001 \001(\t\022\023\n\013target_uuid\030\002 \001(\t\022\r\n\005route\030\003 \001"
+    "(\t\022\020\n\010protocol\030\004 \001(\t\022\014\n\004bind\030\005 \001(\t\022,\n\004mo"
+    "de\030\006 \001(\0162\036.kelpieui.v1.PivotListenerMode"
+    "\022\016\n\006status\030\007 \001(\t\022\022\n\nlast_error\030\010 \001(\t\022:\n\010"
+    "metadata\030\t \003(\0132(.kelpieui.v1.PivotListen"
+    "er.MetadataEntry\022\022\n\ncreated_at\030\n \001(\t\022\022\n\n"
+    "updated_at\030\013 \001(\t\032/\n\rMetadataEntry\022\013\n\003key"
+    "\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"\350\001\n\021PivotListe"
+    "nerSpec\022\020\n\010protocol\030\001 \001(\t\022\014\n\004bind\030\002 \001(\t\022"
+    ",\n\004mode\030\003 \001(\0162\036.kelpieui.v1.PivotListene"
+    "rMode\022>\n\010metadata\030\004 \003(\0132,.kelpieui.v1.Pi"
+    "votListenerSpec.MetadataEntry\022\024\n\014auth_pa"
+    "yload\030\005 \001(\014\032/\n\rMetadataEntry\022\013\n\003key\030\001 \001("
+    "\t\022\r\n\005value\030\002 \001(\t:\0028\001\"8\n\026ControllerListen"
+    "erSpec\022\014\n\004bind\030\001 \001(\t\022\020\n\010protocol\030\002 \001(\t\"\274"
+    "\001\n\022ControllerListener\022\023\n\013listener_id\030\001 \001"
+    "(\t\022\014\n\004bind\030\002 \001(\t\022\020\n\010protocol\030\003 \001(\t\0225\n\006st"
+    "atus\030\004 \001(\0162%.kelpieui.v1.ControllerListe"
+    "nerStatus\022\022\n\nlast_error\030\005 \001(\t\022\022\n\ncreated"
+    "_at\030\006 \001(\t\022\022\n\nupdated_at\030\007 \001(\t\" \n\036ListCon"
+    "trollerListenersRequest\"U\n\037ListControlle"
+    "rListenersResponse\0222\n\tlisteners\030\001 \003(\0132\037."
+    "kelpieui.v1.ControllerListener\"T\n\037Create"
+    "ControllerListenerRequest\0221\n\004spec\030\001 \001(\0132"
+    "#.kelpieui.v1.ControllerListenerSpec\"U\n "
+    "CreateControllerListenerResponse\0221\n\010list"
     "ener\030\001 \001(\0132\037.kelpieui.v1.ControllerListe"
-    "ner\"V\n\031ListPivotListenersRequest\022\024\n\014targ"
-    "et_uuids\030\001 \003(\t\022\021\n\tprotocols\030\002 \003(\t\022\020\n\010sta"
-    "tuses\030\003 \003(\t\"K\n\032ListPivotListenersRespons"
-    "e\022-\n\tlisteners\030\001 \003(\0132\032.kelpieui.v1.Pivot"
-    "Listener\"\333\002\n\010LootItem\022\017\n\007loot_id\030\001 \001(\t\022\023"
-    "\n\013target_uuid\030\002 \001(\t\022\020\n\010operator\030\003 \001(\t\022+\n"
-    "\010category\030\004 \001(\0162\031.kelpieui.v1.LootCatego"
-    "ry\022\014\n\004name\030\005 \001(\t\022\023\n\013storage_ref\030\006 \001(\t\022\023\n"
-    "\013origin_path\030\007 \001(\t\022\014\n\004hash\030\010 \001(\t\022\014\n\004size"
-    "\030\t \001(\004\022\014\n\004mime\030\n \001(\t\0225\n\010metadata\030\013 \003(\0132#"
-    ".kelpieui.v1.LootItem.MetadataEntry\022\014\n\004t"
-    "ags\030\014 \003(\t\022\022\n\ncreated_at\030\r \001(\t\032/\n\rMetadat"
-    "aEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"\203"
-    "\001\n\017ListLootRequest\022\023\n\013target_uuid\030\001 \001(\t\022"
-    "+\n\010category\030\002 \001(\0162\031.kelpieui.v1.LootCate"
-    "gory\022\r\n\005limit\030\003 \001(\005\022\021\n\tbefore_id\030\004 \001(\t\022\014"
-    "\n\004tags\030\005 \003(\t\"8\n\020ListLootResponse\022$\n\005item"
-    "s\030\001 \003(\0132\025.kelpieui.v1.LootItem\"\307\002\n\021Submi"
-    "tLootRequest\022\023\n\013target_uuid\030\001 \001(\t\022+\n\010cat"
-    "egory\030\002 \001(\0162\031.kelpieui.v1.LootCategory\022\014"
-    "\n\004name\030\003 \001(\t\022\023\n\013origin_path\030\004 \001(\t\022\017\n\007con"
-    "tent\030\005 \001(\014\022\014\n\004mime\030\006 \001(\t\022>\n\010metadata\030\007 \003"
-    "(\0132,.kelpieui.v1.SubmitLootRequest.Metad"
-    "ataEntry\022\014\n\004tags\030\010 \003(\t\022\014\n\004hash\030\t \001(\t\022\014\n\004"
-    "size\030\n \001(\004\022\023\n\013storage_ref\030\013 \001(\t\032/\n\rMetad"
-    "ataEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001"
-    "\"9\n\022SubmitLootResponse\022#\n\004item\030\001 \001(\0132\025.k"
-    "elpieui.v1.LootItem\"!\n\016GetLootRequest\022\017\n"
-    "\007loot_id\030\001 \001(\t\"G\n\017GetLootResponse\022#\n\004ite"
-    "m\030\001 \001(\0132\025.kelpieui.v1.LootItem\022\017\n\007conten"
-    "t\030\002 \001(\014\"_\n\032CreatePivotListenerRequest\022\023\n"
-    "\013target_uuid\030\001 \001(\t\022,\n\004spec\030\002 \001(\0132\036.kelpi"
-    "eui.v1.PivotListenerSpec\"K\n\033CreatePivotL"
-    "istenerResponse\022,\n\010listener\030\001 \001(\0132\032.kelp"
-    "ieui.v1.PivotListener\"w\n\032UpdatePivotList"
-    "enerRequest\022\023\n\013listener_id\030\001 \001(\t\022,\n\004spec"
-    "\030\002 \001(\0132\036.kelpieui.v1.PivotListenerSpec\022\026"
-    "\n\016desired_status\030\003 \001(\t\"K\n\033UpdatePivotLis"
-    "tenerResponse\022,\n\010listener\030\001 \001(\0132\032.kelpie"
-    "ui.v1.PivotListener\"1\n\032DeletePivotListen"
-    "erRequest\022\023\n\013listener_id\030\001 \001(\t\"\035\n\033Delete"
-    "PivotListenerResponse\".\n\022WatchEventsRequ"
-    "est\022\030\n\020interested_nodes\030\001 \003(\t\"\355\004\n\007UiEven"
-    "t\022,\n\nnode_event\030\001 \001(\0132\026.kelpieui.v1.Node"
-    "EventH\000\022*\n\tlog_event\030\002 \001(\0132\025.kelpieui.v1"
-    ".LogEntryH\000\0220\n\014stream_event\030\004 \001(\0132\030.kelp"
-    "ieui.v1.StreamEventH\000\0229\n\016listener_event\030"
-    "\005 \001(\0132\037.kelpieui.v1.PivotListenerEventH\000"
-    "\0222\n\rsession_event\030\006 \001(\0132\031.kelpieui.v1.Se"
-    "ssionEventH\000\022,\n\ndial_event\030\007 \001(\0132\026.kelpi"
-    "eui.v1.DialEventH\000\022.\n\013proxy_event\030\010 \001(\0132"
-    "\027.kelpieui.v1.ProxyEventH\000\022.\n\013sleep_even"
-    "t\030\t \001(\0132\027.kelpieui.v1.SleepEventH\000\022<\n\022su"
-    "pplemental_event\030\n \001(\0132\036.kelpieui.v1.Sup"
-    "plementalEventH\000\022,\n\nchat_event\030\013 \001(\0132\026.k"
-    "elpieui.v1.ChatEventH\000\022.\n\013audit_event\030\014 "
-    "\001(\0132\027.kelpieui.v1.AuditEventH\000\022,\n\nloot_e"
-    "vent\030\r \001(\0132\026.kelpieui.v1.LootEventH\000B\t\n\007"
-    "payloadJ\004\010\003\020\004\"\225\001\n\tLootEvent\022)\n\004kind\030\001 \001("
-    "\0162\033.kelpieui.v1.LootEvent.Kind\022#\n\004item\030\002"
-    " \001(\0132\025.kelpieui.v1.LootItem\"8\n\004Kind\022\032\n\026L"
-    "OOT_EVENT_UNSPECIFIED\020\000\022\024\n\020LOOT_EVENT_AD"
-    "DED\020\001\"]\n\013ChatMessage\022\n\n\002id\030\001 \001(\t\022\020\n\010user"
-    "name\030\002 \001(\t\022\014\n\004role\030\003 \001(\t\022\017\n\007message\030\004 \001("
-    "\t\022\021\n\ttimestamp\030\005 \001(\t\"6\n\tChatEvent\022)\n\007mes"
-    "sage\030\001 \001(\0132\030.kelpieui.v1.ChatMessage\")\n\026"
-    "SendChatMessageRequest\022\017\n\007message\030\001 \001(\t\""
-    "D\n\027SendChatMessageResponse\022)\n\007message\030\001 "
-    "\001(\0132\030.kelpieui.v1.ChatMessage\";\n\027ListCha"
-    "tMessagesRequest\022\r\n\005limit\030\001 \001(\005\022\021\n\tbefor"
-    "e_id\030\002 \001(\t\"F\n\030ListChatMessagesResponse\022*"
-    "\n\010messages\030\001 \003(\0132\030.kelpieui.v1.ChatMessa"
-    "ge\"\377\001\n\tDialEvent\022)\n\004kind\030\001 \001(\0162\033.kelpieu"
-    "i.v1.DialEvent.Kind\022\'\n\006status\030\002 \001(\0132\027.ke"
-    "lpieui.v1.DialStatus\"\235\001\n\004Kind\022\032\n\026DIAL_EV"
-    "ENT_UNSPECIFIED\020\000\022\027\n\023DIAL_EVENT_ENQUEUED"
-    "\020\001\022\026\n\022DIAL_EVENT_RUNNING\020\002\022\030\n\024DIAL_EVENT"
-    "_COMPLETED\020\003\022\025\n\021DIAL_EVENT_FAILED\020\004\022\027\n\023D"
-    "IAL_EVENT_CANCELED\020\005\"\225\001\n\tNodeEvent\022)\n\004ki"
-    "nd\030\001 \001(\0162\033.kelpieui.v1.NodeEvent.Kind\022#\n"
-    "\004node\030\002 \001(\0132\025.kelpieui.v1.NodeInfo\"8\n\004Ki"
-    "nd\022\013\n\007UNKNOWN\020\000\022\t\n\005ADDED\020\001\022\013\n\007UPDATED\020\002\022"
-    "\013\n\007REMOVED\020\003\"\315\001\n\013StreamEvent\022+\n\004kind\030\001 \001"
-    "(\0162\035.kelpieui.v1.StreamEvent.Kind\022\'\n\006str"
-    "eam\030\002 \001(\0132\027.kelpieui.v1.StreamDiag\022\016\n\006re"
-    "ason\030\003 \001(\t\"X\n\004Kind\022\026\n\022STREAM_UNSPECIFIED"
-    "\020\000\022\021\n\rSTREAM_OPENED\020\001\022\022\n\016STREAM_UPDATED\020"
-    "\002\022\021\n\rSTREAM_CLOSED\020\003\"\360\001\n\022PivotListenerEv"
-    "ent\0222\n\004kind\030\001 \001(\0162$.kelpieui.v1.PivotLis"
-    "tenerEvent.Kind\022,\n\010listener\030\002 \001(\0132\032.kelp"
-    "ieui.v1.PivotListener\"x\n\004Kind\022\036\n\032PIVOT_L"
-    "ISTENER_UNSPECIFIED\020\000\022\030\n\024PIVOT_LISTENER_"
-    "ADDED\020\001\022\032\n\026PIVOT_LISTENER_UPDATED\020\002\022\032\n\026P"
-    "IVOT_LISTENER_REMOVED\020\003\"\376\002\n\014SessionEvent"
-    "\022,\n\004kind\030\001 \001(\0162\036.kelpieui.v1.SessionEven"
-    "t.Kind\022)\n\007session\030\002 \001(\0132\030.kelpieui.v1.Se"
-    "ssionInfo\022\016\n\006reason\030\003 \001(\t\022\020\n\010operator\030\004 "
-    "\001(\t\"\362\001\n\004Kind\022\035\n\031SESSION_EVENT_UNSPECIFIE"
-    "D\020\000\022\027\n\023SESSION_EVENT_ADDED\020\001\022\031\n\025SESSION_"
-    "EVENT_UPDATED\020\002\022\031\n\025SESSION_EVENT_REMOVED"
-    "\020\003\022\030\n\024SESSION_EVENT_MARKED\020\004\022 \n\034SESSION_"
-    "EVENT_REPAIR_STARTED\020\005\022\"\n\036SESSION_EVENT_"
-    "REPAIR_COMPLETED\020\006\022\034\n\030SESSION_EVENT_TERM"
-    "INATED\020\007\"\216\002\n\rStreamControl\022-\n\004kind\030\001 \001(\016"
-    "2\037.kelpieui.v1.StreamControl.Kind\022\014\n\004row"
-    "s\030\002 \001(\r\022\014\n\004cols\030\003 \001(\r\022\r\n\005error\030\004 \001(\t\0221\n\n"
-    "error_code\030\005 \001(\0162\035.kelpieui.v1.ProxyStre"
-    "amError\022\021\n\tstream_id\030\006 \001(\r\022\023\n\013stream_kin"
-    "d\030\007 \001(\t\"H\n\004Kind\022\024\n\020KIND_UNSPECIFIED\020\000\022\010\n"
-    "\004OPEN\020\001\022\t\n\005CLOSE\020\002\022\t\n\005ERROR\020\003\022\n\n\006RESIZE\020"
-    "\004\"\270\001\n\021ProxyStreamHandle\022\023\n\013target_uuid\030\001"
-    " \001(\t\022\022\n\nsession_id\030\002 \001(\t\022\014\n\004kind\030\003 \001(\t\022<"
-    "\n\007options\030\004 \003(\0132+.kelpieui.v1.ProxyStrea"
-    "mHandle.OptionsEntry\032.\n\014OptionsEntry\022\013\n\003"
-    "key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"i\n\021StartShe"
-    "llRequest\022\023\n\013target_uuid\030\001 \001(\t\022$\n\004mode\030\002"
-    " \001(\0162\026.kelpieui.v1.ShellMode\022\031\n\021resume_s"
-    "ession_id\030\003 \001(\t\"D\n\022StartShellResponse\022.\n"
-    "\006handle\030\001 \001(\0132\036.kelpieui.v1.ProxyStreamH"
-    "andle\"|\n\026StartSocksProxyRequest\022\023\n\013targe"
-    "t_uuid\030\001 \001(\t\022)\n\004auth\030\002 \001(\0162\033.kelpieui.v1"
-    ".SocksProxyAuth\022\020\n\010username\030\003 \001(\t\022\020\n\010pas"
-    "sword\030\004 \001(\t\"I\n\027StartSocksProxyResponse\022."
+    "ner\"\250\001\n\037UpdateControllerListenerRequest\022"
+    "\023\n\013listener_id\030\001 \001(\t\0221\n\004spec\030\002 \001(\0132#.kel"
+    "pieui.v1.ControllerListenerSpec\022=\n\016desir"
+    "ed_status\030\003 \001(\0162%.kelpieui.v1.Controller"
+    "ListenerStatus\"U\n UpdateControllerListen"
+    "erResponse\0221\n\010listener\030\001 \001(\0132\037.kelpieui."
+    "v1.ControllerListener\"6\n\037DeleteControlle"
+    "rListenerRequest\022\023\n\013listener_id\030\001 \001(\t\"U\n"
+    " DeleteControllerListenerResponse\0221\n\010lis"
+    "tener\030\001 \001(\0132\037.kelpieui.v1.ControllerList"
+    "ener\"V\n\031ListPivotListenersRequest\022\024\n\014tar"
+    "get_uuids\030\001 \003(\t\022\021\n\tprotocols\030\002 \003(\t\022\020\n\010st"
+    "atuses\030\003 \003(\t\"K\n\032ListPivotListenersRespon"
+    "se\022-\n\tlisteners\030\001 \003(\0132\032.kelpieui.v1.Pivo"
+    "tListener\"\333\002\n\010LootItem\022\017\n\007loot_id\030\001 \001(\t\022"
+    "\023\n\013target_uuid\030\002 \001(\t\022\020\n\010operator\030\003 \001(\t\022+"
+    "\n\010category\030\004 \001(\0162\031.kelpieui.v1.LootCateg"
+    "ory\022\014\n\004name\030\005 \001(\t\022\023\n\013storage_ref\030\006 \001(\t\022\023"
+    "\n\013origin_path\030\007 \001(\t\022\014\n\004hash\030\010 \001(\t\022\014\n\004siz"
+    "e\030\t \001(\004\022\014\n\004mime\030\n \001(\t\0225\n\010metadata\030\013 \003(\0132"
+    "#.kelpieui.v1.LootItem.MetadataEntry\022\014\n\004"
+    "tags\030\014 \003(\t\022\022\n\ncreated_at\030\r \001(\t\032/\n\rMetada"
+    "taEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\""
+    "\203\001\n\017ListLootRequest\022\023\n\013target_uuid\030\001 \001(\t"
+    "\022+\n\010category\030\002 \001(\0162\031.kelpieui.v1.LootCat"
+    "egory\022\r\n\005limit\030\003 \001(\005\022\021\n\tbefore_id\030\004 \001(\t\022"
+    "\014\n\004tags\030\005 \003(\t\"8\n\020ListLootResponse\022$\n\005ite"
+    "ms\030\001 \003(\0132\025.kelpieui.v1.LootItem\"\307\002\n\021Subm"
+    "itLootRequest\022\023\n\013target_uuid\030\001 \001(\t\022+\n\010ca"
+    "tegory\030\002 \001(\0162\031.kelpieui.v1.LootCategory\022"
+    "\014\n\004name\030\003 \001(\t\022\023\n\013origin_path\030\004 \001(\t\022\017\n\007co"
+    "ntent\030\005 \001(\014\022\014\n\004mime\030\006 \001(\t\022>\n\010metadata\030\007 "
+    "\003(\0132,.kelpieui.v1.SubmitLootRequest.Meta"
+    "dataEntry\022\014\n\004tags\030\010 \003(\t\022\014\n\004hash\030\t \001(\t\022\014\n"
+    "\004size\030\n \001(\004\022\023\n\013storage_ref\030\013 \001(\t\032/\n\rMeta"
+    "dataEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028"
+    "\001\"9\n\022SubmitLootResponse\022#\n\004item\030\001 \001(\0132\025."
+    "kelpieui.v1.LootItem\"!\n\016GetLootRequest\022\017"
+    "\n\007loot_id\030\001 \001(\t\"G\n\017GetLootResponse\022#\n\004it"
+    "em\030\001 \001(\0132\025.kelpieui.v1.LootItem\022\017\n\007conte"
+    "nt\030\002 \001(\014\"_\n\032CreatePivotListenerRequest\022\023"
+    "\n\013target_uuid\030\001 \001(\t\022,\n\004spec\030\002 \001(\0132\036.kelp"
+    "ieui.v1.PivotListenerSpec\"K\n\033CreatePivot"
+    "ListenerResponse\022,\n\010listener\030\001 \001(\0132\032.kel"
+    "pieui.v1.PivotListener\"w\n\032UpdatePivotLis"
+    "tenerRequest\022\023\n\013listener_id\030\001 \001(\t\022,\n\004spe"
+    "c\030\002 \001(\0132\036.kelpieui.v1.PivotListenerSpec\022"
+    "\026\n\016desired_status\030\003 \001(\t\"K\n\033UpdatePivotLi"
+    "stenerResponse\022,\n\010listener\030\001 \001(\0132\032.kelpi"
+    "eui.v1.PivotListener\"1\n\032DeletePivotListe"
+    "nerRequest\022\023\n\013listener_id\030\001 \001(\t\"\035\n\033Delet"
+    "ePivotListenerResponse\".\n\022WatchEventsReq"
+    "uest\022\030\n\020interested_nodes\030\001 \003(\t\"\355\004\n\007UiEve"
+    "nt\022,\n\nnode_event\030\001 \001(\0132\026.kelpieui.v1.Nod"
+    "eEventH\000\022*\n\tlog_event\030\002 \001(\0132\025.kelpieui.v"
+    "1.LogEntryH\000\0220\n\014stream_event\030\004 \001(\0132\030.kel"
+    "pieui.v1.StreamEventH\000\0229\n\016listener_event"
+    "\030\005 \001(\0132\037.kelpieui.v1.PivotListenerEventH"
+    "\000\0222\n\rsession_event\030\006 \001(\0132\031.kelpieui.v1.S"
+    "essionEventH\000\022,\n\ndial_event\030\007 \001(\0132\026.kelp"
+    "ieui.v1.DialEventH\000\022.\n\013proxy_event\030\010 \001(\013"
+    "2\027.kelpieui.v1.ProxyEventH\000\022.\n\013sleep_eve"
+    "nt\030\t \001(\0132\027.kelpieui.v1.SleepEventH\000\022<\n\022s"
+    "upplemental_event\030\n \001(\0132\036.kelpieui.v1.Su"
+    "pplementalEventH\000\022,\n\nchat_event\030\013 \001(\0132\026."
+    "kelpieui.v1.ChatEventH\000\022.\n\013audit_event\030\014"
+    " \001(\0132\027.kelpieui.v1.AuditEventH\000\022,\n\nloot_"
+    "event\030\r \001(\0132\026.kelpieui.v1.LootEventH\000B\t\n"
+    "\007payloadJ\004\010\003\020\004\"\225\001\n\tLootEvent\022)\n\004kind\030\001 \001"
+    "(\0162\033.kelpieui.v1.LootEvent.Kind\022#\n\004item\030"
+    "\002 \001(\0132\025.kelpieui.v1.LootItem\"8\n\004Kind\022\032\n\026"
+    "LOOT_EVENT_UNSPECIFIED\020\000\022\024\n\020LOOT_EVENT_A"
+    "DDED\020\001\"]\n\013ChatMessage\022\n\n\002id\030\001 \001(\t\022\020\n\010use"
+    "rname\030\002 \001(\t\022\014\n\004role\030\003 \001(\t\022\017\n\007message\030\004 \001"
+    "(\t\022\021\n\ttimestamp\030\005 \001(\t\"6\n\tChatEvent\022)\n\007me"
+    "ssage\030\001 \001(\0132\030.kelpieui.v1.ChatMessage\")\n"
+    "\026SendChatMessageRequest\022\017\n\007message\030\001 \001(\t"
+    "\"D\n\027SendChatMessageResponse\022)\n\007message\030\001"
+    " \001(\0132\030.kelpieui.v1.ChatMessage\";\n\027ListCh"
+    "atMessagesRequest\022\r\n\005limit\030\001 \001(\005\022\021\n\tbefo"
+    "re_id\030\002 \001(\t\"F\n\030ListChatMessagesResponse\022"
+    "*\n\010messages\030\001 \003(\0132\030.kelpieui.v1.ChatMess"
+    "age\"\377\001\n\tDialEvent\022)\n\004kind\030\001 \001(\0162\033.kelpie"
+    "ui.v1.DialEvent.Kind\022\'\n\006status\030\002 \001(\0132\027.k"
+    "elpieui.v1.DialStatus\"\235\001\n\004Kind\022\032\n\026DIAL_E"
+    "VENT_UNSPECIFIED\020\000\022\027\n\023DIAL_EVENT_ENQUEUE"
+    "D\020\001\022\026\n\022DIAL_EVENT_RUNNING\020\002\022\030\n\024DIAL_EVEN"
+    "T_COMPLETED\020\003\022\025\n\021DIAL_EVENT_FAILED\020\004\022\027\n\023"
+    "DIAL_EVENT_CANCELED\020\005\"\225\001\n\tNodeEvent\022)\n\004k"
+    "ind\030\001 \001(\0162\033.kelpieui.v1.NodeEvent.Kind\022#"
+    "\n\004node\030\002 \001(\0132\025.kelpieui.v1.NodeInfo\"8\n\004K"
+    "ind\022\013\n\007UNKNOWN\020\000\022\t\n\005ADDED\020\001\022\013\n\007UPDATED\020\002"
+    "\022\013\n\007REMOVED\020\003\"\315\001\n\013StreamEvent\022+\n\004kind\030\001 "
+    "\001(\0162\035.kelpieui.v1.StreamEvent.Kind\022\'\n\006st"
+    "ream\030\002 \001(\0132\027.kelpieui.v1.StreamDiag\022\016\n\006r"
+    "eason\030\003 \001(\t\"X\n\004Kind\022\026\n\022STREAM_UNSPECIFIE"
+    "D\020\000\022\021\n\rSTREAM_OPENED\020\001\022\022\n\016STREAM_UPDATED"
+    "\020\002\022\021\n\rSTREAM_CLOSED\020\003\"\360\001\n\022PivotListenerE"
+    "vent\0222\n\004kind\030\001 \001(\0162$.kelpieui.v1.PivotLi"
+    "stenerEvent.Kind\022,\n\010listener\030\002 \001(\0132\032.kel"
+    "pieui.v1.PivotListener\"x\n\004Kind\022\036\n\032PIVOT_"
+    "LISTENER_UNSPECIFIED\020\000\022\030\n\024PIVOT_LISTENER"
+    "_ADDED\020\001\022\032\n\026PIVOT_LISTENER_UPDATED\020\002\022\032\n\026"
+    "PIVOT_LISTENER_REMOVED\020\003\"\376\002\n\014SessionEven"
+    "t\022,\n\004kind\030\001 \001(\0162\036.kelpieui.v1.SessionEve"
+    "nt.Kind\022)\n\007session\030\002 \001(\0132\030.kelpieui.v1.S"
+    "essionInfo\022\016\n\006reason\030\003 \001(\t\022\020\n\010operator\030\004"
+    " \001(\t\"\362\001\n\004Kind\022\035\n\031SESSION_EVENT_UNSPECIFI"
+    "ED\020\000\022\027\n\023SESSION_EVENT_ADDED\020\001\022\031\n\025SESSION"
+    "_EVENT_UPDATED\020\002\022\031\n\025SESSION_EVENT_REMOVE"
+    "D\020\003\022\030\n\024SESSION_EVENT_MARKED\020\004\022 \n\034SESSION"
+    "_EVENT_REPAIR_STARTED\020\005\022\"\n\036SESSION_EVENT"
+    "_REPAIR_COMPLETED\020\006\022\034\n\030SESSION_EVENT_TER"
+    "MINATED\020\007\"\216\002\n\rStreamControl\022-\n\004kind\030\001 \001("
+    "\0162\037.kelpieui.v1.StreamControl.Kind\022\014\n\004ro"
+    "ws\030\002 \001(\r\022\014\n\004cols\030\003 \001(\r\022\r\n\005error\030\004 \001(\t\0221\n"
+    "\nerror_code\030\005 \001(\0162\035.kelpieui.v1.ProxyStr"
+    "eamError\022\021\n\tstream_id\030\006 \001(\r\022\023\n\013stream_ki"
+    "nd\030\007 \001(\t\"H\n\004Kind\022\024\n\020KIND_UNSPECIFIED\020\000\022\010"
+    "\n\004OPEN\020\001\022\t\n\005CLOSE\020\002\022\t\n\005ERROR\020\003\022\n\n\006RESIZE"
+    "\020\004\"\270\001\n\021ProxyStreamHandle\022\023\n\013target_uuid\030"
+    "\001 \001(\t\022\022\n\nsession_id\030\002 \001(\t\022\014\n\004kind\030\003 \001(\t\022"
+    "<\n\007options\030\004 \003(\0132+.kelpieui.v1.ProxyStre"
+    "amHandle.OptionsEntry\032.\n\014OptionsEntry\022\013\n"
+    "\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"i\n\021StartSh"
+    "ellRequest\022\023\n\013target_uuid\030\001 \001(\t\022$\n\004mode\030"
+    "\002 \001(\0162\026.kelpieui.v1.ShellMode\022\031\n\021resume_"
+    "session_id\030\003 \001(\t\"D\n\022StartShellResponse\022."
     "\n\006handle\030\001 \001(\0132\036.kelpieui.v1.ProxyStream"
-    "Handle\"\236\001\n\026StartSshSessionRequest\022\023\n\013tar"
-    "get_uuid\030\001 \001(\t\022\023\n\013server_addr\030\002 \001(\t\0226\n\013a"
-    "uth_method\030\003 \001(\0162!.kelpieui.v1.SshSessio"
-    "nAuthMethod\022\020\n\010username\030\004 \001(\t\022\020\n\010passwor"
-    "d\030\005 \001(\t\"I\n\027StartSshSessionResponse\022.\n\006ha"
-    "ndle\030\001 \001(\0132\036.kelpieui.v1.ProxyStreamHand"
-    "le\"\335\001\n\rStreamRequest\022\022\n\nsession_id\030\001 \001(\t"
-    "\022\023\n\013target_uuid\030\002 \001(\t\0228\n\007options\030\003 \003(\0132\'"
-    ".kelpieui.v1.StreamRequest.OptionsEntry\022"
-    "\014\n\004data\030\004 \001(\014\022+\n\007control\030\005 \001(\0132\032.kelpieu"
-    "i.v1.StreamControl\032.\n\014OptionsEntry\022\013\n\003ke"
-    "y\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"t\n\016StreamResp"
-    "onse\022\022\n\nsession_id\030\001 \001(\t\022\023\n\013target_uuid\030"
-    "\002 \001(\t\022\014\n\004data\030\003 \001(\014\022+\n\007control\030\004 \001(\0132\032.k"
-    "elpieui.v1.StreamControl\"\307\001\n\tProxyInfo\022\020"
-    "\n\010proxy_id\030\001 \001(\t\022\023\n\013target_uuid\030\002 \001(\t\022\014\n"
-    "\004kind\030\003 \001(\t\022\014\n\004bind\030\004 \001(\t\022\016\n\006remote\030\005 \001("
-    "\t\0226\n\010metadata\030\006 \003(\0132$.kelpieui.v1.ProxyI"
-    "nfo.MetadataEntry\032/\n\rMetadataEntry\022\013\n\003ke"
-    "y\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"\024\n\022ListProxie"
-    "sRequest\">\n\023ListProxiesResponse\022\'\n\007proxi"
-    "es\030\001 \003(\0132\026.kelpieui.v1.ProxyInfo\"\336\001\n\nPro"
-    "xyEvent\022*\n\004kind\030\001 \001(\0162\034.kelpieui.v1.Prox"
-    "yEvent.Kind\022%\n\005proxy\030\002 \001(\0132\026.kelpieui.v1"
-    ".ProxyInfo\022\016\n\006reason\030\003 \001(\t\"m\n\004Kind\022\033\n\027PR"
-    "OXY_EVENT_UNSPECIFIED\020\000\022\027\n\023PROXY_EVENT_S"
-    "TARTED\020\001\022\027\n\023PROXY_EVENT_STOPPED\020\002\022\026\n\022PRO"
-    "XY_EVENT_FAILED\020\003\"\267\002\n\nSleepEvent\022*\n\004kind"
-    "\030\001 \001(\0162\034.kelpieui.v1.SleepEvent.Kind\022\023\n\013"
-    "target_uuid\030\002 \001(\t\022\032\n\rsleep_seconds\030\003 \001(\005"
-    "H\000\210\001\001\022\031\n\014work_seconds\030\004 \001(\005H\001\210\001\001\022\033\n\016jitt"
-    "er_percent\030\005 \001(\001H\002\210\001\001\022\020\n\010operator\030\006 \001(\t\022"
-    "\016\n\006reason\030\007 \001(\t\"<\n\004Kind\022\033\n\027SLEEP_EVENT_U"
-    "NSPECIFIED\020\000\022\027\n\023SLEEP_EVENT_UPDATED\020\001B\020\n"
+    "Handle\"|\n\026StartSocksProxyRequest\022\023\n\013targ"
+    "et_uuid\030\001 \001(\t\022)\n\004auth\030\002 \001(\0162\033.kelpieui.v"
+    "1.SocksProxyAuth\022\020\n\010username\030\003 \001(\t\022\020\n\010pa"
+    "ssword\030\004 \001(\t\"I\n\027StartSocksProxyResponse\022"
+    ".\n\006handle\030\001 \001(\0132\036.kelpieui.v1.ProxyStrea"
+    "mHandle\"\236\001\n\026StartSshSessionRequest\022\023\n\013ta"
+    "rget_uuid\030\001 \001(\t\022\023\n\013server_addr\030\002 \001(\t\0226\n\013"
+    "auth_method\030\003 \001(\0162!.kelpieui.v1.SshSessi"
+    "onAuthMethod\022\020\n\010username\030\004 \001(\t\022\020\n\010passwo"
+    "rd\030\005 \001(\t\"I\n\027StartSshSessionResponse\022.\n\006h"
+    "andle\030\001 \001(\0132\036.kelpieui.v1.ProxyStreamHan"
+    "dle\"\335\001\n\rStreamRequest\022\022\n\nsession_id\030\001 \001("
+    "\t\022\023\n\013target_uuid\030\002 \001(\t\0228\n\007options\030\003 \003(\0132"
+    "\'.kelpieui.v1.StreamRequest.OptionsEntry"
+    "\022\014\n\004data\030\004 \001(\014\022+\n\007control\030\005 \001(\0132\032.kelpie"
+    "ui.v1.StreamControl\032.\n\014OptionsEntry\022\013\n\003k"
+    "ey\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"t\n\016StreamRes"
+    "ponse\022\022\n\nsession_id\030\001 \001(\t\022\023\n\013target_uuid"
+    "\030\002 \001(\t\022\014\n\004data\030\003 \001(\014\022+\n\007control\030\004 \001(\0132\032."
+    "kelpieui.v1.StreamControl\"\307\001\n\tProxyInfo\022"
+    "\020\n\010proxy_id\030\001 \001(\t\022\023\n\013target_uuid\030\002 \001(\t\022\014"
+    "\n\004kind\030\003 \001(\t\022\014\n\004bind\030\004 \001(\t\022\016\n\006remote\030\005 \001"
+    "(\t\0226\n\010metadata\030\006 \003(\0132$.kelpieui.v1.Proxy"
+    "Info.MetadataEntry\032/\n\rMetadataEntry\022\013\n\003k"
+    "ey\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"\024\n\022ListProxi"
+    "esRequest\">\n\023ListProxiesResponse\022\'\n\007prox"
+    "ies\030\001 \003(\0132\026.kelpieui.v1.ProxyInfo\"\336\001\n\nPr"
+    "oxyEvent\022*\n\004kind\030\001 \001(\0162\034.kelpieui.v1.Pro"
+    "xyEvent.Kind\022%\n\005proxy\030\002 \001(\0132\026.kelpieui.v"
+    "1.ProxyInfo\022\016\n\006reason\030\003 \001(\t\"m\n\004Kind\022\033\n\027P"
+    "ROXY_EVENT_UNSPECIFIED\020\000\022\027\n\023PROXY_EVENT_"
+    "STARTED\020\001\022\027\n\023PROXY_EVENT_STOPPED\020\002\022\026\n\022PR"
+    "OXY_EVENT_FAILED\020\003\"\267\002\n\nSleepEvent\022*\n\004kin"
+    "d\030\001 \001(\0162\034.kelpieui.v1.SleepEvent.Kind\022\023\n"
+    "\013target_uuid\030\002 \001(\t\022\032\n\rsleep_seconds\030\003 \001("
+    "\005H\000\210\001\001\022\031\n\014work_seconds\030\004 \001(\005H\001\210\001\001\022\033\n\016jit"
+    "ter_percent\030\005 \001(\001H\002\210\001\001\022\020\n\010operator\030\006 \001(\t"
+    "\022\016\n\006reason\030\007 \001(\t\"<\n\004Kind\022\033\n\027SLEEP_EVENT_"
+    "UNSPECIFIED\020\000\022\027\n\023SLEEP_EVENT_UPDATED\020\001B\020"
+    "\n\016_sleep_secondsB\017\n\r_work_secondsB\021\n\017_ji"
+    "tter_percent\"\252\002\n\014SleepProfile\022\023\n\013target_"
+    "uuid\030\001 \001(\t\022\032\n\rsleep_seconds\030\002 \001(\005H\000\210\001\001\022\031"
+    "\n\014work_seconds\030\003 \001(\005H\001\210\001\001\022\033\n\016jitter_perc"
+    "ent\030\004 \001(\001H\002\210\001\001\022\017\n\007profile\030\005 \001(\t\022\024\n\014last_"
+    "updated\030\006 \001(\t\022\024\n\014next_wake_at\030\007 \001(\t\022\016\n\006s"
+    "tatus\030\010 \001(\t\022\020\n\010operator\030\t \001(\t\022\016\n\006reason\030"
+    "\n \001(\t\022\014\n\004memo\030\013 \001(\tB\020\n\016_sleep_secondsB\017\n"
+    "\r_work_secondsB\021\n\017_jitter_percent\"\032\n\030Lis"
+    "tSleepProfilesRequest\"H\n\031ListSleepProfil"
+    "esResponse\022+\n\010profiles\030\001 \003(\0132\031.kelpieui."
+    "v1.SleepProfile\"\177\n\014RepairStatus\022\023\n\013targe"
+    "t_uuid\030\001 \001(\t\022\020\n\010attempts\030\002 \001(\005\022\024\n\014next_a"
+    "ttempt\030\003 \001(\t\022\016\n\006broken\030\004 \001(\010\022\022\n\nlast_err"
+    "or\030\005 \001(\t\022\016\n\006reason\030\006 \001(\t\"\024\n\022ListRepairsR"
+    "equest\"A\n\023ListRepairsResponse\022*\n\007repairs"
+    "\030\001 \003(\0132\031.kelpieui.v1.RepairStatus\"7\n\022Clo"
+    "seStreamRequest\022\021\n\tstream_id\030\001 \001(\r\022\016\n\006re"
+    "ason\030\002 \001(\t\"\025\n\023CloseStreamResponse\"H\n\020Sta"
+    "rtDialRequest\022\023\n\013target_uuid\030\001 \001(\t\022\017\n\007ad"
+    "dress\030\002 \001(\t\022\016\n\006reason\030\003 \001(\t\"V\n\021StartDial"
+    "Response\022\017\n\007dial_id\030\001 \001(\t\022\020\n\010accepted\030\002 "
+    "\001(\010\022\017\n\007message\030\003 \001(\t\022\r\n\005error\030\004 \001(\t\"$\n\021C"
+    "ancelDialRequest\022\017\n\007dial_id\030\001 \001(\t\"5\n\022Can"
+    "celDialResponse\022\020\n\010canceled\030\001 \001(\010\022\r\n\005err"
+    "or\030\002 \001(\t\"\021\n\017ListDialRequest\"\303\001\n\nDialStat"
+    "us\022\017\n\007dial_id\030\001 \001(\t\022\023\n\013target_uuid\030\002 \001(\t"
+    "\022\017\n\007address\030\003 \001(\t\022\016\n\006reason\030\004 \001(\t\022%\n\005sta"
+    "te\030\005 \001(\0162\026.kelpieui.v1.DialState\022\r\n\005erro"
+    "r\030\006 \001(\t\022\020\n\010operator\030\007 \001(\t\022\022\n\nstarted_at\030"
+    "\010 \001(\t\022\022\n\nupdated_at\030\t \001(\t\":\n\020ListDialRes"
+    "ponse\022&\n\005dials\030\001 \003(\0132\027.kelpieui.v1.DialS"
+    "tatus\"\257\001\n\rAuditLogEntry\022\n\n\002id\030\001 \001(\t\022\020\n\010u"
+    "sername\030\002 \001(\t\022\014\n\004role\030\003 \001(\t\022\016\n\006method\030\004 "
+    "\001(\t\022\016\n\006target\030\005 \001(\t\022\022\n\nparameters\030\006 \001(\t\022"
+    "\016\n\006status\030\007 \001(\t\022\r\n\005error\030\010 \001(\t\022\014\n\004peer\030\t"
+    " \001(\t\022\021\n\ttimestamp\030\n \001(\t\"7\n\nAuditEvent\022)\n"
+    "\005entry\030\001 \001(\0132\032.kelpieui.v1.AuditLogEntry"
+    "\"k\n\024ListAuditLogsRequest\022\020\n\010username\030\001 \001"
+    "(\t\022\016\n\006method\030\002 \001(\t\022\021\n\tfrom_time\030\003 \001(\t\022\017\n"
+    "\007to_time\030\004 \001(\t\022\r\n\005limit\030\005 \001(\005\"D\n\025ListAud"
+    "itLogsResponse\022+\n\007entries\030\001 \003(\0132\032.kelpie"
+    "ui.v1.AuditLogEntry\":\n\025UpdateNodeMemoReq"
+    "uest\022\023\n\013target_uuid\030\001 \001(\t\022\014\n\004memo\030\002 \001(\t\""
+    "\030\n\026UpdateNodeMemoResponse\"X\n\030StartForwar"
+    "dProxyRequest\022\023\n\013target_uuid\030\001 \001(\t\022\022\n\nlo"
+    "cal_bind\030\002 \001(\t\022\023\n\013remote_addr\030\003 \001(\t\"\200\001\n\031"
+    "StartForwardProxyResponse\022.\n\006handle\030\001 \001("
+    "\0132\036.kelpieui.v1.ProxyStreamHandle\022\020\n\010pro"
+    "xy_id\030\002 \001(\t\022\014\n\004bind\030\003 \001(\t\022\023\n\013remote_addr"
+    "\030\004 \001(\t\"@\n\027StopForwardProxyRequest\022\023\n\013tar"
+    "get_uuid\030\001 \001(\t\022\020\n\010proxy_id\030\002 \001(\t\"+\n\030Stop"
+    "ForwardProxyResponse\022\017\n\007stopped\030\001 \001(\005\"Y\n"
+    "\031StartBackwardProxyRequest\022\023\n\013target_uui"
+    "d\030\001 \001(\t\022\023\n\013remote_port\030\002 \001(\t\022\022\n\nlocal_po"
+    "rt\030\003 \001(\t\"\207\001\n\032StartBackwardProxyResponse\022"
+    ".\n\006handle\030\001 \001(\0132\036.kelpieui.v1.ProxyStrea"
+    "mHandle\022\020\n\010proxy_id\030\002 \001(\t\022\023\n\013remote_port"
+    "\030\003 \001(\t\022\022\n\nlocal_port\030\004 \001(\t\"A\n\030StopBackwa"
+    "rdProxyRequest\022\023\n\013target_uuid\030\001 \001(\t\022\020\n\010p"
+    "roxy_id\030\002 \001(\t\",\n\031StopBackwardProxyRespon"
+    "se\022\017\n\007stopped\030\001 \001(\005\"\240\004\n\013SessionInfo\022\023\n\013t"
+    "arget_uuid\030\002 \001(\t\022*\n\006status\030\003 \001(\0162\032.kelpi"
+    "eui.v1.SessionStatus\022\016\n\006active\030\004 \001(\010\022\021\n\t"
+    "connected\030\005 \001(\010\022\023\n\013remote_addr\030\006 \001(\t\022\020\n\010"
+    "upstream\030\007 \001(\t\022\022\n\ndownstream\030\010 \001(\t\022\022\n\nne"
+    "twork_id\030\t \001(\t\022\021\n\tlast_seen\030\n \001(\t\022\022\n\nlas"
+    "t_error\030\013 \001(\t\022\025\n\rsleep_profile\030\014 \001(\t\022\032\n\r"
+    "sleep_seconds\030\r \001(\005H\000\210\001\001\022\031\n\014work_seconds"
+    "\030\016 \001(\005H\001\210\001\001\022\033\n\016jitter_percent\030\017 \001(\001H\002\210\001\001"
+    "\022\024\n\014last_command\030\020 \001(\t\022\025\n\rlast_operator\030"
+    "\021 \001(\t\0228\n\010metadata\030\022 \003(\0132&.kelpieui.v1.Se"
+    "ssionInfo.MetadataEntry\032/\n\rMetadataEntry"
+    "\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001B\020\n\016_sle"
+    "ep_secondsB\017\n\r_work_secondsB\021\n\017_jitter_p"
+    "ercent\"s\n\023ListSessionsRequest\022\024\n\014target_"
+    "uuids\030\001 \003(\t\022,\n\010statuses\030\002 \003(\0162\032.kelpieui"
+    ".v1.SessionStatus\022\030\n\020include_inactive\030\003 "
+    "\001(\010\"B\n\024ListSessionsResponse\022*\n\010sessions\030"
+    "\001 \003(\0132\030.kelpieui.v1.SessionInfo\"i\n\022MarkS"
+    "essionRequest\022\023\n\013target_uuid\030\001 \001(\t\022.\n\006ac"
+    "tion\030\002 \001(\0162\036.kelpieui.v1.SessionMarkActi"
+    "on\022\016\n\006reason\030\003 \001(\t\"@\n\023MarkSessionRespons"
+    "e\022)\n\007session\030\001 \001(\0132\030.kelpieui.v1.Session"
+    "Info\"J\n\024RepairSessionRequest\022\023\n\013target_u"
+    "uid\030\002 \001(\t\022\r\n\005force\030\003 \001(\010\022\016\n\006reason\030\004 \001(\t"
+    "\":\n\025RepairSessionResponse\022\020\n\010enqueued\030\001 "
+    "\001(\010\022\017\n\007message\030\002 \001(\t\">\n\027ReconnectSession"
+    "Request\022\023\n\013target_uuid\030\002 \001(\t\022\016\n\006reason\030\003"
+    " \001(\t\"=\n\030ReconnectSessionResponse\022\020\n\010acce"
+    "pted\030\001 \001(\010\022\017\n\007message\030\002 \001(\t\">\n\027Terminate"
+    "SessionRequest\022\023\n\013target_uuid\030\002 \001(\t\022\016\n\006r"
+    "eason\030\003 \001(\t\".\n\030TerminateSessionResponse\022"
+    "\022\n\nterminated\030\001 \001(\010\"d\n\031SessionDiagnostic"
+    "sRequest\022\023\n\013target_uuid\030\002 \001(\t\022\031\n\021include"
+    "_processes\030\003 \001(\010\022\027\n\017include_metrics\030\004 \001("
+    "\010\",\n\rSessionMetric\022\014\n\004name\030\001 \001(\t\022\r\n\005valu"
+    "e\030\002 \001(\t\"k\n\016SessionProcess\022\013\n\003pid\030\001 \001(\t\022\014"
+    "\n\004name\030\002 \001(\t\022\014\n\004user\030\003 \001(\t\022\016\n\006status\030\004 \001"
+    "(\t\022\014\n\004path\030\005 \001(\t\022\022\n\nstarted_at\030\006 \001(\t\"=\n\014"
+    "SessionIssue\022\014\n\004code\030\001 \001(\t\022\017\n\007message\030\002 "
+    "\001(\t\022\016\n\006detail\030\003 \001(\t\"\317\001\n\032SessionDiagnosti"
+    "csResponse\022)\n\007session\030\001 \001(\0132\030.kelpieui.v"
+    "1.SessionInfo\022+\n\007metrics\030\002 \003(\0132\032.kelpieu"
+    "i.v1.SessionMetric\022)\n\006issues\030\003 \003(\0132\031.kel"
+    "pieui.v1.SessionIssue\022.\n\tprocesses\030\004 \003(\013"
+    "2\033.kelpieui.v1.SessionProcess\"\263\001\n\022Update"
+    "SleepRequest\022\023\n\013target_uuid\030\001 \001(\t\022\032\n\rsle"
+    "ep_seconds\030\002 \001(\005H\000\210\001\001\022\031\n\014work_seconds\030\003 "
+    "\001(\005H\001\210\001\001\022\033\n\016jitter_percent\030\004 \001(\001H\002\210\001\001B\020\n"
     "\016_sleep_secondsB\017\n\r_work_secondsB\021\n\017_jit"
-    "ter_percent\"\252\002\n\014SleepProfile\022\023\n\013target_u"
-    "uid\030\001 \001(\t\022\032\n\rsleep_seconds\030\002 \001(\005H\000\210\001\001\022\031\n"
-    "\014work_seconds\030\003 \001(\005H\001\210\001\001\022\033\n\016jitter_perce"
-    "nt\030\004 \001(\001H\002\210\001\001\022\017\n\007profile\030\005 \001(\t\022\024\n\014last_u"
-    "pdated\030\006 \001(\t\022\024\n\014next_wake_at\030\007 \001(\t\022\016\n\006st"
-    "atus\030\010 \001(\t\022\020\n\010operator\030\t \001(\t\022\016\n\006reason\030\n"
-    " \001(\t\022\014\n\004memo\030\013 \001(\tB\020\n\016_sleep_secondsB\017\n\r"
-    "_work_secondsB\021\n\017_jitter_percent\"\032\n\030List"
-    "SleepProfilesRequest\"H\n\031ListSleepProfile"
-    "sResponse\022+\n\010profiles\030\001 \003(\0132\031.kelpieui.v"
-    "1.SleepProfile\"\177\n\014RepairStatus\022\023\n\013target"
-    "_uuid\030\001 \001(\t\022\020\n\010attempts\030\002 \001(\005\022\024\n\014next_at"
-    "tempt\030\003 \001(\t\022\016\n\006broken\030\004 \001(\010\022\022\n\nlast_erro"
-    "r\030\005 \001(\t\022\016\n\006reason\030\006 \001(\t\"\024\n\022ListRepairsRe"
-    "quest\"A\n\023ListRepairsResponse\022*\n\007repairs\030"
-    "\001 \003(\0132\031.kelpieui.v1.RepairStatus\"7\n\022Clos"
-    "eStreamRequest\022\021\n\tstream_id\030\001 \001(\r\022\016\n\006rea"
-    "son\030\002 \001(\t\"\025\n\023CloseStreamResponse\"H\n\020Star"
-    "tDialRequest\022\023\n\013target_uuid\030\001 \001(\t\022\017\n\007add"
-    "ress\030\002 \001(\t\022\016\n\006reason\030\003 \001(\t\"V\n\021StartDialR"
-    "esponse\022\017\n\007dial_id\030\001 \001(\t\022\020\n\010accepted\030\002 \001"
-    "(\010\022\017\n\007message\030\003 \001(\t\022\r\n\005error\030\004 \001(\t\"$\n\021Ca"
-    "ncelDialRequest\022\017\n\007dial_id\030\001 \001(\t\"5\n\022Canc"
-    "elDialResponse\022\020\n\010canceled\030\001 \001(\010\022\r\n\005erro"
-    "r\030\002 \001(\t\"\021\n\017ListDialRequest\"\303\001\n\nDialStatu"
-    "s\022\017\n\007dial_id\030\001 \001(\t\022\023\n\013target_uuid\030\002 \001(\t\022"
-    "\017\n\007address\030\003 \001(\t\022\016\n\006reason\030\004 \001(\t\022%\n\005stat"
-    "e\030\005 \001(\0162\026.kelpieui.v1.DialState\022\r\n\005error"
-    "\030\006 \001(\t\022\020\n\010operator\030\007 \001(\t\022\022\n\nstarted_at\030\010"
-    " \001(\t\022\022\n\nupdated_at\030\t \001(\t\":\n\020ListDialResp"
-    "onse\022&\n\005dials\030\001 \003(\0132\027.kelpieui.v1.DialSt"
-    "atus\"\257\001\n\rAuditLogEntry\022\n\n\002id\030\001 \001(\t\022\020\n\010us"
-    "ername\030\002 \001(\t\022\014\n\004role\030\003 \001(\t\022\016\n\006method\030\004 \001"
-    "(\t\022\016\n\006target\030\005 \001(\t\022\022\n\nparameters\030\006 \001(\t\022\016"
-    "\n\006status\030\007 \001(\t\022\r\n\005error\030\010 \001(\t\022\014\n\004peer\030\t "
-    "\001(\t\022\021\n\ttimestamp\030\n \001(\t\"7\n\nAuditEvent\022)\n\005"
-    "entry\030\001 \001(\0132\032.kelpieui.v1.AuditLogEntry\""
-    "k\n\024ListAuditLogsRequest\022\020\n\010username\030\001 \001("
-    "\t\022\016\n\006method\030\002 \001(\t\022\021\n\tfrom_time\030\003 \001(\t\022\017\n\007"
-    "to_time\030\004 \001(\t\022\r\n\005limit\030\005 \001(\005\"D\n\025ListAudi"
-    "tLogsResponse\022+\n\007entries\030\001 \003(\0132\032.kelpieu"
-    "i.v1.AuditLogEntry\":\n\025UpdateNodeMemoRequ"
-    "est\022\023\n\013target_uuid\030\001 \001(\t\022\014\n\004memo\030\002 \001(\t\"\030"
-    "\n\026UpdateNodeMemoResponse\"X\n\030StartForward"
-    "ProxyRequest\022\023\n\013target_uuid\030\001 \001(\t\022\022\n\nloc"
-    "al_bind\030\002 \001(\t\022\023\n\013remote_addr\030\003 \001(\t\"\200\001\n\031S"
-    "tartForwardProxyResponse\022.\n\006handle\030\001 \001(\013"
-    "2\036.kelpieui.v1.ProxyStreamHandle\022\020\n\010prox"
-    "y_id\030\002 \001(\t\022\014\n\004bind\030\003 \001(\t\022\023\n\013remote_addr\030"
-    "\004 \001(\t\"@\n\027StopForwardProxyRequest\022\023\n\013targ"
-    "et_uuid\030\001 \001(\t\022\020\n\010proxy_id\030\002 \001(\t\"+\n\030StopF"
-    "orwardProxyResponse\022\017\n\007stopped\030\001 \001(\005\"Y\n\031"
-    "StartBackwardProxyRequest\022\023\n\013target_uuid"
-    "\030\001 \001(\t\022\023\n\013remote_port\030\002 \001(\t\022\022\n\nlocal_por"
-    "t\030\003 \001(\t\"\207\001\n\032StartBackwardProxyResponse\022."
-    "\n\006handle\030\001 \001(\0132\036.kelpieui.v1.ProxyStream"
-    "Handle\022\020\n\010proxy_id\030\002 \001(\t\022\023\n\013remote_port\030"
-    "\003 \001(\t\022\022\n\nlocal_port\030\004 \001(\t\"A\n\030StopBackwar"
-    "dProxyRequest\022\023\n\013target_uuid\030\001 \001(\t\022\020\n\010pr"
-    "oxy_id\030\002 \001(\t\",\n\031StopBackwardProxyRespons"
-    "e\022\017\n\007stopped\030\001 \001(\005\"\240\004\n\013SessionInfo\022\023\n\013ta"
-    "rget_uuid\030\002 \001(\t\022*\n\006status\030\003 \001(\0162\032.kelpie"
-    "ui.v1.SessionStatus\022\016\n\006active\030\004 \001(\010\022\021\n\tc"
-    "onnected\030\005 \001(\010\022\023\n\013remote_addr\030\006 \001(\t\022\020\n\010u"
-    "pstream\030\007 \001(\t\022\022\n\ndownstream\030\010 \001(\t\022\022\n\nnet"
-    "work_id\030\t \001(\t\022\021\n\tlast_seen\030\n \001(\t\022\022\n\nlast"
-    "_error\030\013 \001(\t\022\025\n\rsleep_profile\030\014 \001(\t\022\032\n\rs"
-    "leep_seconds\030\r \001(\005H\000\210\001\001\022\031\n\014work_seconds\030"
-    "\016 \001(\005H\001\210\001\001\022\033\n\016jitter_percent\030\017 \001(\001H\002\210\001\001\022"
-    "\024\n\014last_command\030\020 \001(\t\022\025\n\rlast_operator\030\021"
-    " \001(\t\0228\n\010metadata\030\022 \003(\0132&.kelpieui.v1.Ses"
-    "sionInfo.MetadataEntry\032/\n\rMetadataEntry\022"
-    "\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001B\020\n\016_slee"
-    "p_secondsB\017\n\r_work_secondsB\021\n\017_jitter_pe"
-    "rcent\"s\n\023ListSessionsRequest\022\024\n\014target_u"
-    "uids\030\001 \003(\t\022,\n\010statuses\030\002 \003(\0162\032.kelpieui."
-    "v1.SessionStatus\022\030\n\020include_inactive\030\003 \001"
-    "(\010\"B\n\024ListSessionsResponse\022*\n\010sessions\030\001"
-    " \003(\0132\030.kelpieui.v1.SessionInfo\"i\n\022MarkSe"
-    "ssionRequest\022\023\n\013target_uuid\030\001 \001(\t\022.\n\006act"
-    "ion\030\002 \001(\0162\036.kelpieui.v1.SessionMarkActio"
-    "n\022\016\n\006reason\030\003 \001(\t\"@\n\023MarkSessionResponse"
-    "\022)\n\007session\030\001 \001(\0132\030.kelpieui.v1.SessionI"
-    "nfo\"J\n\024RepairSessionRequest\022\023\n\013target_uu"
-    "id\030\002 \001(\t\022\r\n\005force\030\003 \001(\010\022\016\n\006reason\030\004 \001(\t\""
-    ":\n\025RepairSessionResponse\022\020\n\010enqueued\030\001 \001"
-    "(\010\022\017\n\007message\030\002 \001(\t\">\n\027ReconnectSessionR"
-    "equest\022\023\n\013target_uuid\030\002 \001(\t\022\016\n\006reason\030\003 "
-    "\001(\t\"=\n\030ReconnectSessionResponse\022\020\n\010accep"
-    "ted\030\001 \001(\010\022\017\n\007message\030\002 \001(\t\">\n\027TerminateS"
-    "essionRequest\022\023\n\013target_uuid\030\002 \001(\t\022\016\n\006re"
-    "ason\030\003 \001(\t\".\n\030TerminateSessionResponse\022\022"
-    "\n\nterminated\030\001 \001(\010\"d\n\031SessionDiagnostics"
-    "Request\022\023\n\013target_uuid\030\002 \001(\t\022\031\n\021include_"
-    "processes\030\003 \001(\010\022\027\n\017include_metrics\030\004 \001(\010"
-    "\",\n\rSessionMetric\022\014\n\004name\030\001 \001(\t\022\r\n\005value"
-    "\030\002 \001(\t\"k\n\016SessionProcess\022\013\n\003pid\030\001 \001(\t\022\014\n"
-    "\004name\030\002 \001(\t\022\014\n\004user\030\003 \001(\t\022\016\n\006status\030\004 \001("
-    "\t\022\014\n\004path\030\005 \001(\t\022\022\n\nstarted_at\030\006 \001(\t\"=\n\014S"
-    "essionIssue\022\014\n\004code\030\001 \001(\t\022\017\n\007message\030\002 \001"
-    "(\t\022\016\n\006detail\030\003 \001(\t\"\317\001\n\032SessionDiagnostic"
-    "sResponse\022)\n\007session\030\001 \001(\0132\030.kelpieui.v1"
-    ".SessionInfo\022+\n\007metrics\030\002 \003(\0132\032.kelpieui"
-    ".v1.SessionMetric\022)\n\006issues\030\003 \003(\0132\031.kelp"
-    "ieui.v1.SessionIssue\022.\n\tprocesses\030\004 \003(\0132"
-    "\033.kelpieui.v1.SessionProcess\"\263\001\n\022UpdateS"
-    "leepRequest\022\023\n\013target_uuid\030\001 \001(\t\022\032\n\rslee"
-    "p_seconds\030\002 \001(\005H\000\210\001\001\022\031\n\014work_seconds\030\003 \001"
-    "(\005H\001\210\001\001\022\033\n\016jitter_percent\030\004 \001(\001H\002\210\001\001B\020\n\016"
-    "_sleep_secondsB\017\n\r_work_secondsB\021\n\017_jitt"
-    "er_percent\"\025\n\023UpdateSleepResponse\"*\n\023Shu"
-    "tdownNodeRequest\022\023\n\013target_uuid\030\001 \001(\t\"\026\n"
-    "\024ShutdownNodeResponse\"x\n\016StreamStatInfo\022"
-    "\014\n\004kind\030\001 \001(\t\022\016\n\006opened\030\002 \001(\004\022\016\n\006closed\030"
-    "\003 \001(\004\022\016\n\006active\030\004 \001(\004\022\023\n\013last_reason\030\005 \001"
-    "(\t\022\023\n\013last_closed\030\006 \001(\t\"\024\n\022StreamStatsRe"
-    "quest\"A\n\023StreamStatsResponse\022*\n\005stats\030\001 "
-    "\003(\0132\033.kelpieui.v1.StreamStatInfo\"\032\n\030Stre"
-    "amDiagnosticsRequest\"E\n\031StreamDiagnostic"
-    "sResponse\022(\n\007streams\030\001 \003(\0132\027.kelpieui.v1"
-    ".StreamDiag\"M\n\021StreamPingRequest\022\023\n\013targ"
-    "et_uuid\030\001 \001(\t\022\r\n\005count\030\002 \001(\005\022\024\n\014payload_"
-    "size\030\003 \001(\005\"\024\n\022StreamPingResponse\"(\n\021Node"
-    "StatusRequest\022\023\n\013target_uuid\030\001 \001(\t\"\230\001\n\022N"
-    "odeStatusResponse\022#\n\004node\030\001 \001(\0132\025.kelpie"
-    "ui.v1.NodeInfo\022(\n\007streams\030\002 \003(\0132\027.kelpie"
-    "ui.v1.StreamDiag\0223\n\017pivot_listeners\030\003 \003("
-    "\0132\032.kelpieui.v1.PivotListener\"G\n\013Network"
-    "Info\022\022\n\nnetwork_id\030\001 \001(\t\022\024\n\014target_uuids"
-    "\030\002 \003(\t\022\016\n\006active\030\003 \001(\010\"\025\n\023ListNetworksRe"
-    "quest\"]\n\024ListNetworksResponse\022*\n\010network"
-    "s\030\001 \003(\0132\030.kelpieui.v1.NetworkInfo\022\031\n\021act"
-    "ive_network_id\030\002 \001(\t\"\'\n\021UseNetworkReques"
-    "t\022\022\n\nnetwork_id\030\001 \001(\t\"/\n\022UseNetworkRespo"
-    "nse\022\031\n\021active_network_id\030\001 \001(\t\"\025\n\023ResetN"
-    "etworkRequest\"1\n\024ResetNetworkResponse\022\031\n"
-    "\021active_network_id\030\001 \001(\t\"@\n\025SetNodeNetwo"
-    "rkRequest\022\023\n\013target_uuid\030\001 \001(\t\022\022\n\nnetwor"
-    "k_id\030\002 \001(\t\"\030\n\026SetNodeNetworkResponse\"\025\n\023"
-    "PruneOfflineRequest\"\'\n\024PruneOfflineRespo"
-    "nse\022\017\n\007removed\030\001 \001(\005\"j\n\022SupplementalStat"
-    "us\022\017\n\007enabled\030\001 \001(\010\022\024\n\014queue_length\030\002 \001("
-    "\005\022\027\n\017pending_actions\030\003 \001(\005\022\024\n\014active_lin"
-    "ks\030\004 \001(\005\"\221\002\n\023SupplementalMetrics\022\022\n\ndisp"
-    "atched\030\001 \001(\004\022\017\n\007success\030\002 \001(\004\022\020\n\010failure"
-    "s\030\003 \001(\004\022\017\n\007dropped\030\004 \001(\004\022\020\n\010recycled\030\005 \001"
-    "(\004\022\022\n\nqueue_high\030\006 \001(\004\022\024\n\014last_failure\030\007"
-    " \001(\t\022\021\n\tevent_seq\030\010 \001(\004\022\027\n\017repair_attemp"
-    "ts\030\t \001(\004\022\026\n\016repair_success\030\n \001(\004\022\027\n\017repa"
-    "ir_failures\030\013 \001(\004\022\031\n\021last_graph_report\030\014"
-    " \003(\t\".\n\035ListSupplementalEventsRequest\022\r\n"
-    "\005limit\030\001 \001(\005\"\213\001\n\021SupplementalEvent\022\013\n\003se"
-    "q\030\001 \001(\004\022\014\n\004kind\030\002 \001(\t\022\016\n\006action\030\003 \001(\t\022\023\n"
-    "\013source_uuid\030\004 \001(\t\022\023\n\013target_uuid\030\005 \001(\t\022"
-    "\016\n\006detail\030\006 \001(\t\022\021\n\ttimestamp\030\007 \001(\t\"P\n\036Li"
-    "stSupplementalEventsResponse\022.\n\006events\030\001"
-    " \003(\0132\036.kelpieui.v1.SupplementalEvent\"C\n\036"
-    "ListSupplementalQualityRequest\022\r\n\005limit\030"
-    "\001 \001(\005\022\022\n\nnode_uuids\030\002 \003(\t\"\341\001\n\023Supplement"
-    "alQuality\022\021\n\tnode_uuid\030\001 \001(\t\022\024\n\014health_s"
-    "core\030\002 \001(\001\022\025\n\rlatency_score\030\003 \001(\001\022\025\n\rfai"
-    "lure_score\030\004 \001(\001\022\023\n\013queue_score\030\005 \001(\001\022\027\n"
-    "\017staleness_score\030\006 \001(\001\022\025\n\rtotal_success\030"
-    "\007 \001(\004\022\026\n\016total_failures\030\010 \001(\004\022\026\n\016last_he"
-    "artbeat\030\t \001(\t\"V\n\037ListSupplementalQuality"
-    "Response\0223\n\tqualities\030\001 \003(\0132 .kelpieui.v"
-    "1.SupplementalQuality\"\023\n\021SupplementalEmp"
-    "ty\"\305\001\n\025StartSshTunnelRequest\022\023\n\013target_u"
-    "uid\030\001 \001(\t\022\023\n\013server_addr\030\002 \001(\t\022\022\n\nagent_"
-    "port\030\003 \001(\t\0225\n\013auth_method\030\004 \001(\0162 .kelpie"
-    "ui.v1.SshTunnelAuthMethod\022\020\n\010username\030\005 "
-    "\001(\t\022\020\n\010password\030\006 \001(\t\022\023\n\013private_key\030\007 \001"
-    "(\014\"\030\n\026StartSshTunnelResponse*q\n\013DtnPrior"
-    "ity\022\034\n\030DTN_PRIORITY_UNSPECIFIED\020\000\022\024\n\020DTN"
-    "_PRIORITY_LOW\020\001\022\027\n\023DTN_PRIORITY_NORMAL\020\002"
-    "\022\025\n\021DTN_PRIORITY_HIGH\020\003*\211\001\n\017RoutingStrat"
-    "egy\022 \n\034ROUTING_STRATEGY_UNSPECIFIED\020\000\022\031\n"
-    "\025ROUTING_STRATEGY_HOPS\020\001\022\033\n\027ROUTING_STRA"
-    "TEGY_WEIGHT\020\002\022\034\n\030ROUTING_STRATEGY_LATENC"
-    "Y\020\003*\233\001\n\021PivotListenerMode\022#\n\037PIVOT_LISTE"
-    "NER_MODE_UNSPECIFIED\020\000\022\036\n\032PIVOT_LISTENER"
-    "_MODE_NORMAL\020\001\022 \n\034PIVOT_LISTENER_MODE_IP"
-    "TABLES\020\002\022\037\n\033PIVOT_LISTENER_MODE_SOREUSE\020"
-    "\003*\345\001\n\030ControllerListenerStatus\022*\n&CONTRO"
-    "LLER_LISTENER_STATUS_UNSPECIFIED\020\000\022&\n\"CO"
-    "NTROLLER_LISTENER_STATUS_PENDING\020\001\022&\n\"CO"
-    "NTROLLER_LISTENER_STATUS_RUNNING\020\002\022%\n!CO"
-    "NTROLLER_LISTENER_STATUS_FAILED\020\003\022&\n\"CON"
-    "TROLLER_LISTENER_STATUS_STOPPED\020\004*}\n\014Loo"
-    "tCategory\022\035\n\031LOOT_CATEGORY_UNSPECIFIED\020\000"
-    "\022\026\n\022LOOT_CATEGORY_FILE\020\001\022\034\n\030LOOT_CATEGOR"
-    "Y_SCREENSHOT\020\002\022\030\n\024LOOT_CATEGORY_TICKET\020\003"
-    "*\335\001\n\020ProxyStreamError\022!\n\035PROXYSTREAM_ERR"
-    "OR_UNSPECIFIED\020\000\022(\n$PROXYSTREAM_ERROR_TA"
-    "RGET_UNAVAILABLE\020\001\022&\n\"PROXYSTREAM_ERROR_"
-    "INVALID_ARGUMENT\020\002\022\032\n\026PROXYSTREAM_ERROR_"
-    "BIND\020\003\022\034\n\030PROXYSTREAM_ERROR_REMOTE\020\004\022\032\n\026"
-    "PROXYSTREAM_ERROR_AUTH\020\005*P\n\tShellMode\022\032\n"
-    "\026SHELL_MODE_UNSPECIFIED\020\000\022\023\n\017SHELL_MODE_"
-    "PIPE\020\001\022\022\n\016SHELL_MODE_PTY\020\002*l\n\016SocksProxy"
-    "Auth\022 \n\034SOCKS_PROXY_AUTH_UNSPECIFIED\020\000\022\031"
-    "\n\025SOCKS_PROXY_AUTH_NONE\020\001\022\035\n\031SOCKS_PROXY"
-    "_AUTH_USERPASS\020\002*e\n\024SshSessionAuthMethod"
-    "\022\'\n#SSH_SESSION_AUTH_METHOD_UNSPECIFIED\020"
-    "\000\022$\n SSH_SESSION_AUTH_METHOD_PASSWORD\020\001*"
-    "\242\001\n\tDialState\022\032\n\026DIAL_STATE_UNSPECIFIED\020"
-    "\000\022\027\n\023DIAL_STATE_ENQUEUED\020\001\022\026\n\022DIAL_STATE"
-    "_RUNNING\020\002\022\030\n\024DIAL_STATE_SUCCEEDED\020\003\022\025\n\021"
-    "DIAL_STATE_FAILED\020\004\022\027\n\023DIAL_STATE_CANCEL"
-    "ED\020\005*\300\001\n\rSessionStatus\022\036\n\032SESSION_STATUS"
-    "_UNSPECIFIED\020\000\022\031\n\025SESSION_STATUS_ACTIVE\020"
-    "\001\022\033\n\027SESSION_STATUS_DEGRADED\020\002\022\031\n\025SESSIO"
-    "N_STATUS_FAILED\020\003\022\036\n\032SESSION_STATUS_MARK"
-    "ED_DEAD\020\004\022\034\n\030SESSION_STATUS_REPAIRING\020\005*"
-    "\232\001\n\021SessionMarkAction\022#\n\037SESSION_MARK_AC"
-    "TION_UNSPECIFIED\020\000\022\035\n\031SESSION_MARK_ACTIO"
-    "N_ALIVE\020\001\022\034\n\030SESSION_MARK_ACTION_DEAD\020\002\022"
-    "#\n\037SESSION_MARK_ACTION_MAINTENANCE\020\003*\203\001\n"
-    "\023SshTunnelAuthMethod\022&\n\"SSH_TUNNEL_AUTH_"
-    "METHOD_UNSPECIFIED\020\000\022#\n\037SSH_TUNNEL_AUTH_"
-    "METHOD_PASSWORD\020\001\022\037\n\033SSH_TUNNEL_AUTH_MET"
-    "HOD_CERT\020\0022\204\034\n\017KelpieUIService\022J\n\013GetSna"
-    "pshot\022\034.kelpieui.v1.SnapshotRequest\032\035.ke"
-    "lpieui.v1.SnapshotResponse\022J\n\tListNodes\022"
-    "\035.kelpieui.v1.ListNodesRequest\032\036.kelpieu"
-    "i.v1.ListNodesResponse\022P\n\013GetTopology\022\037."
-    "kelpieui.v1.GetTopologyRequest\032 .kelpieu"
-    "i.v1.GetTopologyResponse\022F\n\013WatchEvents\022"
-    "\037.kelpieui.v1.WatchEventsRequest\032\024.kelpi"
-    "eui.v1.UiEvent0\001\022G\n\010ListLoot\022\034.kelpieui."
-    "v1.ListLootRequest\032\035.kelpieui.v1.ListLoo"
-    "tResponse\022M\n\nSubmitLoot\022\036.kelpieui.v1.Su"
-    "bmitLootRequest\032\037.kelpieui.v1.SubmitLoot"
-    "Response\022D\n\007GetLoot\022\033.kelpieui.v1.GetLoo"
-    "tRequest\032\034.kelpieui.v1.GetLootResponse\022J"
-    "\n\013ProxyStream\022\032.kelpieui.v1.StreamReques"
-    "t\032\033.kelpieui.v1.StreamResponse(\0010\001\022M\n\nSt"
-    "artShell\022\036.kelpieui.v1.StartShellRequest"
-    "\032\037.kelpieui.v1.StartShellResponse\022\\\n\017Sta"
-    "rtSocksProxy\022#.kelpieui.v1.StartSocksPro"
-    "xyRequest\032$.kelpieui.v1.StartSocksProxyR"
-    "esponse\022\\\n\017StartSshSession\022#.kelpieui.v1"
-    ".StartSshSessionRequest\032$.kelpieui.v1.St"
-    "artSshSessionResponse\022Y\n\016UpdateNodeMemo\022"
-    "\".kelpieui.v1.UpdateNodeMemoRequest\032#.ke"
-    "lpieui.v1.UpdateNodeMemoResponse\022S\n\014List"
-    "Sessions\022 .kelpieui.v1.ListSessionsReque"
-    "st\032!.kelpieui.v1.ListSessionsResponse\022P\n"
-    "\013MarkSession\022\037.kelpieui.v1.MarkSessionRe"
-    "quest\032 .kelpieui.v1.MarkSessionResponse\022"
-    "V\n\rRepairSession\022!.kelpieui.v1.RepairSes"
-    "sionRequest\032\".kelpieui.v1.RepairSessionR"
-    "esponse\022_\n\020ReconnectSession\022$.kelpieui.v"
-    "1.ReconnectSessionRequest\032%.kelpieui.v1."
-    "ReconnectSessionResponse\022_\n\020TerminateSes"
-    "sion\022$.kelpieui.v1.TerminateSessionReque"
-    "st\032%.kelpieui.v1.TerminateSessionRespons"
-    "e\022h\n\025GetSessionDiagnostics\022&.kelpieui.v1"
-    ".SessionDiagnosticsRequest\032\'.kelpieui.v1"
-    ".SessionDiagnosticsResponse\022P\n\013CloseStre"
-    "am\022\037.kelpieui.v1.CloseStreamRequest\032 .ke"
-    "lpieui.v1.CloseStreamResponse\022Y\n\016StartSs"
-    "hTunnel\022\".kelpieui.v1.StartSshTunnelRequ"
-    "est\032#.kelpieui.v1.StartSshTunnelResponse"
-    "\022S\n\014ShutdownNode\022 .kelpieui.v1.ShutdownN"
-    "odeRequest\032!.kelpieui.v1.ShutdownNodeRes"
-    "ponse\022P\n\013StreamStats\022\037.kelpieui.v1.Strea"
-    "mStatsRequest\032 .kelpieui.v1.StreamStatsR"
-    "esponse\022b\n\021StreamDiagnostics\022%.kelpieui."
-    "v1.StreamDiagnosticsRequest\032&.kelpieui.v"
-    "1.StreamDiagnosticsResponse\022M\n\nStreamPin"
-    "g\022\036.kelpieui.v1.StreamPingRequest\032\037.kelp"
-    "ieui.v1.StreamPingResponse\022M\n\nGetMetrics"
-    "\022\036.kelpieui.v1.GetMetricsRequest\032\037.kelpi"
-    "eui.v1.GetMetricsResponse\022_\n\020GetDtnQueue"
-    "Stats\022$.kelpieui.v1.GetDtnQueueStatsRequ"
-    "est\032%.kelpieui.v1.GetDtnQueueStatsRespon"
-    "se\022Y\n\016ListDtnBundles\022\".kelpieui.v1.ListD"
-    "tnBundlesRequest\032#.kelpieui.v1.ListDtnBu"
-    "ndlesResponse\022b\n\021EnqueueDtnPayload\022%.kel"
-    "pieui.v1.EnqueueDtnPayloadRequest\032&.kelp"
-    "ieui.v1.EnqueueDtnPayloadResponse\022S\n\014Get"
-    "DtnPolicy\022 .kelpieui.v1.GetDtnPolicyRequ"
-    "est\032!.kelpieui.v1.GetDtnPolicyResponse\022\\"
-    "\n\017UpdateDtnPolicy\022#.kelpieui.v1.UpdateDt"
-    "nPolicyRequest\032$.kelpieui.v1.UpdateDtnPo"
-    "licyResponse\022e\n\022GetRoutingStrategy\022&.kel"
-    "pieui.v1.GetRoutingStrategyRequest\032\'.kel"
-    "pieui.v1.GetRoutingStrategyResponse\022e\n\022S"
-    "etRoutingStrategy\022&.kelpieui.v1.SetRouti"
-    "ngStrategyRequest\032\'.kelpieui.v1.SetRouti"
-    "ngStrategyResponse\022M\n\nNodeStatus\022\036.kelpi"
-    "eui.v1.NodeStatusRequest\032\037.kelpieui.v1.N"
-    "odeStatusResponse\022S\n\014ListNetworks\022 .kelp"
-    "ieui.v1.ListNetworksRequest\032!.kelpieui.v"
-    "1.ListNetworksResponse\022M\n\nUseNetwork\022\036.k"
-    "elpieui.v1.UseNetworkRequest\032\037.kelpieui."
-    "v1.UseNetworkResponse\022S\n\014ResetNetwork\022 ."
-    "kelpieui.v1.ResetNetworkRequest\032!.kelpie"
-    "ui.v1.ResetNetworkResponse\022Y\n\016SetNodeNet"
-    "work\022\".kelpieui.v1.SetNodeNetworkRequest"
-    "\032#.kelpieui.v1.SetNodeNetworkResponse\022S\n"
-    "\014PruneOffline\022 .kelpieui.v1.PruneOffline"
-    "Request\032!.kelpieui.v1.PruneOfflineRespon"
-    "se\022\\\n\017SendChatMessage\022#.kelpieui.v1.Send"
-    "ChatMessageRequest\032$.kelpieui.v1.SendCha"
-    "tMessageResponse\022_\n\020ListChatMessages\022$.k"
-    "elpieui.v1.ListChatMessagesRequest\032%.kel"
-    "pieui.v1.ListChatMessagesResponse\022V\n\rLis"
-    "tAuditLogs\022!.kelpieui.v1.ListAuditLogsRe"
-    "quest\032\".kelpieui.v1.ListAuditLogsRespons"
-    "e2\300\003\n\031PivotListenerAdminService\022e\n\022ListP"
-    "ivotListeners\022&.kelpieui.v1.ListPivotLis"
-    "tenersRequest\032\'.kelpieui.v1.ListPivotLis"
-    "tenersResponse\022h\n\023CreatePivotListener\022\'."
-    "kelpieui.v1.CreatePivotListenerRequest\032("
-    ".kelpieui.v1.CreatePivotListenerResponse"
-    "\022h\n\023UpdatePivotListener\022\'.kelpieui.v1.Up"
-    "datePivotListenerRequest\032(.kelpieui.v1.U"
-    "pdatePivotListenerResponse\022h\n\023DeletePivo"
-    "tListener\022\'.kelpieui.v1.DeletePivotListe"
-    "nerRequest\032(.kelpieui.v1.DeletePivotList"
-    "enerResponse2\201\004\n\036ControllerListenerAdmin"
-    "Service\022t\n\027ListControllerListeners\022+.kel"
-    "pieui.v1.ListControllerListenersRequest\032"
-    ",.kelpieui.v1.ListControllerListenersRes"
-    "ponse\022w\n\030CreateControllerListener\022,.kelp"
-    "ieui.v1.CreateControllerListenerRequest\032"
-    "-.kelpieui.v1.CreateControllerListenerRe"
-    "sponse\022w\n\030UpdateControllerListener\022,.kel"
-    "pieui.v1.UpdateControllerListenerRequest"
-    "\032-.kelpieui.v1.UpdateControllerListenerR"
-    "esponse\022w\n\030DeleteControllerListener\022,.ke"
-    "lpieui.v1.DeleteControllerListenerReques"
-    "t\032-.kelpieui.v1.DeleteControllerListener"
-    "Response2\365\003\n\021ProxyAdminService\022b\n\021StartF"
-    "orwardProxy\022%.kelpieui.v1.StartForwardPr"
-    "oxyRequest\032&.kelpieui.v1.StartForwardPro"
-    "xyResponse\022_\n\020StopForwardProxy\022$.kelpieu"
-    "i.v1.StopForwardProxyRequest\032%.kelpieui."
-    "v1.StopForwardProxyResponse\022e\n\022StartBack"
-    "wardProxy\022&.kelpieui.v1.StartBackwardPro"
-    "xyRequest\032\'.kelpieui.v1.StartBackwardPro"
-    "xyResponse\022b\n\021StopBackwardProxy\022%.kelpie"
-    "ui.v1.StopBackwardProxyRequest\032&.kelpieu"
-    "i.v1.StopBackwardProxyResponse\022P\n\013ListPr"
-    "oxies\022\037.kelpieui.v1.ListProxiesRequest\032 "
-    ".kelpieui.v1.ListProxiesResponse2\311\001\n\021Sle"
-    "epAdminService\022P\n\013UpdateSleep\022\037.kelpieui"
-    ".v1.UpdateSleepRequest\032 .kelpieui.v1.Upd"
-    "ateSleepResponse\022b\n\021ListSleepProfiles\022%."
-    "kelpieui.v1.ListSleepProfilesRequest\032&.k"
-    "elpieui.v1.ListSleepProfilesResponse2\213\004\n"
-    "\030SupplementalAdminService\022X\n\025GetSuppleme"
-    "ntalStatus\022\036.kelpieui.v1.SupplementalEmp"
-    "ty\032\037.kelpieui.v1.SupplementalStatus\022Z\n\026G"
-    "etSupplementalMetrics\022\036.kelpieui.v1.Supp"
-    "lementalEmpty\032 .kelpieui.v1.Supplemental"
-    "Metrics\022q\n\026ListSupplementalEvents\022*.kelp"
-    "ieui.v1.ListSupplementalEventsRequest\032+."
-    "kelpieui.v1.ListSupplementalEventsRespon"
-    "se\022t\n\027ListSupplementalQuality\022+.kelpieui"
-    ".v1.ListSupplementalQualityRequest\032,.kel"
-    "pieui.v1.ListSupplementalQualityResponse"
-    "\022P\n\013ListRepairs\022\037.kelpieui.v1.ListRepair"
-    "sRequest\032 .kelpieui.v1.ListRepairsRespon"
-    "se2\372\001\n\023ConnectAdminService\022J\n\tStartDial\022"
-    "\035.kelpieui.v1.StartDialRequest\032\036.kelpieu"
-    "i.v1.StartDialResponse\022M\n\nCancelDial\022\036.k"
-    "elpieui.v1.CancelDialRequest\032\037.kelpieui."
-    "v1.CancelDialResponse\022H\n\tListDials\022\034.kel"
-    "pieui.v1.ListDialRequest\032\035.kelpieui.v1.L"
-    "istDialResponseB8Z6codeberg.org/agnoie/s"
-    "hepherd/internal/kelpie/uipb;uipbb\006proto"
-    "3"
+    "ter_percent\"\025\n\023UpdateSleepResponse\"*\n\023Sh"
+    "utdownNodeRequest\022\023\n\013target_uuid\030\001 \001(\t\"\026"
+    "\n\024ShutdownNodeResponse\"x\n\016StreamStatInfo"
+    "\022\014\n\004kind\030\001 \001(\t\022\016\n\006opened\030\002 \001(\004\022\016\n\006closed"
+    "\030\003 \001(\004\022\016\n\006active\030\004 \001(\004\022\023\n\013last_reason\030\005 "
+    "\001(\t\022\023\n\013last_closed\030\006 \001(\t\"\024\n\022StreamStatsR"
+    "equest\"A\n\023StreamStatsResponse\022*\n\005stats\030\001"
+    " \003(\0132\033.kelpieui.v1.StreamStatInfo\"\032\n\030Str"
+    "eamDiagnosticsRequest\"E\n\031StreamDiagnosti"
+    "csResponse\022(\n\007streams\030\001 \003(\0132\027.kelpieui.v"
+    "1.StreamDiag\"M\n\021StreamPingRequest\022\023\n\013tar"
+    "get_uuid\030\001 \001(\t\022\r\n\005count\030\002 \001(\005\022\024\n\014payload"
+    "_size\030\003 \001(\005\"\024\n\022StreamPingResponse\"(\n\021Nod"
+    "eStatusRequest\022\023\n\013target_uuid\030\001 \001(\t\"\230\001\n\022"
+    "NodeStatusResponse\022#\n\004node\030\001 \001(\0132\025.kelpi"
+    "eui.v1.NodeInfo\022(\n\007streams\030\002 \003(\0132\027.kelpi"
+    "eui.v1.StreamDiag\0223\n\017pivot_listeners\030\003 \003"
+    "(\0132\032.kelpieui.v1.PivotListener\"G\n\013Networ"
+    "kInfo\022\022\n\nnetwork_id\030\001 \001(\t\022\024\n\014target_uuid"
+    "s\030\002 \003(\t\022\016\n\006active\030\003 \001(\010\"\025\n\023ListNetworksR"
+    "equest\"]\n\024ListNetworksResponse\022*\n\010networ"
+    "ks\030\001 \003(\0132\030.kelpieui.v1.NetworkInfo\022\031\n\021ac"
+    "tive_network_id\030\002 \001(\t\"\'\n\021UseNetworkReque"
+    "st\022\022\n\nnetwork_id\030\001 \001(\t\"/\n\022UseNetworkResp"
+    "onse\022\031\n\021active_network_id\030\001 \001(\t\"\025\n\023Reset"
+    "NetworkRequest\"1\n\024ResetNetworkResponse\022\031"
+    "\n\021active_network_id\030\001 \001(\t\"@\n\025SetNodeNetw"
+    "orkRequest\022\023\n\013target_uuid\030\001 \001(\t\022\022\n\nnetwo"
+    "rk_id\030\002 \001(\t\"\030\n\026SetNodeNetworkResponse\"\025\n"
+    "\023PruneOfflineRequest\"\'\n\024PruneOfflineResp"
+    "onse\022\017\n\007removed\030\001 \001(\005\"j\n\022SupplementalSta"
+    "tus\022\017\n\007enabled\030\001 \001(\010\022\024\n\014queue_length\030\002 \001"
+    "(\005\022\027\n\017pending_actions\030\003 \001(\005\022\024\n\014active_li"
+    "nks\030\004 \001(\005\"\221\002\n\023SupplementalMetrics\022\022\n\ndis"
+    "patched\030\001 \001(\004\022\017\n\007success\030\002 \001(\004\022\020\n\010failur"
+    "es\030\003 \001(\004\022\017\n\007dropped\030\004 \001(\004\022\020\n\010recycled\030\005 "
+    "\001(\004\022\022\n\nqueue_high\030\006 \001(\004\022\024\n\014last_failure\030"
+    "\007 \001(\t\022\021\n\tevent_seq\030\010 \001(\004\022\027\n\017repair_attem"
+    "pts\030\t \001(\004\022\026\n\016repair_success\030\n \001(\004\022\027\n\017rep"
+    "air_failures\030\013 \001(\004\022\031\n\021last_graph_report\030"
+    "\014 \003(\t\".\n\035ListSupplementalEventsRequest\022\r"
+    "\n\005limit\030\001 \001(\005\"\213\001\n\021SupplementalEvent\022\013\n\003s"
+    "eq\030\001 \001(\004\022\014\n\004kind\030\002 \001(\t\022\016\n\006action\030\003 \001(\t\022\023"
+    "\n\013source_uuid\030\004 \001(\t\022\023\n\013target_uuid\030\005 \001(\t"
+    "\022\016\n\006detail\030\006 \001(\t\022\021\n\ttimestamp\030\007 \001(\t\"P\n\036L"
+    "istSupplementalEventsResponse\022.\n\006events\030"
+    "\001 \003(\0132\036.kelpieui.v1.SupplementalEvent\"C\n"
+    "\036ListSupplementalQualityRequest\022\r\n\005limit"
+    "\030\001 \001(\005\022\022\n\nnode_uuids\030\002 \003(\t\"\341\001\n\023Supplemen"
+    "talQuality\022\021\n\tnode_uuid\030\001 \001(\t\022\024\n\014health_"
+    "score\030\002 \001(\001\022\025\n\rlatency_score\030\003 \001(\001\022\025\n\rfa"
+    "ilure_score\030\004 \001(\001\022\023\n\013queue_score\030\005 \001(\001\022\027"
+    "\n\017staleness_score\030\006 \001(\001\022\025\n\rtotal_success"
+    "\030\007 \001(\004\022\026\n\016total_failures\030\010 \001(\004\022\026\n\016last_h"
+    "eartbeat\030\t \001(\t\"V\n\037ListSupplementalQualit"
+    "yResponse\0223\n\tqualities\030\001 \003(\0132 .kelpieui."
+    "v1.SupplementalQuality\"\023\n\021SupplementalEm"
+    "pty\"\305\001\n\025StartSshTunnelRequest\022\023\n\013target_"
+    "uuid\030\001 \001(\t\022\023\n\013server_addr\030\002 \001(\t\022\022\n\nagent"
+    "_port\030\003 \001(\t\0225\n\013auth_method\030\004 \001(\0162 .kelpi"
+    "eui.v1.SshTunnelAuthMethod\022\020\n\010username\030\005"
+    " \001(\t\022\020\n\010password\030\006 \001(\t\022\023\n\013private_key\030\007 "
+    "\001(\014\"\030\n\026StartSshTunnelResponse*q\n\013DtnPrio"
+    "rity\022\034\n\030DTN_PRIORITY_UNSPECIFIED\020\000\022\024\n\020DT"
+    "N_PRIORITY_LOW\020\001\022\027\n\023DTN_PRIORITY_NORMAL\020"
+    "\002\022\025\n\021DTN_PRIORITY_HIGH\020\003*\211\001\n\017RoutingStra"
+    "tegy\022 \n\034ROUTING_STRATEGY_UNSPECIFIED\020\000\022\031"
+    "\n\025ROUTING_STRATEGY_HOPS\020\001\022\033\n\027ROUTING_STR"
+    "ATEGY_WEIGHT\020\002\022\034\n\030ROUTING_STRATEGY_LATEN"
+    "CY\020\003*\233\001\n\021PivotListenerMode\022#\n\037PIVOT_LIST"
+    "ENER_MODE_UNSPECIFIED\020\000\022\036\n\032PIVOT_LISTENE"
+    "R_MODE_NORMAL\020\001\022 \n\034PIVOT_LISTENER_MODE_I"
+    "PTABLES\020\002\022\037\n\033PIVOT_LISTENER_MODE_SOREUSE"
+    "\020\003*\345\001\n\030ControllerListenerStatus\022*\n&CONTR"
+    "OLLER_LISTENER_STATUS_UNSPECIFIED\020\000\022&\n\"C"
+    "ONTROLLER_LISTENER_STATUS_PENDING\020\001\022&\n\"C"
+    "ONTROLLER_LISTENER_STATUS_RUNNING\020\002\022%\n!C"
+    "ONTROLLER_LISTENER_STATUS_FAILED\020\003\022&\n\"CO"
+    "NTROLLER_LISTENER_STATUS_STOPPED\020\004*}\n\014Lo"
+    "otCategory\022\035\n\031LOOT_CATEGORY_UNSPECIFIED\020"
+    "\000\022\026\n\022LOOT_CATEGORY_FILE\020\001\022\034\n\030LOOT_CATEGO"
+    "RY_SCREENSHOT\020\002\022\030\n\024LOOT_CATEGORY_TICKET\020"
+    "\003*\335\001\n\020ProxyStreamError\022!\n\035PROXYSTREAM_ER"
+    "ROR_UNSPECIFIED\020\000\022(\n$PROXYSTREAM_ERROR_T"
+    "ARGET_UNAVAILABLE\020\001\022&\n\"PROXYSTREAM_ERROR"
+    "_INVALID_ARGUMENT\020\002\022\032\n\026PROXYSTREAM_ERROR"
+    "_BIND\020\003\022\034\n\030PROXYSTREAM_ERROR_REMOTE\020\004\022\032\n"
+    "\026PROXYSTREAM_ERROR_AUTH\020\005*P\n\tShellMode\022\032"
+    "\n\026SHELL_MODE_UNSPECIFIED\020\000\022\023\n\017SHELL_MODE"
+    "_PIPE\020\001\022\022\n\016SHELL_MODE_PTY\020\002*l\n\016SocksProx"
+    "yAuth\022 \n\034SOCKS_PROXY_AUTH_UNSPECIFIED\020\000\022"
+    "\031\n\025SOCKS_PROXY_AUTH_NONE\020\001\022\035\n\031SOCKS_PROX"
+    "Y_AUTH_USERPASS\020\002*e\n\024SshSessionAuthMetho"
+    "d\022\'\n#SSH_SESSION_AUTH_METHOD_UNSPECIFIED"
+    "\020\000\022$\n SSH_SESSION_AUTH_METHOD_PASSWORD\020\001"
+    "*\242\001\n\tDialState\022\032\n\026DIAL_STATE_UNSPECIFIED"
+    "\020\000\022\027\n\023DIAL_STATE_ENQUEUED\020\001\022\026\n\022DIAL_STAT"
+    "E_RUNNING\020\002\022\030\n\024DIAL_STATE_SUCCEEDED\020\003\022\025\n"
+    "\021DIAL_STATE_FAILED\020\004\022\027\n\023DIAL_STATE_CANCE"
+    "LED\020\005*\300\001\n\rSessionStatus\022\036\n\032SESSION_STATU"
+    "S_UNSPECIFIED\020\000\022\031\n\025SESSION_STATUS_ACTIVE"
+    "\020\001\022\033\n\027SESSION_STATUS_DEGRADED\020\002\022\031\n\025SESSI"
+    "ON_STATUS_FAILED\020\003\022\036\n\032SESSION_STATUS_MAR"
+    "KED_DEAD\020\004\022\034\n\030SESSION_STATUS_REPAIRING\020\005"
+    "*\232\001\n\021SessionMarkAction\022#\n\037SESSION_MARK_A"
+    "CTION_UNSPECIFIED\020\000\022\035\n\031SESSION_MARK_ACTI"
+    "ON_ALIVE\020\001\022\034\n\030SESSION_MARK_ACTION_DEAD\020\002"
+    "\022#\n\037SESSION_MARK_ACTION_MAINTENANCE\020\003*\203\001"
+    "\n\023SshTunnelAuthMethod\022&\n\"SSH_TUNNEL_AUTH"
+    "_METHOD_UNSPECIFIED\020\000\022#\n\037SSH_TUNNEL_AUTH"
+    "_METHOD_PASSWORD\020\001\022\037\n\033SSH_TUNNEL_AUTH_ME"
+    "THOD_CERT\020\0022\321\032\n\017KelpieUIService\022J\n\013GetSn"
+    "apshot\022\034.kelpieui.v1.SnapshotRequest\032\035.k"
+    "elpieui.v1.SnapshotResponse\022J\n\tListNodes"
+    "\022\035.kelpieui.v1.ListNodesRequest\032\036.kelpie"
+    "ui.v1.ListNodesResponse\022P\n\013GetTopology\022\037"
+    ".kelpieui.v1.GetTopologyRequest\032 .kelpie"
+    "ui.v1.GetTopologyResponse\022F\n\013WatchEvents"
+    "\022\037.kelpieui.v1.WatchEventsRequest\032\024.kelp"
+    "ieui.v1.UiEvent0\001\022G\n\010ListLoot\022\034.kelpieui"
+    ".v1.ListLootRequest\032\035.kelpieui.v1.ListLo"
+    "otResponse\022M\n\nSubmitLoot\022\036.kelpieui.v1.S"
+    "ubmitLootRequest\032\037.kelpieui.v1.SubmitLoo"
+    "tResponse\022D\n\007GetLoot\022\033.kelpieui.v1.GetLo"
+    "otRequest\032\034.kelpieui.v1.GetLootResponse\022"
+    "J\n\013ProxyStream\022\032.kelpieui.v1.StreamReque"
+    "st\032\033.kelpieui.v1.StreamResponse(\0010\001\022M\n\nS"
+    "tartShell\022\036.kelpieui.v1.StartShellReques"
+    "t\032\037.kelpieui.v1.StartShellResponse\022\\\n\017St"
+    "artSocksProxy\022#.kelpieui.v1.StartSocksPr"
+    "oxyRequest\032$.kelpieui.v1.StartSocksProxy"
+    "Response\022\\\n\017StartSshSession\022#.kelpieui.v"
+    "1.StartSshSessionRequest\032$.kelpieui.v1.S"
+    "tartSshSessionResponse\022Y\n\016UpdateNodeMemo"
+    "\022\".kelpieui.v1.UpdateNodeMemoRequest\032#.k"
+    "elpieui.v1.UpdateNodeMemoResponse\022S\n\014Lis"
+    "tSessions\022 .kelpieui.v1.ListSessionsRequ"
+    "est\032!.kelpieui.v1.ListSessionsResponse\022P"
+    "\n\013MarkSession\022\037.kelpieui.v1.MarkSessionR"
+    "equest\032 .kelpieui.v1.MarkSessionResponse"
+    "\022V\n\rRepairSession\022!.kelpieui.v1.RepairSe"
+    "ssionRequest\032\".kelpieui.v1.RepairSession"
+    "Response\022_\n\020ReconnectSession\022$.kelpieui."
+    "v1.ReconnectSessionRequest\032%.kelpieui.v1"
+    ".ReconnectSessionResponse\022_\n\020TerminateSe"
+    "ssion\022$.kelpieui.v1.TerminateSessionRequ"
+    "est\032%.kelpieui.v1.TerminateSessionRespon"
+    "se\022h\n\025GetSessionDiagnostics\022&.kelpieui.v"
+    "1.SessionDiagnosticsRequest\032\'.kelpieui.v"
+    "1.SessionDiagnosticsResponse\022P\n\013CloseStr"
+    "eam\022\037.kelpieui.v1.CloseStreamRequest\032 .k"
+    "elpieui.v1.CloseStreamResponse\022Y\n\016StartS"
+    "shTunnel\022\".kelpieui.v1.StartSshTunnelReq"
+    "uest\032#.kelpieui.v1.StartSshTunnelRespons"
+    "e\022S\n\014ShutdownNode\022 .kelpieui.v1.Shutdown"
+    "NodeRequest\032!.kelpieui.v1.ShutdownNodeRe"
+    "sponse\022P\n\013StreamStats\022\037.kelpieui.v1.Stre"
+    "amStatsRequest\032 .kelpieui.v1.StreamStats"
+    "Response\022b\n\021StreamDiagnostics\022%.kelpieui"
+    ".v1.StreamDiagnosticsRequest\032&.kelpieui."
+    "v1.StreamDiagnosticsResponse\022M\n\nStreamPi"
+    "ng\022\036.kelpieui.v1.StreamPingRequest\032\037.kel"
+    "pieui.v1.StreamPingResponse\022M\n\nGetMetric"
+    "s\022\036.kelpieui.v1.GetMetricsRequest\032\037.kelp"
+    "ieui.v1.GetMetricsResponse\022_\n\020GetDtnQueu"
+    "eStats\022$.kelpieui.v1.GetDtnQueueStatsReq"
+    "uest\032%.kelpieui.v1.GetDtnQueueStatsRespo"
+    "nse\022Y\n\016ListDtnBundles\022\".kelpieui.v1.List"
+    "DtnBundlesRequest\032#.kelpieui.v1.ListDtnB"
+    "undlesResponse\022b\n\021EnqueueDtnPayload\022%.ke"
+    "lpieui.v1.EnqueueDtnPayloadRequest\032&.kel"
+    "pieui.v1.EnqueueDtnPayloadResponse\022e\n\022Ge"
+    "tRoutingStrategy\022&.kelpieui.v1.GetRoutin"
+    "gStrategyRequest\032\'.kelpieui.v1.GetRoutin"
+    "gStrategyResponse\022e\n\022SetRoutingStrategy\022"
+    "&.kelpieui.v1.SetRoutingStrategyRequest\032"
+    "\'.kelpieui.v1.SetRoutingStrategyResponse"
+    "\022M\n\nNodeStatus\022\036.kelpieui.v1.NodeStatusR"
+    "equest\032\037.kelpieui.v1.NodeStatusResponse\022"
+    "S\n\014ListNetworks\022 .kelpieui.v1.ListNetwor"
+    "ksRequest\032!.kelpieui.v1.ListNetworksResp"
+    "onse\022M\n\nUseNetwork\022\036.kelpieui.v1.UseNetw"
+    "orkRequest\032\037.kelpieui.v1.UseNetworkRespo"
+    "nse\022S\n\014ResetNetwork\022 .kelpieui.v1.ResetN"
+    "etworkRequest\032!.kelpieui.v1.ResetNetwork"
+    "Response\022Y\n\016SetNodeNetwork\022\".kelpieui.v1"
+    ".SetNodeNetworkRequest\032#.kelpieui.v1.Set"
+    "NodeNetworkResponse\022S\n\014PruneOffline\022 .ke"
+    "lpieui.v1.PruneOfflineRequest\032!.kelpieui"
+    ".v1.PruneOfflineResponse\022\\\n\017SendChatMess"
+    "age\022#.kelpieui.v1.SendChatMessageRequest"
+    "\032$.kelpieui.v1.SendChatMessageResponse\022_"
+    "\n\020ListChatMessages\022$.kelpieui.v1.ListCha"
+    "tMessagesRequest\032%.kelpieui.v1.ListChatM"
+    "essagesResponse\022V\n\rListAuditLogs\022!.kelpi"
+    "eui.v1.ListAuditLogsRequest\032\".kelpieui.v"
+    "1.ListAuditLogsResponse2\300\003\n\031PivotListene"
+    "rAdminService\022e\n\022ListPivotListeners\022&.ke"
+    "lpieui.v1.ListPivotListenersRequest\032\'.ke"
+    "lpieui.v1.ListPivotListenersResponse\022h\n\023"
+    "CreatePivotListener\022\'.kelpieui.v1.Create"
+    "PivotListenerRequest\032(.kelpieui.v1.Creat"
+    "ePivotListenerResponse\022h\n\023UpdatePivotLis"
+    "tener\022\'.kelpieui.v1.UpdatePivotListenerR"
+    "equest\032(.kelpieui.v1.UpdatePivotListener"
+    "Response\022h\n\023DeletePivotListener\022\'.kelpie"
+    "ui.v1.DeletePivotListenerRequest\032(.kelpi"
+    "eui.v1.DeletePivotListenerResponse2\201\004\n\036C"
+    "ontrollerListenerAdminService\022t\n\027ListCon"
+    "trollerListeners\022+.kelpieui.v1.ListContr"
+    "ollerListenersRequest\032,.kelpieui.v1.List"
+    "ControllerListenersResponse\022w\n\030CreateCon"
+    "trollerListener\022,.kelpieui.v1.CreateCont"
+    "rollerListenerRequest\032-.kelpieui.v1.Crea"
+    "teControllerListenerResponse\022w\n\030UpdateCo"
+    "ntrollerListener\022,.kelpieui.v1.UpdateCon"
+    "trollerListenerRequest\032-.kelpieui.v1.Upd"
+    "ateControllerListenerResponse\022w\n\030DeleteC"
+    "ontrollerListener\022,.kelpieui.v1.DeleteCo"
+    "ntrollerListenerRequest\032-.kelpieui.v1.De"
+    "leteControllerListenerResponse2\365\003\n\021Proxy"
+    "AdminService\022b\n\021StartForwardProxy\022%.kelp"
+    "ieui.v1.StartForwardProxyRequest\032&.kelpi"
+    "eui.v1.StartForwardProxyResponse\022_\n\020Stop"
+    "ForwardProxy\022$.kelpieui.v1.StopForwardPr"
+    "oxyRequest\032%.kelpieui.v1.StopForwardProx"
+    "yResponse\022e\n\022StartBackwardProxy\022&.kelpie"
+    "ui.v1.StartBackwardProxyRequest\032\'.kelpie"
+    "ui.v1.StartBackwardProxyResponse\022b\n\021Stop"
+    "BackwardProxy\022%.kelpieui.v1.StopBackward"
+    "ProxyRequest\032&.kelpieui.v1.StopBackwardP"
+    "roxyResponse\022P\n\013ListProxies\022\037.kelpieui.v"
+    "1.ListProxiesRequest\032 .kelpieui.v1.ListP"
+    "roxiesResponse2\311\001\n\021SleepAdminService\022P\n\013"
+    "UpdateSleep\022\037.kelpieui.v1.UpdateSleepReq"
+    "uest\032 .kelpieui.v1.UpdateSleepResponse\022b"
+    "\n\021ListSleepProfiles\022%.kelpieui.v1.ListSl"
+    "eepProfilesRequest\032&.kelpieui.v1.ListSle"
+    "epProfilesResponse2\213\004\n\030SupplementalAdmin"
+    "Service\022X\n\025GetSupplementalStatus\022\036.kelpi"
+    "eui.v1.SupplementalEmpty\032\037.kelpieui.v1.S"
+    "upplementalStatus\022Z\n\026GetSupplementalMetr"
+    "ics\022\036.kelpieui.v1.SupplementalEmpty\032 .ke"
+    "lpieui.v1.SupplementalMetrics\022q\n\026ListSup"
+    "plementalEvents\022*.kelpieui.v1.ListSupple"
+    "mentalEventsRequest\032+.kelpieui.v1.ListSu"
+    "pplementalEventsResponse\022t\n\027ListSuppleme"
+    "ntalQuality\022+.kelpieui.v1.ListSupplement"
+    "alQualityRequest\032,.kelpieui.v1.ListSuppl"
+    "ementalQualityResponse\022P\n\013ListRepairs\022\037."
+    "kelpieui.v1.ListRepairsRequest\032 .kelpieu"
+    "i.v1.ListRepairsResponse2\372\001\n\023ConnectAdmi"
+    "nService\022J\n\tStartDial\022\035.kelpieui.v1.Star"
+    "tDialRequest\032\036.kelpieui.v1.StartDialResp"
+    "onse\022M\n\nCancelDial\022\036.kelpieui.v1.CancelD"
+    "ialRequest\032\037.kelpieui.v1.CancelDialRespo"
+    "nse\022H\n\tListDials\022\034.kelpieui.v1.ListDialR"
+    "equest\032\035.kelpieui.v1.ListDialResponseB8Z"
+    "6codeberg.org/agnoie/shepherd/internal/k"
+    "elpie/uipb;uipbb\006proto3"
 };
 static ::absl::once_flag descriptor_table_kelpieui_2fv1_2fkelpieui_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_kelpieui_2fv1_2fkelpieui_2eproto = {
     false,
     false,
-    26481,
+    25943,
     descriptor_table_protodef_kelpieui_2fv1_2fkelpieui_2eproto,
     "kelpieui/v1/kelpieui.proto",
     &descriptor_table_kelpieui_2fv1_2fkelpieui_2eproto_once,
     nullptr,
     0,
-    180,
+    174,
     schemas,
     file_default_instances,
     TableStruct_kelpieui_2fv1_2fkelpieui_2eproto::offsets,
@@ -14030,1286 +13819,6 @@ void EnqueueDtnPayloadResponse::InternalSwap(EnqueueDtnPayloadResponse* PROTOBUF
 }
 
 ::google::protobuf::Metadata EnqueueDtnPayloadResponse::GetMetadata() const {
-  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
-}
-// ===================================================================
-
-class GetDtnPolicyRequest::_Internal {
- public:
-};
-
-GetDtnPolicyRequest::GetDtnPolicyRequest(::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-    : ::google::protobuf::internal::ZeroFieldsBase(arena, GetDtnPolicyRequest_class_data_.base()) {
-#else   // PROTOBUF_CUSTOM_VTABLE
-    : ::google::protobuf::internal::ZeroFieldsBase(arena) {
-#endif  // PROTOBUF_CUSTOM_VTABLE
-  // @@protoc_insertion_point(arena_constructor:kelpieui.v1.GetDtnPolicyRequest)
-}
-GetDtnPolicyRequest::GetDtnPolicyRequest(
-    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena,
-    const GetDtnPolicyRequest& from)
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-    : ::google::protobuf::internal::ZeroFieldsBase(arena, GetDtnPolicyRequest_class_data_.base()) {
-#else   // PROTOBUF_CUSTOM_VTABLE
-    : ::google::protobuf::internal::ZeroFieldsBase(arena) {
-#endif  // PROTOBUF_CUSTOM_VTABLE
-  GetDtnPolicyRequest* const _this = this;
-  (void)_this;
-  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
-      from._internal_metadata_);
-
-  // @@protoc_insertion_point(copy_constructor:kelpieui.v1.GetDtnPolicyRequest)
-}
-
-inline void* PROTOBUF_NONNULL GetDtnPolicyRequest::PlacementNew_(
-    const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
-    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena) {
-  return ::new (mem) GetDtnPolicyRequest(arena);
-}
-constexpr auto GetDtnPolicyRequest::InternalNewImpl_() {
-  return ::google::protobuf::internal::MessageCreator::ZeroInit(sizeof(GetDtnPolicyRequest),
-                                            alignof(GetDtnPolicyRequest));
-}
-constexpr auto GetDtnPolicyRequest::InternalGenerateClassData_() {
-  return ::google::protobuf::internal::ClassDataFull{
-      ::google::protobuf::internal::ClassData{
-          &_GetDtnPolicyRequest_default_instance_._instance,
-          &_table_.header,
-          nullptr,  // IsInitialized
-          &GetDtnPolicyRequest::MergeImpl,
-          ::google::protobuf::internal::ZeroFieldsBase::GetNewImpl<GetDtnPolicyRequest>(),
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-          &GetDtnPolicyRequest::SharedDtor,
-          ::google::protobuf::internal::ZeroFieldsBase::GetClearImpl<GetDtnPolicyRequest>(), &GetDtnPolicyRequest::ByteSizeLong,
-              &GetDtnPolicyRequest::_InternalSerialize,
-#endif  // PROTOBUF_CUSTOM_VTABLE
-          PROTOBUF_FIELD_OFFSET(GetDtnPolicyRequest, _impl_._cached_size_),
-          false,
-      },
-      &GetDtnPolicyRequest::kDescriptorMethods,
-      &descriptor_table_kelpieui_2fv1_2fkelpieui_2eproto,
-      nullptr,  // tracker
-  };
-}
-
-PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 const
-    ::google::protobuf::internal::ClassDataFull GetDtnPolicyRequest_class_data_ =
-        GetDtnPolicyRequest::InternalGenerateClassData_();
-
-PROTOBUF_ATTRIBUTE_WEAK const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL
-GetDtnPolicyRequest::GetClassData() const {
-  ::google::protobuf::internal::PrefetchToLocalCache(&GetDtnPolicyRequest_class_data_);
-  ::google::protobuf::internal::PrefetchToLocalCache(GetDtnPolicyRequest_class_data_.tc_table);
-  return GetDtnPolicyRequest_class_data_.base();
-}
-PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<0, 0, 0, 0, 2>
-GetDtnPolicyRequest::_table_ = {
-  {
-    PROTOBUF_FIELD_OFFSET(GetDtnPolicyRequest,
-                          _impl_._cached_size_),  // no hasbits
-    0, // no _extensions_
-    0, 0,  // max_field_number, fast_idx_mask
-    offsetof(decltype(_table_), field_lookup_table),
-    4294967295,  // skipmap
-    offsetof(decltype(_table_), field_names),  // no field_entries
-    0,  // num_field_entries
-    0,  // num_aux_entries
-    offsetof(decltype(_table_), field_names),  // no aux_entries
-    GetDtnPolicyRequest_class_data_.base(),
-    nullptr,  // post_loop_handler
-    ::_pbi::TcParser::GenericFallback,  // fallback
-    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
-    ::_pbi::TcParser::GetTable<::kelpieui::v1::GetDtnPolicyRequest>(),  // to_prefetch
-    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
-  }, {{
-    {::_pbi::TcParser::MiniParse, {}},
-  }}, {{
-    65535, 65535
-  }}, // no field_entries, or aux_entries
-  {{
-  }},
-};
-
-
-
-
-
-
-
-::google::protobuf::Metadata GetDtnPolicyRequest::GetMetadata() const {
-  return ::google::protobuf::internal::ZeroFieldsBase::GetMetadataImpl(GetClassData()->full());
-}
-// ===================================================================
-
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-GetDtnPolicyResponse_EntriesEntry_DoNotUse::GetDtnPolicyResponse_EntriesEntry_DoNotUse()
-    : SuperType(GetDtnPolicyResponse_EntriesEntry_DoNotUse_class_data_.base()) {}
-GetDtnPolicyResponse_EntriesEntry_DoNotUse::GetDtnPolicyResponse_EntriesEntry_DoNotUse(::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
-    : SuperType(arena, GetDtnPolicyResponse_EntriesEntry_DoNotUse_class_data_.base()) {}
-#else   // PROTOBUF_CUSTOM_VTABLE
-GetDtnPolicyResponse_EntriesEntry_DoNotUse::GetDtnPolicyResponse_EntriesEntry_DoNotUse() : SuperType() {}
-GetDtnPolicyResponse_EntriesEntry_DoNotUse::GetDtnPolicyResponse_EntriesEntry_DoNotUse(::google::protobuf::Arena* PROTOBUF_NULLABLE arena) : SuperType(arena) {}
-#endif  // PROTOBUF_CUSTOM_VTABLE
-inline void* PROTOBUF_NONNULL GetDtnPolicyResponse_EntriesEntry_DoNotUse::PlacementNew_(
-    const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
-    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena) {
-  return ::new (mem) GetDtnPolicyResponse_EntriesEntry_DoNotUse(arena);
-}
-constexpr auto GetDtnPolicyResponse_EntriesEntry_DoNotUse::InternalNewImpl_() {
-  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(GetDtnPolicyResponse_EntriesEntry_DoNotUse),
-                                            alignof(GetDtnPolicyResponse_EntriesEntry_DoNotUse));
-}
-constexpr auto GetDtnPolicyResponse_EntriesEntry_DoNotUse::InternalGenerateClassData_() {
-  return ::google::protobuf::internal::ClassDataFull{
-      ::google::protobuf::internal::ClassData{
-          &_GetDtnPolicyResponse_EntriesEntry_DoNotUse_default_instance_._instance,
-          &_table_.header,
-          nullptr,  // IsInitialized
-          &GetDtnPolicyResponse_EntriesEntry_DoNotUse::MergeImpl,
-          ::google::protobuf::Message::GetNewImpl<GetDtnPolicyResponse_EntriesEntry_DoNotUse>(),
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-          &GetDtnPolicyResponse_EntriesEntry_DoNotUse::SharedDtor,
-          static_cast<void (::google::protobuf::MessageLite::*)()>(&GetDtnPolicyResponse_EntriesEntry_DoNotUse::ClearImpl),
-              ::google::protobuf::Message::ByteSizeLongImpl, ::google::protobuf::Message::_InternalSerializeImpl
-              ,
-#endif  // PROTOBUF_CUSTOM_VTABLE
-          PROTOBUF_FIELD_OFFSET(GetDtnPolicyResponse_EntriesEntry_DoNotUse, _impl_._cached_size_),
-          false,
-      },
-      &GetDtnPolicyResponse_EntriesEntry_DoNotUse::kDescriptorMethods,
-      &descriptor_table_kelpieui_2fv1_2fkelpieui_2eproto,
-      nullptr,  // tracker
-  };
-}
-
-PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 const
-    ::google::protobuf::internal::ClassDataFull GetDtnPolicyResponse_EntriesEntry_DoNotUse_class_data_ =
-        GetDtnPolicyResponse_EntriesEntry_DoNotUse::InternalGenerateClassData_();
-
-PROTOBUF_ATTRIBUTE_WEAK const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL
-GetDtnPolicyResponse_EntriesEntry_DoNotUse::GetClassData() const {
-  ::google::protobuf::internal::PrefetchToLocalCache(&GetDtnPolicyResponse_EntriesEntry_DoNotUse_class_data_);
-  ::google::protobuf::internal::PrefetchToLocalCache(GetDtnPolicyResponse_EntriesEntry_DoNotUse_class_data_.tc_table);
-  return GetDtnPolicyResponse_EntriesEntry_DoNotUse_class_data_.base();
-}
-PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<1, 2, 0, 62, 2>
-GetDtnPolicyResponse_EntriesEntry_DoNotUse::_table_ = {
-  {
-    PROTOBUF_FIELD_OFFSET(GetDtnPolicyResponse_EntriesEntry_DoNotUse, _impl_._has_bits_),
-    0, // no _extensions_
-    2, 8,  // max_field_number, fast_idx_mask
-    offsetof(decltype(_table_), field_lookup_table),
-    4294967292,  // skipmap
-    offsetof(decltype(_table_), field_entries),
-    2,  // num_field_entries
-    0,  // num_aux_entries
-    offsetof(decltype(_table_), field_names),  // no aux_entries
-    GetDtnPolicyResponse_EntriesEntry_DoNotUse_class_data_.base(),
-    nullptr,  // post_loop_handler
-    ::_pbi::TcParser::DiscardEverythingFallback,  // fallback
-    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
-    ::_pbi::TcParser::GetTable<::kelpieui::v1::GetDtnPolicyResponse_EntriesEntry_DoNotUse>(),  // to_prefetch
-    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
-  }, {{
-    // string value = 2;
-    {::_pbi::TcParser::FastUS1,
-     {18, 1, 0,
-      PROTOBUF_FIELD_OFFSET(GetDtnPolicyResponse_EntriesEntry_DoNotUse, _impl_.value_)}},
-    // string key = 1;
-    {::_pbi::TcParser::FastUS1,
-     {10, 0, 0,
-      PROTOBUF_FIELD_OFFSET(GetDtnPolicyResponse_EntriesEntry_DoNotUse, _impl_.key_)}},
-  }}, {{
-    65535, 65535
-  }}, {{
-    // string key = 1;
-    {PROTOBUF_FIELD_OFFSET(GetDtnPolicyResponse_EntriesEntry_DoNotUse, _impl_.key_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
-    // string value = 2;
-    {PROTOBUF_FIELD_OFFSET(GetDtnPolicyResponse_EntriesEntry_DoNotUse, _impl_.value_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
-  }},
-  // no aux_entries
-  {{
-    "\55\3\5\0\0\0\0\0"
-    "kelpieui.v1.GetDtnPolicyResponse.EntriesEntry"
-    "key"
-    "value"
-  }},
-};
-// ===================================================================
-
-class GetDtnPolicyResponse::_Internal {
- public:
-  using HasBits =
-      decltype(::std::declval<GetDtnPolicyResponse>()._impl_._has_bits_);
-  static constexpr ::int32_t kHasBitsOffset =
-      8 * PROTOBUF_FIELD_OFFSET(GetDtnPolicyResponse, _impl_._has_bits_);
-};
-
-GetDtnPolicyResponse::GetDtnPolicyResponse(::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-    : ::google::protobuf::Message(arena, GetDtnPolicyResponse_class_data_.base()) {
-#else   // PROTOBUF_CUSTOM_VTABLE
-    : ::google::protobuf::Message(arena) {
-#endif  // PROTOBUF_CUSTOM_VTABLE
-  SharedCtor(arena);
-  // @@protoc_insertion_point(arena_constructor:kelpieui.v1.GetDtnPolicyResponse)
-}
-PROTOBUF_NDEBUG_INLINE GetDtnPolicyResponse::Impl_::Impl_(
-    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
-    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
-    [[maybe_unused]] const ::kelpieui::v1::GetDtnPolicyResponse& from_msg)
-      : _has_bits_{from._has_bits_},
-        _cached_size_{0},
-        #ifdef PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_MAP_FIELD
-        entries_{visibility, ::_pbi::InternalMetadataOffset::Build<
-            ::kelpieui::v1::GetDtnPolicyResponse,
-            PROTOBUF_FIELD_OFFSET(::kelpieui::v1::GetDtnPolicyResponse, _impl_.entries_)>()
-        , from.entries_}
-        #else
-        entries_ { visibility, arena, from.entries_ }
-        #endif
-     {}
-
-GetDtnPolicyResponse::GetDtnPolicyResponse(
-    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena,
-    const GetDtnPolicyResponse& from)
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-    : ::google::protobuf::Message(arena, GetDtnPolicyResponse_class_data_.base()) {
-#else   // PROTOBUF_CUSTOM_VTABLE
-    : ::google::protobuf::Message(arena) {
-#endif  // PROTOBUF_CUSTOM_VTABLE
-  GetDtnPolicyResponse* const _this = this;
-  (void)_this;
-  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
-      from._internal_metadata_);
-  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
-
-  // @@protoc_insertion_point(copy_constructor:kelpieui.v1.GetDtnPolicyResponse)
-}
-PROTOBUF_NDEBUG_INLINE GetDtnPolicyResponse::Impl_::Impl_(
-    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
-    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
-      : _cached_size_{0},
-        #ifdef PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_MAP_FIELD
-        entries_{visibility, ::_pbi::InternalMetadataOffset::Build<
-            ::kelpieui::v1::GetDtnPolicyResponse,
-            PROTOBUF_FIELD_OFFSET(::kelpieui::v1::GetDtnPolicyResponse, _impl_.entries_)>()
-        }
-        #else
-        entries_ { visibility, arena }
-        #endif
-     {}
-
-inline void GetDtnPolicyResponse::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
-  new (&_impl_) Impl_(internal_visibility(), arena);
-}
-GetDtnPolicyResponse::~GetDtnPolicyResponse() {
-  // @@protoc_insertion_point(destructor:kelpieui.v1.GetDtnPolicyResponse)
-  SharedDtor(*this);
-}
-inline void GetDtnPolicyResponse::SharedDtor(MessageLite& self) {
-  GetDtnPolicyResponse& this_ = static_cast<GetDtnPolicyResponse&>(self);
-  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
-    this_.CheckHasBitConsistency();
-  }
-  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
-  ABSL_DCHECK(this_.GetArena() == nullptr);
-  this_._impl_.~Impl_();
-}
-
-inline void* PROTOBUF_NONNULL GetDtnPolicyResponse::PlacementNew_(
-    const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
-    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena) {
-  return ::new (mem) GetDtnPolicyResponse(arena);
-}
-#ifdef PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_REPEATED_PTR_FIELD
-constexpr auto GetDtnPolicyResponse::InternalNewImpl_() {
-  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(GetDtnPolicyResponse),
-                                            alignof(GetDtnPolicyResponse));
-}
-#else  // !PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_REPEATED_PTR_FIELD
-constexpr auto GetDtnPolicyResponse::InternalNewImpl_() {
-  constexpr auto arena_bits = ::google::protobuf::internal::EncodePlacementArenaOffsets({
-      PROTOBUF_FIELD_OFFSET(GetDtnPolicyResponse, _impl_.entries_) +
-          decltype(GetDtnPolicyResponse::_impl_.entries_)::
-              InternalGetArenaOffset(
-                  ::google::protobuf::Message::internal_visibility()),
-  });
-  if (arena_bits.has_value()) {
-    return ::google::protobuf::internal::MessageCreator::CopyInit(
-        sizeof(GetDtnPolicyResponse), alignof(GetDtnPolicyResponse), *arena_bits);
-  } else {
-    return ::google::protobuf::internal::MessageCreator(&GetDtnPolicyResponse::PlacementNew_,
-                                 sizeof(GetDtnPolicyResponse),
-                                 alignof(GetDtnPolicyResponse));
-  }
-}
-#endif
-constexpr auto GetDtnPolicyResponse::InternalGenerateClassData_() {
-  return ::google::protobuf::internal::ClassDataFull{
-      ::google::protobuf::internal::ClassData{
-          &_GetDtnPolicyResponse_default_instance_._instance,
-          &_table_.header,
-          nullptr,  // IsInitialized
-          &GetDtnPolicyResponse::MergeImpl,
-          ::google::protobuf::Message::GetNewImpl<GetDtnPolicyResponse>(),
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-          &GetDtnPolicyResponse::SharedDtor,
-          ::google::protobuf::Message::GetClearImpl<GetDtnPolicyResponse>(), &GetDtnPolicyResponse::ByteSizeLong,
-              &GetDtnPolicyResponse::_InternalSerialize,
-#endif  // PROTOBUF_CUSTOM_VTABLE
-          PROTOBUF_FIELD_OFFSET(GetDtnPolicyResponse, _impl_._cached_size_),
-          false,
-      },
-      &GetDtnPolicyResponse::kDescriptorMethods,
-      &descriptor_table_kelpieui_2fv1_2fkelpieui_2eproto,
-      nullptr,  // tracker
-  };
-}
-
-PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 const
-    ::google::protobuf::internal::ClassDataFull GetDtnPolicyResponse_class_data_ =
-        GetDtnPolicyResponse::InternalGenerateClassData_();
-
-PROTOBUF_ATTRIBUTE_WEAK const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL
-GetDtnPolicyResponse::GetClassData() const {
-  ::google::protobuf::internal::PrefetchToLocalCache(&GetDtnPolicyResponse_class_data_);
-  ::google::protobuf::internal::PrefetchToLocalCache(GetDtnPolicyResponse_class_data_.tc_table);
-  return GetDtnPolicyResponse_class_data_.base();
-}
-PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<0, 1, 1, 48, 2>
-GetDtnPolicyResponse::_table_ = {
-  {
-    PROTOBUF_FIELD_OFFSET(GetDtnPolicyResponse, _impl_._has_bits_),
-    0, // no _extensions_
-    1, 0,  // max_field_number, fast_idx_mask
-    offsetof(decltype(_table_), field_lookup_table),
-    4294967294,  // skipmap
-    offsetof(decltype(_table_), field_entries),
-    1,  // num_field_entries
-    1,  // num_aux_entries
-    offsetof(decltype(_table_), aux_entries),
-    GetDtnPolicyResponse_class_data_.base(),
-    nullptr,  // post_loop_handler
-    ::_pbi::TcParser::GenericFallback,  // fallback
-    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
-    ::_pbi::TcParser::GetTable<::kelpieui::v1::GetDtnPolicyResponse>(),  // to_prefetch
-    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
-  }, {{
-    {::_pbi::TcParser::MiniParse, {}},
-  }}, {{
-    65535, 65535
-  }}, {{
-    // map<string, string> entries = 1;
-    {PROTOBUF_FIELD_OFFSET(GetDtnPolicyResponse, _impl_.entries_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcRepeated | ::_fl::kMap)},
-  }},
-  {{
-      {::_pbi::TcParser::GetMapAuxInfo(
-          1, 0, 9, 9, 0)},
-  }},
-  {{
-    "\40\7\0\0\0\0\0\0"
-    "kelpieui.v1.GetDtnPolicyResponse"
-    "entries"
-  }},
-};
-PROTOBUF_NOINLINE void GetDtnPolicyResponse::Clear() {
-// @@protoc_insertion_point(message_clear_start:kelpieui.v1.GetDtnPolicyResponse)
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  cached_has_bits = _impl_._has_bits_[0];
-  if (CheckHasBitForRepeated(cached_has_bits, 0x00000001U)) {
-    _impl_.entries_.Clear();
-  }
-  _impl_._has_bits_.Clear();
-  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
-}
-
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-::uint8_t* PROTOBUF_NONNULL GetDtnPolicyResponse::_InternalSerialize(
-    const ::google::protobuf::MessageLite& base, ::uint8_t* PROTOBUF_NONNULL target,
-    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) {
-  const GetDtnPolicyResponse& this_ = static_cast<const GetDtnPolicyResponse&>(base);
-#else   // PROTOBUF_CUSTOM_VTABLE
-::uint8_t* PROTOBUF_NONNULL GetDtnPolicyResponse::_InternalSerialize(
-    ::uint8_t* PROTOBUF_NONNULL target,
-    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
-  const GetDtnPolicyResponse& this_ = *this;
-#endif  // PROTOBUF_CUSTOM_VTABLE
-  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
-    this_.CheckHasBitConsistency();
-  }
-  // @@protoc_insertion_point(serialize_to_array_start:kelpieui.v1.GetDtnPolicyResponse)
-  ::uint32_t cached_has_bits = 0;
-  (void)cached_has_bits;
-
-  cached_has_bits = this_._impl_._has_bits_[0];
-  // map<string, string> entries = 1;
-  if (CheckHasBitForRepeated(cached_has_bits, 0x00000001U)) {
-    if (!this_._internal_entries().empty()) {
-      using MapType = ::google::protobuf::Map<::std::string, ::std::string>;
-      using WireHelper = _pbi::MapEntryFuncs<::std::string, ::std::string,
-                                     _pbi::WireFormatLite::TYPE_STRING,
-                                     _pbi::WireFormatLite::TYPE_STRING>;
-      const auto& field = this_._internal_entries();
-
-      if (stream->IsSerializationDeterministic() && field.size() > 1) {
-        for (const auto& entry : ::google::protobuf::internal::MapSorterPtr<MapType>(field)) {
-          target = WireHelper::InternalSerialize(
-              1, entry.first, entry.second, target, stream);
-          ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-              entry.first.data(), static_cast<int>(entry.first.length()),
- ::google::protobuf::internal::WireFormatLite::SERIALIZE, "kelpieui.v1.GetDtnPolicyResponse.entries");
-          ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-              entry.second.data(), static_cast<int>(entry.second.length()),
- ::google::protobuf::internal::WireFormatLite::SERIALIZE, "kelpieui.v1.GetDtnPolicyResponse.entries");
-        }
-      } else {
-        for (const auto& entry : field) {
-          target = WireHelper::InternalSerialize(
-              1, entry.first, entry.second, target, stream);
-          ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-              entry.first.data(), static_cast<int>(entry.first.length()),
- ::google::protobuf::internal::WireFormatLite::SERIALIZE, "kelpieui.v1.GetDtnPolicyResponse.entries");
-          ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-              entry.second.data(), static_cast<int>(entry.second.length()),
- ::google::protobuf::internal::WireFormatLite::SERIALIZE, "kelpieui.v1.GetDtnPolicyResponse.entries");
-        }
-      }
-    }
-  }
-
-  if (ABSL_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
-    target =
-        ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
-            this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:kelpieui.v1.GetDtnPolicyResponse)
-  return target;
-}
-
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-::size_t GetDtnPolicyResponse::ByteSizeLong(const MessageLite& base) {
-  const GetDtnPolicyResponse& this_ = static_cast<const GetDtnPolicyResponse&>(base);
-#else   // PROTOBUF_CUSTOM_VTABLE
-::size_t GetDtnPolicyResponse::ByteSizeLong() const {
-  const GetDtnPolicyResponse& this_ = *this;
-#endif  // PROTOBUF_CUSTOM_VTABLE
-  // @@protoc_insertion_point(message_byte_size_start:kelpieui.v1.GetDtnPolicyResponse)
-  ::size_t total_size = 0;
-
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void)cached_has_bits;
-
-  ::_pbi::Prefetch5LinesFrom7Lines(&this_);
-   {
-    // map<string, string> entries = 1;
-    cached_has_bits = this_._impl_._has_bits_[0];
-    if (CheckHasBitForRepeated(cached_has_bits, 0x00000001U)) {
-      total_size +=
-          1 * ::google::protobuf::internal::FromIntSize(this_._internal_entries_size());
-      for (const auto& entry : this_._internal_entries()) {
-        total_size += _pbi::MapEntryFuncs<::std::string, ::std::string,
-                                       _pbi::WireFormatLite::TYPE_STRING,
-                                       _pbi::WireFormatLite::TYPE_STRING>::ByteSizeLong(entry.first, entry.second);
-      }
-    }
-  }
-  return this_.MaybeComputeUnknownFieldsSize(total_size,
-                                             &this_._impl_._cached_size_);
-}
-
-void GetDtnPolicyResponse::MergeImpl(::google::protobuf::MessageLite& to_msg,
-                            const ::google::protobuf::MessageLite& from_msg) {
-   auto* const _this =
-      static_cast<GetDtnPolicyResponse*>(&to_msg);
-  auto& from = static_cast<const GetDtnPolicyResponse&>(from_msg);
-  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
-    from.CheckHasBitConsistency();
-  }
-  // @@protoc_insertion_point(class_specific_merge_from_start:kelpieui.v1.GetDtnPolicyResponse)
-  ABSL_DCHECK_NE(&from, _this);
-  ::uint32_t cached_has_bits = 0;
-  (void)cached_has_bits;
-
-  cached_has_bits = from._impl_._has_bits_[0];
-  if (CheckHasBitForRepeated(cached_has_bits, 0x00000001U)) {
-    _this->_impl_.entries_.MergeFrom(from._impl_.entries_);
-  }
-  _this->_impl_._has_bits_[0] |= cached_has_bits;
-  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
-      from._internal_metadata_);
-}
-
-void GetDtnPolicyResponse::CopyFrom(const GetDtnPolicyResponse& from) {
-  // @@protoc_insertion_point(class_specific_copy_from_start:kelpieui.v1.GetDtnPolicyResponse)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-
-void GetDtnPolicyResponse::InternalSwap(GetDtnPolicyResponse* PROTOBUF_RESTRICT PROTOBUF_NONNULL other) {
-  using ::std::swap;
-  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
-  _impl_.entries_.InternalSwap(&other->_impl_.entries_);
-}
-
-::google::protobuf::Metadata GetDtnPolicyResponse::GetMetadata() const {
-  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
-}
-// ===================================================================
-
-class UpdateDtnPolicyRequest::_Internal {
- public:
-  using HasBits =
-      decltype(::std::declval<UpdateDtnPolicyRequest>()._impl_._has_bits_);
-  static constexpr ::int32_t kHasBitsOffset =
-      8 * PROTOBUF_FIELD_OFFSET(UpdateDtnPolicyRequest, _impl_._has_bits_);
-};
-
-UpdateDtnPolicyRequest::UpdateDtnPolicyRequest(::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-    : ::google::protobuf::Message(arena, UpdateDtnPolicyRequest_class_data_.base()) {
-#else   // PROTOBUF_CUSTOM_VTABLE
-    : ::google::protobuf::Message(arena) {
-#endif  // PROTOBUF_CUSTOM_VTABLE
-  SharedCtor(arena);
-  // @@protoc_insertion_point(arena_constructor:kelpieui.v1.UpdateDtnPolicyRequest)
-}
-PROTOBUF_NDEBUG_INLINE UpdateDtnPolicyRequest::Impl_::Impl_(
-    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
-    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
-    [[maybe_unused]] const ::kelpieui::v1::UpdateDtnPolicyRequest& from_msg)
-      : _has_bits_{from._has_bits_},
-        _cached_size_{0},
-        key_(arena, from.key_),
-        value_(arena, from.value_) {}
-
-UpdateDtnPolicyRequest::UpdateDtnPolicyRequest(
-    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena,
-    const UpdateDtnPolicyRequest& from)
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-    : ::google::protobuf::Message(arena, UpdateDtnPolicyRequest_class_data_.base()) {
-#else   // PROTOBUF_CUSTOM_VTABLE
-    : ::google::protobuf::Message(arena) {
-#endif  // PROTOBUF_CUSTOM_VTABLE
-  UpdateDtnPolicyRequest* const _this = this;
-  (void)_this;
-  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
-      from._internal_metadata_);
-  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
-
-  // @@protoc_insertion_point(copy_constructor:kelpieui.v1.UpdateDtnPolicyRequest)
-}
-PROTOBUF_NDEBUG_INLINE UpdateDtnPolicyRequest::Impl_::Impl_(
-    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
-    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
-      : _cached_size_{0},
-        key_(arena),
-        value_(arena) {}
-
-inline void UpdateDtnPolicyRequest::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
-  new (&_impl_) Impl_(internal_visibility(), arena);
-}
-UpdateDtnPolicyRequest::~UpdateDtnPolicyRequest() {
-  // @@protoc_insertion_point(destructor:kelpieui.v1.UpdateDtnPolicyRequest)
-  SharedDtor(*this);
-}
-inline void UpdateDtnPolicyRequest::SharedDtor(MessageLite& self) {
-  UpdateDtnPolicyRequest& this_ = static_cast<UpdateDtnPolicyRequest&>(self);
-  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
-    this_.CheckHasBitConsistency();
-  }
-  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
-  ABSL_DCHECK(this_.GetArena() == nullptr);
-  this_._impl_.key_.Destroy();
-  this_._impl_.value_.Destroy();
-  this_._impl_.~Impl_();
-}
-
-inline void* PROTOBUF_NONNULL UpdateDtnPolicyRequest::PlacementNew_(
-    const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
-    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena) {
-  return ::new (mem) UpdateDtnPolicyRequest(arena);
-}
-constexpr auto UpdateDtnPolicyRequest::InternalNewImpl_() {
-  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(UpdateDtnPolicyRequest),
-                                            alignof(UpdateDtnPolicyRequest));
-}
-constexpr auto UpdateDtnPolicyRequest::InternalGenerateClassData_() {
-  return ::google::protobuf::internal::ClassDataFull{
-      ::google::protobuf::internal::ClassData{
-          &_UpdateDtnPolicyRequest_default_instance_._instance,
-          &_table_.header,
-          nullptr,  // IsInitialized
-          &UpdateDtnPolicyRequest::MergeImpl,
-          ::google::protobuf::Message::GetNewImpl<UpdateDtnPolicyRequest>(),
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-          &UpdateDtnPolicyRequest::SharedDtor,
-          ::google::protobuf::Message::GetClearImpl<UpdateDtnPolicyRequest>(), &UpdateDtnPolicyRequest::ByteSizeLong,
-              &UpdateDtnPolicyRequest::_InternalSerialize,
-#endif  // PROTOBUF_CUSTOM_VTABLE
-          PROTOBUF_FIELD_OFFSET(UpdateDtnPolicyRequest, _impl_._cached_size_),
-          false,
-      },
-      &UpdateDtnPolicyRequest::kDescriptorMethods,
-      &descriptor_table_kelpieui_2fv1_2fkelpieui_2eproto,
-      nullptr,  // tracker
-  };
-}
-
-PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 const
-    ::google::protobuf::internal::ClassDataFull UpdateDtnPolicyRequest_class_data_ =
-        UpdateDtnPolicyRequest::InternalGenerateClassData_();
-
-PROTOBUF_ATTRIBUTE_WEAK const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL
-UpdateDtnPolicyRequest::GetClassData() const {
-  ::google::protobuf::internal::PrefetchToLocalCache(&UpdateDtnPolicyRequest_class_data_);
-  ::google::protobuf::internal::PrefetchToLocalCache(UpdateDtnPolicyRequest_class_data_.tc_table);
-  return UpdateDtnPolicyRequest_class_data_.base();
-}
-PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<1, 2, 0, 51, 2>
-UpdateDtnPolicyRequest::_table_ = {
-  {
-    PROTOBUF_FIELD_OFFSET(UpdateDtnPolicyRequest, _impl_._has_bits_),
-    0, // no _extensions_
-    2, 8,  // max_field_number, fast_idx_mask
-    offsetof(decltype(_table_), field_lookup_table),
-    4294967292,  // skipmap
-    offsetof(decltype(_table_), field_entries),
-    2,  // num_field_entries
-    0,  // num_aux_entries
-    offsetof(decltype(_table_), field_names),  // no aux_entries
-    UpdateDtnPolicyRequest_class_data_.base(),
-    nullptr,  // post_loop_handler
-    ::_pbi::TcParser::GenericFallback,  // fallback
-    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
-    ::_pbi::TcParser::GetTable<::kelpieui::v1::UpdateDtnPolicyRequest>(),  // to_prefetch
-    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
-  }, {{
-    // string value = 2;
-    {::_pbi::TcParser::FastUS1,
-     {18, 1, 0,
-      PROTOBUF_FIELD_OFFSET(UpdateDtnPolicyRequest, _impl_.value_)}},
-    // string key = 1;
-    {::_pbi::TcParser::FastUS1,
-     {10, 0, 0,
-      PROTOBUF_FIELD_OFFSET(UpdateDtnPolicyRequest, _impl_.key_)}},
-  }}, {{
-    65535, 65535
-  }}, {{
-    // string key = 1;
-    {PROTOBUF_FIELD_OFFSET(UpdateDtnPolicyRequest, _impl_.key_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
-    // string value = 2;
-    {PROTOBUF_FIELD_OFFSET(UpdateDtnPolicyRequest, _impl_.value_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
-  }},
-  // no aux_entries
-  {{
-    "\42\3\5\0\0\0\0\0"
-    "kelpieui.v1.UpdateDtnPolicyRequest"
-    "key"
-    "value"
-  }},
-};
-PROTOBUF_NOINLINE void UpdateDtnPolicyRequest::Clear() {
-// @@protoc_insertion_point(message_clear_start:kelpieui.v1.UpdateDtnPolicyRequest)
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  cached_has_bits = _impl_._has_bits_[0];
-  if (BatchCheckHasBit(cached_has_bits, 0x00000003U)) {
-    if (CheckHasBit(cached_has_bits, 0x00000001U)) {
-      _impl_.key_.ClearNonDefaultToEmpty();
-    }
-    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
-      _impl_.value_.ClearNonDefaultToEmpty();
-    }
-  }
-  _impl_._has_bits_.Clear();
-  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
-}
-
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-::uint8_t* PROTOBUF_NONNULL UpdateDtnPolicyRequest::_InternalSerialize(
-    const ::google::protobuf::MessageLite& base, ::uint8_t* PROTOBUF_NONNULL target,
-    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) {
-  const UpdateDtnPolicyRequest& this_ = static_cast<const UpdateDtnPolicyRequest&>(base);
-#else   // PROTOBUF_CUSTOM_VTABLE
-::uint8_t* PROTOBUF_NONNULL UpdateDtnPolicyRequest::_InternalSerialize(
-    ::uint8_t* PROTOBUF_NONNULL target,
-    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
-  const UpdateDtnPolicyRequest& this_ = *this;
-#endif  // PROTOBUF_CUSTOM_VTABLE
-  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
-    this_.CheckHasBitConsistency();
-  }
-  // @@protoc_insertion_point(serialize_to_array_start:kelpieui.v1.UpdateDtnPolicyRequest)
-  ::uint32_t cached_has_bits = 0;
-  (void)cached_has_bits;
-
-  cached_has_bits = this_._impl_._has_bits_[0];
-  // string key = 1;
-  if (CheckHasBit(cached_has_bits, 0x00000001U)) {
-    if (!this_._internal_key().empty()) {
-      const ::std::string& _s = this_._internal_key();
-      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "kelpieui.v1.UpdateDtnPolicyRequest.key");
-      target = stream->WriteStringMaybeAliased(1, _s, target);
-    }
-  }
-
-  // string value = 2;
-  if (CheckHasBit(cached_has_bits, 0x00000002U)) {
-    if (!this_._internal_value().empty()) {
-      const ::std::string& _s = this_._internal_value();
-      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "kelpieui.v1.UpdateDtnPolicyRequest.value");
-      target = stream->WriteStringMaybeAliased(2, _s, target);
-    }
-  }
-
-  if (ABSL_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
-    target =
-        ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
-            this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:kelpieui.v1.UpdateDtnPolicyRequest)
-  return target;
-}
-
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-::size_t UpdateDtnPolicyRequest::ByteSizeLong(const MessageLite& base) {
-  const UpdateDtnPolicyRequest& this_ = static_cast<const UpdateDtnPolicyRequest&>(base);
-#else   // PROTOBUF_CUSTOM_VTABLE
-::size_t UpdateDtnPolicyRequest::ByteSizeLong() const {
-  const UpdateDtnPolicyRequest& this_ = *this;
-#endif  // PROTOBUF_CUSTOM_VTABLE
-  // @@protoc_insertion_point(message_byte_size_start:kelpieui.v1.UpdateDtnPolicyRequest)
-  ::size_t total_size = 0;
-
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void)cached_has_bits;
-
-  ::_pbi::Prefetch5LinesFrom7Lines(&this_);
-  cached_has_bits = this_._impl_._has_bits_[0];
-  if (BatchCheckHasBit(cached_has_bits, 0x00000003U)) {
-    // string key = 1;
-    if (CheckHasBit(cached_has_bits, 0x00000001U)) {
-      if (!this_._internal_key().empty()) {
-        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                        this_._internal_key());
-      }
-    }
-    // string value = 2;
-    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
-      if (!this_._internal_value().empty()) {
-        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                        this_._internal_value());
-      }
-    }
-  }
-  return this_.MaybeComputeUnknownFieldsSize(total_size,
-                                             &this_._impl_._cached_size_);
-}
-
-void UpdateDtnPolicyRequest::MergeImpl(::google::protobuf::MessageLite& to_msg,
-                            const ::google::protobuf::MessageLite& from_msg) {
-   auto* const _this =
-      static_cast<UpdateDtnPolicyRequest*>(&to_msg);
-  auto& from = static_cast<const UpdateDtnPolicyRequest&>(from_msg);
-  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
-    from.CheckHasBitConsistency();
-  }
-  // @@protoc_insertion_point(class_specific_merge_from_start:kelpieui.v1.UpdateDtnPolicyRequest)
-  ABSL_DCHECK_NE(&from, _this);
-  ::uint32_t cached_has_bits = 0;
-  (void)cached_has_bits;
-
-  cached_has_bits = from._impl_._has_bits_[0];
-  if (BatchCheckHasBit(cached_has_bits, 0x00000003U)) {
-    if (CheckHasBit(cached_has_bits, 0x00000001U)) {
-      if (!from._internal_key().empty()) {
-        _this->_internal_set_key(from._internal_key());
-      } else {
-        if (_this->_impl_.key_.IsDefault()) {
-          _this->_internal_set_key("");
-        }
-      }
-    }
-    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
-      if (!from._internal_value().empty()) {
-        _this->_internal_set_value(from._internal_value());
-      } else {
-        if (_this->_impl_.value_.IsDefault()) {
-          _this->_internal_set_value("");
-        }
-      }
-    }
-  }
-  _this->_impl_._has_bits_[0] |= cached_has_bits;
-  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
-      from._internal_metadata_);
-}
-
-void UpdateDtnPolicyRequest::CopyFrom(const UpdateDtnPolicyRequest& from) {
-  // @@protoc_insertion_point(class_specific_copy_from_start:kelpieui.v1.UpdateDtnPolicyRequest)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-
-void UpdateDtnPolicyRequest::InternalSwap(UpdateDtnPolicyRequest* PROTOBUF_RESTRICT PROTOBUF_NONNULL other) {
-  using ::std::swap;
-  auto* arena = GetArena();
-  ABSL_DCHECK_EQ(arena, other->GetArena());
-  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.key_, &other->_impl_.key_, arena);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.value_, &other->_impl_.value_, arena);
-}
-
-::google::protobuf::Metadata UpdateDtnPolicyRequest::GetMetadata() const {
-  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
-}
-// ===================================================================
-
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-UpdateDtnPolicyResponse_EntriesEntry_DoNotUse::UpdateDtnPolicyResponse_EntriesEntry_DoNotUse()
-    : SuperType(UpdateDtnPolicyResponse_EntriesEntry_DoNotUse_class_data_.base()) {}
-UpdateDtnPolicyResponse_EntriesEntry_DoNotUse::UpdateDtnPolicyResponse_EntriesEntry_DoNotUse(::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
-    : SuperType(arena, UpdateDtnPolicyResponse_EntriesEntry_DoNotUse_class_data_.base()) {}
-#else   // PROTOBUF_CUSTOM_VTABLE
-UpdateDtnPolicyResponse_EntriesEntry_DoNotUse::UpdateDtnPolicyResponse_EntriesEntry_DoNotUse() : SuperType() {}
-UpdateDtnPolicyResponse_EntriesEntry_DoNotUse::UpdateDtnPolicyResponse_EntriesEntry_DoNotUse(::google::protobuf::Arena* PROTOBUF_NULLABLE arena) : SuperType(arena) {}
-#endif  // PROTOBUF_CUSTOM_VTABLE
-inline void* PROTOBUF_NONNULL UpdateDtnPolicyResponse_EntriesEntry_DoNotUse::PlacementNew_(
-    const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
-    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena) {
-  return ::new (mem) UpdateDtnPolicyResponse_EntriesEntry_DoNotUse(arena);
-}
-constexpr auto UpdateDtnPolicyResponse_EntriesEntry_DoNotUse::InternalNewImpl_() {
-  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(UpdateDtnPolicyResponse_EntriesEntry_DoNotUse),
-                                            alignof(UpdateDtnPolicyResponse_EntriesEntry_DoNotUse));
-}
-constexpr auto UpdateDtnPolicyResponse_EntriesEntry_DoNotUse::InternalGenerateClassData_() {
-  return ::google::protobuf::internal::ClassDataFull{
-      ::google::protobuf::internal::ClassData{
-          &_UpdateDtnPolicyResponse_EntriesEntry_DoNotUse_default_instance_._instance,
-          &_table_.header,
-          nullptr,  // IsInitialized
-          &UpdateDtnPolicyResponse_EntriesEntry_DoNotUse::MergeImpl,
-          ::google::protobuf::Message::GetNewImpl<UpdateDtnPolicyResponse_EntriesEntry_DoNotUse>(),
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-          &UpdateDtnPolicyResponse_EntriesEntry_DoNotUse::SharedDtor,
-          static_cast<void (::google::protobuf::MessageLite::*)()>(&UpdateDtnPolicyResponse_EntriesEntry_DoNotUse::ClearImpl),
-              ::google::protobuf::Message::ByteSizeLongImpl, ::google::protobuf::Message::_InternalSerializeImpl
-              ,
-#endif  // PROTOBUF_CUSTOM_VTABLE
-          PROTOBUF_FIELD_OFFSET(UpdateDtnPolicyResponse_EntriesEntry_DoNotUse, _impl_._cached_size_),
-          false,
-      },
-      &UpdateDtnPolicyResponse_EntriesEntry_DoNotUse::kDescriptorMethods,
-      &descriptor_table_kelpieui_2fv1_2fkelpieui_2eproto,
-      nullptr,  // tracker
-  };
-}
-
-PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 const
-    ::google::protobuf::internal::ClassDataFull UpdateDtnPolicyResponse_EntriesEntry_DoNotUse_class_data_ =
-        UpdateDtnPolicyResponse_EntriesEntry_DoNotUse::InternalGenerateClassData_();
-
-PROTOBUF_ATTRIBUTE_WEAK const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL
-UpdateDtnPolicyResponse_EntriesEntry_DoNotUse::GetClassData() const {
-  ::google::protobuf::internal::PrefetchToLocalCache(&UpdateDtnPolicyResponse_EntriesEntry_DoNotUse_class_data_);
-  ::google::protobuf::internal::PrefetchToLocalCache(UpdateDtnPolicyResponse_EntriesEntry_DoNotUse_class_data_.tc_table);
-  return UpdateDtnPolicyResponse_EntriesEntry_DoNotUse_class_data_.base();
-}
-PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<1, 2, 0, 65, 2>
-UpdateDtnPolicyResponse_EntriesEntry_DoNotUse::_table_ = {
-  {
-    PROTOBUF_FIELD_OFFSET(UpdateDtnPolicyResponse_EntriesEntry_DoNotUse, _impl_._has_bits_),
-    0, // no _extensions_
-    2, 8,  // max_field_number, fast_idx_mask
-    offsetof(decltype(_table_), field_lookup_table),
-    4294967292,  // skipmap
-    offsetof(decltype(_table_), field_entries),
-    2,  // num_field_entries
-    0,  // num_aux_entries
-    offsetof(decltype(_table_), field_names),  // no aux_entries
-    UpdateDtnPolicyResponse_EntriesEntry_DoNotUse_class_data_.base(),
-    nullptr,  // post_loop_handler
-    ::_pbi::TcParser::DiscardEverythingFallback,  // fallback
-    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
-    ::_pbi::TcParser::GetTable<::kelpieui::v1::UpdateDtnPolicyResponse_EntriesEntry_DoNotUse>(),  // to_prefetch
-    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
-  }, {{
-    // string value = 2;
-    {::_pbi::TcParser::FastUS1,
-     {18, 1, 0,
-      PROTOBUF_FIELD_OFFSET(UpdateDtnPolicyResponse_EntriesEntry_DoNotUse, _impl_.value_)}},
-    // string key = 1;
-    {::_pbi::TcParser::FastUS1,
-     {10, 0, 0,
-      PROTOBUF_FIELD_OFFSET(UpdateDtnPolicyResponse_EntriesEntry_DoNotUse, _impl_.key_)}},
-  }}, {{
-    65535, 65535
-  }}, {{
-    // string key = 1;
-    {PROTOBUF_FIELD_OFFSET(UpdateDtnPolicyResponse_EntriesEntry_DoNotUse, _impl_.key_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
-    // string value = 2;
-    {PROTOBUF_FIELD_OFFSET(UpdateDtnPolicyResponse_EntriesEntry_DoNotUse, _impl_.value_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
-  }},
-  // no aux_entries
-  {{
-    "\60\3\5\0\0\0\0\0"
-    "kelpieui.v1.UpdateDtnPolicyResponse.EntriesEntry"
-    "key"
-    "value"
-  }},
-};
-// ===================================================================
-
-class UpdateDtnPolicyResponse::_Internal {
- public:
-  using HasBits =
-      decltype(::std::declval<UpdateDtnPolicyResponse>()._impl_._has_bits_);
-  static constexpr ::int32_t kHasBitsOffset =
-      8 * PROTOBUF_FIELD_OFFSET(UpdateDtnPolicyResponse, _impl_._has_bits_);
-};
-
-UpdateDtnPolicyResponse::UpdateDtnPolicyResponse(::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-    : ::google::protobuf::Message(arena, UpdateDtnPolicyResponse_class_data_.base()) {
-#else   // PROTOBUF_CUSTOM_VTABLE
-    : ::google::protobuf::Message(arena) {
-#endif  // PROTOBUF_CUSTOM_VTABLE
-  SharedCtor(arena);
-  // @@protoc_insertion_point(arena_constructor:kelpieui.v1.UpdateDtnPolicyResponse)
-}
-PROTOBUF_NDEBUG_INLINE UpdateDtnPolicyResponse::Impl_::Impl_(
-    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
-    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
-    [[maybe_unused]] const ::kelpieui::v1::UpdateDtnPolicyResponse& from_msg)
-      : _has_bits_{from._has_bits_},
-        _cached_size_{0},
-        #ifdef PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_MAP_FIELD
-        entries_{visibility, ::_pbi::InternalMetadataOffset::Build<
-            ::kelpieui::v1::UpdateDtnPolicyResponse,
-            PROTOBUF_FIELD_OFFSET(::kelpieui::v1::UpdateDtnPolicyResponse, _impl_.entries_)>()
-        , from.entries_}
-        #else
-        entries_ { visibility, arena, from.entries_ }
-        #endif
-     {}
-
-UpdateDtnPolicyResponse::UpdateDtnPolicyResponse(
-    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena,
-    const UpdateDtnPolicyResponse& from)
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-    : ::google::protobuf::Message(arena, UpdateDtnPolicyResponse_class_data_.base()) {
-#else   // PROTOBUF_CUSTOM_VTABLE
-    : ::google::protobuf::Message(arena) {
-#endif  // PROTOBUF_CUSTOM_VTABLE
-  UpdateDtnPolicyResponse* const _this = this;
-  (void)_this;
-  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
-      from._internal_metadata_);
-  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
-
-  // @@protoc_insertion_point(copy_constructor:kelpieui.v1.UpdateDtnPolicyResponse)
-}
-PROTOBUF_NDEBUG_INLINE UpdateDtnPolicyResponse::Impl_::Impl_(
-    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
-    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
-      : _cached_size_{0},
-        #ifdef PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_MAP_FIELD
-        entries_{visibility, ::_pbi::InternalMetadataOffset::Build<
-            ::kelpieui::v1::UpdateDtnPolicyResponse,
-            PROTOBUF_FIELD_OFFSET(::kelpieui::v1::UpdateDtnPolicyResponse, _impl_.entries_)>()
-        }
-        #else
-        entries_ { visibility, arena }
-        #endif
-     {}
-
-inline void UpdateDtnPolicyResponse::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
-  new (&_impl_) Impl_(internal_visibility(), arena);
-}
-UpdateDtnPolicyResponse::~UpdateDtnPolicyResponse() {
-  // @@protoc_insertion_point(destructor:kelpieui.v1.UpdateDtnPolicyResponse)
-  SharedDtor(*this);
-}
-inline void UpdateDtnPolicyResponse::SharedDtor(MessageLite& self) {
-  UpdateDtnPolicyResponse& this_ = static_cast<UpdateDtnPolicyResponse&>(self);
-  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
-    this_.CheckHasBitConsistency();
-  }
-  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
-  ABSL_DCHECK(this_.GetArena() == nullptr);
-  this_._impl_.~Impl_();
-}
-
-inline void* PROTOBUF_NONNULL UpdateDtnPolicyResponse::PlacementNew_(
-    const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
-    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena) {
-  return ::new (mem) UpdateDtnPolicyResponse(arena);
-}
-#ifdef PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_REPEATED_PTR_FIELD
-constexpr auto UpdateDtnPolicyResponse::InternalNewImpl_() {
-  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(UpdateDtnPolicyResponse),
-                                            alignof(UpdateDtnPolicyResponse));
-}
-#else  // !PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_REPEATED_PTR_FIELD
-constexpr auto UpdateDtnPolicyResponse::InternalNewImpl_() {
-  constexpr auto arena_bits = ::google::protobuf::internal::EncodePlacementArenaOffsets({
-      PROTOBUF_FIELD_OFFSET(UpdateDtnPolicyResponse, _impl_.entries_) +
-          decltype(UpdateDtnPolicyResponse::_impl_.entries_)::
-              InternalGetArenaOffset(
-                  ::google::protobuf::Message::internal_visibility()),
-  });
-  if (arena_bits.has_value()) {
-    return ::google::protobuf::internal::MessageCreator::CopyInit(
-        sizeof(UpdateDtnPolicyResponse), alignof(UpdateDtnPolicyResponse), *arena_bits);
-  } else {
-    return ::google::protobuf::internal::MessageCreator(&UpdateDtnPolicyResponse::PlacementNew_,
-                                 sizeof(UpdateDtnPolicyResponse),
-                                 alignof(UpdateDtnPolicyResponse));
-  }
-}
-#endif
-constexpr auto UpdateDtnPolicyResponse::InternalGenerateClassData_() {
-  return ::google::protobuf::internal::ClassDataFull{
-      ::google::protobuf::internal::ClassData{
-          &_UpdateDtnPolicyResponse_default_instance_._instance,
-          &_table_.header,
-          nullptr,  // IsInitialized
-          &UpdateDtnPolicyResponse::MergeImpl,
-          ::google::protobuf::Message::GetNewImpl<UpdateDtnPolicyResponse>(),
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-          &UpdateDtnPolicyResponse::SharedDtor,
-          ::google::protobuf::Message::GetClearImpl<UpdateDtnPolicyResponse>(), &UpdateDtnPolicyResponse::ByteSizeLong,
-              &UpdateDtnPolicyResponse::_InternalSerialize,
-#endif  // PROTOBUF_CUSTOM_VTABLE
-          PROTOBUF_FIELD_OFFSET(UpdateDtnPolicyResponse, _impl_._cached_size_),
-          false,
-      },
-      &UpdateDtnPolicyResponse::kDescriptorMethods,
-      &descriptor_table_kelpieui_2fv1_2fkelpieui_2eproto,
-      nullptr,  // tracker
-  };
-}
-
-PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 const
-    ::google::protobuf::internal::ClassDataFull UpdateDtnPolicyResponse_class_data_ =
-        UpdateDtnPolicyResponse::InternalGenerateClassData_();
-
-PROTOBUF_ATTRIBUTE_WEAK const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL
-UpdateDtnPolicyResponse::GetClassData() const {
-  ::google::protobuf::internal::PrefetchToLocalCache(&UpdateDtnPolicyResponse_class_data_);
-  ::google::protobuf::internal::PrefetchToLocalCache(UpdateDtnPolicyResponse_class_data_.tc_table);
-  return UpdateDtnPolicyResponse_class_data_.base();
-}
-PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<0, 1, 1, 51, 2>
-UpdateDtnPolicyResponse::_table_ = {
-  {
-    PROTOBUF_FIELD_OFFSET(UpdateDtnPolicyResponse, _impl_._has_bits_),
-    0, // no _extensions_
-    1, 0,  // max_field_number, fast_idx_mask
-    offsetof(decltype(_table_), field_lookup_table),
-    4294967294,  // skipmap
-    offsetof(decltype(_table_), field_entries),
-    1,  // num_field_entries
-    1,  // num_aux_entries
-    offsetof(decltype(_table_), aux_entries),
-    UpdateDtnPolicyResponse_class_data_.base(),
-    nullptr,  // post_loop_handler
-    ::_pbi::TcParser::GenericFallback,  // fallback
-    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
-    ::_pbi::TcParser::GetTable<::kelpieui::v1::UpdateDtnPolicyResponse>(),  // to_prefetch
-    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
-  }, {{
-    {::_pbi::TcParser::MiniParse, {}},
-  }}, {{
-    65535, 65535
-  }}, {{
-    // map<string, string> entries = 1;
-    {PROTOBUF_FIELD_OFFSET(UpdateDtnPolicyResponse, _impl_.entries_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcRepeated | ::_fl::kMap)},
-  }},
-  {{
-      {::_pbi::TcParser::GetMapAuxInfo(
-          1, 0, 9, 9, 0)},
-  }},
-  {{
-    "\43\7\0\0\0\0\0\0"
-    "kelpieui.v1.UpdateDtnPolicyResponse"
-    "entries"
-  }},
-};
-PROTOBUF_NOINLINE void UpdateDtnPolicyResponse::Clear() {
-// @@protoc_insertion_point(message_clear_start:kelpieui.v1.UpdateDtnPolicyResponse)
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  cached_has_bits = _impl_._has_bits_[0];
-  if (CheckHasBitForRepeated(cached_has_bits, 0x00000001U)) {
-    _impl_.entries_.Clear();
-  }
-  _impl_._has_bits_.Clear();
-  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
-}
-
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-::uint8_t* PROTOBUF_NONNULL UpdateDtnPolicyResponse::_InternalSerialize(
-    const ::google::protobuf::MessageLite& base, ::uint8_t* PROTOBUF_NONNULL target,
-    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) {
-  const UpdateDtnPolicyResponse& this_ = static_cast<const UpdateDtnPolicyResponse&>(base);
-#else   // PROTOBUF_CUSTOM_VTABLE
-::uint8_t* PROTOBUF_NONNULL UpdateDtnPolicyResponse::_InternalSerialize(
-    ::uint8_t* PROTOBUF_NONNULL target,
-    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
-  const UpdateDtnPolicyResponse& this_ = *this;
-#endif  // PROTOBUF_CUSTOM_VTABLE
-  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
-    this_.CheckHasBitConsistency();
-  }
-  // @@protoc_insertion_point(serialize_to_array_start:kelpieui.v1.UpdateDtnPolicyResponse)
-  ::uint32_t cached_has_bits = 0;
-  (void)cached_has_bits;
-
-  cached_has_bits = this_._impl_._has_bits_[0];
-  // map<string, string> entries = 1;
-  if (CheckHasBitForRepeated(cached_has_bits, 0x00000001U)) {
-    if (!this_._internal_entries().empty()) {
-      using MapType = ::google::protobuf::Map<::std::string, ::std::string>;
-      using WireHelper = _pbi::MapEntryFuncs<::std::string, ::std::string,
-                                     _pbi::WireFormatLite::TYPE_STRING,
-                                     _pbi::WireFormatLite::TYPE_STRING>;
-      const auto& field = this_._internal_entries();
-
-      if (stream->IsSerializationDeterministic() && field.size() > 1) {
-        for (const auto& entry : ::google::protobuf::internal::MapSorterPtr<MapType>(field)) {
-          target = WireHelper::InternalSerialize(
-              1, entry.first, entry.second, target, stream);
-          ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-              entry.first.data(), static_cast<int>(entry.first.length()),
- ::google::protobuf::internal::WireFormatLite::SERIALIZE, "kelpieui.v1.UpdateDtnPolicyResponse.entries");
-          ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-              entry.second.data(), static_cast<int>(entry.second.length()),
- ::google::protobuf::internal::WireFormatLite::SERIALIZE, "kelpieui.v1.UpdateDtnPolicyResponse.entries");
-        }
-      } else {
-        for (const auto& entry : field) {
-          target = WireHelper::InternalSerialize(
-              1, entry.first, entry.second, target, stream);
-          ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-              entry.first.data(), static_cast<int>(entry.first.length()),
- ::google::protobuf::internal::WireFormatLite::SERIALIZE, "kelpieui.v1.UpdateDtnPolicyResponse.entries");
-          ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-              entry.second.data(), static_cast<int>(entry.second.length()),
- ::google::protobuf::internal::WireFormatLite::SERIALIZE, "kelpieui.v1.UpdateDtnPolicyResponse.entries");
-        }
-      }
-    }
-  }
-
-  if (ABSL_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
-    target =
-        ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
-            this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:kelpieui.v1.UpdateDtnPolicyResponse)
-  return target;
-}
-
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-::size_t UpdateDtnPolicyResponse::ByteSizeLong(const MessageLite& base) {
-  const UpdateDtnPolicyResponse& this_ = static_cast<const UpdateDtnPolicyResponse&>(base);
-#else   // PROTOBUF_CUSTOM_VTABLE
-::size_t UpdateDtnPolicyResponse::ByteSizeLong() const {
-  const UpdateDtnPolicyResponse& this_ = *this;
-#endif  // PROTOBUF_CUSTOM_VTABLE
-  // @@protoc_insertion_point(message_byte_size_start:kelpieui.v1.UpdateDtnPolicyResponse)
-  ::size_t total_size = 0;
-
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void)cached_has_bits;
-
-  ::_pbi::Prefetch5LinesFrom7Lines(&this_);
-   {
-    // map<string, string> entries = 1;
-    cached_has_bits = this_._impl_._has_bits_[0];
-    if (CheckHasBitForRepeated(cached_has_bits, 0x00000001U)) {
-      total_size +=
-          1 * ::google::protobuf::internal::FromIntSize(this_._internal_entries_size());
-      for (const auto& entry : this_._internal_entries()) {
-        total_size += _pbi::MapEntryFuncs<::std::string, ::std::string,
-                                       _pbi::WireFormatLite::TYPE_STRING,
-                                       _pbi::WireFormatLite::TYPE_STRING>::ByteSizeLong(entry.first, entry.second);
-      }
-    }
-  }
-  return this_.MaybeComputeUnknownFieldsSize(total_size,
-                                             &this_._impl_._cached_size_);
-}
-
-void UpdateDtnPolicyResponse::MergeImpl(::google::protobuf::MessageLite& to_msg,
-                            const ::google::protobuf::MessageLite& from_msg) {
-   auto* const _this =
-      static_cast<UpdateDtnPolicyResponse*>(&to_msg);
-  auto& from = static_cast<const UpdateDtnPolicyResponse&>(from_msg);
-  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
-    from.CheckHasBitConsistency();
-  }
-  // @@protoc_insertion_point(class_specific_merge_from_start:kelpieui.v1.UpdateDtnPolicyResponse)
-  ABSL_DCHECK_NE(&from, _this);
-  ::uint32_t cached_has_bits = 0;
-  (void)cached_has_bits;
-
-  cached_has_bits = from._impl_._has_bits_[0];
-  if (CheckHasBitForRepeated(cached_has_bits, 0x00000001U)) {
-    _this->_impl_.entries_.MergeFrom(from._impl_.entries_);
-  }
-  _this->_impl_._has_bits_[0] |= cached_has_bits;
-  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
-      from._internal_metadata_);
-}
-
-void UpdateDtnPolicyResponse::CopyFrom(const UpdateDtnPolicyResponse& from) {
-  // @@protoc_insertion_point(class_specific_copy_from_start:kelpieui.v1.UpdateDtnPolicyResponse)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-
-void UpdateDtnPolicyResponse::InternalSwap(UpdateDtnPolicyResponse* PROTOBUF_RESTRICT PROTOBUF_NONNULL other) {
-  using ::std::swap;
-  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
-  _impl_.entries_.InternalSwap(&other->_impl_.entries_);
-}
-
-::google::protobuf::Metadata UpdateDtnPolicyResponse::GetMetadata() const {
   return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
 }
 // ===================================================================

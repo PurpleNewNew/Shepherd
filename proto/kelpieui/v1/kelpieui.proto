@@ -109,21 +109,6 @@ message EnqueueDtnPayloadResponse {
   string bundle_id = 1;
 }
 
-message GetDtnPolicyRequest {}
-
-message GetDtnPolicyResponse {
-  map<string, string> entries = 1;
-}
-
-message UpdateDtnPolicyRequest {
-  string key = 1;
-  string value = 2;
-}
-
-message UpdateDtnPolicyResponse {
-  map<string, string> entries = 1;
-}
-
 message GetRoutingStrategyRequest {}
 
 message GetRoutingStrategyResponse {
@@ -1160,8 +1145,6 @@ service KelpieUIService {
   rpc GetDtnQueueStats(GetDtnQueueStatsRequest) returns (GetDtnQueueStatsResponse);
   rpc ListDtnBundles(ListDtnBundlesRequest) returns (ListDtnBundlesResponse);
   rpc EnqueueDtnPayload(EnqueueDtnPayloadRequest) returns (EnqueueDtnPayloadResponse);
-  rpc GetDtnPolicy(GetDtnPolicyRequest) returns (GetDtnPolicyResponse);
-  rpc UpdateDtnPolicy(UpdateDtnPolicyRequest) returns (UpdateDtnPolicyResponse);
   rpc GetRoutingStrategy(GetRoutingStrategyRequest) returns (GetRoutingStrategyResponse);
   rpc SetRoutingStrategy(SetRoutingStrategyRequest) returns (SetRoutingStrategyResponse);
   rpc NodeStatus(NodeStatusRequest) returns (NodeStatusResponse);

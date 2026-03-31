@@ -138,6 +138,7 @@ func (topology *Topology) addNode(task *TopoTask) {
 }
 
 func (topology *Topology) updateDetail(task *TopoTask) {
+	routingInputsChanged := false
 	uuidNum := topology.id2IDNum(task.UUID)
 	if uuidNum >= 0 {
 		node := topology.nodes[uuidNum]
@@ -157,15 +158,28 @@ func (topology *Topology) updateDetail(task *TopoTask) {
 			node.listenPort = task.Port
 		}
 		if task.SleepSeconds >= 0 { // 允许0表示长连接
+			if node.sleepSeconds != task.SleepSeconds {
+				routingInputsChanged = true
+			}
 			node.sleepSeconds = task.SleepSeconds
 		}
 		if task.WorkSeconds > 0 {
+			if node.workSeconds != task.WorkSeconds {
+				routingInputsChanged = true
+			}
 			node.workSeconds = task.WorkSeconds
 		} else if node.workSeconds <= 0 {
+			if node.workSeconds != defaultWorkSeconds {
+				routingInputsChanged = true
+			}
 			node.workSeconds = defaultWorkSeconds
 		}
 		if task.NextWakeUnix > 0 {
-			node.nextWake = time.Unix(task.NextWakeUnix, 0)
+			nextWake := time.Unix(task.NextWakeUnix, 0)
+			if !node.nextWake.Equal(nextWake) {
+				routingInputsChanged = true
+			}
+			node.nextWake = nextWake
 		}
 		if !task.SkipLiveness {
 			node.lastSeen = time.Now()
@@ -175,10 +189,15 @@ func (topology *Topology) updateDetail(task *TopoTask) {
 
 updateLatency:
 	if task.LatencyMs > 0 {
-		topology.applyNodeLatency(task.UUID, task.LatencyMs)
+		if topology.applyNodeLatency(task.UUID, task.LatencyMs) {
+			routingInputsChanged = true
+		}
 	}
 
 	topology.persistNode(task.UUID)
+	if routingInputsChanged {
+		topology.ScheduleCalculate()
+	}
 
 	topology.ResultChan <- &topoResult{}
 }
