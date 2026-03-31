@@ -1,4 +1,5 @@
 #include <UserInterface/KelpiePanel.hpp>
+#include <UserInterface/Pages/TaskingPage.hpp>
 
 #include <QHeaderView>
 #include <QGraphicsScene>
@@ -645,97 +646,8 @@ namespace StockmanNamespace::UserInterface
 
     void KelpiePanel::buildTaskingStateTab()
     {
-        tasking_.page = new QWidget(overviewPage_);
-        auto* opsLayout = new QVBoxLayout(tasking_.page);
-        opsLayout->setContentsMargins(0, 0, 0, 0);
-
-        auto* taskingTabs = new QTabWidget(tasking_.page);
-        taskingTabs->setDocumentMode(true);
-
-        auto* sleepPage = new QWidget(tasking_.page);
-        auto* sleepPageLayout = new QVBoxLayout(sleepPage);
-        sleepPageLayout->setContentsMargins(0, 0, 0, 0);
-        auto* sleepLayout = new QHBoxLayout();
-        tasking_.sleepSecondsInput = new QLineEdit(sleepPage);
-        tasking_.sleepSecondsInput->setPlaceholderText(tr("Sleep seconds"));
-        tasking_.workSecondsInput = new QLineEdit(sleepPage);
-        tasking_.workSecondsInput->setPlaceholderText(tr("Work seconds"));
-        tasking_.jitterInput = new QLineEdit(sleepPage);
-        tasking_.jitterInput->setPlaceholderText(tr("Jitter %"));
-        tasking_.refreshSleepButton = new QPushButton(tr("Refresh Sleep"), sleepPage);
-        tasking_.updateSleepButton = new QPushButton(tr("Update Sleep"), sleepPage);
-        sleepLayout->addWidget(new QLabel(tr("Sleep:"), sleepPage));
-        sleepLayout->addWidget(tasking_.sleepSecondsInput);
-        sleepLayout->addWidget(new QLabel(tr("Work:"), sleepPage));
-        sleepLayout->addWidget(tasking_.workSecondsInput);
-        sleepLayout->addWidget(new QLabel(tr("Jitter:"), sleepPage));
-        sleepLayout->addWidget(tasking_.jitterInput);
-        sleepLayout->addWidget(tasking_.updateSleepButton);
-        sleepLayout->addWidget(tasking_.refreshSleepButton);
-        sleepPageLayout->addLayout(sleepLayout);
-        sleepPageLayout->addStretch();
-        taskingTabs->addTab(sleepPage, tr("Sleep"));
-
-        auto* dialPage = new QWidget(tasking_.page);
-        auto* dialPageLayout = new QVBoxLayout(dialPage);
-        dialPageLayout->setContentsMargins(0, 0, 0, 0);
-        auto* dialLayout = new QHBoxLayout();
-        tasking_.dialAddressInput = new QLineEdit(dialPage);
-        tasking_.dialAddressInput->setPlaceholderText(tr("Dial address (host:port)"));
-        tasking_.dialReasonInput = new QLineEdit(dialPage);
-        tasking_.dialReasonInput->setPlaceholderText(tr("Reason (optional)"));
-        tasking_.startDialButton = new QPushButton(tr("Start Dial"), dialPage);
-        tasking_.cancelDialButton = new QPushButton(tr("Cancel Dial"), dialPage);
-        dialLayout->addWidget(tasking_.dialAddressInput);
-        dialLayout->addWidget(tasking_.dialReasonInput);
-        dialLayout->addWidget(tasking_.startDialButton);
-        dialLayout->addWidget(tasking_.cancelDialButton);
-        dialPageLayout->addLayout(dialLayout);
-        tasking_.dialTable = new QTableWidget(dialPage);
-        tasking_.dialTable->setColumnCount(5);
-        tasking_.dialTable->setHorizontalHeaderLabels({tr("Dial ID"), tr("Target"), tr("Address"), tr("State"), tr("Reason/Error")});
-        tasking_.dialTable->horizontalHeader()->setStretchLastSection(true);
-        tasking_.dialTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-        dialPageLayout->addWidget(tasking_.dialTable, 1);
-        taskingTabs->addTab(dialPage, tr("Dial"));
-
-        auto* sshPage = new QWidget(tasking_.page);
-        auto* sshPageLayout = new QVBoxLayout(sshPage);
-        sshPageLayout->setContentsMargins(0, 0, 0, 0);
-        tasking_.sshTable = new QTableWidget(sshPage);
-        tasking_.sshTable->setColumnCount(4);
-        tasking_.sshTable->setHorizontalHeaderLabels({tr("Type"), tr("Target"), tr("Server/Port"), tr("Status")});
-        tasking_.sshTable->horizontalHeader()->setStretchLastSection(true);
-        tasking_.sshTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-        sshPageLayout->addWidget(tasking_.sshTable, 1);
-
-        auto* sshLayout = new QHBoxLayout();
-        tasking_.sshServerInput = new QLineEdit(sshPage);
-        tasking_.sshServerInput->setPlaceholderText(tr("SSH server (host:port)"));
-        tasking_.sshAuthCombo = new QComboBox(sshPage);
-        tasking_.sshAuthCombo->addItem(tr("Password"), kelpieui::v1::SSH_TUNNEL_AUTH_METHOD_PASSWORD);
-        tasking_.sshAuthCombo->addItem(tr("Cert"), kelpieui::v1::SSH_TUNNEL_AUTH_METHOD_CERT);
-        tasking_.sshUserInput = new QLineEdit(sshPage);
-        tasking_.sshUserInput->setPlaceholderText(tr("Username"));
-        tasking_.sshPassInput = new QLineEdit(sshPage);
-        tasking_.sshPassInput->setPlaceholderText(tr("Password / PrivateKey"));
-        tasking_.sshPassInput->setEchoMode(QLineEdit::Password);
-        tasking_.sshTunnelPortInput = new QLineEdit(sshPage);
-        tasking_.sshTunnelPortInput->setPlaceholderText(tr("Agent port (for tunnel)"));
-        tasking_.startSshSessionButton = new QPushButton(tr("Start SSH Session"), sshPage);
-        tasking_.startSshTunnelButton = new QPushButton(tr("Start SSH Tunnel"), sshPage);
-        sshLayout->addWidget(tasking_.sshServerInput);
-        sshLayout->addWidget(tasking_.sshAuthCombo);
-        sshLayout->addWidget(tasking_.sshUserInput);
-        sshLayout->addWidget(tasking_.sshPassInput);
-        sshLayout->addWidget(tasking_.sshTunnelPortInput);
-        sshLayout->addWidget(tasking_.startSshSessionButton);
-        sshLayout->addWidget(tasking_.startSshTunnelButton);
-        sshPageLayout->addLayout(sshLayout);
-        taskingTabs->addTab(sshPage, tr("SSH"));
-
-        opsLayout->addWidget(taskingTabs, 1);
-        stateTabs_->addTab(tasking_.page, tr("Tasking"));
+        taskingPage_ = new TaskingPage(overviewPage_);
+        stateTabs_->addTab(taskingPage_, tr("Tasking"));
     }
 
 }

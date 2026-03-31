@@ -1,4 +1,8 @@
 #include <UserInterface/KelpiePanel.hpp>
+#include <UserInterface/Pages/ChatPage.hpp>
+#include <UserInterface/Pages/LootPage.hpp>
+#include <UserInterface/Pages/ShellPage.hpp>
+#include <UserInterface/Pages/TaskingPage.hpp>
 #include <UserInterface/StockmanUI.hpp>
 #include "Internal.hpp"
 
@@ -26,7 +30,7 @@ namespace StockmanNamespace::UserInterface
         streamRefreshDebounce_->setSingleShot(true);
         streamRefreshDebounce_->setInterval(kStreamRefreshDebounceMs);
         connect(streamRefreshDebounce_, &QTimer::timeout, this, [this]() {
-            const bool taskingVisible = (stateTabs_ != nullptr) && (stateTabs_->currentWidget() == tasking_.page);
+            const bool taskingVisible = (stateTabs_ != nullptr) && (stateTabs_->currentWidget() == taskingPage_);
             const bool streamDiagnosticsVisible =
                 ((workspaceTabs_ != nullptr) && (workspaceTabs_->currentWidget() == streams_.page)) ||
                 ((stateTabs_ != nullptr) && (stateTabs_->currentWidget() == hostIntelPage_));
@@ -276,25 +280,25 @@ namespace StockmanNamespace::UserInterface
 
     void KelpiePanel::FocusChat()
     {
-        if ( (workspaceTabs_ != nullptr) && (workspace_.chatPage != nullptr) )
+        if ( (workspaceTabs_ != nullptr) && (chatPage_ != nullptr) )
         {
-            workspaceTabs_->setCurrentWidget(workspace_.chatPage);
+            workspaceTabs_->setCurrentWidget(chatPage_);
         }
-        if ( workspace_.chatInput != nullptr )
+        if ( chatPage_ != nullptr && chatPage_->input != nullptr )
         {
-            workspace_.chatInput->setFocus();
+            chatPage_->input->setFocus();
         }
     }
 
     void KelpiePanel::FocusLoot()
     {
-        if ( (workspaceTabs_ != nullptr) && (workspace_.lootPage != nullptr) )
+        if ( (workspaceTabs_ != nullptr) && (lootPage_ != nullptr) )
         {
-            workspaceTabs_->setCurrentWidget(workspace_.lootPage);
+            workspaceTabs_->setCurrentWidget(lootPage_);
         }
-        if ( workspace_.lootTable != nullptr )
+        if ( lootPage_ != nullptr && lootPage_->table != nullptr )
         {
-            workspace_.lootTable->setFocus();
+            lootPage_->table->setFocus();
         }
     }
 
@@ -364,7 +368,7 @@ namespace StockmanNamespace::UserInterface
 }
         if ( setNodeNetworkButton_ != nullptr ) { setNodeNetworkButton_->setEnabled(enabled);
 }
-        if ( shell_.openButton != nullptr ) { shell_.openButton->setEnabled(enabled);
+        if ( shellPage_ != nullptr && shellPage_->openButton != nullptr ) { shellPage_->openButton->setEnabled(enabled);
 }
         if ( enqueueDtnButton_ != nullptr ) { enqueueDtnButton_->setEnabled(enabled);
 }
@@ -372,15 +376,15 @@ namespace StockmanNamespace::UserInterface
 }
         if ( startBackwardButton_ != nullptr ) { startBackwardButton_->setEnabled(enabled);
 }
-        if ( tasking_.refreshSleepButton != nullptr ) { tasking_.refreshSleepButton->setEnabled(enabled);
+        if ( taskingPage_ != nullptr && taskingPage_->refreshSleepButton != nullptr ) { taskingPage_->refreshSleepButton->setEnabled(enabled);
 }
-        if ( tasking_.updateSleepButton != nullptr ) { tasking_.updateSleepButton->setEnabled(enabled);
+        if ( taskingPage_ != nullptr && taskingPage_->updateSleepButton != nullptr ) { taskingPage_->updateSleepButton->setEnabled(enabled);
 }
-        if ( tasking_.startDialButton != nullptr ) { tasking_.startDialButton->setEnabled(enabled);
+        if ( taskingPage_ != nullptr && taskingPage_->startDialButton != nullptr ) { taskingPage_->startDialButton->setEnabled(enabled);
 }
-        if ( tasking_.startSshSessionButton != nullptr ) { tasking_.startSshSessionButton->setEnabled(enabled);
+        if ( taskingPage_ != nullptr && taskingPage_->startSshSessionButton != nullptr ) { taskingPage_->startSshSessionButton->setEnabled(enabled);
 }
-        if ( tasking_.startSshTunnelButton != nullptr ) { tasking_.startSshTunnelButton->setEnabled(enabled);
+        if ( taskingPage_ != nullptr && taskingPage_->startSshTunnelButton != nullptr ) { taskingPage_->startSshTunnelButton->setEnabled(enabled);
 }
         if ( markAliveButton_ != nullptr ) { markAliveButton_->setEnabled(enabled);
 }
@@ -396,11 +400,11 @@ namespace StockmanNamespace::UserInterface
 }
         if ( shutdownNodeButton_ != nullptr ) { shutdownNodeButton_->setEnabled(enabled);
 }
-        if ( shell_.startDownloadButton != nullptr ) { shell_.startDownloadButton->setEnabled(enabled && !downloadActive_.load());
+        if ( shellPage_ != nullptr && shellPage_->startDownloadButton != nullptr ) { shellPage_->startDownloadButton->setEnabled(enabled && !downloadActive_.load());
 }
-        if ( shell_.startUploadButton != nullptr ) { shell_.startUploadButton->setEnabled(enabled && !uploadActive_.load());
+        if ( shellPage_ != nullptr && shellPage_->startUploadButton != nullptr ) { shellPage_->startUploadButton->setEnabled(enabled && !uploadActive_.load());
 }
-        if ( shell_.startSocksButton != nullptr ) { shell_.startSocksButton->setEnabled(enabled && socksServer_ == nullptr);
+        if ( shellPage_ != nullptr && shellPage_->startSocksButton != nullptr ) { shellPage_->startSocksButton->setEnabled(enabled && socksServer_ == nullptr);
 }
     }
 
@@ -467,7 +471,7 @@ namespace StockmanNamespace::UserInterface
             refreshRepairs();
             return;
         }
-        if ( page == tasking_.page )
+        if ( page == taskingPage_ )
         {
             refreshSleep();
             refreshDials();
@@ -491,19 +495,19 @@ namespace StockmanNamespace::UserInterface
             refreshStreamDiagnostics();
             return;
         }
-        if ( page == workspace_.chatPage )
+        if ( page == chatPage_ )
         {
             refreshChat();
             return;
         }
-        if ( page == workspace_.lootPage )
+        if ( page == lootPage_ )
         {
             refreshLoot();
             return;
         }
-        if ( page == shell_.page && (shell_.input != nullptr) && shell_.input->isEnabled() )
+        if ( page == shellPage_ && (shellPage_ != nullptr) && (shellPage_->input != nullptr) && shellPage_->input->isEnabled() )
         {
-            shell_.input->setFocus();
+            shellPage_->input->setFocus();
         }
     }
 
@@ -590,7 +594,7 @@ namespace StockmanNamespace::UserInterface
 
     void KelpiePanel::scheduleStreamRefresh()
     {
-        const bool taskingVisible = (stateTabs_ != nullptr) && (stateTabs_->currentWidget() == tasking_.page);
+        const bool taskingVisible = (stateTabs_ != nullptr) && (stateTabs_->currentWidget() == taskingPage_);
         const bool streamDiagnosticsVisible =
             ((workspaceTabs_ != nullptr) && (workspaceTabs_->currentWidget() == streams_.page)) ||
             ((stateTabs_ != nullptr) && (stateTabs_->currentWidget() == hostIntelPage_));
@@ -624,8 +628,11 @@ namespace StockmanNamespace::UserInterface
             setTopologyHighlightNode(QString());
             setNodeScopedActionsEnabled(false);
             stopSocksServer();
-            shell_.pendingTarget.clear();
-            shell_.pendingLine.clear();
+            if ( shellPage_ != nullptr )
+            {
+                shellPage_->pendingTarget.clear();
+                shellPage_->pendingLine.clear();
+            }
             if ( nodeMemoInput_ != nullptr ) { nodeMemoInput_->setEnabled(false);
 }
             if ( updateNodeMemoButton_ != nullptr ) { updateNodeMemoButton_->setEnabled(false);
@@ -655,8 +662,11 @@ namespace StockmanNamespace::UserInterface
         {
             stopSocksServer();
             stopShell();
-            shell_.pendingTarget.clear();
-            shell_.pendingLine.clear();
+            if ( shellPage_ != nullptr )
+            {
+                shellPage_->pendingTarget.clear();
+                shellPage_->pendingLine.clear();
+            }
             refreshNodeScopedData();
         }
     }
@@ -737,17 +747,20 @@ namespace StockmanNamespace::UserInterface
 	        {
 	            return;
 	        }
-	        if ( (workspaceTabs_ != nullptr) && (shell_.page != nullptr) )
+	        if ( (workspaceTabs_ != nullptr) && (shellPage_ != nullptr) )
 	        {
-	            workspaceTabs_->setCurrentWidget(shell_.page);
+	            workspaceTabs_->setCurrentWidget(shellPage_);
 	        }
-	        if ( !shell_.stream )
+	        if ( shellPage_ == nullptr || !shellPage_->stream )
 	        {
-	            shell_.pendingTarget = currentNodeUuid_;
-	            shell_.pendingLine = cmd;
-	            if ( !shell_.pendingLine.endsWith('\n') )
+	            if ( shellPage_ != nullptr )
 	            {
-	                shell_.pendingLine.append('\n');
+	                shellPage_->pendingTarget = currentNodeUuid_;
+	                shellPage_->pendingLine = cmd;
+	                if ( !shellPage_->pendingLine.endsWith('\n') )
+	                {
+	                    shellPage_->pendingLine.append('\n');
+	                }
 	            }
 	            startShell(); // async; will send pending line when connected
 	            if ( nodeCommandInput_ != nullptr ) { nodeCommandInput_->clear();
@@ -759,7 +772,7 @@ namespace StockmanNamespace::UserInterface
 	        {
 	            line.append('\n');
 	        }
-	        shell_.stream->SendData(line.toUtf8());
+	        shellPage_->stream->SendData(line.toUtf8());
 	        AppendLog(tr("[%1] >> %2").arg(currentNodeUuid_, cmd));
 	        nodeCommandInput_->clear();
 	    }

@@ -1,4 +1,5 @@
 #include <UserInterface/KelpiePanel.hpp>
+#include <UserInterface/Pages/ShellPage.hpp>
 
 #include "Internal.hpp"
 
@@ -19,7 +20,7 @@ namespace StockmanNamespace::UserInterface
             return;
         }
         bool ok = false;
-        const int port = (shell_.socksPortInput != nullptr) ? shell_.socksPortInput->text().toInt(&ok) : 0;
+        const int port = (shellPage_ != nullptr && shellPage_->socksPortInput != nullptr) ? shellPage_->socksPortInput->text().toInt(&ok) : 0;
         if ( !ok || port <= 0 || port > 65535 )
         {
             toastWarn(tr("Invalid SOCKS local port"));
@@ -39,13 +40,13 @@ namespace StockmanNamespace::UserInterface
             socksServer_ = nullptr;
             return;
         }
-        if ( shell_.startSocksButton != nullptr ) { shell_.startSocksButton->setEnabled(false);
+        if ( shellPage_ != nullptr && shellPage_->startSocksButton != nullptr ) { shellPage_->startSocksButton->setEnabled(false);
 }
-        if ( shell_.stopSocksButton != nullptr ) { shell_.stopSocksButton->setEnabled(true);
+        if ( shellPage_ != nullptr && shellPage_->stopSocksButton != nullptr ) { shellPage_->stopSocksButton->setEnabled(true);
 }
-        if ( shell_.socksStatusLabel != nullptr )
+        if ( shellPage_ != nullptr && shellPage_->socksStatusLabel != nullptr )
         {
-            shell_.socksStatusLabel->setText(tr("SOCKS: listening on 127.0.0.1:%1").arg(port));
+            shellPage_->socksStatusLabel->setText(tr("SOCKS: listening on 127.0.0.1:%1").arg(port));
         }
         toastInfo(tr("SOCKS bridge started on 127.0.0.1:%1").arg(port));
     }
@@ -79,11 +80,11 @@ namespace StockmanNamespace::UserInterface
             {
                 continue;
             }
-            const bool withAuth = (shell_.socksAuthCheck != nullptr) ? shell_.socksAuthCheck->isChecked() : false;
+            const bool withAuth = (shellPage_ != nullptr && shellPage_->socksAuthCheck != nullptr) ? shellPage_->socksAuthCheck->isChecked() : false;
             const auto auth = withAuth ? kelpieui::v1::SOCKS_PROXY_AUTH_USERPASS
                                        : kelpieui::v1::SOCKS_PROXY_AUTH_NONE;
-            const QString user = (withAuth && (shell_.socksUserInput != nullptr)) ? shell_.socksUserInput->text() : QString();
-            const QString pass = (withAuth && (shell_.socksPasswordInput != nullptr)) ? shell_.socksPasswordInput->text() : QString();
+            const QString user = (withAuth && shellPage_ != nullptr && (shellPage_->socksUserInput != nullptr)) ? shellPage_->socksUserInput->text() : QString();
+            const QString pass = (withAuth && shellPage_ != nullptr && (shellPage_->socksPasswordInput != nullptr)) ? shellPage_->socksPasswordInput->text() : QString();
 
             QPointer<QTcpSocket> rawSocket = socket;
             struct Result {
@@ -241,11 +242,11 @@ namespace StockmanNamespace::UserInterface
             socksServer_->deleteLater();
             socksServer_ = nullptr;
         }
-        if ( shell_.startSocksButton != nullptr ) { shell_.startSocksButton->setEnabled(!currentNodeUuid_.isEmpty());
+        if ( shellPage_ != nullptr && shellPage_->startSocksButton != nullptr ) { shellPage_->startSocksButton->setEnabled(!currentNodeUuid_.isEmpty());
 }
-        if ( shell_.stopSocksButton != nullptr ) { shell_.stopSocksButton->setEnabled(false);
+        if ( shellPage_ != nullptr && shellPage_->stopSocksButton != nullptr ) { shellPage_->stopSocksButton->setEnabled(false);
 }
-        if ( shell_.socksStatusLabel != nullptr ) { shell_.socksStatusLabel->setText(tr("SOCKS: stopped"));
+        if ( shellPage_ != nullptr && shellPage_->socksStatusLabel != nullptr ) { shellPage_->socksStatusLabel->setText(tr("SOCKS: stopped"));
 }
     }
 }

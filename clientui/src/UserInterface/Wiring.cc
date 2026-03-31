@@ -1,4 +1,8 @@
 #include <UserInterface/KelpiePanel.hpp>
+#include <UserInterface/Pages/ChatPage.hpp>
+#include <UserInterface/Pages/LootPage.hpp>
+#include <UserInterface/Pages/ShellPage.hpp>
+#include <UserInterface/Pages/TaskingPage.hpp>
 
 #include <QGraphicsItem>
 #include <QGraphicsScene>
@@ -13,12 +17,12 @@ namespace StockmanNamespace::UserInterface
         connect(updateNodeMemoButton_, &QPushButton::clicked, this, &KelpiePanel::updateNodeMemo);
         connect(nodeCommandInput_, &QLineEdit::returnPressed, this, &KelpiePanel::sendNodeCommand);
         connect(nodeCommandButton_, &QPushButton::clicked, this, &KelpiePanel::sendNodeCommand);
-        connect(workspace_.chatInput, &QLineEdit::returnPressed, this, &KelpiePanel::sendChatMessage);
-        connect(workspace_.sendChatButton, &QPushButton::clicked, this, &KelpiePanel::sendChatMessage);
-        connect(workspace_.refreshChatButton, &QPushButton::clicked, this, &KelpiePanel::refreshChat);
-        connect(workspace_.refreshLootButton, &QPushButton::clicked, this, &KelpiePanel::refreshLoot);
-        connect(workspace_.submitLootButton, &QPushButton::clicked, this, &KelpiePanel::submitLootFromFile);
-        connect(workspace_.downloadLootButton, &QPushButton::clicked, this, &KelpiePanel::downloadSelectedLoot);
+        connect(chatPage_->input, &QLineEdit::returnPressed, this, &KelpiePanel::sendChatMessage);
+        connect(chatPage_->sendButton, &QPushButton::clicked, this, &KelpiePanel::sendChatMessage);
+        connect(chatPage_->refreshButton, &QPushButton::clicked, this, &KelpiePanel::refreshChat);
+        connect(lootPage_->refreshButton, &QPushButton::clicked, this, &KelpiePanel::refreshLoot);
+        connect(lootPage_->submitButton, &QPushButton::clicked, this, &KelpiePanel::submitLootFromFile);
+        connect(lootPage_->downloadButton, &QPushButton::clicked, this, &KelpiePanel::downloadSelectedLoot);
         connect(workspace_.refreshProxiesButton, &QPushButton::clicked, this, &KelpiePanel::refreshProxies);
         connect(refreshListenersButton_, &QPushButton::clicked, this, &KelpiePanel::refreshListeners);
         connect(streams_.closeButton, &QPushButton::clicked, this, &KelpiePanel::closeSelectedStream);
@@ -41,12 +45,12 @@ namespace StockmanNamespace::UserInterface
         connect(setNodeNetworkButton_, &QPushButton::clicked, this, &KelpiePanel::setNodeNetwork);
         connect(pruneOfflineButton_, &QPushButton::clicked, this, &KelpiePanel::pruneOffline);
 
-        connect(tasking_.refreshSleepButton, &QPushButton::clicked, this, &KelpiePanel::refreshSleep);
-        connect(tasking_.updateSleepButton, &QPushButton::clicked, this, &KelpiePanel::updateSleep);
-        connect(tasking_.startDialButton, &QPushButton::clicked, this, &KelpiePanel::startDial);
-        connect(tasking_.cancelDialButton, &QPushButton::clicked, this, &KelpiePanel::cancelDial);
-        connect(tasking_.startSshSessionButton, &QPushButton::clicked, this, &KelpiePanel::startSshSession);
-        connect(tasking_.startSshTunnelButton, &QPushButton::clicked, this, &KelpiePanel::startSshTunnel);
+        connect(taskingPage_->refreshSleepButton, &QPushButton::clicked, this, &KelpiePanel::refreshSleep);
+        connect(taskingPage_->updateSleepButton, &QPushButton::clicked, this, &KelpiePanel::updateSleep);
+        connect(taskingPage_->startDialButton, &QPushButton::clicked, this, &KelpiePanel::startDial);
+        connect(taskingPage_->cancelDialButton, &QPushButton::clicked, this, &KelpiePanel::cancelDial);
+        connect(taskingPage_->startSshSessionButton, &QPushButton::clicked, this, &KelpiePanel::startSshSession);
+        connect(taskingPage_->startSshTunnelButton, &QPushButton::clicked, this, &KelpiePanel::startSshTunnel);
 
         connect(refreshDtnButton_, &QPushButton::clicked, this, &KelpiePanel::refreshDtn);
         connect(refreshDtnPolicyButton_, &QPushButton::clicked, this, &KelpiePanel::refreshDtnPolicy);
@@ -70,15 +74,15 @@ namespace StockmanNamespace::UserInterface
         connect(terminateSessionButton_, &QPushButton::clicked, this, &KelpiePanel::terminateCurrentSession);
         connect(shutdownNodeButton_, &QPushButton::clicked, this, &KelpiePanel::shutdownCurrentNode);
 
-        connect(shell_.openButton, &QPushButton::clicked, this, &KelpiePanel::startShell);
-        connect(shell_.closeButton, &QPushButton::clicked, this, &KelpiePanel::stopShell);
-        connect(shell_.input, &QLineEdit::returnPressed, this, &KelpiePanel::sendShellInput);
-        connect(shell_.browseDownloadButton, &QPushButton::clicked, this, &KelpiePanel::browseDownloadPath);
-        connect(shell_.startDownloadButton, &QPushButton::clicked, this, &KelpiePanel::startDownloadFile);
-        connect(shell_.browseUploadButton, &QPushButton::clicked, this, &KelpiePanel::browseUploadPath);
-        connect(shell_.startUploadButton, &QPushButton::clicked, this, &KelpiePanel::startUploadFile);
-        connect(shell_.startSocksButton, &QPushButton::clicked, this, &KelpiePanel::startSocksBridge);
-        connect(shell_.stopSocksButton, &QPushButton::clicked, this, &KelpiePanel::stopSocksBridge);
+        connect(shellPage_->openButton, &QPushButton::clicked, this, &KelpiePanel::startShell);
+        connect(shellPage_->closeButton, &QPushButton::clicked, this, &KelpiePanel::stopShell);
+        connect(shellPage_->input, &QLineEdit::returnPressed, this, &KelpiePanel::sendShellInput);
+        connect(shellPage_->browseDownloadButton, &QPushButton::clicked, this, &KelpiePanel::browseDownloadPath);
+        connect(shellPage_->startDownloadButton, &QPushButton::clicked, this, &KelpiePanel::startDownloadFile);
+        connect(shellPage_->browseUploadButton, &QPushButton::clicked, this, &KelpiePanel::browseUploadPath);
+        connect(shellPage_->startUploadButton, &QPushButton::clicked, this, &KelpiePanel::startUploadFile);
+        connect(shellPage_->startSocksButton, &QPushButton::clicked, this, &KelpiePanel::startSocksBridge);
+        connect(shellPage_->stopSocksButton, &QPushButton::clicked, this, &KelpiePanel::stopSocksBridge);
 
         connect(supplementalFilter_, &QLineEdit::textChanged, this, &KelpiePanel::applySupplementalFilter);
         connect(refreshRepairsButton_, &QPushButton::clicked, this, &KelpiePanel::refreshRepairs);

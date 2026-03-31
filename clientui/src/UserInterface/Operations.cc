@@ -1,4 +1,5 @@
 #include <UserInterface/KelpiePanel.hpp>
+#include <UserInterface/Pages/ShellPage.hpp>
 
 #include "Internal.hpp"
 
@@ -158,7 +159,7 @@ namespace StockmanNamespace::UserInterface
 		                    if ( !res.eventsErr.isEmpty() )
 		                    {
 		                        toastError(tr("Supplemental refresh failed: %1").arg(res.eventsErr));
-		                        if ( shell_.opsStatusLabel ) { shell_.opsStatusLabel->setText(tr("Supplemental error: %1").arg(res.eventsErr));
+		                        if ( shellPage_ != nullptr && shellPage_->opsStatusLabel ) { shellPage_->opsStatusLabel->setText(tr("Supplemental error: %1").arg(res.eventsErr));
 }
 		                    }
 	                    if ( supplementalTable_ ) { supplementalTable_->setRowCount(0);
@@ -364,7 +365,7 @@ namespace StockmanNamespace::UserInterface
 		                if ( !res.ok )
 		                {
 		                    toastError(tr("Audit refresh failed: %1").arg(res.error));
-		                    if ( shell_.opsStatusLabel ) { shell_.opsStatusLabel->setText(tr("Audit error: %1").arg(res.error));
+		                    if ( shellPage_ != nullptr && shellPage_->opsStatusLabel ) { shellPage_->opsStatusLabel->setText(tr("Audit error: %1").arg(res.error));
 }
 		                    if ( auditTable_ ) { auditTable_->setRowCount(0);
 }

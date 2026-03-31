@@ -69,6 +69,10 @@ set(STOCKMAN_CORE_INCLUDE
 
         include/UserInterface/StockmanUI.hpp
         include/UserInterface/KelpiePanel.hpp
+        include/UserInterface/Pages/ChatPage.hpp
+        include/UserInterface/Pages/LootPage.hpp
+        include/UserInterface/Pages/ShellPage.hpp
+        include/UserInterface/Pages/TaskingPage.hpp
         include/Util/ThemeManager.hpp
         include/Util/UiConstants.hpp
 )
@@ -126,6 +130,10 @@ set(
 	        src/UserInterface/Shell.cc
 	        src/UserInterface/Tasking.cc
 	        src/UserInterface/Topology.cc
+	        src/UserInterface/Pages/ChatPage.cc
+	        src/UserInterface/Pages/LootPage.cc
+	        src/UserInterface/Pages/ShellPage.cc
+	        src/UserInterface/Pages/TaskingPage.cc
 	)
 
 # src for Stockman

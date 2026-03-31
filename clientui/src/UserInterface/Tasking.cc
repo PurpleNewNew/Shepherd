@@ -1,4 +1,6 @@
 #include <UserInterface/KelpiePanel.hpp>
+#include <UserInterface/Pages/ShellPage.hpp>
+#include <UserInterface/Pages/TaskingPage.hpp>
 
 #include "Internal.hpp"
 
@@ -519,11 +521,11 @@ namespace StockmanNamespace::UserInterface
             return;
         }
 
-        if ( tasking_.sleepSecondsInput != nullptr ) { tasking_.sleepSecondsInput->setEnabled(false);
+        if ( taskingPage_ != nullptr && taskingPage_->sleepSecondsInput != nullptr ) { taskingPage_->sleepSecondsInput->setEnabled(false);
 }
-        if ( tasking_.workSecondsInput != nullptr ) { tasking_.workSecondsInput->setEnabled(false);
+        if ( taskingPage_ != nullptr && taskingPage_->workSecondsInput != nullptr ) { taskingPage_->workSecondsInput->setEnabled(false);
 }
-        if ( tasking_.jitterInput != nullptr ) { tasking_.jitterInput->setEnabled(false);
+        if ( taskingPage_ != nullptr && taskingPage_->jitterInput != nullptr ) { taskingPage_->jitterInput->setEnabled(false);
 }
         const uint64_t epoch = ctrl->ConnectionEpoch();
 
@@ -538,7 +540,7 @@ namespace StockmanNamespace::UserInterface
             std::optional<double> jitterPercent;
         };
 
-        runAsync<Result>(
+        runAsyncGuarded<Result>(
             this,
             [ctrl, epoch, targetUuid]() {
                 Result res;
@@ -568,49 +570,46 @@ namespace StockmanNamespace::UserInterface
                 }
                 return res;
             },
+            [this]() {
+                if ( taskingPage_ != nullptr )
+                {
+                    if ( taskingPage_->sleepSecondsInput ) { taskingPage_->sleepSecondsInput->setEnabled(true);
+}
+                    if ( taskingPage_->workSecondsInput ) { taskingPage_->workSecondsInput->setEnabled(true);
+}
+                    if ( taskingPage_->jitterInput ) { taskingPage_->jitterInput->setEnabled(true);
+}
+                }
+            },
             [this](const Result& res) {
-                if ( tasking_.sleepSecondsInput ) { tasking_.sleepSecondsInput->setEnabled(true);
-}
-                if ( tasking_.workSecondsInput ) { tasking_.workSecondsInput->setEnabled(true);
-}
-                if ( tasking_.jitterInput ) { tasking_.jitterInput->setEnabled(true);
-}
-
-                auto* ctrl = controller();
-                if ( ctrl == nullptr || ctrl->ConnectionEpoch() != res.epoch )
-                {
-                    return;
-                }
-                if ( res.targetUuid != currentNodeUuid_ )
-                {
-                    return;
-                }
-                if ( !res.ok )
-                {
-                    toastError(tr("Sleep profiles failed: %1").arg(res.error));
-                    return;
-                }
+                auto* currentCtrl = controller();
+                return (currentCtrl != nullptr) && (currentCtrl->ConnectionEpoch() == res.epoch) && (res.targetUuid == currentNodeUuid_);
+            },
+            [this](const Result& res) {
+                toastError(tr("Sleep profiles failed: %1").arg(res.error));
+            },
+            [this](const Result& res) {
                 if ( !res.found )
                 {
-                    if ( tasking_.sleepSecondsInput ) { tasking_.sleepSecondsInput->clear();
+                    if ( taskingPage_->sleepSecondsInput ) { taskingPage_->sleepSecondsInput->clear();
 }
-                    if ( tasking_.workSecondsInput ) { tasking_.workSecondsInput->clear();
+                    if ( taskingPage_->workSecondsInput ) { taskingPage_->workSecondsInput->clear();
 }
-                    if ( tasking_.jitterInput ) { tasking_.jitterInput->clear();
+                    if ( taskingPage_->jitterInput ) { taskingPage_->jitterInput->clear();
 }
                     return;
                 }
-                if ( tasking_.sleepSecondsInput )
+                if ( taskingPage_->sleepSecondsInput )
                 {
-                    tasking_.sleepSecondsInput->setText(res.sleepSeconds ? QString::number(*res.sleepSeconds) : QString());
+                    taskingPage_->sleepSecondsInput->setText(res.sleepSeconds ? QString::number(*res.sleepSeconds) : QString());
                 }
-                if ( tasking_.workSecondsInput )
+                if ( taskingPage_->workSecondsInput )
                 {
-                    tasking_.workSecondsInput->setText(res.workSeconds ? QString::number(*res.workSeconds) : QString());
+                    taskingPage_->workSecondsInput->setText(res.workSeconds ? QString::number(*res.workSeconds) : QString());
                 }
-                if ( tasking_.jitterInput )
+                if ( taskingPage_->jitterInput )
                 {
-                    tasking_.jitterInput->setText(res.jitterPercent ? QString::number(*res.jitterPercent) : QString());
+                    taskingPage_->jitterInput->setText(res.jitterPercent ? QString::number(*res.jitterPercent) : QString());
                 }
             });
     }
@@ -630,17 +629,17 @@ namespace StockmanNamespace::UserInterface
         std::optional<int> sleep, work;
         std::optional<double> jitter;
         bool ok = false;
-        int s = (tasking_.sleepSecondsInput != nullptr) ? tasking_.sleepSecondsInput->text().toInt(&ok) : 0;
+        int s = (taskingPage_ != nullptr && taskingPage_->sleepSecondsInput != nullptr) ? taskingPage_->sleepSecondsInput->text().toInt(&ok) : 0;
         if ( ok ) { sleep = s;
 }
-        int w = (tasking_.workSecondsInput != nullptr) ? tasking_.workSecondsInput->text().toInt(&ok) : 0;
+        int w = (taskingPage_ != nullptr && taskingPage_->workSecondsInput != nullptr) ? taskingPage_->workSecondsInput->text().toInt(&ok) : 0;
         if ( ok ) { work = w;
 }
-        double j = (tasking_.jitterInput != nullptr) ? tasking_.jitterInput->text().toDouble(&ok) : 0.0;
+        double j = (taskingPage_ != nullptr && taskingPage_->jitterInput != nullptr) ? taskingPage_->jitterInput->text().toDouble(&ok) : 0.0;
         if ( ok ) { jitter = j;
 }
         const QString targetUuid = currentNodeUuid_;
-        setWidgetsEnabled({tasking_.updateSleepButton, tasking_.sleepSecondsInput, tasking_.workSecondsInput, tasking_.jitterInput}, false);
+        setWidgetsEnabled({taskingPage_->updateSleepButton, taskingPage_->sleepSecondsInput, taskingPage_->workSecondsInput, taskingPage_->jitterInput}, false);
         toastInfo(tr("Updating sleep profile for %1...").arg(targetUuid));
         const uint64_t epoch = ctrl->ConnectionEpoch();
         struct Result {
@@ -649,7 +648,7 @@ namespace StockmanNamespace::UserInterface
             bool ok{false};
             QString error;
         };
-        runAsync<Result>(
+        runAsyncGuarded<Result>(
             this,
             [ctrl, epoch, targetUuid, sleep, work, jitter]() {
                 Result res;
@@ -660,32 +659,31 @@ namespace StockmanNamespace::UserInterface
                 res.error = error;
                 return res;
             },
+            [this]() {
+                setWidgetsEnabled({taskingPage_->updateSleepButton, taskingPage_->sleepSecondsInput, taskingPage_->workSecondsInput, taskingPage_->jitterInput}, true);
+            },
             [this](const Result& res) {
-                setWidgetsEnabled({tasking_.updateSleepButton, tasking_.sleepSecondsInput, tasking_.workSecondsInput, tasking_.jitterInput}, true);
-                auto* ctrl = controller();
-                if ( ctrl == nullptr || ctrl->ConnectionEpoch() != res.epoch )
-                {
-                    return;
-                }
-                if ( !res.ok )
-                {
-                    toastError(tr("Update sleep failed: %1").arg(res.error));
-                    return;
-                }
+                auto* currentCtrl = controller();
+                return (currentCtrl != nullptr) && (currentCtrl->ConnectionEpoch() == res.epoch);
+            },
+            [this](const Result& res) {
+                toastError(tr("Update sleep failed: %1").arg(res.error));
+            },
+            [this](const Result& res) {
                 toastInfo(tr("Updated sleep for %1").arg(res.targetUuid));
                 refreshSleep();
-                ctrl->RequestSnapshotRefresh();
+                controller()->RequestSnapshotRefresh();
             });
     }
 
     void KelpiePanel::refreshDials()
     {
         auto* ctrl = controller();
-        if ( (ctrl == nullptr) || (tasking_.dialTable == nullptr) )
+        if ( (ctrl == nullptr) || (taskingPage_ == nullptr) || (taskingPage_->dialTable == nullptr) )
         {
             return;
         }
-        tasking_.dialTable->setEnabled(false);
+        taskingPage_->dialTable->setEnabled(false);
         const uint64_t epoch = ctrl->ConnectionEpoch();
 
         struct Result {
@@ -695,7 +693,7 @@ namespace StockmanNamespace::UserInterface
             std::vector<kelpieui::v1::DialStatus> dials;
         };
 
-        runAsync<Result>(
+        runAsyncGuarded<Result>(
             this,
             [ctrl, epoch]() {
                 Result res;
@@ -707,29 +705,27 @@ namespace StockmanNamespace::UserInterface
                 res.dials = std::move(dials);
                 return res;
             },
+            [this]() {
+                if ( taskingPage_ != nullptr && taskingPage_->dialTable ) { taskingPage_->dialTable->setEnabled(true);
+}
+            },
             [this](const Result& res) {
-                if ( tasking_.dialTable ) { tasking_.dialTable->setEnabled(true);
+                auto* currentCtrl = controller();
+                return (currentCtrl != nullptr) && (currentCtrl->ConnectionEpoch() == res.epoch);
+            },
+            [this](const Result& res) {
+                toastError(tr("Dial list failed: %1").arg(res.error));
+                if ( taskingPage_ != nullptr && taskingPage_->dialTable ) { taskingPage_->dialTable->setRowCount(0);
 }
-
-                auto* ctrl = controller();
-                if ( ctrl == nullptr || ctrl->ConnectionEpoch() != res.epoch )
-                {
-                    return;
-                }
-                if ( !res.ok )
-                {
-                    toastError(tr("Dial list failed: %1").arg(res.error));
-                    if ( tasking_.dialTable ) { tasking_.dialTable->setRowCount(0);
-}
-                    return;
-                }
-                tasking_.dialTable->setRowCount(static_cast<int>(res.dials.size()));
+            },
+            [this](const Result& res) {
+                taskingPage_->dialTable->setRowCount(static_cast<int>(res.dials.size()));
                 for (size_t i = 0; i < res.dials.size(); ++i)
                 {
                     const auto& d = res.dials[i];
-                    tasking_.dialTable->setItem(static_cast<int>(i), 0, new QTableWidgetItem(QString::fromStdString(d.dial_id())));
-                    tasking_.dialTable->setItem(static_cast<int>(i), 1, new QTableWidgetItem(QString::fromStdString(d.target_uuid())));
-                    tasking_.dialTable->setItem(static_cast<int>(i), 2, new QTableWidgetItem(QString::fromStdString(d.address())));
+                    taskingPage_->dialTable->setItem(static_cast<int>(i), 0, new QTableWidgetItem(QString::fromStdString(d.dial_id())));
+                    taskingPage_->dialTable->setItem(static_cast<int>(i), 1, new QTableWidgetItem(QString::fromStdString(d.target_uuid())));
+                    taskingPage_->dialTable->setItem(static_cast<int>(i), 2, new QTableWidgetItem(QString::fromStdString(d.address())));
                     QString stateText;
                     switch ( d.state() )
                     {
@@ -740,13 +736,13 @@ namespace StockmanNamespace::UserInterface
                         case kelpieui::v1::DIAL_STATE_CANCELED: stateText = tr("Canceled"); break;
                         default: stateText = tr("Unknown"); break;
                     }
-                    tasking_.dialTable->setItem(static_cast<int>(i), 3, new QTableWidgetItem(stateText));
+                    taskingPage_->dialTable->setItem(static_cast<int>(i), 3, new QTableWidgetItem(stateText));
                     QString reason = QString::fromStdString(d.reason());
                     if ( reason.isEmpty() )
                     {
                         reason = QString::fromStdString(d.error());
                     }
-                    tasking_.dialTable->setItem(static_cast<int>(i), 4, new QTableWidgetItem(reason));
+                    taskingPage_->dialTable->setItem(static_cast<int>(i), 4, new QTableWidgetItem(reason));
                 }
             });
     }
@@ -763,15 +759,15 @@ namespace StockmanNamespace::UserInterface
             toastWarn(tr("Select a node first"));
             return;
         }
-        const QString addr = (tasking_.dialAddressInput != nullptr) ? tasking_.dialAddressInput->text() : QString();
+        const QString addr = (taskingPage_ != nullptr && taskingPage_->dialAddressInput != nullptr) ? taskingPage_->dialAddressInput->text() : QString();
         if ( addr.isEmpty() )
         {
             toastWarn(tr("Dial address required"));
             return;
         }
-        const QString reason = (tasking_.dialReasonInput != nullptr) ? tasking_.dialReasonInput->text() : QString();
+        const QString reason = (taskingPage_ != nullptr && taskingPage_->dialReasonInput != nullptr) ? taskingPage_->dialReasonInput->text() : QString();
         const QString targetUuid = currentNodeUuid_;
-        setWidgetsEnabled({tasking_.startDialButton, tasking_.dialAddressInput, tasking_.dialReasonInput}, false);
+        setWidgetsEnabled({taskingPage_->startDialButton, taskingPage_->dialAddressInput, taskingPage_->dialReasonInput}, false);
         toastInfo(tr("Starting dial for %1...").arg(targetUuid));
 
         const uint64_t epoch = ctrl->ConnectionEpoch();
@@ -781,7 +777,7 @@ namespace StockmanNamespace::UserInterface
             QString error;
             kelpieui::v1::StartDialResponse resp;
         };
-        runAsync<Result>(
+        runAsyncGuarded<Result>(
             this,
             [ctrl, epoch, targetUuid, addr, reason]() {
                 Result res;
@@ -793,23 +789,22 @@ namespace StockmanNamespace::UserInterface
                 res.resp = resp;
                 return res;
             },
+            [this]() {
+                setWidgetsEnabled({taskingPage_->startDialButton, taskingPage_->dialAddressInput, taskingPage_->dialReasonInput}, true);
+            },
             [this](const Result& res) {
-                setWidgetsEnabled({tasking_.startDialButton, tasking_.dialAddressInput, tasking_.dialReasonInput}, true);
-                auto* ctrl = controller();
-                if ( ctrl == nullptr || ctrl->ConnectionEpoch() != res.epoch )
-                {
-                    return;
-                }
-                if ( !res.ok )
-                {
-                    toastError(tr("Start dial failed: %1").arg(res.error));
-                    if ( shell_.opsStatusLabel ) { shell_.opsStatusLabel->setText(tr("Dial failed: %1").arg(res.error));
+                auto* currentCtrl = controller();
+                return (currentCtrl != nullptr) && (currentCtrl->ConnectionEpoch() == res.epoch);
+            },
+            [this](const Result& res) {
+                toastError(tr("Start dial failed: %1").arg(res.error));
+                if ( shellPage_ != nullptr && shellPage_->opsStatusLabel ) { shellPage_->opsStatusLabel->setText(tr("Dial failed: %1").arg(res.error));
 }
-                    return;
-                }
+            },
+            [this](const Result& res) {
                 const QString id = QString::fromStdString(res.resp.dial_id());
                 toastInfo(tr("Dial %1 accepted=%2").arg(id).arg(res.resp.accepted()));
-                if ( shell_.opsStatusLabel ) { shell_.opsStatusLabel->setText(tr("Dial %1 accepted").arg(id));
+                if ( shellPage_ != nullptr && shellPage_->opsStatusLabel ) { shellPage_->opsStatusLabel->setText(tr("Dial %1 accepted").arg(id));
 }
                 refreshDials();
             });
@@ -822,13 +817,13 @@ namespace StockmanNamespace::UserInterface
         {
             return;
         }
-        auto sel = (tasking_.dialTable != nullptr) ? tasking_.dialTable->currentRow() : -1;
+        auto sel = (taskingPage_ != nullptr && taskingPage_->dialTable != nullptr) ? taskingPage_->dialTable->currentRow() : -1;
         if ( sel < 0 )
         {
             toastWarn(tr("Select a dial row first"));
             return;
         }
-        auto* idItem = tasking_.dialTable->item(sel, 0);
+        auto* idItem = taskingPage_->dialTable->item(sel, 0);
         if ( idItem == nullptr )
         {
             return;
@@ -839,7 +834,7 @@ namespace StockmanNamespace::UserInterface
             toastWarn(tr("Invalid dial id"));
             return;
         }
-        setWidgetsEnabled({tasking_.cancelDialButton, tasking_.dialTable}, false);
+        setWidgetsEnabled({taskingPage_->cancelDialButton, taskingPage_->dialTable}, false);
         toastInfo(tr("Canceling dial %1...").arg(dialId));
         const uint64_t epoch = ctrl->ConnectionEpoch();
         struct Result {
@@ -849,7 +844,7 @@ namespace StockmanNamespace::UserInterface
             QString error;
             kelpieui::v1::CancelDialResponse resp;
         };
-        runAsync<Result>(
+        runAsyncGuarded<Result>(
             this,
             [ctrl, epoch, dialId]() {
                 Result res;
@@ -862,22 +857,21 @@ namespace StockmanNamespace::UserInterface
                 res.resp = resp;
                 return res;
             },
+            [this]() {
+                setWidgetsEnabled({taskingPage_->cancelDialButton, taskingPage_->dialTable}, true);
+            },
             [this](const Result& res) {
-                setWidgetsEnabled({tasking_.cancelDialButton, tasking_.dialTable}, true);
-                auto* ctrl = controller();
-                if ( ctrl == nullptr || ctrl->ConnectionEpoch() != res.epoch )
-                {
-                    return;
-                }
-                if ( !res.ok )
-                {
-                    toastError(tr("Cancel dial failed: %1").arg(res.error));
-                    if ( shell_.opsStatusLabel ) { shell_.opsStatusLabel->setText(tr("Cancel failed: %1").arg(res.error));
+                auto* currentCtrl = controller();
+                return (currentCtrl != nullptr) && (currentCtrl->ConnectionEpoch() == res.epoch);
+            },
+            [this](const Result& res) {
+                toastError(tr("Cancel dial failed: %1").arg(res.error));
+                if ( shellPage_ != nullptr && shellPage_->opsStatusLabel ) { shellPage_->opsStatusLabel->setText(tr("Cancel failed: %1").arg(res.error));
 }
-                    return;
-                }
+            },
+            [this](const Result& res) {
                 toastInfo(tr("Dial %1 canceled=%2").arg(res.dialId).arg(res.resp.canceled()));
-                if ( shell_.opsStatusLabel ) { shell_.opsStatusLabel->setText(tr("Dial %1 canceled").arg(res.dialId));
+                if ( shellPage_ != nullptr && shellPage_->opsStatusLabel ) { shellPage_->opsStatusLabel->setText(tr("Dial %1 canceled").arg(res.dialId));
 }
                 refreshDials();
             });
@@ -896,22 +890,22 @@ namespace StockmanNamespace::UserInterface
             return;
         }
         const QString targetUuid = currentNodeUuid_;
-        const QString server = (tasking_.sshServerInput != nullptr) ? tasking_.sshServerInput->text().trimmed() : QString();
+        const QString server = (taskingPage_ != nullptr && taskingPage_->sshServerInput != nullptr) ? taskingPage_->sshServerInput->text().trimmed() : QString();
         if ( server.isEmpty() )
         {
             toastWarn(tr("SSH server address required"));
             return;
         }
-        const QString user = (tasking_.sshUserInput != nullptr) ? tasking_.sshUserInput->text() : QString();
-        const QString pass = (tasking_.sshPassInput != nullptr) ? tasking_.sshPassInput->text() : QString();
-        const auto method = static_cast<kelpieui::v1::SshTunnelAuthMethod>((tasking_.sshAuthCombo != nullptr) ? tasking_.sshAuthCombo->currentData().toInt() : 0);
+        const QString user = (taskingPage_ != nullptr && taskingPage_->sshUserInput != nullptr) ? taskingPage_->sshUserInput->text() : QString();
+        const QString pass = (taskingPage_ != nullptr && taskingPage_->sshPassInput != nullptr) ? taskingPage_->sshPassInput->text() : QString();
+        const auto method = static_cast<kelpieui::v1::SshTunnelAuthMethod>((taskingPage_ != nullptr && taskingPage_->sshAuthCombo != nullptr) ? taskingPage_->sshAuthCombo->currentData().toInt() : 0);
         if ( method == kelpieui::v1::SSH_TUNNEL_AUTH_METHOD_CERT )
         {
             toastWarn(tr("SSH session currently supports password auth only. Use SSH tunnel for certificate auth."));
             return;
         }
 
-        setWidgetsEnabled({tasking_.startSshSessionButton, tasking_.startSshTunnelButton, tasking_.sshTable, tasking_.sshServerInput, tasking_.sshUserInput, tasking_.sshPassInput, tasking_.sshAuthCombo}, false);
+        setWidgetsEnabled({taskingPage_->startSshSessionButton, taskingPage_->startSshTunnelButton, taskingPage_->sshTable, taskingPage_->sshServerInput, taskingPage_->sshUserInput, taskingPage_->sshPassInput, taskingPage_->sshAuthCombo}, false);
         toastInfo(tr("Starting SSH session to %1...").arg(server));
         const uint64_t epoch = ctrl->ConnectionEpoch();
 
@@ -924,7 +918,7 @@ namespace StockmanNamespace::UserInterface
             std::shared_ptr<StockmanNamespace::ProxyStreamHandle> handle;
         };
 
-        runAsync<Result>(
+        runAsyncGuarded<Result>(
             this,
             [ctrl, epoch, targetUuid, server, user, pass]() {
                 Result res;
@@ -938,40 +932,38 @@ namespace StockmanNamespace::UserInterface
                 res.handle = std::move(handle);
                 return res;
             },
+            [this]() {
+                setWidgetsEnabled({taskingPage_->startSshSessionButton, taskingPage_->startSshTunnelButton, taskingPage_->sshTable, taskingPage_->sshServerInput, taskingPage_->sshUserInput, taskingPage_->sshPassInput, taskingPage_->sshAuthCombo}, true);
+            },
             [this](const Result& res) {
-                setWidgetsEnabled({tasking_.startSshSessionButton, tasking_.startSshTunnelButton, tasking_.sshTable, tasking_.sshServerInput, tasking_.sshUserInput, tasking_.sshPassInput, tasking_.sshAuthCombo}, true);
-                auto* ctrl = controller();
-                if ( ctrl == nullptr || ctrl->ConnectionEpoch() != res.epoch )
+                auto* currentCtrl = controller();
+                const bool sameEpoch = (currentCtrl != nullptr) && (currentCtrl->ConnectionEpoch() == res.epoch);
+                if ( !sameEpoch && res.handle )
                 {
-                    if ( res.handle )
-                    {
-                        closeHandleAsync(res.handle);
-                    }
-                    return;
+                    closeHandleAsync(res.handle);
                 }
-                if ( !res.ok )
-                {
-                    toastError(tr("SSH session failed: %1").arg(res.error));
-                    return;
-                }
-
+                return sameEpoch;
+            },
+            [this](const Result& res) {
+                toastError(tr("SSH session failed: %1").arg(res.error));
+            },
+            [this](const Result& res) {
                 if ( res.handle )
                 {
                     const QString sid = res.handle->SessionId();
-                    tasking_.sshStreams.push_back(res.handle);
+                    taskingPage_->sshStreams.push_back(res.handle);
                     connect(res.handle.get(), &ProxyStreamHandle::Closed, this, [this, sid](const QString&) {
-                        tasking_.sshStreams.erase(
-                            std::remove_if(tasking_.sshStreams.begin(),
-                                           tasking_.sshStreams.end(),
+                        taskingPage_->sshStreams.erase(
+                            std::remove_if(taskingPage_->sshStreams.begin(),
+                                           taskingPage_->sshStreams.end(),
                                            [&sid](const std::shared_ptr<StockmanNamespace::ProxyStreamHandle>& h) {
                                                return !h || h->SessionId() == sid;
                                            }),
-                            tasking_.sshStreams.end());
+                            taskingPage_->sshStreams.end());
                     });
                 }
                 toastInfo(tr("SSH session started to %1").arg(res.server));
-                if ( ctrl ) { ctrl->RequestSnapshotRefresh();
-}
+                controller()->RequestSnapshotRefresh();
             });
     }
 
@@ -988,27 +980,27 @@ namespace StockmanNamespace::UserInterface
             return;
         }
         const QString targetUuid = currentNodeUuid_;
-        const QString server = (tasking_.sshServerInput != nullptr) ? tasking_.sshServerInput->text().trimmed() : QString();
-        const QString agentPort = (tasking_.sshTunnelPortInput != nullptr) ? tasking_.sshTunnelPortInput->text().trimmed() : QString();
+        const QString server = (taskingPage_ != nullptr && taskingPage_->sshServerInput != nullptr) ? taskingPage_->sshServerInput->text().trimmed() : QString();
+        const QString agentPort = (taskingPage_ != nullptr && taskingPage_->sshTunnelPortInput != nullptr) ? taskingPage_->sshTunnelPortInput->text().trimmed() : QString();
         if ( server.isEmpty() || agentPort.isEmpty() )
         {
             toastWarn(tr("SSH server and agent port are required"));
             return;
         }
-        const QString user = (tasking_.sshUserInput != nullptr) ? tasking_.sshUserInput->text() : QString();
-        const QString passOrKey = (tasking_.sshPassInput != nullptr) ? tasking_.sshPassInput->text() : QString();
-        const auto method = static_cast<kelpieui::v1::SshTunnelAuthMethod>((tasking_.sshAuthCombo != nullptr) ? tasking_.sshAuthCombo->currentData().toInt() : 0);
+        const QString user = (taskingPage_ != nullptr && taskingPage_->sshUserInput != nullptr) ? taskingPage_->sshUserInput->text() : QString();
+        const QString passOrKey = (taskingPage_ != nullptr && taskingPage_->sshPassInput != nullptr) ? taskingPage_->sshPassInput->text() : QString();
+        const auto method = static_cast<kelpieui::v1::SshTunnelAuthMethod>((taskingPage_ != nullptr && taskingPage_->sshAuthCombo != nullptr) ? taskingPage_->sshAuthCombo->currentData().toInt() : 0);
         const QString password = method == kelpieui::v1::SSH_TUNNEL_AUTH_METHOD_CERT ? QString() : passOrKey;
         const QByteArray privateKey = method == kelpieui::v1::SSH_TUNNEL_AUTH_METHOD_CERT ? passOrKey.toUtf8() : QByteArray();
 
-        setWidgetsEnabled({tasking_.startSshSessionButton,
-                    tasking_.startSshTunnelButton,
-                    tasking_.sshTable,
-                    tasking_.sshServerInput,
-                    tasking_.sshTunnelPortInput,
-                    tasking_.sshUserInput,
-                    tasking_.sshPassInput,
-                    tasking_.sshAuthCombo},
+        setWidgetsEnabled({taskingPage_->startSshSessionButton,
+                    taskingPage_->startSshTunnelButton,
+                    taskingPage_->sshTable,
+                    taskingPage_->sshServerInput,
+                    taskingPage_->sshTunnelPortInput,
+                    taskingPage_->sshUserInput,
+                    taskingPage_->sshPassInput,
+                    taskingPage_->sshAuthCombo},
                    false);
         toastInfo(tr("Starting SSH tunnel to %1...").arg(server));
         const uint64_t epoch = ctrl->ConnectionEpoch();
@@ -1021,7 +1013,7 @@ namespace StockmanNamespace::UserInterface
             QString error;
         };
 
-        runAsync<Result>(
+        runAsyncGuarded<Result>(
             this,
             [ctrl, epoch, targetUuid, server, agentPort, method, user, password, privateKey]() {
                 Result res;
@@ -1033,39 +1025,38 @@ namespace StockmanNamespace::UserInterface
                 res.error = error;
                 return res;
             },
-            [this](const Result& res) {
-                setWidgetsEnabled({tasking_.startSshSessionButton,
-                            tasking_.startSshTunnelButton,
-                            tasking_.sshTable,
-                            tasking_.sshServerInput,
-                            tasking_.sshTunnelPortInput,
-                            tasking_.sshUserInput,
-                            tasking_.sshPassInput,
-                            tasking_.sshAuthCombo},
+            [this]() {
+                setWidgetsEnabled({taskingPage_->startSshSessionButton,
+                            taskingPage_->startSshTunnelButton,
+                            taskingPage_->sshTable,
+                            taskingPage_->sshServerInput,
+                            taskingPage_->sshTunnelPortInput,
+                            taskingPage_->sshUserInput,
+                            taskingPage_->sshPassInput,
+                            taskingPage_->sshAuthCombo},
                            true);
-                auto* ctrl = controller();
-                if ( ctrl == nullptr || ctrl->ConnectionEpoch() != res.epoch )
-                {
-                    return;
-                }
-                if ( !res.ok )
-                {
-                    toastError(tr("SSH tunnel failed: %1").arg(res.error));
-                    return;
-                }
+            },
+            [this](const Result& res) {
+                auto* currentCtrl = controller();
+                return (currentCtrl != nullptr) && (currentCtrl->ConnectionEpoch() == res.epoch);
+            },
+            [this](const Result& res) {
+                toastError(tr("SSH tunnel failed: %1").arg(res.error));
+            },
+            [this](const Result& res) {
                 toastInfo(tr("SSH tunnel started: %1/%2").arg(res.server, res.agentPort));
-                ctrl->RequestSnapshotRefresh();
+                controller()->RequestSnapshotRefresh();
             });
     }
 
     void KelpiePanel::refreshSsh()
     {
-        if ( tasking_.sshTable == nullptr )
+        if ( taskingPage_ == nullptr || taskingPage_->sshTable == nullptr )
         {
             return;
         }
-        tasking_.sshTable->setEnabled(false);
-        tasking_.sshTable->setRowCount(0);
+        taskingPage_->sshTable->setEnabled(false);
+        taskingPage_->sshTable->setRowCount(0);
         const auto* st = state();
         auto snapshot = (st != nullptr) ? st->Snapshot() : kelpieui::v1::Snapshot{};
         int row = 0;
@@ -1101,20 +1092,20 @@ namespace StockmanNamespace::UserInterface
             {
                 status = tr("%1 @ %2").arg(status, last);
             }
-            tasking_.sshTable->insertRow(row);
-            tasking_.sshTable->setItem(row, 0, new QTableWidgetItem(lowerKind.contains(QStringLiteral("tunnel")) ? tr("Tunnel") : tr("Session")));
-            tasking_.sshTable->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(stream.target_uuid())));
-            tasking_.sshTable->setItem(row, 2, new QTableWidgetItem(endpoint));
-            tasking_.sshTable->setItem(row, 3, new QTableWidgetItem(status));
+            taskingPage_->sshTable->insertRow(row);
+            taskingPage_->sshTable->setItem(row, 0, new QTableWidgetItem(lowerKind.contains(QStringLiteral("tunnel")) ? tr("Tunnel") : tr("Session")));
+            taskingPage_->sshTable->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(stream.target_uuid())));
+            taskingPage_->sshTable->setItem(row, 2, new QTableWidgetItem(endpoint));
+            taskingPage_->sshTable->setItem(row, 3, new QTableWidgetItem(status));
             ++row;
         }
         if ( row == 0 )
         {
-            tasking_.sshTable->setRowCount(1);
+            taskingPage_->sshTable->setRowCount(1);
             auto* placeholder = new QTableWidgetItem(tr("No active SSH streams"));
             placeholder->setFlags(Qt::NoItemFlags);
-            tasking_.sshTable->setItem(0, 0, placeholder);
+            taskingPage_->sshTable->setItem(0, 0, placeholder);
         }
-        tasking_.sshTable->setEnabled(true);
+        taskingPage_->sshTable->setEnabled(true);
     }
 }

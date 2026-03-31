@@ -70,6 +70,35 @@ inline void runAsync(QObject* owner, WorkFn&& work, DoneFn&& done)
 }
 // NOLINTEND(clang-analyzer-cplusplus.NewDeleteLeaks)
 
+template <typename Result, typename WorkFn, typename RestoreFn, typename ValidFn, typename FailureFn, typename SuccessFn>
+inline void runAsyncGuarded(QObject* owner,
+                            WorkFn&& work,
+                            RestoreFn&& restoreUi,
+                            ValidFn&& isStillValid,
+                            FailureFn&& onFailure,
+                            SuccessFn&& onSuccess)
+{
+    runAsync<Result>(
+        owner,
+        std::forward<WorkFn>(work),
+        [restoreUi = std::forward<RestoreFn>(restoreUi),
+         isStillValid = std::forward<ValidFn>(isStillValid),
+         onFailure = std::forward<FailureFn>(onFailure),
+         onSuccess = std::forward<SuccessFn>(onSuccess)](Result res) mutable {
+            restoreUi();
+            if ( !isStillValid(res) )
+            {
+                return;
+            }
+            if ( !res.ok )
+            {
+                onFailure(res);
+                return;
+            }
+            onSuccess(res);
+        });
+}
+
 template <typename HandlePtr>
 inline void closeHandleAsync(HandlePtr handle)
 {

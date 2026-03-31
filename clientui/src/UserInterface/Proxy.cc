@@ -28,7 +28,7 @@ namespace StockmanNamespace::UserInterface
             std::vector<kelpieui::v1::ProxyInfo> proxies;
         };
 
-        runAsync<Result>(
+        runAsyncGuarded<Result>(
             this,
             [ctrl, epoch]() {
                 Result res;
@@ -40,22 +40,20 @@ namespace StockmanNamespace::UserInterface
                 res.proxies = std::move(proxies);
                 return res;
             },
-            [this](const Result& res) {
+            [this]() {
                 if ( workspace_.refreshProxiesButton ) { workspace_.refreshProxiesButton->setEnabled(true);
 }
                 if ( proxyTable_ ) { proxyTable_->setEnabled(true);
 }
-
-                auto* ctrl = controller();
-                if ( ctrl == nullptr || ctrl->ConnectionEpoch() != res.epoch )
-                {
-                    return;
-                }
-                if ( !res.ok )
-                {
-                    toastError(tr("Proxy refresh failed: %1").arg(res.error));
-                    return;
-                }
+            },
+            [this](const Result& res) {
+                auto* currentCtrl = controller();
+                return (currentCtrl != nullptr) && (currentCtrl->ConnectionEpoch() == res.epoch);
+            },
+            [this](const Result& res) {
+                toastError(tr("Proxy refresh failed: %1").arg(res.error));
+            },
+            [this](const Result& res) {
                 populateProxies(res.proxies);
             });
     }

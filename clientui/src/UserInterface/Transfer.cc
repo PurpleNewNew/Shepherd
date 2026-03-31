@@ -1,4 +1,5 @@
 #include <UserInterface/KelpiePanel.hpp>
+#include <UserInterface/Pages/ShellPage.hpp>
 
 #include "Internal.hpp"
 
@@ -12,20 +13,20 @@ namespace StockmanNamespace::UserInterface
 {
     void KelpiePanel::browseDownloadPath()
     {
-        const QString initial = (shell_.downloadLocalPathInput != nullptr) ? shell_.downloadLocalPathInput->text().trimmed() : QString();
+        const QString initial = (shellPage_ != nullptr && shellPage_->downloadLocalPathInput != nullptr) ? shellPage_->downloadLocalPathInput->text().trimmed() : QString();
         QString suggested = initial;
-        if ( suggested.isEmpty() && (shell_.downloadRemotePathInput != nullptr) )
+        if ( suggested.isEmpty() && (shellPage_ != nullptr) && (shellPage_->downloadRemotePathInput != nullptr) )
         {
-            suggested = QFileInfo(shell_.downloadRemotePathInput->text().trimmed()).fileName();
+            suggested = QFileInfo(shellPage_->downloadRemotePathInput->text().trimmed()).fileName();
         }
         const QString path = QFileDialog::getSaveFileName(this, tr("Select download destination"), suggested);
         if ( path.isEmpty() )
         {
             return;
         }
-        if ( shell_.downloadLocalPathInput != nullptr )
+        if ( shellPage_ != nullptr && shellPage_->downloadLocalPathInput != nullptr )
         {
-            shell_.downloadLocalPathInput->setText(path);
+            shellPage_->downloadLocalPathInput->setText(path);
         }
     }
 
@@ -40,17 +41,17 @@ namespace StockmanNamespace::UserInterface
             toastWarn(tr("Select a node first"));
             return;
         }
-        const QString remotePath = (shell_.downloadRemotePathInput != nullptr) ? shell_.downloadRemotePathInput->text().trimmed() : QString();
+        const QString remotePath = (shellPage_ != nullptr && shellPage_->downloadRemotePathInput != nullptr) ? shellPage_->downloadRemotePathInput->text().trimmed() : QString();
         if ( remotePath.isEmpty() )
         {
             toastWarn(tr("Download remote path is required"));
             return;
         }
-        QString localPath = (shell_.downloadLocalPathInput != nullptr) ? shell_.downloadLocalPathInput->text().trimmed() : QString();
+        QString localPath = (shellPage_ != nullptr && shellPage_->downloadLocalPathInput != nullptr) ? shellPage_->downloadLocalPathInput->text().trimmed() : QString();
         if ( localPath.isEmpty() )
         {
             browseDownloadPath();
-            localPath = (shell_.downloadLocalPathInput != nullptr) ? shell_.downloadLocalPathInput->text().trimmed() : QString();
+            localPath = (shellPage_ != nullptr && shellPage_->downloadLocalPathInput != nullptr) ? shellPage_->downloadLocalPathInput->text().trimmed() : QString();
         }
         if ( localPath.isEmpty() )
         {
@@ -60,9 +61,9 @@ namespace StockmanNamespace::UserInterface
 
         downloadActive_.store(true);
         const uint64_t generation = downloadGeneration_.fetch_add(1, std::memory_order_relaxed) + 1;
-        if ( shell_.startDownloadButton != nullptr ) { shell_.startDownloadButton->setEnabled(false);
+        if ( shellPage_ != nullptr && shellPage_->startDownloadButton != nullptr ) { shellPage_->startDownloadButton->setEnabled(false);
 }
-        if ( shell_.downloadStatusLabel != nullptr ) { shell_.downloadStatusLabel->setText(tr("Download: starting..."));
+        if ( shellPage_ != nullptr && shellPage_->downloadStatusLabel != nullptr ) { shellPage_->downloadStatusLabel->setText(tr("Download: starting..."));
 }
         toastInfo(tr("Download started: %1").arg(QFileInfo(remotePath).fileName()));
 
@@ -91,9 +92,9 @@ namespace StockmanNamespace::UserInterface
                                 {
                                     return;
                                 }
-                                if ( shell_.downloadStatusLabel )
+                                if ( shellPage_ != nullptr && shellPage_->downloadStatusLabel )
                                 {
-                                    shell_.downloadStatusLabel->setText(tr("Download: %1 / %2").arg(done).arg(total));
+                                    shellPage_->downloadStatusLabel->setText(tr("Download: %1 / %2").arg(done).arg(total));
                                 }
                             },
                             Qt::QueuedConnection);
@@ -124,13 +125,13 @@ namespace StockmanNamespace::UserInterface
         {
             return;
         }
-        if ( shell_.uploadLocalPathInput != nullptr )
+        if ( shellPage_ != nullptr && shellPage_->uploadLocalPathInput != nullptr )
         {
-            shell_.uploadLocalPathInput->setText(path);
+            shellPage_->uploadLocalPathInput->setText(path);
         }
-        if ( (shell_.uploadRemotePathInput != nullptr) && shell_.uploadRemotePathInput->text().trimmed().isEmpty() )
+        if ( (shellPage_ != nullptr) && (shellPage_->uploadRemotePathInput != nullptr) && shellPage_->uploadRemotePathInput->text().trimmed().isEmpty() )
         {
-            shell_.uploadRemotePathInput->setText(QFileInfo(path).fileName());
+            shellPage_->uploadRemotePathInput->setText(QFileInfo(path).fileName());
         }
     }
 
@@ -145,17 +146,17 @@ namespace StockmanNamespace::UserInterface
             toastWarn(tr("Select a node first"));
             return;
         }
-        QString localPath = (shell_.uploadLocalPathInput != nullptr) ? shell_.uploadLocalPathInput->text().trimmed() : QString();
+        QString localPath = (shellPage_ != nullptr && shellPage_->uploadLocalPathInput != nullptr) ? shellPage_->uploadLocalPathInput->text().trimmed() : QString();
         if ( localPath.isEmpty() )
         {
             browseUploadPath();
-            localPath = (shell_.uploadLocalPathInput != nullptr) ? shell_.uploadLocalPathInput->text().trimmed() : QString();
+            localPath = (shellPage_ != nullptr && shellPage_->uploadLocalPathInput != nullptr) ? shellPage_->uploadLocalPathInput->text().trimmed() : QString();
         }
         if ( localPath.isEmpty() )
         {
             return;
         }
-        const QString remotePath = (shell_.uploadRemotePathInput != nullptr) ? shell_.uploadRemotePathInput->text().trimmed() : QString();
+        const QString remotePath = (shellPage_ != nullptr && shellPage_->uploadRemotePathInput != nullptr) ? shellPage_->uploadRemotePathInput->text().trimmed() : QString();
         if ( remotePath.isEmpty() )
         {
             toastWarn(tr("Upload remote path is required"));
@@ -165,9 +166,9 @@ namespace StockmanNamespace::UserInterface
 
         uploadActive_.store(true);
         const uint64_t generation = uploadGeneration_.fetch_add(1, std::memory_order_relaxed) + 1;
-        if ( shell_.startUploadButton != nullptr ) { shell_.startUploadButton->setEnabled(false);
+        if ( shellPage_ != nullptr && shellPage_->startUploadButton != nullptr ) { shellPage_->startUploadButton->setEnabled(false);
 }
-        if ( shell_.uploadStatusLabel != nullptr ) { shell_.uploadStatusLabel->setText(tr("Upload: starting..."));
+        if ( shellPage_ != nullptr && shellPage_->uploadStatusLabel != nullptr ) { shellPage_->uploadStatusLabel->setText(tr("Upload: starting..."));
 }
         toastInfo(tr("Upload started: %1").arg(QFileInfo(localPath).fileName()));
 
@@ -176,7 +177,7 @@ namespace StockmanNamespace::UserInterface
         StockmanNamespace::KelpieController::FileUploadSpec spec;
         spec.localPath = localPath;
         spec.remotePath = remotePath;
-        spec.overwrite = (shell_.uploadOverwriteCheck != nullptr) ? shell_.uploadOverwriteCheck->isChecked() : false;
+        spec.overwrite = (shellPage_ != nullptr && shellPage_->uploadOverwriteCheck != nullptr) ? shellPage_->uploadOverwriteCheck->isChecked() : false;
 
         uploadThread_ = std::jthread([this, ctx, targetUuid, spec, generation](std::stop_token stopToken) {
             QString error;
@@ -196,9 +197,9 @@ namespace StockmanNamespace::UserInterface
                                 {
                                     return;
                                 }
-                                if ( shell_.uploadStatusLabel )
+                                if ( shellPage_ != nullptr && shellPage_->uploadStatusLabel )
                                 {
-                                    shell_.uploadStatusLabel->setText(tr("Upload: %1 / %2").arg(done).arg(total));
+                                    shellPage_->uploadStatusLabel->setText(tr("Upload: %1 / %2").arg(done).arg(total));
                                 }
                             },
                             Qt::QueuedConnection);
@@ -225,21 +226,21 @@ namespace StockmanNamespace::UserInterface
     void KelpiePanel::finishDownload(bool success, const QString& errorMessage)
     {
         downloadActive_.store(false);
-        if ( shell_.startDownloadButton != nullptr )
+        if ( shellPage_ != nullptr && shellPage_->startDownloadButton != nullptr )
         {
-            shell_.startDownloadButton->setEnabled(!currentNodeUuid_.isEmpty());
+            shellPage_->startDownloadButton->setEnabled(!currentNodeUuid_.isEmpty());
         }
         if ( success )
         {
-            if ( shell_.downloadStatusLabel != nullptr ) { shell_.downloadStatusLabel->setText(tr("Download: completed"));
+            if ( shellPage_ != nullptr && shellPage_->downloadStatusLabel != nullptr ) { shellPage_->downloadStatusLabel->setText(tr("Download: completed"));
 }
             toastInfo(tr("Download completed"));
         }
         else
         {
-            if ( shell_.downloadStatusLabel != nullptr )
+            if ( shellPage_ != nullptr && shellPage_->downloadStatusLabel != nullptr )
             {
-                shell_.downloadStatusLabel->setText(tr("Download: failed (%1)").arg(errorMessage));
+                shellPage_->downloadStatusLabel->setText(tr("Download: failed (%1)").arg(errorMessage));
             }
             if ( !errorMessage.isEmpty() )
             {
@@ -251,21 +252,21 @@ namespace StockmanNamespace::UserInterface
     void KelpiePanel::finishUpload(bool success, const QString& errorMessage)
     {
         uploadActive_.store(false);
-        if ( shell_.startUploadButton != nullptr )
+        if ( shellPage_ != nullptr && shellPage_->startUploadButton != nullptr )
         {
-            shell_.startUploadButton->setEnabled(!currentNodeUuid_.isEmpty());
+            shellPage_->startUploadButton->setEnabled(!currentNodeUuid_.isEmpty());
         }
         if ( success )
         {
-            if ( shell_.uploadStatusLabel != nullptr ) { shell_.uploadStatusLabel->setText(tr("Upload: completed"));
+            if ( shellPage_ != nullptr && shellPage_->uploadStatusLabel != nullptr ) { shellPage_->uploadStatusLabel->setText(tr("Upload: completed"));
 }
             toastInfo(tr("Upload completed"));
         }
         else
         {
-            if ( shell_.uploadStatusLabel != nullptr )
+            if ( shellPage_ != nullptr && shellPage_->uploadStatusLabel != nullptr )
             {
-                shell_.uploadStatusLabel->setText(tr("Upload: failed (%1)").arg(errorMessage));
+                shellPage_->uploadStatusLabel->setText(tr("Upload: failed (%1)").arg(errorMessage));
             }
             if ( !errorMessage.isEmpty() )
             {

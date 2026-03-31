@@ -34,6 +34,11 @@ class QTimer;
 
 namespace StockmanNamespace::UserInterface
 {
+    class ChatPage;
+    class LootPage;
+    class ShellPage;
+    class TaskingPage;
+
     class KelpiePanel : public QWidget
     {
         Q_OBJECT
@@ -92,80 +97,10 @@ namespace StockmanNamespace::UserInterface
             QLineEdit* pingSizeInput = nullptr;
         };
 
-        struct TaskingUiState {
-            QWidget* page = nullptr;
-            QPushButton* refreshSleepButton = nullptr;
-            QPushButton* updateSleepButton = nullptr;
-            QLineEdit* sleepSecondsInput = nullptr;
-            QLineEdit* workSecondsInput = nullptr;
-            QLineEdit* jitterInput = nullptr;
-            QLineEdit* dialAddressInput = nullptr;
-            QLineEdit* dialReasonInput = nullptr;
-            QPushButton* startDialButton = nullptr;
-            QPushButton* cancelDialButton = nullptr;
-            QTableWidget* dialTable = nullptr;
-            QLineEdit* sshServerInput = nullptr;
-            QLineEdit* sshUserInput = nullptr;
-            QLineEdit* sshPassInput = nullptr;
-            QComboBox* sshAuthCombo = nullptr;
-            QPushButton* startSshSessionButton = nullptr;
-            QPushButton* startSshTunnelButton = nullptr;
-            QLineEdit* sshTunnelPortInput = nullptr;
-            QTableWidget* sshTable = nullptr;
-            std::vector<std::shared_ptr<StockmanNamespace::ProxyStreamHandle>> sshStreams;
-        };
-
-        struct ShellUiState {
-            QWidget* page = nullptr;
-            QPlainTextEdit* view = nullptr;
-            QLineEdit* input = nullptr;
-            QPushButton* openButton = nullptr;
-            QPushButton* closeButton = nullptr;
-            QLabel* statusLabel = nullptr;
-            QLabel* opsStatusLabel = nullptr;
-            QString pendingTarget;
-            QString pendingLine;
-            std::shared_ptr<StockmanNamespace::ProxyStreamHandle> stream;
-            QLineEdit* downloadRemotePathInput = nullptr;
-            QLineEdit* downloadLocalPathInput = nullptr;
-            QPushButton* browseDownloadButton = nullptr;
-            QPushButton* startDownloadButton = nullptr;
-            QLabel* downloadStatusLabel = nullptr;
-            QLineEdit* uploadLocalPathInput = nullptr;
-            QLineEdit* uploadRemotePathInput = nullptr;
-            QCheckBox* uploadOverwriteCheck = nullptr;
-            QPushButton* browseUploadButton = nullptr;
-            QPushButton* startUploadButton = nullptr;
-            QLabel* uploadStatusLabel = nullptr;
-            QLineEdit* socksPortInput = nullptr;
-            QCheckBox* socksAuthCheck = nullptr;
-            QLineEdit* socksUserInput = nullptr;
-            QLineEdit* socksPasswordInput = nullptr;
-            QPushButton* startSocksButton = nullptr;
-            QPushButton* stopSocksButton = nullptr;
-            QLabel* socksStatusLabel = nullptr;
-        };
-
         struct WorkspaceUiState {
             QWidget* consolePage = nullptr;
             QPlainTextEdit* logView = nullptr;
             QPushButton* refreshProxiesButton = nullptr;
-            QWidget* chatPage = nullptr;
-            QTableWidget* chatTable = nullptr;
-            QLineEdit* chatInput = nullptr;
-            QPushButton* sendChatButton = nullptr;
-            QPushButton* refreshChatButton = nullptr;
-            QSet<QString> chatIds;
-            QWidget* lootPage = nullptr;
-            QTableWidget* lootTable = nullptr;
-            QLineEdit* lootTargetInput = nullptr;
-            QLineEdit* lootTagInput = nullptr;
-            QComboBox* lootCategoryBox = nullptr;
-            QSpinBox* lootLimitSpin = nullptr;
-            QPushButton* refreshLootButton = nullptr;
-            QPushButton* submitLootButton = nullptr;
-            QPushButton* downloadLootButton = nullptr;
-            QSet<QString> lootIds;
         };
 
         QTabWidget*       workspaceTabs_;
@@ -249,7 +184,7 @@ namespace StockmanNamespace::UserInterface
         QPushButton*      useNetworkButton_;
         QPushButton*      resetNetworkButton_;
         QPushButton*      setNodeNetworkButton_;
-        TaskingUiState    tasking_;
+        TaskingPage*      taskingPage_ = nullptr;
         QLabel*           supplementalSummary_;
         // Repairs
         QPushButton*      refreshRepairsButton_;
@@ -264,7 +199,9 @@ namespace StockmanNamespace::UserInterface
         QLineEdit*        backwardLocalPortInput_;
         QPushButton*      startBackwardButton_;
         QPushButton*      stopProxyButton_;
-        ShellUiState      shell_;
+        ChatPage*         chatPage_ = nullptr;
+        LootPage*         lootPage_ = nullptr;
+        ShellPage*        shellPage_ = nullptr;
         QString           currentNodeUuid_;
         QHash<QString, int> proxyRowIndex_;
         QTcpServer*       socksServer_ = nullptr;

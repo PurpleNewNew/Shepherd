@@ -1,4 +1,5 @@
 #include <UserInterface/KelpiePanel.hpp>
+#include <UserInterface/Pages/TaskingPage.hpp>
 
 #include <Util/Base.hpp>
 
@@ -24,9 +25,9 @@ namespace StockmanNamespace::UserInterface
 
         // Node-specific actions stay disabled until a target is selected.
         setNodeScopedActionsEnabled(false);
-        if ( tasking_.startSshSessionButton != nullptr )
+        if ( taskingPage_ != nullptr && taskingPage_->startSshSessionButton != nullptr )
         {
-            tasking_.startSshSessionButton->setToolTip(tr("Legacy SSH session RPC may be disabled on current server build."));
+            taskingPage_->startSshSessionButton->setToolTip(tr("Legacy SSH session RPC may be disabled on current server build."));
         }
 
         wireStateActions();
