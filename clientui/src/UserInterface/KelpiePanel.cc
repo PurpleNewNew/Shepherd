@@ -44,10 +44,10 @@ namespace StockmanNamespace::UserInterface
         dialRefreshCooldown_->setSingleShot(true);
         dialRefreshCooldown_->setInterval(kDialRefreshCooldownMs);
 
-        topologyViewDebounce_ = new QTimer(this);
-        topologyViewDebounce_->setSingleShot(true);
-        topologyViewDebounce_->setInterval(kTopologyViewDebounceMs);
-        connect(topologyViewDebounce_, &QTimer::timeout, this, &KelpiePanel::refreshTopologyView);
+        topology_.refreshDebounce = new QTimer(this);
+        topology_.refreshDebounce->setSingleShot(true);
+        topology_.refreshDebounce->setInterval(kTopologyViewDebounceMs);
+        connect(topology_.refreshDebounce, &QTimer::timeout, this, &KelpiePanel::refreshTopologyView);
     }
 
     KelpiePanel::~KelpiePanel()
@@ -420,7 +420,7 @@ namespace StockmanNamespace::UserInterface
             refreshListeners();
             return;
         }
-        if ( page == topologyPage_ )
+        if ( page == topology_.page )
         {
             refreshTopology();
             return;

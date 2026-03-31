@@ -30,8 +30,8 @@ namespace StockmanNamespace::UserInterface
         connect(updateControllerListenerButton_, &QPushButton::clicked, this, &KelpiePanel::editControllerListener);
         connect(deleteControllerListenerButton_, &QPushButton::clicked, this, &KelpiePanel::deleteControllerListener);
 
-        connect(refreshTopologyButton_, &QPushButton::clicked, this, &KelpiePanel::refreshTopology);
-        connect(fitTopologyButton_, &QPushButton::clicked, this, &KelpiePanel::fitTopologyGraph);
+        connect(topology_.refreshButton, &QPushButton::clicked, this, &KelpiePanel::refreshTopology);
+        connect(topology_.fitButton, &QPushButton::clicked, this, &KelpiePanel::fitTopologyGraph);
         connect(refreshSessionListButton_, &QPushButton::clicked, this, &KelpiePanel::refreshSessionList);
         connect(refreshSupplementalButton_, &QPushButton::clicked, this, &KelpiePanel::refreshSupplemental);
         connect(refreshAuditButton_, &QPushButton::clicked, this, &KelpiePanel::refreshAudit);
@@ -126,12 +126,12 @@ namespace StockmanNamespace::UserInterface
 
     void KelpiePanel::wireTopologyInteractions()
     {
-        connect(topologyScene_, &QGraphicsScene::selectionChanged, this, [this]() {
-            if ( topologyScene_ == nullptr )
+        connect(topology_.scene, &QGraphicsScene::selectionChanged, this, [this]() {
+            if ( topology_.scene == nullptr )
             {
                 return;
             }
-            const auto selected = topologyScene_->selectedItems();
+            const auto selected = topology_.scene->selectedItems();
             for ( auto* item : selected )
             {
                 if ( item == nullptr )
@@ -144,17 +144,17 @@ namespace StockmanNamespace::UserInterface
                     const QString parent = item->data(2).toString();
                     const QString child = item->data(3).toString();
                     setTopologyHighlightEdge(parent, child);
-                    if ( topologyEdgesTable_ != nullptr )
+                    if ( topology_.edgesTable != nullptr )
                     {
-                        for ( int row = 0; row < topologyEdgesTable_->rowCount(); ++row )
+                        for ( int row = 0; row < topology_.edgesTable->rowCount(); ++row )
                         {
-                            auto* parentItem = topologyEdgesTable_->item(row, 0);
-                            auto* childItem = topologyEdgesTable_->item(row, 1);
+                            auto* parentItem = topology_.edgesTable->item(row, 0);
+                            auto* childItem = topology_.edgesTable->item(row, 1);
                             if ( (parentItem != nullptr) && (childItem != nullptr) &&
                                  parentItem->text() == parent && childItem->text() == child )
                             {
-                                const QSignalBlocker blocker(topologyEdgesTable_);
-                                topologyEdgesTable_->setCurrentCell(row, 0);
+                                const QSignalBlocker blocker(topology_.edgesTable);
+                                topology_.edgesTable->setCurrentCell(row, 0);
                                 break;
                             }
                         }
@@ -172,34 +172,34 @@ namespace StockmanNamespace::UserInterface
             }
         });
 
-        connect(topologyEdgesTable_, &QTableWidget::itemSelectionChanged, this, [this]() {
-            if ( !topologyEdgesTable_ )
+        connect(topology_.edgesTable, &QTableWidget::itemSelectionChanged, this, [this]() {
+            if ( !topology_.edgesTable )
             {
                 return;
             }
-            const int row = topologyEdgesTable_->currentRow();
+            const int row = topology_.edgesTable->currentRow();
             if ( row < 0 )
             {
                 setTopologyHighlightNode(currentNodeUuid_);
                 return;
             }
-            auto* parentItem = topologyEdgesTable_->item(row, 0);
-            auto* childItem = topologyEdgesTable_->item(row, 1);
+            auto* parentItem = topology_.edgesTable->item(row, 0);
+            auto* childItem = topology_.edgesTable->item(row, 1);
             const QString parent = parentItem ? parentItem->text() : QString();
             const QString child = childItem ? childItem->text() : QString();
             setTopologyHighlightEdge(parent, child);
         });
 
-        connect(topologyFilterInput_, &QLineEdit::textChanged, this, [this](const QString&) {
+        connect(topology_.filterInput, &QLineEdit::textChanged, this, [this](const QString&) {
             scheduleTopologyViewRefresh();
         });
-        connect(topologyLayoutBox_, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int) {
+        connect(topology_.layoutBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int) {
             scheduleTopologyViewRefresh();
         });
-        connect(topologyShowSupplementalCheck_, &QCheckBox::toggled, this, [this](bool) {
+        connect(topology_.showSupplementalCheck, &QCheckBox::toggled, this, [this](bool) {
             scheduleTopologyViewRefresh();
         });
-        connect(topologyLocateButton_, &QPushButton::clicked, this, &KelpiePanel::locateTopologyNode);
-        connect(topologyLocateInput_, &QLineEdit::returnPressed, this, &KelpiePanel::locateTopologyNode);
+        connect(topology_.locateButton, &QPushButton::clicked, this, &KelpiePanel::locateTopologyNode);
+        connect(topology_.locateInput, &QLineEdit::returnPressed, this, &KelpiePanel::locateTopologyNode);
     }
 }

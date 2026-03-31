@@ -57,6 +57,29 @@ namespace StockmanNamespace::UserInterface
         void ProcessEvent(const kelpieui::v1::UiEvent& event);
 
     private:
+        struct TopologyUiState {
+            QWidget* page = nullptr;
+            QLineEdit* targetInput = nullptr;
+            QLineEdit* networkInput = nullptr;
+            QLineEdit* filterInput = nullptr;
+            QLineEdit* locateInput = nullptr;
+            QPushButton* refreshButton = nullptr;
+            QPushButton* fitButton = nullptr;
+            QPushButton* locateButton = nullptr;
+            QLabel* statusLabel = nullptr;
+            QLabel* legendLabel = nullptr;
+            QComboBox* layoutBox = nullptr;
+            QCheckBox* showSupplementalCheck = nullptr;
+            QGraphicsView* graphView = nullptr;
+            QGraphicsScene* scene = nullptr;
+            QTableWidget* edgesTable = nullptr;
+            QTimer* refreshDebounce = nullptr;
+            kelpieui::v1::GetTopologyResponse snapshot;
+            QString highlightNodeUuid;
+            QString highlightParentUuid;
+            QString highlightChildUuid;
+        };
+
         QTabWidget*       workspaceTabs_;
         QWidget*          overviewPage_;
         QWidget*          streamsPage_;
@@ -65,7 +88,6 @@ namespace StockmanNamespace::UserInterface
         QWidget*          lootPage_;
         QWidget*          shellPage_;
         QWidget*          sessionsPage_;
-        QWidget*          topologyPage_;
         QWidget*          sessionListPage_;
         QWidget*          pivotingPage_;
         QWidget*          listenersPage_;
@@ -145,22 +167,7 @@ namespace StockmanNamespace::UserInterface
         QPushButton*      deleteControllerListenerButton_;
         QPushButton*      refreshSupplementalButton_;
         QPushButton*      refreshAuditButton_;
-
-        // Topology (RPC) page
-        QLineEdit*        topologyTargetInput_;
-        QLineEdit*        topologyNetworkInput_;
-        QLineEdit*        topologyFilterInput_;
-        QLineEdit*        topologyLocateInput_;
-        QPushButton*      refreshTopologyButton_;
-        QPushButton*      fitTopologyButton_;
-        QPushButton*      topologyLocateButton_;
-        QLabel*           topologyStatusLabel_;
-        QLabel*           topologyLegendLabel_;
-        QComboBox*        topologyLayoutBox_;
-        QCheckBox*        topologyShowSupplementalCheck_;
-        QGraphicsView*    topologyGraphView_;
-        QGraphicsScene*   topologyScene_;
-        QTableWidget*     topologyEdgesTable_;
+        TopologyUiState   topology_;
 
         // Sessions list (RPC) page
         QLineEdit*        sessionListTargetsInput_;
@@ -259,13 +266,8 @@ namespace StockmanNamespace::UserInterface
         std::atomic<bool>  uploadActive_{false};
         std::atomic<uint64_t> downloadGeneration_{0};
         std::atomic<uint64_t> uploadGeneration_{0};
-        kelpieui::v1::GetTopologyResponse topologySnapshot_;
-        QString           topologyHighlightNodeUuid_;
-        QString           topologyHighlightParentUuid_;
-        QString           topologyHighlightChildUuid_;
         QTimer*           streamRefreshDebounce_ = nullptr;
         QTimer*           dialRefreshCooldown_ = nullptr;
-        QTimer*           topologyViewDebounce_ = nullptr;
         bool              streamDiagnosticsRefreshInFlight_{false};
         bool              streamDiagnosticsRefreshPending_{false};
         std::shared_ptr<StockmanNamespace::AppContext> context_ = nullptr;

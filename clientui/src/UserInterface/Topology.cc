@@ -361,29 +361,29 @@ namespace StockmanNamespace::UserInterface
 {
     void KelpiePanel::fitTopologyGraph()
     {
-        if ( (topologyGraphView_ == nullptr) || (topologyScene_ == nullptr) )
+        if ( (topology_.graphView == nullptr) || (topology_.scene == nullptr) )
         {
             return;
         }
-        const QRectF rect = topologyScene_->itemsBoundingRect();
+        const QRectF rect = topology_.scene->itemsBoundingRect();
         if ( rect.isNull() )
         {
             return;
         }
-        topologyGraphView_->fitInView(rect.adjusted(-80, -80, 80, 80), Qt::KeepAspectRatio);
+        topology_.graphView->fitInView(rect.adjusted(-80, -80, 80, 80), Qt::KeepAspectRatio);
     }
 
     void KelpiePanel::renderTopologyGraph(const kelpieui::v1::GetTopologyResponse& topo)
     {
-        if ( (topologyScene_ == nullptr) || (topologyGraphView_ == nullptr) )
+        if ( (topology_.scene == nullptr) || (topology_.graphView == nullptr) )
         {
             return;
         }
 
-        topologyScene_->clear();
+        topology_.scene->clear();
         if ( topo.nodes_size() == 0 )
         {
-            auto* msg = topologyScene_->addSimpleText(tr("No topology data"));
+            auto* msg = topology_.scene->addSimpleText(tr("No topology data"));
             msg->setBrush(QBrush(QColor(220, 220, 220)));
             msg->setPos(20, 20);
             return;
@@ -400,20 +400,22 @@ namespace StockmanNamespace::UserInterface
             }
         }
 
-        const QString filter = (topologyFilterInput_ != nullptr) ? topologyFilterInput_->text() : QString();
+        const QString filter = (topology_.filterInput != nullptr) ? topology_.filterInput->text() : QString();
         const QSet<QString> visibleNodes = collectVisibleNodes(topo, filter);
         if ( visibleNodes.isEmpty() )
         {
-            auto* msg = topologyScene_->addSimpleText(tr("No nodes matched filter"));
+            auto* msg = topology_.scene->addSimpleText(tr("No nodes matched filter"));
             msg->setBrush(QBrush(QColor(220, 220, 220)));
             msg->setPos(20, 20);
             return;
         }
 
-        const bool showSupplemental = (topologyShowSupplementalCheck_ == nullptr) || topologyShowSupplementalCheck_->isChecked();
+        const bool showSupplemental =
+            (topology_.showSupplementalCheck == nullptr) || topology_.showSupplementalCheck->isChecked();
         const auto edges = collectVisibleEdges(topo, visibleNodes, showSupplemental);
 
-        const QString layout = (topologyLayoutBox_ != nullptr) ? topologyLayoutBox_->currentData().toString() : QStringLiteral("tree");
+        const QString layout =
+            (topology_.layoutBox != nullptr) ? topology_.layoutBox->currentData().toString() : QStringLiteral("tree");
         const QHash<QString, QPointF> pos =
             layout == QStringLiteral("force") ? computeForceLayout(visibleNodes, edges) : computeTreeLayout(visibleNodes, edges);
 
@@ -435,7 +437,7 @@ namespace StockmanNamespace::UserInterface
             {
                 pen = QPen(QColor(140, 140, 140), 2.2, Qt::SolidLine);
             }
-	            auto* line = topologyScene_->addLine(QLineF(a, b), pen);
+	            auto* line = topology_.scene->addLine(QLineF(a, b), pen);
 	            if ( line != nullptr )
 	            {
 	                line->setZValue(0);
@@ -483,7 +485,7 @@ namespace StockmanNamespace::UserInterface
                 pen.setColor(QColor(255, 205, 80));
             }
 
-            auto* nodeItem = topologyScene_->addEllipse(p.x() - kR, p.y() - kR, kR * 2, kR * 2, pen, QBrush(fill));
+            auto* nodeItem = topology_.scene->addEllipse(p.x() - kR, p.y() - kR, kR * 2, kR * 2, pen, QBrush(fill));
             if ( nodeItem != nullptr )
             {
                 nodeItem->setZValue(2);
@@ -499,7 +501,7 @@ namespace StockmanNamespace::UserInterface
                                               QString::fromStdString(n->memo())));
             }
 
-            auto* text = topologyScene_->addSimpleText(label, labelFont);
+            auto* text = topology_.scene->addSimpleText(label, labelFont);
             if ( text != nullptr )
             {
                 text->setBrush(QBrush(QColor(235, 235, 235)));
@@ -516,102 +518,103 @@ namespace StockmanNamespace::UserInterface
 
     void KelpiePanel::populateTopologyEdges(const kelpieui::v1::GetTopologyResponse& topo)
     {
-        if ( topologyEdgesTable_ == nullptr )
+        if ( topology_.edgesTable == nullptr )
         {
             return;
         }
 
-        const QString filter = (topologyFilterInput_ != nullptr) ? topologyFilterInput_->text() : QString();
+        const QString filter = (topology_.filterInput != nullptr) ? topology_.filterInput->text() : QString();
         const QSet<QString> visibleNodes = collectVisibleNodes(topo, filter);
-        const bool showSupplemental = (topologyShowSupplementalCheck_ == nullptr) || topologyShowSupplementalCheck_->isChecked();
+        const bool showSupplemental =
+            (topology_.showSupplementalCheck == nullptr) || topology_.showSupplementalCheck->isChecked();
         const auto edges = collectVisibleEdges(topo, visibleNodes, showSupplemental);
 
         const auto edgeCount = edges.size();
-        topologyEdgesTable_->setRowCount(static_cast<int>(edgeCount));
+        topology_.edgesTable->setRowCount(static_cast<int>(edgeCount));
         for ( std::size_t index = 0; index < edgeCount; ++index )
         {
             const int row = static_cast<int>(index);
-            topologyEdgesTable_->setItem(row, 0, new QTableWidgetItem(edges[index].parent));
-            topologyEdgesTable_->setItem(row, 1, new QTableWidgetItem(edges[index].child));
-            topologyEdgesTable_->setItem(row, 2, new QTableWidgetItem(edges[index].supplemental ? tr("yes") : tr("no")));
+            topology_.edgesTable->setItem(row, 0, new QTableWidgetItem(edges[index].parent));
+            topology_.edgesTable->setItem(row, 1, new QTableWidgetItem(edges[index].child));
+            topology_.edgesTable->setItem(row, 2, new QTableWidgetItem(edges[index].supplemental ? tr("yes") : tr("no")));
         }
     }
 
     void KelpiePanel::refreshTopologyView()
     {
-        if ( topologyViewDebounce_ != nullptr && topologyViewDebounce_->isActive() )
+        if ( topology_.refreshDebounce != nullptr && topology_.refreshDebounce->isActive() )
         {
-            topologyViewDebounce_->stop();
+            topology_.refreshDebounce->stop();
         }
-        if ( topologySnapshot_.nodes_size() == 0 )
+        if ( topology_.snapshot.nodes_size() == 0 )
         {
-            if ( topologyEdgesTable_ != nullptr )
+            if ( topology_.edgesTable != nullptr )
             {
-                topologyEdgesTable_->setRowCount(0);
+                topology_.edgesTable->setRowCount(0);
             }
-            if ( topologyScene_ != nullptr )
+            if ( topology_.scene != nullptr )
             {
-                topologyScene_->clear();
-                auto* msg = topologyScene_->addSimpleText(tr("No topology data"));
+                topology_.scene->clear();
+                auto* msg = topology_.scene->addSimpleText(tr("No topology data"));
                 msg->setBrush(QBrush(QColor(220, 220, 220)));
                 msg->setPos(20, 20);
             }
             return;
         }
 
-        renderTopologyGraph(topologySnapshot_);
-        populateTopologyEdges(topologySnapshot_);
+        renderTopologyGraph(topology_.snapshot);
+        populateTopologyEdges(topology_.snapshot);
         applyTopologyHighlights();
     }
 
     void KelpiePanel::scheduleTopologyViewRefresh()
     {
-        if ( topologyViewDebounce_ == nullptr )
+        if ( topology_.refreshDebounce == nullptr )
         {
             refreshTopologyView();
             return;
         }
-        topologyViewDebounce_->start();
+        topology_.refreshDebounce->start();
     }
 
     void KelpiePanel::setTopologyHighlightNode(const QString& uuid)
     {
-        topologyHighlightNodeUuid_ = uuid;
-        topologyHighlightParentUuid_.clear();
-        topologyHighlightChildUuid_.clear();
+        topology_.highlightNodeUuid = uuid;
+        topology_.highlightParentUuid.clear();
+        topology_.highlightChildUuid.clear();
         applyTopologyHighlights();
     }
 
     void KelpiePanel::setTopologyHighlightEdge(const QString& parentUuid, const QString& childUuid)
     {
-        topologyHighlightParentUuid_ = parentUuid;
-        topologyHighlightChildUuid_ = childUuid;
-        topologyHighlightNodeUuid_ = !childUuid.isEmpty() ? childUuid : parentUuid;
+        topology_.highlightParentUuid = parentUuid;
+        topology_.highlightChildUuid = childUuid;
+        topology_.highlightNodeUuid = !childUuid.isEmpty() ? childUuid : parentUuid;
         applyTopologyHighlights();
     }
 
     void KelpiePanel::applyTopologyHighlights()
     {
-        const QString focusNode = topologyHighlightNodeUuid_;
-        const QString focusParent = topologyHighlightParentUuid_;
-        const QString focusChild = topologyHighlightChildUuid_;
+        const QString focusNode = topology_.highlightNodeUuid;
+        const QString focusParent = topology_.highlightParentUuid;
+        const QString focusChild = topology_.highlightChildUuid;
 
-        if ( topologyEdgesTable_ != nullptr )
+        if ( topology_.edgesTable != nullptr )
         {
             const QColor connectedBg(36, 58, 84);
             const QColor selectedBg(88, 72, 36);
-            for ( int row = 0; row < topologyEdgesTable_->rowCount(); ++row )
+            for ( int row = 0; row < topology_.edgesTable->rowCount(); ++row )
             {
-                auto* parentItem = topologyEdgesTable_->item(row, 0);
-                auto* childItem = topologyEdgesTable_->item(row, 1);
+                auto* parentItem = topology_.edgesTable->item(row, 0);
+                auto* childItem = topology_.edgesTable->item(row, 1);
                 const QString parent = (parentItem != nullptr) ? parentItem->text() : QString();
                 const QString child = (childItem != nullptr) ? childItem->text() : QString();
                 const bool isEdge = !focusParent.isEmpty() && parent == focusParent && child == focusChild;
                 const bool isConnected = !focusNode.isEmpty() && (parent == focusNode || child == focusNode);
                 const QBrush brush = isEdge ? QBrush(selectedBg) : (isConnected ? QBrush(connectedBg) : QBrush());
-                for ( int col = 0; col < topologyEdgesTable_->columnCount(); ++col )
+                for ( int col = 0; col < topology_.edgesTable->columnCount(); ++col )
                 {
-                    if ( auto* item = topologyEdgesTable_->item(row, col) )
+                    if ( auto* item = topology_.edgesTable->item(row, col) )
                     {
                         item->setBackground(brush);
                     }
@@ -619,12 +622,12 @@ namespace StockmanNamespace::UserInterface
             }
         }
 
-        if ( topologyScene_ == nullptr )
+        if ( topology_.scene == nullptr )
         {
             return;
         }
 
-        for ( auto* item : topologyScene_->items() )
+        for ( auto* item : topology_.scene->items() )
         {
             if ( item == nullptr )
             {
@@ -708,11 +711,11 @@ namespace StockmanNamespace::UserInterface
 
     void KelpiePanel::locateTopologyNode()
     {
-        if ( topologySnapshot_.nodes_size() == 0 )
+        if ( topology_.snapshot.nodes_size() == 0 )
         {
             return;
         }
-        const QString query = (topologyLocateInput_ != nullptr) ? topologyLocateInput_->text().trimmed() : QString();
+        const QString query = (topology_.locateInput != nullptr) ? topology_.locateInput->text().trimmed() : QString();
         if ( query.isEmpty() )
         {
             return;
@@ -720,7 +723,7 @@ namespace StockmanNamespace::UserInterface
 
         QString foundUuid;
         const QString lower = query.toLower();
-        for ( const auto& node : topologySnapshot_.nodes() )
+        for ( const auto& node : topology_.snapshot.nodes() )
         {
             const QString uuid = QString::fromStdString(node.uuid());
             if ( uuid.compare(query, Qt::CaseInsensitive) == 0 )
@@ -731,7 +734,7 @@ namespace StockmanNamespace::UserInterface
         }
         if ( foundUuid.isEmpty() )
         {
-            for ( const auto& node : topologySnapshot_.nodes() )
+            for ( const auto& node : topology_.snapshot.nodes() )
             {
                 const QString uuid = QString::fromStdString(node.uuid());
                 const QString alias = QString::fromStdString(node.alias());
@@ -749,19 +752,19 @@ namespace StockmanNamespace::UserInterface
             return;
         }
 
-        const QString filter = (topologyFilterInput_ != nullptr) ? topologyFilterInput_->text().trimmed() : QString();
-        if ( (topologyFilterInput_ != nullptr) && !filter.isEmpty() && !foundUuid.toLower().contains(filter.toLower()) )
+        const QString filter = (topology_.filterInput != nullptr) ? topology_.filterInput->text().trimmed() : QString();
+        if ( (topology_.filterInput != nullptr) && !filter.isEmpty() && !foundUuid.toLower().contains(filter.toLower()) )
         {
-            topologyFilterInput_->setText(foundUuid);
+            topology_.filterInput->setText(foundUuid);
         }
         refreshTopologyView();
 
         setTopologyHighlightNode(foundUuid);
         selectNodeByUuid(foundUuid);
 
-        if ( (topologyScene_ != nullptr) && (topologyGraphView_ != nullptr) )
+        if ( (topology_.scene != nullptr) && (topology_.graphView != nullptr) )
         {
-            for ( auto* item : topologyScene_->items() )
+            for ( auto* item : topology_.scene->items() )
             {
                 if ( item == nullptr || item->data(1).toString() != QStringLiteral("node") )
                 {
@@ -769,9 +772,9 @@ namespace StockmanNamespace::UserInterface
                 }
                 if ( item->data(0).toString() == foundUuid )
                 {
-                    topologyScene_->clearSelection();
+                    topology_.scene->clearSelection();
                     item->setSelected(true);
-                    topologyGraphView_->centerOn(item);
+                    topology_.graphView->centerOn(item);
                     break;
                 }
             }
@@ -802,23 +805,23 @@ namespace StockmanNamespace::UserInterface
     void KelpiePanel::refreshTopology()
     {
         auto* ctrl = controller();
-        if ( ctrl == nullptr || topologyEdgesTable_ == nullptr )
+        if ( ctrl == nullptr || topology_.edgesTable == nullptr )
         {
             return;
         }
 
-        if ( refreshTopologyButton_ != nullptr )
+        if ( topology_.refreshButton != nullptr )
         {
-            refreshTopologyButton_->setEnabled(false);
+            topology_.refreshButton->setEnabled(false);
         }
-        if ( topologyStatusLabel_ != nullptr )
+        if ( topology_.statusLabel != nullptr )
         {
-            topologyStatusLabel_->setText(tr("Topology: refreshing..."));
+            topology_.statusLabel->setText(tr("Topology: refreshing..."));
         }
 
         const uint64_t epoch = ctrl->ConnectionEpoch();
-        const QString target = (topologyTargetInput_ != nullptr) ? topologyTargetInput_->text().trimmed() : QString();
-        const QString network = (topologyNetworkInput_ != nullptr) ? topologyNetworkInput_->text().trimmed() : QString();
+        const QString target = (topology_.targetInput != nullptr) ? topology_.targetInput->text().trimmed() : QString();
+        const QString network = (topology_.networkInput != nullptr) ? topology_.networkInput->text().trimmed() : QString();
 
         struct Result {
             uint64_t epoch{0};
@@ -848,9 +851,9 @@ namespace StockmanNamespace::UserInterface
                 return res;
             },
             [this](const Result& res) {
-                if ( refreshTopologyButton_ )
+                if ( topology_.refreshButton )
                 {
-                    refreshTopologyButton_->setEnabled(true);
+                    topology_.refreshButton->setEnabled(true);
                 }
 
                 auto* ctrl = controller();
@@ -861,36 +864,36 @@ namespace StockmanNamespace::UserInterface
                 if ( !res.ok )
                 {
                     toastError(tr("Topology refresh failed: %1").arg(res.error));
-                    if ( topologyStatusLabel_ )
+                    if ( topology_.statusLabel )
                     {
-                        topologyStatusLabel_->setText(tr("Topology error: %1").arg(res.error));
+                        topology_.statusLabel->setText(tr("Topology error: %1").arg(res.error));
                     }
-                    topologySnapshot_.Clear();
-                    topologyHighlightNodeUuid_.clear();
-                    topologyHighlightParentUuid_.clear();
-                    topologyHighlightChildUuid_.clear();
-                    if ( topologyEdgesTable_ )
+                    topology_.snapshot.Clear();
+                    topology_.highlightNodeUuid.clear();
+                    topology_.highlightParentUuid.clear();
+                    topology_.highlightChildUuid.clear();
+                    if ( topology_.edgesTable )
                     {
-                        topologyEdgesTable_->setRowCount(0);
+                        topology_.edgesTable->setRowCount(0);
                     }
-                    if ( topologyScene_ )
+                    if ( topology_.scene )
                     {
-                        topologyScene_->clear();
-                        auto* msg = topologyScene_->addSimpleText(tr("Topology unavailable"));
+                        topology_.scene->clear();
+                        auto* msg = topology_.scene->addSimpleText(tr("Topology unavailable"));
                         msg->setBrush(QBrush(QColor(220, 220, 220)));
                         msg->setPos(20, 20);
                     }
                     return;
                 }
 
-                topologySnapshot_ = res.topo;
-                if ( topologyStatusLabel_ )
+                topology_.snapshot = res.topo;
+                if ( topology_.statusLabel )
                 {
                     const int listedNodes = res.listNodesOk ? static_cast<int>(res.nodes.size()) : res.topo.nodes_size();
-                    topologyStatusLabel_->setText(tr("Topology: nodes=%1 edges=%2 updated=%3")
-                                                      .arg(listedNodes)
-                                                      .arg(res.topo.edges_size())
-                                                      .arg(QString::fromStdString(res.topo.last_updated())));
+                    topology_.statusLabel->setText(tr("Topology: nodes=%1 edges=%2 updated=%3")
+                                                       .arg(listedNodes)
+                                                       .arg(res.topo.edges_size())
+                                                       .arg(QString::fromStdString(res.topo.last_updated())));
                 }
                 if ( !res.listNodesOk )
                 {

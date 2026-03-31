@@ -151,76 +151,76 @@ namespace StockmanNamespace::UserInterface
 
     void KelpiePanel::buildTopologyStateTab()
     {
-        topologyPage_ = new QWidget(overviewPage_);
-        auto* topologyLayout = new QVBoxLayout(topologyPage_);
+        topology_.page = new QWidget(overviewPage_);
+        auto* topologyLayout = new QVBoxLayout(topology_.page);
         topologyLayout->setContentsMargins(0, 0, 0, 0);
 
         auto* topologyControls = new QHBoxLayout();
         topologyControls->setContentsMargins(0, 0, 0, 0);
-        topologyControls->addWidget(new QLabel(tr("Target:"), topologyPage_));
-        topologyTargetInput_ = new QLineEdit(topologyPage_);
-        topologyTargetInput_->setPlaceholderText(tr("Target UUID (optional)"));
-        topologyControls->addWidget(topologyTargetInput_, 1);
-        topologyControls->addWidget(new QLabel(tr("Network:"), topologyPage_));
-        topologyNetworkInput_ = new QLineEdit(topologyPage_);
-        topologyNetworkInput_->setPlaceholderText(tr("Network ID (optional)"));
-        topologyControls->addWidget(topologyNetworkInput_);
-        refreshTopologyButton_ = new QPushButton(tr("Refresh"), topologyPage_);
-        topologyControls->addWidget(refreshTopologyButton_);
-        fitTopologyButton_ = new QPushButton(tr("Fit"), topologyPage_);
-        topologyControls->addWidget(fitTopologyButton_);
+        topologyControls->addWidget(new QLabel(tr("Target:"), topology_.page));
+        topology_.targetInput = new QLineEdit(topology_.page);
+        topology_.targetInput->setPlaceholderText(tr("Target UUID (optional)"));
+        topologyControls->addWidget(topology_.targetInput, 1);
+        topologyControls->addWidget(new QLabel(tr("Network:"), topology_.page));
+        topology_.networkInput = new QLineEdit(topology_.page);
+        topology_.networkInput->setPlaceholderText(tr("Network ID (optional)"));
+        topologyControls->addWidget(topology_.networkInput);
+        topology_.refreshButton = new QPushButton(tr("Refresh"), topology_.page);
+        topologyControls->addWidget(topology_.refreshButton);
+        topology_.fitButton = new QPushButton(tr("Fit"), topology_.page);
+        topologyControls->addWidget(topology_.fitButton);
         topologyLayout->addLayout(topologyControls);
 
         auto* topologyViewControls = new QHBoxLayout();
         topologyViewControls->setContentsMargins(0, 0, 0, 0);
-        topologyViewControls->addWidget(new QLabel(tr("Layout:"), topologyPage_));
-        topologyLayoutBox_ = new QComboBox(topologyPage_);
-        topologyLayoutBox_->addItem(tr("Tree"), QStringLiteral("tree"));
-        topologyLayoutBox_->addItem(tr("Force"), QStringLiteral("force"));
-        topologyViewControls->addWidget(topologyLayoutBox_);
-        topologyShowSupplementalCheck_ = new QCheckBox(tr("Show supplemental"), topologyPage_);
-        topologyShowSupplementalCheck_->setChecked(true);
-        topologyViewControls->addWidget(topologyShowSupplementalCheck_);
-        topologyFilterInput_ = new QLineEdit(topologyPage_);
-        topologyFilterInput_->setPlaceholderText(tr("Filter by uuid/alias/status"));
-        topologyViewControls->addWidget(topologyFilterInput_, 1);
-        topologyLocateInput_ = new QLineEdit(topologyPage_);
-        topologyLocateInput_->setPlaceholderText(tr("Locate node"));
-        topologyLocateButton_ = new QPushButton(tr("Locate"), topologyPage_);
-        topologyViewControls->addWidget(topologyLocateInput_);
-        topologyViewControls->addWidget(topologyLocateButton_);
+        topologyViewControls->addWidget(new QLabel(tr("Layout:"), topology_.page));
+        topology_.layoutBox = new QComboBox(topology_.page);
+        topology_.layoutBox->addItem(tr("Tree"), QStringLiteral("tree"));
+        topology_.layoutBox->addItem(tr("Force"), QStringLiteral("force"));
+        topologyViewControls->addWidget(topology_.layoutBox);
+        topology_.showSupplementalCheck = new QCheckBox(tr("Show supplemental"), topology_.page);
+        topology_.showSupplementalCheck->setChecked(true);
+        topologyViewControls->addWidget(topology_.showSupplementalCheck);
+        topology_.filterInput = new QLineEdit(topology_.page);
+        topology_.filterInput->setPlaceholderText(tr("Filter by uuid/alias/status"));
+        topologyViewControls->addWidget(topology_.filterInput, 1);
+        topology_.locateInput = new QLineEdit(topology_.page);
+        topology_.locateInput->setPlaceholderText(tr("Locate node"));
+        topology_.locateButton = new QPushButton(tr("Locate"), topology_.page);
+        topologyViewControls->addWidget(topology_.locateInput);
+        topologyViewControls->addWidget(topology_.locateButton);
         topologyLayout->addLayout(topologyViewControls);
 
-        topologyStatusLabel_ = new QLabel(tr("Topology: -"), topologyPage_);
-        topologyLayout->addWidget(topologyStatusLabel_);
-        topologyLegendLabel_ = new QLabel(
+        topology_.statusLabel = new QLabel(tr("Topology: -"), topology_.page);
+        topologyLayout->addWidget(topology_.statusLabel);
+        topology_.legendLabel = new QLabel(
             tr("Legend: node color = status (green online, yellow degraded, red failed, gray offline, blue unknown); "
                "edge style = solid primary / dashed supplemental."),
-            topologyPage_);
-        topologyLegendLabel_->setWordWrap(true);
-        topologyLayout->addWidget(topologyLegendLabel_);
+            topology_.page);
+        topology_.legendLabel->setWordWrap(true);
+        topologyLayout->addWidget(topology_.legendLabel);
 
-        topologyGraphView_ = new ZoomableGraphicsView(topologyPage_);
-        topologyGraphView_->setObjectName(QStringLiteral("TopologyGraphView"));
-        topologyScene_ = new QGraphicsScene(topologyGraphView_);
-        topologyGraphView_->setScene(topologyScene_);
-        topologyGraphView_->setBackgroundBrush(QBrush(QColor(20, 24, 28)));
+        topology_.graphView = new ZoomableGraphicsView(topology_.page);
+        topology_.graphView->setObjectName(QStringLiteral("TopologyGraphView"));
+        topology_.scene = new QGraphicsScene(topology_.graphView);
+        topology_.graphView->setScene(topology_.scene);
+        topology_.graphView->setBackgroundBrush(QBrush(QColor(20, 24, 28)));
 
-        topologyEdgesTable_ = new QTableWidget(topologyPage_);
-        topologyEdgesTable_->setColumnCount(3);
-        topologyEdgesTable_->setHorizontalHeaderLabels({tr("Parent"), tr("Child"), tr("Supplemental")});
-        topologyEdgesTable_->horizontalHeader()->setStretchLastSection(true);
-        topologyEdgesTable_->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        topology_.edgesTable = new QTableWidget(topology_.page);
+        topology_.edgesTable->setColumnCount(3);
+        topology_.edgesTable->setHorizontalHeaderLabels({tr("Parent"), tr("Child"), tr("Supplemental")});
+        topology_.edgesTable->horizontalHeader()->setStretchLastSection(true);
+        topology_.edgesTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-        auto* topoSplit = new QSplitter(Qt::Vertical, topologyPage_);
+        auto* topoSplit = new QSplitter(Qt::Vertical, topology_.page);
         topoSplit->setObjectName(QStringLiteral("TopologySplit"));
-        topoSplit->addWidget(topologyGraphView_);
-        topoSplit->addWidget(topologyEdgesTable_);
+        topoSplit->addWidget(topology_.graphView);
+        topoSplit->addWidget(topology_.edgesTable);
         topoSplit->setStretchFactor(0, 3);
         topoSplit->setStretchFactor(1, 1);
         topologyLayout->addWidget(topoSplit, 1);
 
-        stateTabs_->addTab(topologyPage_, tr("Topology"));
+        stateTabs_->addTab(topology_.page, tr("Topology"));
     }
 
     void KelpiePanel::buildSessionListStateTab()
