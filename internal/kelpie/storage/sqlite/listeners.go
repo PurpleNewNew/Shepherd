@@ -10,7 +10,7 @@ import (
 )
 
 // SaveListener 持久化监听记录。
-func (s *Store) SaveListener(record process.ListenerRecord) error {
+func (s *ListenerRepository) SaveListener(record process.ListenerRecord) error {
 	if s == nil || s.db == nil || record.ID == "" {
 		return nil
 	}
@@ -55,7 +55,7 @@ func (s *Store) SaveListener(record process.ListenerRecord) error {
 }
 
 // DeleteListener 删除监听记录。
-func (s *Store) DeleteListener(id string) error {
+func (s *ListenerRepository) DeleteListener(id string) error {
 	if s == nil || s.db == nil || id == "" {
 		return nil
 	}
@@ -66,7 +66,7 @@ func (s *Store) DeleteListener(id string) error {
 }
 
 // LoadListeners 读取所有监听记录。
-func (s *Store) LoadListeners() ([]process.ListenerRecord, error) {
+func (s *ListenerRepository) LoadListeners() ([]process.ListenerRecord, error) {
 	if s == nil || s.db == nil {
 		return nil, nil
 	}

@@ -52,13 +52,13 @@ done
 
 echo "[4/4] aggregate -> docs/data + docs/figures"
 mkdir -p docs/data docs/figures
-python3 experiments/analysis/analyze_bootstrap.py --root "${BOOT_ROOT}" --out docs/data/bootstrap_summary.csv
-python3 experiments/analysis/analyze_dtn_latency.py \
+python3 experiments/analysis/bootstrap.py --root "${BOOT_ROOT}" --out docs/data/bootstrap_summary.csv
+python3 experiments/analysis/latency.py \
   --root "${DTN_ROOT}" \
   --target n3 \
   --out-samples docs/data/dtn_latency_samples.csv \
   --out-summary docs/data/dtn_latency_summary.csv
-python3 experiments/analysis/plot_svg.py \
+python3 experiments/analysis/plotsvg.py \
   --bootstrap-csv docs/data/bootstrap_summary.csv \
   --dtn-summary-csv docs/data/dtn_latency_summary.csv \
   --out-bootstrap-svg docs/figures/bootstrap_convergence.svg \

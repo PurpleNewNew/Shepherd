@@ -9,7 +9,7 @@ import (
 )
 
 // Load 从数据库重建拓扑状态。
-func (s *Store) Load() (*topology.Snapshot, error) {
+func (s *TopologyRepository) Load() (*topology.Snapshot, error) {
 	if s == nil || s.db == nil {
 		return &topology.Snapshot{}, nil
 	}
@@ -66,7 +66,7 @@ func (s *Store) Load() (*topology.Snapshot, error) {
 	}, nil
 }
 
-func (s *Store) loadNodes() ([]topology.NodeSnapshot, error) {
+func (s *TopologyRepository) loadNodes() ([]topology.NodeSnapshot, error) {
 	rows, err := s.db.Query(`SELECT uuid, parent_uuid, network_id, ip, port, listen_port, dial_address, fallback_port, transport, tls_enabled, last_success, repair_failures, repair_updated, hostname, username, memo, is_alive, last_seen FROM nodes`)
 	if err != nil {
 		return nil, fmt.Errorf("load nodes: %w", err)
@@ -142,7 +142,7 @@ func (s *Store) loadNodes() ([]topology.NodeSnapshot, error) {
 	return result, rows.Err()
 }
 
-func (s *Store) loadEdges() ([]topology.EdgeSnapshot, error) {
+func (s *TopologyRepository) loadEdges() ([]topology.EdgeSnapshot, error) {
 	rows, err := s.db.Query(`SELECT from_uuid, to_uuid, type, weight FROM edges`)
 	if err != nil {
 		return nil, fmt.Errorf("load edges: %w", err)
@@ -161,7 +161,7 @@ func (s *Store) loadEdges() ([]topology.EdgeSnapshot, error) {
 	return result, rows.Err()
 }
 
-func (s *Store) loadNetworks() (map[string]string, error) {
+func (s *TopologyRepository) loadNetworks() (map[string]string, error) {
 	rows, err := s.db.Query(`SELECT target_uuid, network_id FROM networks`)
 	if err != nil {
 		return nil, fmt.Errorf("load networks: %w", err)
@@ -178,7 +178,7 @@ func (s *Store) loadNetworks() (map[string]string, error) {
 	return result, rows.Err()
 }
 
-func (s *Store) loadSupplementalLinks() ([]SupplementalLinkRecord, error) {
+func (s *TopologyRepository) loadSupplementalLinks() ([]SupplementalLinkRecord, error) {
 	rows, err := s.db.Query(`SELECT link_uuid, listener, dialer, status, failure_reason, last_transition FROM supplemental_links`)
 	if err != nil {
 		if isNoSuchTable(err) {
@@ -204,7 +204,7 @@ func (s *Store) loadSupplementalLinks() ([]SupplementalLinkRecord, error) {
 	return result, rows.Err()
 }
 
-func (s *Store) loadPlannerMetrics() (PlannerMetrics, error) {
+func (s *TopologyRepository) loadPlannerMetrics() (PlannerMetrics, error) {
 	row := s.db.QueryRow(`SELECT dispatched, success, failures, dropped, recycled, queue_high, last_failure, repair_attempts, repair_success, repair_failures FROM planner_metrics LIMIT 1`)
 	var rec PlannerMetrics
 	var last sqlNullString

@@ -11,6 +11,7 @@ import (
 	"codeberg.org/agnoie/shepherd/internal/dataplanepb"
 	"codeberg.org/agnoie/shepherd/internal/kelpie/dataplane"
 	"codeberg.org/agnoie/shepherd/internal/kelpie/dtn"
+	"codeberg.org/agnoie/shepherd/internal/kelpie/planner"
 	"codeberg.org/agnoie/shepherd/internal/kelpie/process"
 	"codeberg.org/agnoie/shepherd/internal/kelpie/supp"
 	"codeberg.org/agnoie/shepherd/internal/kelpie/topology"
@@ -51,7 +52,7 @@ func TestMapPivotListenerMode(t *testing.T) {
 }
 
 func TestConvertSupplementalMetrics(t *testing.T) {
-	snapshot := process.SupplementalMetricsSnapshot{
+	snapshot := planner.SupplementalMetricsSnapshot{
 		Dispatched:      5,
 		Success:         4,
 		Failures:        1,
@@ -77,7 +78,7 @@ func TestConvertSupplementalMetrics(t *testing.T) {
 
 func TestConvertSupplementalEvents(t *testing.T) {
 	now := time.Now()
-	events := []process.SupplementalPlannerEvent{
+	events := []planner.SupplementalPlannerEvent{
 		{Seq: 1, Kind: "k", Action: "a", SourceUUID: "s", TargetUUID: "t", Detail: "d", Timestamp: now},
 	}
 	converted := convertSupplementalEvents(events)
@@ -90,7 +91,7 @@ func TestConvertSupplementalEvents(t *testing.T) {
 }
 
 func TestConvertSupplementalQuality(t *testing.T) {
-	qualities := []process.SupplementalQualitySnapshot{
+	qualities := []planner.SupplementalQualitySnapshot{
 		{NodeUUID: "node-a", HealthScore: 0.5, LatencyScore: 0.2, FailureScore: 0.1, QueueScore: 0.3, StalenessScore: 0.4, TotalSuccess: 10, TotalFailures: 2, LastHeartbeat: time.Now()},
 	}
 	converted := convertSupplementalQuality(qualities)
@@ -378,8 +379,8 @@ func TestListRepairsAggregates(t *testing.T) {
 				StatusReason: "retry",
 			}}
 		},
-		listRepairsOverride: func() []process.RepairStatusSnapshot {
-			return []process.RepairStatusSnapshot{
+		listRepairsOverride: func() []planner.RepairStatusSnapshot {
+			return []planner.RepairStatusSnapshot{
 				{TargetUUID: "node-a", Attempts: 2},
 				{TargetUUID: "node-b", Attempts: 1, NextAttempt: time.Unix(0, 0)},
 			}

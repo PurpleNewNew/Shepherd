@@ -11,7 +11,7 @@ Soak 压测脚本：对“高风险 trace”做多次重复回放，用于主动
 
 典型用法：
   make trace_replay
-  python3 experiments/trace_replay/run_soak.py --repeat 10 --topologies star,chain --profile core --skip-build
+  python3 experiments/trace_replay/soak.py --repeat 10 --topologies star,chain --profile core --skip-build
 
 更“狠”的过夜跑法（建议 fail-fast）：
   SOAK_REPEAT=50 make soak
@@ -30,7 +30,7 @@ from typing import List
 
 ROOT = Path(__file__).resolve().parents[2]
 TRACE_DIR = ROOT / "experiments/trace_replay/traces"
-RUN_REGRESS = ROOT / "experiments/trace_replay/run_regress.py"
+RUN_REGRESS = ROOT / "experiments/trace_replay/regress.py"
 
 
 SOAK_PROFILES = {
@@ -179,7 +179,7 @@ def main(argv: List[str]) -> int:
     ap.add_argument("--out-root", default=str(ROOT / "experiments/out/soak"), help="Output root (default: experiments/out/soak)")
     ap.add_argument("--run-id", default="", help="Optional fixed run id (default: soak-<utc-ts>)")
 
-    # Pass-through knobs to run_regress.py
+    # Pass-through knobs to regress.py
     ap.add_argument("--metrics-every", default="500ms", help="Metrics snapshot interval (default: 500ms)")
     ap.add_argument("--tail-ms", type=int, default=30000, help="Extra time after last trace event (ms) (default: 30000)")
     ap.add_argument("--min-duration-s", type=int, default=60, help="Minimum --duration in seconds (default: 60)")

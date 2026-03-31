@@ -5,6 +5,7 @@ import (
 	"sort"
 	"strings"
 
+	"codeberg.org/agnoie/shepherd/internal/kelpie/planner"
 	"codeberg.org/agnoie/shepherd/internal/kelpie/topology"
 	"codeberg.org/agnoie/shepherd/protocol"
 )
@@ -165,35 +166,35 @@ func (admin *Admin) RequestRepair(uuid string) error {
 	return admin.suppPlanner.RequestManualRepair(uuid)
 }
 
-func (admin *Admin) SupplementalStatus() (SupplementalStatusSnapshot, error) {
+func (admin *Admin) SupplementalStatus() (planner.SupplementalStatusSnapshot, error) {
 	if admin == nil || admin.suppPlanner == nil {
-		return SupplementalStatusSnapshot{}, fmt.Errorf("supplemental planner unavailable")
+		return planner.SupplementalStatusSnapshot{}, fmt.Errorf("supplemental planner unavailable")
 	}
 	return admin.suppPlanner.StatusSnapshot(), nil
 }
 
-func (admin *Admin) SupplementalMetrics() (SupplementalMetricsSnapshot, error) {
+func (admin *Admin) SupplementalMetrics() (planner.SupplementalMetricsSnapshot, error) {
 	if admin == nil || admin.suppPlanner == nil {
-		return SupplementalMetricsSnapshot{}, fmt.Errorf("supplemental planner unavailable")
+		return planner.SupplementalMetricsSnapshot{}, fmt.Errorf("supplemental planner unavailable")
 	}
 	return admin.suppPlanner.MetricsSnapshot(), nil
 }
 
-func (admin *Admin) SupplementalEvents(limit int) ([]SupplementalPlannerEvent, error) {
+func (admin *Admin) SupplementalEvents(limit int) ([]planner.SupplementalPlannerEvent, error) {
 	if admin == nil || admin.suppPlanner == nil {
 		return nil, fmt.Errorf("supplemental planner unavailable")
 	}
 	return admin.suppPlanner.EventLog(limit), nil
 }
 
-func (admin *Admin) SupplementalQuality(limit int, nodes []string) ([]SupplementalQualitySnapshot, error) {
+func (admin *Admin) SupplementalQuality(limit int, nodes []string) ([]planner.SupplementalQualitySnapshot, error) {
 	if admin == nil || admin.suppPlanner == nil {
 		return nil, fmt.Errorf("supplemental planner unavailable")
 	}
 	return admin.suppPlanner.QualitySnapshot(limit, nodes), nil
 }
 
-func (admin *Admin) SupplementalRepairs() ([]RepairStatusSnapshot, error) {
+func (admin *Admin) SupplementalRepairs() ([]planner.RepairStatusSnapshot, error) {
 	if admin == nil || admin.suppPlanner == nil {
 		return nil, fmt.Errorf("supplemental planner unavailable")
 	}
@@ -237,7 +238,7 @@ func (admin *Admin) DropSession(target string) error {
 	}
 	comp, ok := admin.store.Component(target)
 	if !ok || comp == nil {
-		return fmt.Errorf("session %s not found", shorten(target))
+		return fmt.Errorf("session %s not found", shortID(target))
 	}
 	if comp.Conn != nil {
 		_ = comp.Conn.Close()

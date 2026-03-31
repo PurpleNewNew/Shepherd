@@ -9,7 +9,7 @@ import (
 )
 
 // SaveControllerListener 持久化 Kelpie Controller Listener 记录。
-func (s *Store) SaveControllerListener(rec process.ControllerListenerRecord) error {
+func (s *ControllerListenerRepository) SaveControllerListener(rec process.ControllerListenerRecord) error {
 	if s == nil || s.db == nil || rec.ID == "" {
 		return nil
 	}
@@ -45,7 +45,7 @@ func (s *Store) SaveControllerListener(rec process.ControllerListenerRecord) err
 }
 
 // DeleteControllerListener 删除 Controller Listener 记录。
-func (s *Store) DeleteControllerListener(id string) error {
+func (s *ControllerListenerRepository) DeleteControllerListener(id string) error {
 	if s == nil || s.db == nil || id == "" {
 		return nil
 	}
@@ -56,7 +56,7 @@ func (s *Store) DeleteControllerListener(id string) error {
 }
 
 // LoadControllerListeners 读取所有 Controller Listener 记录。
-func (s *Store) LoadControllerListeners() ([]process.ControllerListenerRecord, error) {
+func (s *ControllerListenerRepository) LoadControllerListeners() ([]process.ControllerListenerRecord, error) {
 	if s == nil || s.db == nil {
 		return nil, nil
 	}

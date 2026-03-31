@@ -5,9 +5,9 @@
 在本地时间截止点前持续执行一个命令；到达截止时间后优雅中断。
 
 示例：
-  python3 experiments/trace_replay/run_until_cutoff.py \
+  python3 experiments/trace_replay/cutoff.py \
     --cutoff 17:30 -- \
-    python3 experiments/trace_replay/run_regress.py --traces ... --repeat 10
+    python3 experiments/trace_replay/regress.py --traces ... --repeat 10
 """
 
 from __future__ import annotations
@@ -70,7 +70,7 @@ def main(argv: List[str]) -> int:
         return 124
 
     print(
-        f"[run_until_cutoff] start={now.isoformat(timespec='seconds')} "
+        f"[cutoff] start={now.isoformat(timespec='seconds')} "
         f"cutoff={deadline.isoformat(timespec='seconds')} cmd={' '.join(cmd)}",
         flush=True,
     )
@@ -81,25 +81,25 @@ def main(argv: List[str]) -> int:
         while True:
             rc = proc.poll()
             if rc is not None:
-                print(f"[run_until_cutoff] command exited rc={rc}", flush=True)
+                print(f"[cutoff] command exited rc={rc}", flush=True)
                 return rc
             if dt.datetime.now() >= deadline:
-                print("[run_until_cutoff] cutoff reached, sending SIGINT ...", flush=True)
+                print("[cutoff] cutoff reached, sending SIGINT ...", flush=True)
                 proc.send_signal(signal.SIGINT)
                 try:
                     return proc.wait(timeout=max(1, args.grace_seconds))
                 except subprocess.TimeoutExpired:
-                    print("[run_until_cutoff] SIGINT timeout, sending SIGTERM ...", flush=True)
+                    print("[cutoff] SIGINT timeout, sending SIGTERM ...", flush=True)
                     proc.terminate()
                     try:
                         return proc.wait(timeout=5)
                     except subprocess.TimeoutExpired:
-                        print("[run_until_cutoff] SIGTERM timeout, sending SIGKILL ...", flush=True)
+                        print("[cutoff] SIGTERM timeout, sending SIGKILL ...", flush=True)
                         proc.kill()
                         return proc.wait(timeout=5)
             time.sleep(1.0)
     except KeyboardInterrupt:
-        print("[run_until_cutoff] interrupted by user, forwarding SIGINT ...", flush=True)
+        print("[cutoff] interrupted by user, forwarding SIGINT ...", flush=True)
         try:
             proc.send_signal(signal.SIGINT)
         except Exception:

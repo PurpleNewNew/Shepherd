@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"io"
 	"net"
 	"sort"
 	"strings"
@@ -16,6 +17,7 @@ import (
 	"codeberg.org/agnoie/shepherd/internal/kelpie/collab"
 	"codeberg.org/agnoie/shepherd/internal/kelpie/dataplane"
 	"codeberg.org/agnoie/shepherd/internal/kelpie/dtn"
+	"codeberg.org/agnoie/shepherd/internal/kelpie/planner"
 	"codeberg.org/agnoie/shepherd/internal/kelpie/printer"
 	"codeberg.org/agnoie/shepherd/internal/kelpie/process"
 	"codeberg.org/agnoie/shepherd/internal/kelpie/storage/sqlite"
@@ -36,8 +38,115 @@ type Server struct {
 	service    *service
 }
 
+type TopologyAdmin interface {
+	TopologySnapshot(entry, network string) topology.UISnapshot
+	ListNetworks() ([]process.NetworkInfo, string, error)
+	SetActiveNetwork(networkID string) (string, error)
+	ResetActiveNetwork() string
+	SetNodeNetwork(target, network string) error
+	PruneOffline() (int, error)
+	RouterStats() map[uint16]bus.RouterCounter
+	ReconnectStatsView() process.ReconnectStatsView
+}
+
+type SessionAdmin interface {
+	Sessions(filter process.SessionFilter) []process.SessionInfo
+	MarkSession(target string, action process.SessionMarkAction, operator, reason string) (process.SessionInfo, error)
+	RepairSession(target string, force bool, reason string) (process.SessionInfo, error)
+	ReconnectSession(target, reason string) (process.SessionInfo, error)
+	TerminateSession(target, reason string) (bool, error)
+	SessionDiagnostics(target string, includeProcesses, includeMetrics bool) (process.SessionDiagnostics, error)
+	UpdateNodeMemo(targetUUID, memo string) error
+	UpdateSleep(targetUUID string, params process.SleepUpdateParams) error
+	StartSSHTunnel(ctx context.Context, targetUUID, serverAddr, agentPort string, method uipb.SshTunnelAuthMethod, username, password string, privateKey []byte) error
+	ShutdownNode(targetUUID string) error
+	ConnectNode(ctx context.Context, targetUUID, addr string) error
+}
+
+type StreamAdmin interface {
+	StreamDiagnostics() []stream.SessionDiag
+	StreamCloseReason(streamID uint32) string
+	ShellSessionID(uuid string) string
+	OpenStream(ctx context.Context, target, sessionID string, meta map[string]string) (io.ReadWriteCloser, error)
+	CloseStream(sessionID uint32, reason string) error
+	StreamStats() []process.StreamStat
+	StreamPing(targetUUID string, count, payloadSize int) error
+}
+
+type ListenerAdmin interface {
+	ListListeners(filter process.ListenerFilter) []process.ListenerRecord
+	ListControllerListeners() []process.ControllerListenerRecord
+	CreateListener(ctx context.Context, targetUUID string, spec process.ListenerSpec) (process.ListenerRecord, error)
+	UpdateListener(ctx context.Context, id string, spec *process.ListenerSpec, desiredStatus string) (process.ListenerRecord, error)
+	DeleteListener(id string) (process.ListenerRecord, error)
+	CreateControllerListener(spec process.ControllerListenerSpec) (process.ControllerListenerRecord, error)
+	StartControllerListenerAsync(id string)
+	StopControllerListener(id string) (process.ControllerListenerRecord, error)
+	UpdateControllerListener(id string, spec *process.ControllerListenerSpec, desired process.ControllerListenerStatus) (process.ControllerListenerRecord, error)
+	DeleteControllerListener(id string) (process.ControllerListenerRecord, error)
+}
+
+type LootAdmin interface {
+	ListLoot(filter process.LootFilter) []process.LootRecord
+	SubmitLoot(rec process.LootRecord, content []byte) (process.LootRecord, error)
+	GetLootContent(lootID string) (process.LootRecord, []byte, error)
+}
+
+type ProxyAdmin interface {
+	StartForwardProxy(ctx context.Context, targetUUID, bindAddr, remoteAddr string) (*process.ProxyDescriptor, error)
+	StopForwardProxy(targetUUID, proxyID string) ([]*process.ProxyDescriptor, error)
+	StartBackwardProxy(ctx context.Context, targetUUID, remotePort, localPort string) (*process.ProxyDescriptor, error)
+	StopBackwardProxy(targetUUID, proxyID string) ([]*process.ProxyDescriptor, error)
+	ListProxies() []*process.ProxyDescriptor
+}
+
+type SupplementalAdmin interface {
+	SupplementalStatus() (planner.SupplementalStatusSnapshot, error)
+	SupplementalMetrics() (planner.SupplementalMetricsSnapshot, error)
+	SupplementalEvents(limit int) ([]planner.SupplementalPlannerEvent, error)
+	SupplementalQuality(limit int, nodes []string) ([]planner.SupplementalQualitySnapshot, error)
+	SupplementalRepairs() ([]planner.RepairStatusSnapshot, error)
+}
+
+type DTNAdmin interface {
+	QueueStats(target string) (dtn.QueueStats, error)
+	ListBundles(target string, limit int) ([]dtn.BundleSummary, error)
+	EnqueueDiagnostic(target, data string, priority dtn.Priority, ttl time.Duration) (string, error)
+	DTNMetricsSnapshot() (dtn.QueueStats, time.Time)
+	DTNStats() (uint64, uint64, uint64, uint64)
+}
+
+// AdminAPI 描述 gRPC 层依赖的管理端能力组合，按子域拆分后再进行装配。
+type AdminAPI interface {
+	TopologyAdmin
+	SessionAdmin
+	StreamAdmin
+	ListenerAdmin
+	LootAdmin
+	ProxyAdmin
+	SupplementalAdmin
+	DTNAdmin
+}
+
+type AuditRecorder interface {
+	RegisterSink(func(sqlite.AuditRecord))
+	List(filter collab.Filter) ([]sqlite.AuditRecord, error)
+	Record(entry collab.Entry) error
+}
+
+type ChatService interface {
+	RegisterSink(func(sqlite.ChatRecord))
+	Append(username, role, message string) (sqlite.ChatRecord, error)
+	List(limit int, before time.Time) ([]sqlite.ChatRecord, error)
+}
+
+type DataplaneService interface {
+	PrepareTransfer(tenant, operator, target, direction string, maxSize int64, maxRate float64, sizeHint int64, hash string, offset int64, ttl time.Duration, extra map[string]string) (token string, endpoint string, meta dataplane.TokenMeta)
+	PrepareProxy(tenant, operator, target string, ttl time.Duration, extra map[string]string) (token string, endpoint string, meta dataplane.TokenMeta)
+}
+
 // New 使用给定的 admin 实例创建一个 UI gRPC 服务端。
-func New(admin *process.Admin, auditor *collab.Recorder, chatSvc *collab.Service, dpManager *dataplane.Manager, bootstrapToken string, opts ...grpc.ServerOption) *Server {
+func New(admin AdminAPI, auditor AuditRecorder, chatSvc ChatService, dpManager DataplaneService, bootstrapToken string, opts ...grpc.ServerOption) *Server {
 	svc := &service{
 		admin:          admin,
 		auditor:        auditor,
@@ -96,7 +205,7 @@ type service struct {
 	uipb.UnimplementedSupplementalAdminServiceServer
 	uipb.UnimplementedConnectAdminServiceServer
 	uipb.UnimplementedControllerListenerAdminServiceServer
-	admin          *process.Admin
+	admin          AdminAPI
 	subMu          sync.Mutex
 	subscribers    map[uint64]chan *uipb.UiEvent
 	nextSubID      atomic.Uint64
@@ -104,9 +213,9 @@ type service struct {
 	logHookCancel  func()
 	suppHookCancel []func()
 	dropCount      atomic.Uint64
-	auditor        *collab.Recorder
-	chatService    *collab.Service
-	dataplane      *dataplane.Manager
+	auditor        AuditRecorder
+	chatService    ChatService
+	dataplane      DataplaneService
 	bootstrapToken string
 	// 测试钩子
 	startForwardProxyOverride  func(context.Context, string, string, string) (*process.ProxyDescriptor, error)
@@ -132,7 +241,7 @@ type service struct {
 	suppEventSeq               atomic.Uint64
 	listProxiesOverride        func() []*process.ProxyDescriptor
 	listSleepProfilesOverride  func() []process.SessionInfo
-	listRepairsOverride        func() []process.RepairStatusSnapshot
+	listRepairsOverride        func() []planner.RepairStatusSnapshot
 }
 
 type dialTracker struct {
@@ -1066,7 +1175,7 @@ func (s *service) recordDataplaneAudit(ctx context.Context, method, target, stat
 	s.auditor.Record(entry)
 }
 
-func convertSupplementalStatus(status process.SupplementalStatusSnapshot) *uipb.SupplementalStatus {
+func convertSupplementalStatus(status planner.SupplementalStatusSnapshot) *uipb.SupplementalStatus {
 	return &uipb.SupplementalStatus{
 		Enabled:        status.Enabled,
 		QueueLength:    int32(status.QueueLength),
@@ -1075,7 +1184,7 @@ func convertSupplementalStatus(status process.SupplementalStatusSnapshot) *uipb.
 	}
 }
 
-func convertSupplementalMetrics(snapshot process.SupplementalMetricsSnapshot) *uipb.SupplementalMetrics {
+func convertSupplementalMetrics(snapshot planner.SupplementalMetricsSnapshot) *uipb.SupplementalMetrics {
 	return &uipb.SupplementalMetrics{
 		Dispatched:      snapshot.Dispatched,
 		Success:         snapshot.Success,
@@ -1092,7 +1201,7 @@ func convertSupplementalMetrics(snapshot process.SupplementalMetricsSnapshot) *u
 	}
 }
 
-func convertSupplementalEvents(events []process.SupplementalPlannerEvent) []*uipb.SupplementalEvent {
+func convertSupplementalEvents(events []planner.SupplementalPlannerEvent) []*uipb.SupplementalEvent {
 	if len(events) == 0 {
 		return nil
 	}
@@ -1115,7 +1224,7 @@ func convertSupplementalEvents(events []process.SupplementalPlannerEvent) []*uip
 	return result
 }
 
-func convertSupplementalQuality(qualities []process.SupplementalQualitySnapshot) []*uipb.SupplementalQuality {
+func convertSupplementalQuality(qualities []planner.SupplementalQualitySnapshot) []*uipb.SupplementalQuality {
 	if len(qualities) == 0 {
 		return nil
 	}
@@ -1386,7 +1495,7 @@ func (s *service) ListRepairs(ctx context.Context, _ *uipb.ListRepairsRequest) (
 		}
 		statusMap[key] = entry
 	}
-	var snapshots []process.RepairStatusSnapshot
+	var snapshots []planner.RepairStatusSnapshot
 	switch {
 	case s.listRepairsOverride != nil:
 		snapshots = s.listRepairsOverride()

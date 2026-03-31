@@ -145,16 +145,16 @@ func attemptSupplementalFailover(mgr *manager.Manager, topo *topology.Topology, 
 				"publish_node_removed_only")
 		} else {
 			diagSuppFailover("start_promote", uuid, parentUUID, target, candidates,
-				fmt.Sprintf("link_uuid=%s", shortUUID(linkUUID)))
+				fmt.Sprintf("link_uuid=%s", shortID(linkUUID)))
 			supp.StartSuppFailover(topo, mgr, linkUUID, target, uuid)
 		}
 	} else {
 		diagSuppFailover("no_link_uuid", uuid, parentUUID, target, candidates,
-			fmt.Sprintf("supp_link_not_found target=%s", shortUUID(target)))
+			fmt.Sprintf("supp_link_not_found target=%s", shortID(target)))
 	}
 
 	printer.Warning("\r\n[*] Node %s lost parent %s, failover via supplemental link to %s\r\n",
-		shortUUID(uuid), shortUUID(parentUUID), shortUUID(target))
+		shortID(uuid), shortID(parentUUID), shortID(target))
 	diagSuppFailover("done", uuid, parentUUID, target, candidates, "")
 	return true
 }
@@ -334,7 +334,7 @@ func selectFailoverCandidate(topo *topology.Topology, uuid, parent string, candi
 		}
 	}
 	if best == "" {
-		diagSuppFailoverCandidate(uuid, parent, "", "no_valid_candidate", fmt.Sprintf("candidates=%s", shortUUIDList(candidates)))
+		diagSuppFailoverCandidate(uuid, parent, "", "no_valid_candidate", fmt.Sprintf("candidates=%s", shortIDList(candidates)))
 	}
 	return best
 }
@@ -392,29 +392,7 @@ func fetchRouteString(topo *topology.Topology, uuid string) string {
 	return result.Route
 }
 
-func routeIncludesUUID(route, uuid string) bool {
-	if route == "" || uuid == "" {
-		return false
-	}
-	parts := strings.Split(route, ":")
-	for _, part := range parts {
-		next, _ := stripRouteSegment(part)
-		if next == uuid {
-			return true
-		}
-	}
-	return false
-}
-
-func stripRouteSegment(segment string) (string, bool) {
-	const suffix = "#supp"
-	if strings.HasSuffix(segment, suffix) {
-		return strings.TrimSuffix(segment, suffix), true
-	}
-	return segment, false
-}
-
-func shortUUIDList(ids []string) string {
+func shortIDList(ids []string) string {
 	if len(ids) == 0 {
 		return "-"
 	}
@@ -424,7 +402,7 @@ func shortUUIDList(ids []string) string {
 		if id == "" {
 			continue
 		}
-		out = append(out, shortUUID(id))
+		out = append(out, shortID(id))
 	}
 	if len(out) == 0 {
 		return "-"
@@ -438,10 +416,10 @@ func diagSuppFailover(stage, uuid, parentUUID, targetUUID string, candidates []s
 	}
 	printer.Warning("\r\n[diag][supp_failover] stage=%s node=%s parent=%s target=%s candidates=%s detail=%s\r\n",
 		stage,
-		shortUUID(uuid),
-		shortUUID(parentUUID),
-		shortUUID(targetUUID),
-		shortUUIDList(candidates),
+		shortID(uuid),
+		shortID(parentUUID),
+		shortID(targetUUID),
+		shortIDList(candidates),
 		detail,
 	)
 }
@@ -451,17 +429,10 @@ func diagSuppFailoverCandidate(uuid, parentUUID, peerUUID, reason, detail string
 		detail = "-"
 	}
 	printer.Warning("\r\n[diag][supp_failover_candidate] node=%s parent=%s peer=%s reason=%s detail=%s\r\n",
-		shortUUID(uuid),
-		shortUUID(parentUUID),
-		shortUUID(peerUUID),
+		shortID(uuid),
+		shortID(parentUUID),
+		shortID(peerUUID),
 		reason,
 		detail,
 	)
-}
-
-func shortUUID(id string) string {
-	if len(id) <= 8 {
-		return id
-	}
-	return id[:8]
 }

@@ -11,7 +11,9 @@ import (
 
 func TestAdminCloseStream(t *testing.T) {
 	admin := &Admin{
-		streamEngine: stream.New(stream.DefaultConfig(), func(string, []byte) error { return nil }, func(string, ...interface{}) {}),
+		adminStreamState: adminStreamState{
+			streamEngine: stream.New(stream.DefaultConfig(), func(string, []byte) error { return nil }, func(string, ...interface{}) {}),
+		},
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()

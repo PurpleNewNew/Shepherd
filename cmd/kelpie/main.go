@@ -102,6 +102,12 @@ func main() {
 		return
 	}
 	defer sqlStore.Close()
+	topoRepo := sqlStore.Topology()
+	listenerRepo := sqlStore.Listeners()
+	controllerRepo := sqlStore.ControllerListeners()
+	lootRepo := sqlStore.Loot()
+	dtnRepo := sqlStore.DTN()
+	collabRepo := sqlStore.Collab()
 	var lootContentStore process.LootContentStore
 	if store, err := lootfs.New(filepath.Join(filepath.Dir(dbPath), "loot")); err != nil {
 		printer.Warning("[*] Failed to initialize loot content store: %v\r\n", err)
@@ -111,7 +117,7 @@ func main() {
 
 	// Teamserver 启动时优先从 controller_listeners 表中选择监听地址；
 	// 若暂无 pending 监听器，则仅启动 UI，等待后续配置。
-	if records, err := sqlStore.LoadControllerListeners(); err != nil {
+	if records, err := controllerRepo.LoadControllerListeners(); err != nil {
 		printer.Fail("[*] Failed to load controller listeners: %v\r\n", err)
 		return
 	} else {
@@ -125,10 +131,10 @@ func main() {
 		}
 	}
 	printer.Warning("[*] Kelpie running in TEAMSERVER mode (no per-user auth)\r\n")
-	auditRecorder := collab.NewRecorder(sqlStore)
-	chatService := collab.NewService(sqlStore)
-	topo.SetPersistence(sqlStore)
-	snapshot, err := sqlStore.Load()
+	auditRecorder := collab.NewRecorder(collabRepo)
+	chatService := collab.NewService(collabRepo)
+	topo.SetPersistence(topoRepo)
+	snapshot, err := topoRepo.Load()
 	if err != nil {
 		printer.Fail("[*] Failed to load persisted topology: %v\r\n", err)
 		return
@@ -180,7 +186,7 @@ func main() {
 	if snapshot != nil {
 		plannerMetrics = snapshot.PlannerMetrics
 	}
-	admin := process.NewAdmin(ctx, options, topo, store, nil, plannerMetrics, sqlStore, sqlStore, sqlStore, sqlStore, lootContentStore)
+	admin := process.NewAdmin(ctx, options, topo, store, nil, plannerMetrics, dtnRepo, listenerRepo, controllerRepo, lootRepo, lootContentStore)
 	defer admin.Stop()
 
 	topoTask := &topology.TopoTask{

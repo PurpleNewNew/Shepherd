@@ -8,7 +8,7 @@ import (
 )
 
 func TestShutdownNodeUsesOverrides(t *testing.T) {
-	admin := &Admin{mgr: &manager.Manager{}}
+	admin := &Admin{adminRuntime: adminRuntime{mgr: &manager.Manager{}}}
 	admin.routeOverride = func(uuid string) (string, bool) {
 		if uuid != "node-1" {
 			t.Fatalf("unexpected uuid %s", uuid)
@@ -31,7 +31,7 @@ func TestShutdownNodeUsesOverrides(t *testing.T) {
 }
 
 func TestShutdownNodeValidation(t *testing.T) {
-	admin := &Admin{mgr: &manager.Manager{}}
+	admin := &Admin{adminRuntime: adminRuntime{mgr: &manager.Manager{}}}
 	if err := admin.ShutdownNode(""); !errors.Is(err, ErrShutdownMissingTarget) {
 		t.Fatalf("expected missing target error, got %v", err)
 	}

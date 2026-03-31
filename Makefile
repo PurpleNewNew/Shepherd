@@ -32,10 +32,10 @@ trace_replay: admin agent
 	$(GO) build -trimpath -ldflags "$(LDFLAGS)" -o $(OUT)/trace_replay ./experiments/trace_replay
 
 regress: trace_replay
-	$(PYTHON) experiments/trace_replay/run_regress.py --topologies star,chain --skip-build
+	$(PYTHON) experiments/trace_replay/regress.py --topologies star,chain --skip-build
 
 soak: trace_replay
-	$(PYTHON) experiments/trace_replay/run_soak.py --topologies $(SOAK_TOPOS) --repeat $(SOAK_REPEAT) --profile $(SOAK_PROFILE) --skip-build --fail-fast
+	$(PYTHON) experiments/trace_replay/soak.py --topologies $(SOAK_TOPOS) --repeat $(SOAK_REPEAT) --profile $(SOAK_PROFILE) --skip-build --fail-fast
 
 check:
 	$(GO) test -race ./...

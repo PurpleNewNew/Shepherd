@@ -29,7 +29,7 @@ func parseRFC3339Nano(s string) (time.Time, error) {
 	return t, nil
 }
 
-func (s *Store) UpsertDTNBundle(bundle *dtn.Bundle) error {
+func (s *DTNRepository) UpsertDTNBundle(bundle *dtn.Bundle) error {
 	if s == nil || s.db == nil {
 		return nil
 	}
@@ -63,7 +63,7 @@ func (s *Store) UpsertDTNBundle(bundle *dtn.Bundle) error {
 	return nil
 }
 
-func (s *Store) DeleteDTNBundle(id string) error {
+func (s *DTNRepository) DeleteDTNBundle(id string) error {
 	if s == nil || s.db == nil {
 		return nil
 	}
@@ -77,7 +77,7 @@ func (s *Store) DeleteDTNBundle(id string) error {
 	return nil
 }
 
-func (s *Store) DeleteDTNBundles(ids []string) error {
+func (s *DTNRepository) DeleteDTNBundles(ids []string) error {
 	if s == nil || s.db == nil || len(ids) == 0 {
 		return nil
 	}
@@ -108,7 +108,7 @@ func (s *Store) DeleteDTNBundles(ids []string) error {
 	return nil
 }
 
-func (s *Store) LoadDTNBundles() ([]*dtn.Bundle, error) {
+func (s *DTNRepository) LoadDTNBundles() ([]*dtn.Bundle, error) {
 	if s == nil || s.db == nil {
 		return nil, nil
 	}

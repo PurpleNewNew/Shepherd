@@ -221,28 +221,28 @@ func (admin *Admin) attemptBundleDelivery(ctx context.Context, bundle *dtn.Bundl
 	if !ok || route == "" {
 		return false
 	}
-	firstHop := dtnRouteFirstHop(route)
+	firstHop := routeFirstHop(route)
 	if firstHop == "" {
 		printer.Warning("\r\n[diag][dtn_dispatch] stage=invalid_route bundle=%s target=%s route=%s\r\n",
-			shortUUID(bundle.ID), shortUUID(bundle.Target), route)
+			shortID(bundle.ID), shortID(bundle.Target), route)
 		return false
 	}
 	sess := admin.sessionForRoute(route)
 	if sess == nil || sess.Conn() == nil {
 		printer.Warning("\r\n[diag][dtn_dispatch] stage=session_unavailable bundle=%s target=%s route=%s first_hop=%s session_key=%s\r\n",
-			shortUUID(bundle.ID), shortUUID(bundle.Target), route, shortUUID(firstHop), shortUUID(firstHop))
+			shortID(bundle.ID), shortID(bundle.Target), route, shortID(firstHop), shortID(firstHop))
 		return false
 	}
 	if firstHop != "" && sess.UUID() != "" && sess.UUID() != firstHop {
 		printer.Warning("\r\n[diag][dtn_dispatch] stage=session_fallback bundle=%s target=%s route=%s first_hop=%s session=%s conn=%s\r\n",
-			shortUUID(bundle.ID), shortUUID(bundle.Target), route, shortUUID(firstHop), shortUUID(sess.UUID()), connEndpoints(sess.Conn()))
+			shortID(bundle.ID), shortID(bundle.Target), route, shortID(firstHop), shortID(sess.UUID()), connEndpoints(sess.Conn()))
 	}
 	if firstHop != "" && sess.UUID() != "" &&
 		sess.UUID() != firstHop &&
 		sess.UUID() != protocol.ADMIN_UUID &&
 		sess.UUID() != protocol.TEMP_UUID {
 		printer.Warning("\r\n[diag][dtn_dispatch] stage=session_mismatch bundle=%s target=%s route=%s first_hop=%s session=%s conn=%s\r\n",
-			shortUUID(bundle.ID), shortUUID(bundle.Target), route, shortUUID(firstHop), shortUUID(sess.UUID()), connEndpoints(sess.Conn()))
+			shortID(bundle.ID), shortID(bundle.Target), route, shortID(firstHop), shortID(sess.UUID()), connEndpoints(sess.Conn()))
 	}
 	msg := protocol.NewDownMsg(sess.Conn(), sess.Secret(), sess.UUID())
 	protocol.SetMessageMeta(msg, sess.ProtocolVersion(), sess.ProtocolFlags())
@@ -259,7 +259,7 @@ func (admin *Admin) attemptBundleDelivery(ctx context.Context, bundle *dtn.Bundl
 	// 记录正在等待 DTN_ACK 的 inflight 项。
 	admin.rememberInflightAt(bundle, time.Now())
 	printer.Success("\r\n[*] DTN delivered bundle %s -> %s (route=%s via=%s session=%s conn=%s) [memo len=%d]\r\n",
-		shortUUID(bundle.ID), shortUUID(bundle.Target), route, shortUUID(firstHop), shortUUID(sess.UUID()), connEndpoints(sess.Conn()), len(bundle.Payload))
+		shortID(bundle.ID), shortID(bundle.Target), route, shortID(firstHop), shortID(sess.UUID()), connEndpoints(sess.Conn()), len(bundle.Payload))
 	return true
 }
 
@@ -282,23 +282,6 @@ func (admin *Admin) sessionForComponent(uuid string) session.Session {
 		}
 	}
 	return nil
-}
-
-func dtnRouteFirstHop(route string) string {
-	route = strings.TrimSpace(route)
-	if route == "" {
-		return ""
-	}
-	parts := strings.Split(route, ":")
-	for _, part := range parts {
-		part = strings.TrimSpace(part)
-		if part == "" {
-			continue
-		}
-		hop, _ := stripRouteSegment(part)
-		return hop
-	}
-	return ""
 }
 
 func connEndpoints(conn net.Conn) string {
@@ -387,7 +370,7 @@ func (admin *Admin) onNodeReonline(uuid string) {
 	// 节点重新上线时，它的 bundle 可能还在等待一个由旧 sleep 估计推导出的
 	// 过期 HoldUntil。这里立即释放 hold，避免错过短暂的 work 窗口。
 	if changed := admin.dtnManager.RecalculateHoldForTarget(uuid, time.Time{}); changed > 0 {
-		printer.Warning("\r\n[*] DTN hold released on node reonline: %s bundles=%d\r\n", shortUUID(uuid), changed)
+		printer.Warning("\r\n[*] DTN hold released on node reonline: %s bundles=%d\r\n", shortID(uuid), changed)
 	}
 	admin.flushDTNBundles(admin.context())
 }
@@ -469,7 +452,7 @@ func (admin *Admin) requeueExpiredInflight(now time.Time) {
 		admin.dtnManager.Requeue(b, delay)
 		admin.dtnRetried++
 		printer.Warning("\r\n[*] DTN bundle %s ACK timeout; requeued (delay=%s attempts=%d)\r\n",
-			shortUUID(b.ID), delay, b.Attempts)
+			shortID(b.ID), delay, b.Attempts)
 	}
 }
 

@@ -562,7 +562,7 @@ func main() {
 					})
 				}
 			case "dtn_expect_order":
-				// 在 runner 中这里不做额外动作：顺序性由 run_regress.py 通过检查 Kelpie 日志来断言。
+				// 在 runner 中这里不做额外动作：顺序性由 regress.py 通过检查 Kelpie 日志来断言。
 				// 保留这个分支，是为了避免生成过多无意义的 trace_error 记录。
 				_ = metricsW.Write(map[string]any{
 					"kind":           "trace_action",

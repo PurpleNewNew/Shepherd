@@ -6,6 +6,7 @@ import (
 
 	"codeberg.org/agnoie/shepherd/internal/kelpie/initial"
 	"codeberg.org/agnoie/shepherd/internal/kelpie/manager"
+	"codeberg.org/agnoie/shepherd/internal/kelpie/planner"
 	"codeberg.org/agnoie/shepherd/internal/kelpie/printer"
 	"codeberg.org/agnoie/shepherd/internal/kelpie/supp"
 	"codeberg.org/agnoie/shepherd/internal/kelpie/topology"
@@ -68,15 +69,19 @@ func (b *adminBuilder) build() *Admin {
 	}
 	derived, cancel := context.WithCancel(ctx)
 	admin := &Admin{
-		ctx:                derived,
-		cancel:             cancel,
-		options:            b.options,
-		topology:           b.topo,
-		topoService:        topology.NewService(b.topo),
-		gossipUpdateChan:   make(chan *protocol.GossipUpdate, 32),
-		store:              b.store,
-		sessions:           newSessionRegistry(b.store, b.topo),
-		plannerMetricsSeed: b.metrics,
+		ctx:         derived,
+		cancel:      cancel,
+		options:     b.options,
+		topology:    b.topo,
+		topoService: topology.NewService(b.topo),
+		store:       b.store,
+		adminSessionState: adminSessionState{
+			sessions: newSessionRegistry(b.store, b.topo),
+		},
+		adminSupplementalState: adminSupplementalState{
+			gossipUpdateChan:   make(chan *protocol.GossipUpdate, 32),
+			plannerMetricsSeed: b.metrics,
+		},
 	}
 	if b.store != nil {
 		admin.session = b.store.ActiveSession()
@@ -146,7 +151,7 @@ func (admin *Admin) initManager(ctx context.Context) {
 }
 
 func (admin *Admin) initSupplementalPlanner(ctx context.Context) {
-	admin.suppPlanner = NewSupplementalPlanner(admin.topology, admin.topoService, admin.mgr, admin.store)
+	admin.suppPlanner = planner.NewSupplementalPlanner(admin.topology, admin.topoService, admin.mgr, admin.store)
 	if admin.suppPlanner == nil {
 		return
 	}

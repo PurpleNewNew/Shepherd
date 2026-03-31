@@ -45,13 +45,13 @@ go run ./experiments/trace_replay --nodes 6 --duration 120s --topology star --wa
 运行示例：
 
 ```sh
-python3 experiments/trace_replay/run_regress.py --topologies star,chain
+python3 experiments/trace_replay/regress.py --topologies star,chain
 ```
 
 若希望在出现 FAIL 时自动打包留档（包含失败 run 目录 + summary.json）：
 
 ```sh
-python3 experiments/trace_replay/run_regress.py --topologies star,chain --archive-failures experiments/out/regress/archives
+python3 experiments/trace_replay/regress.py --topologies star,chain --archive-failures experiments/out/regress/archives
 ```
 
 ## Soak 压测（重复跑关键 trace 找 flake）

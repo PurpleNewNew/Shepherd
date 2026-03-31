@@ -1,6 +1,6 @@
 # Shepherd 答辩讲稿级架构说明与论文目录映射
 
-本文是对 `docs/midterm_report.md` 的补充材料，目标不是替代正文，而是把现有代码、实验与论文材料整理成更适合答辩和写作的版本。
+本文是对 `docs/midterm.md` 的补充材料，目标不是替代正文，而是把现有代码、实验与论文材料整理成更适合答辩和写作的版本。
 
 适用场景：
 
@@ -71,7 +71,7 @@ flowchart LR
 | 模块 | 主要代码落点 | 负责什么 | 答辩时建议表述 |
 | --- | --- | --- | --- |
 | Kelpie 入口 | `cmd/kelpie/main.go` | 启动 teamserver、加载 listener、初始化拓扑/数据库/gRPC | “它是管理端主进程，负责把系统从启动状态带到可观测、可控制状态。” |
-| Kelpie 核心调度 | `internal/kelpie/process/` | 拓扑调度、补链、DTN、STREAM、listener/proxy 管理 | “它相当于系统的大脑，核心控制逻辑都集中在这里。” |
+| Kelpie 核心调度 | `internal/kelpie/process/` + `internal/kelpie/planner/` | 拓扑调度、补链编排、DTN、STREAM、listener/proxy 管理 | “它相当于系统的大脑；其中 `process` 负责 orchestration，`planner` 负责补链自愈子域。” |
 | 拓扑层 | `internal/kelpie/topology/` | 节点、边、路由、离线判定、快照 | “它负责回答两个问题：系统里现在有哪些节点，以及应该怎么走到目标节点。” |
 | DTN 队列 | `internal/kelpie/dtn/` | 内存队列、TTL、优先级、hold-until、投递统计 | “它负责回答：目标不在线时，消息怎么暂存、什么时候再发。” |
 | STREAM 引擎 | `internal/kelpie/stream/` | 分片、窗口、ACK、RTO、重传、诊断 | “它把离散消息提升为可靠的数据流。” |
@@ -99,7 +99,7 @@ flowchart LR
 | 创新主张 | 要解决的矛盾 | 设计落点 | 现有证据 |
 | --- | --- | --- | --- |
 | Gossip 化拓扑维护 | 节点多、链路动态，集中维护成本高 | `internal/flock/gossip/` + `internal/kelpie/topology/` | bootstrap/convergence 实验 |
-| 补链自愈 | 父链路离线导致整支子树失联 | `SupplementalPlanner`、listener/pivot 管理 | 失效恢复与后续消融计划 |
+| 补链自愈 | 父链路离线导致整支子树失联 | `internal/kelpie/planner/`、listener/pivot 管理 | 失效恢复与后续消融计划 |
 | DTN + sleep 协同 | 节点长时间离线导致控制消息丢失 | `internal/kelpie/dtn/`、`topology/latency.go`、sleep profile | duty-cycling 下交付时延实验 |
 | DTN 上的可靠流 | 单条消息机制难以支撑更长数据流 | `internal/kelpie/stream/` | `stream_proxy`、`dataplane_*` trace |
 | 握手安全可论证 | 工程握手难以直接说明安全性 | `pkg/share/preauth.go`、`pkg/share/handshake/`、`formal/` | ProVerif/Tamarin 骨架 |
@@ -112,17 +112,17 @@ flowchart LR
 
 | 章节 | 本章要回答的问题 | 主要代码/实现材料 | 实验/图表/补充材料 | 写作要点 |
 | --- | --- | --- | --- | --- |
-| 第 1 章 绪论 | 为什么要研究受限网络下的远程运维 | `README.md`、`docs/shepherd_paper.md` | `docs/midterm_report.md` 摘要与研究问题 | 先把“受限网络”讲清楚，再说明传统持续在线控制面的局限 |
-| 第 2 章 场景分析与相关技术 | 这个问题涉及哪些技术方向，现有方法有什么不足 | `docs/shepherd_paper.md` 第 1~3 节 | 参考文献列表、`formal/README.md`、`experiments/README.md` | 把 Gossip、DTN、duty cycling、AKE/PSK 握手几条线串起来 |
+| 第 1 章 绪论 | 为什么要研究受限网络下的远程运维 | `README.md`、`docs/paper.md` | `docs/midterm.md` 摘要与研究问题 | 先把“受限网络”讲清楚，再说明传统持续在线控制面的局限 |
+| 第 2 章 场景分析与相关技术 | 这个问题涉及哪些技术方向，现有方法有什么不足 | `docs/paper.md` 第 1~3 节 | 参考文献列表、`formal/README.md`、`experiments/README.md` | 把 Gossip、DTN、duty cycling、AKE/PSK 握手几条线串起来 |
 | 第 3 章 系统总体架构设计 | Shepherd 整体由哪些角色和控制面组成 | `cmd/kelpie/`、`cmd/flock/`、`clientui/`、`proto/kelpieui/v1/kelpieui.proto`、`internal/kelpie/ui/grpcserver/` | 本文第 2 节架构讲稿、建议配总架构图 | 强调三组件与控制面/数据面/持久化三层关系 |
-| 第 4 章 拓扑维护与补链自愈机制 | 系统如何在动态网络中收敛并恢复 | `internal/flock/gossip/`、`internal/kelpie/topology/`、`internal/kelpie/process/supplemental_planner.go`、listener/pivot 相关实现 | `docs/data/bootstrap_summary.csv`、`docs/figures/bootstrap_convergence.svg`、`experiments/trace_replay/traces/gossip_*` | 这是“拓扑与自愈”主线，重点讲收敛、离线判定、补链候选评分 |
+| 第 4 章 拓扑维护与补链自愈机制 | 系统如何在动态网络中收敛并恢复 | `internal/flock/gossip/`、`internal/kelpie/topology/`、`internal/kelpie/planner/`、listener/pivot 相关实现 | `docs/data/bootstrap_summary.csv`、`docs/figures/bootstrap_convergence.svg`、`experiments/trace_replay/traces/gossip_*` | 这是“拓扑与自愈”主线，重点讲收敛、离线判定、补链候选评分 |
 | 第 5 章 DTN/STREAM 与 duty-cycling 协同机制 | 目标离线时如何最终交付，为什么时延会变化 | `internal/kelpie/dtn/`、`internal/kelpie/stream/`、`internal/kelpie/topology/latency.go`、`internal/flock/process/sleep*.go` | `docs/data/dtn_latency_samples.csv`、`docs/data/dtn_latency_summary.csv`、`docs/figures/dtn_latency.svg`、`experiments/trace_replay/traces/dtn_*` | 这是“可靠交付”主线，先讲 store-carry-forward，再讲 STREAM 和 sleep 协同 |
 
 这一章写作时建议顺手注明：`RecommendSendDelay()`、`ExpectedWaitMsAt()`、离线扫描阈值和补链探测延迟都属于启发式策略，用于在可实现性、误判率和恢复速度之间折中，不应表述为严格最优调度。
-| 第 6 章 安全机制与协作控制面 | 握手为什么可信，UI/审计/协作面如何支撑系统使用 | `pkg/share/preauth.go`、`pkg/share/handshake/`、`formal/`、`internal/kelpie/collab/auth/`、`audit/`、`chat/` | `formal/README.md`、形式化模型文件、`docs/midterm_report.md` 第 7.5 节 | 不要只写“有登录”，要写“认证、审计、形式化论证”三层关系 |
-| 第 7 章 系统实现与工程化落地 | 这个系统具体是怎样构建、部署、存储和运行的 | `Makefile`、`internal/kelpie/storage/sqlite/`、`cmd/lab/bootstrap/`、`docker/`、`clientui/` | `docker/README_运行环境.md`、`experiments/trace_replay/README.md` | 这一章回答“系统真的能跑起来，而且能复现” |
-| 第 8 章 实验设计与结果分析 | 方案到底是否有效，当前证据能说明什么 | `script/run_experiments_local.sh`、`experiments/analysis/`、`experiments/trace_replay/` | `docs/experiment_report.md`、`docs/midterm_report.md` 第 4 节、`docs/data/*.csv`、`docs/figures/*.svg` | 按“实验目标-场景-指标-结果-分析-威胁”写，保持统计口径一致 |
-| 第 9 章 总结与展望 | 当前完成了什么，还缺什么 | `docs/midterm_report.md` 第 6、7 节 | 里程碑 M1~M4、后续 Mininet/ns-3/形式化细化计划 | 总结时不要只写“已完成”，要明确后续补强路线 |
+| 第 6 章 安全机制与协作控制面 | 握手为什么可信，UI/审计/协作面如何支撑系统使用 | `pkg/share/preauth.go`、`pkg/share/handshake/`、`formal/`、`internal/kelpie/collab/auth/`、`audit/`、`chat/` | `formal/README.md`、形式化模型文件、`docs/midterm.md` 第 7.5 节 | 不要只写“有登录”，要写“认证、审计、形式化论证”三层关系 |
+| 第 7 章 系统实现与工程化落地 | 这个系统具体是怎样构建、部署、存储和运行的 | `Makefile`、`internal/kelpie/storage/sqlite/`、`cmd/lab/bootstrap/`、`docker/`、`clientui/` | `docker/runtime.md`、`experiments/trace_replay/README.md` | 这一章回答“系统真的能跑起来，而且能复现” |
+| 第 8 章 实验设计与结果分析 | 方案到底是否有效，当前证据能说明什么 | `script/experiments.sh`、`experiments/analysis/`、`experiments/trace_replay/` | `docs/experiments.md`、`docs/midterm.md` 第 4 节、`docs/data/*.csv`、`docs/figures/*.svg` | 按“实验目标-场景-指标-结果-分析-威胁”写，保持统计口径一致 |
+| 第 9 章 总结与展望 | 当前完成了什么，还缺什么 | `docs/midterm.md` 第 6、7 节 | 里程碑 M1~M4、后续 Mininet/ns-3/形式化细化计划 | 总结时不要只写“已完成”，要明确后续补强路线 |
 
 ---
 
@@ -149,8 +149,8 @@ flowchart LR
 
 - 预认证挑战应答：`pkg/share/preauth.go`
 - 握手状态与记录：`pkg/share/handshake/`
-- ProVerif 模型：`formal/proverif/shepherd_handshake.pv`
-- Tamarin 模型：`formal/tamarin/shepherd_handshake.spthy`
+- ProVerif 模型：`formal/proverif/handshake.pv`
+- Tamarin 模型：`formal/tamarin/handshake.spthy`
 
 ---
 

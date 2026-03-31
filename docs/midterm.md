@@ -24,7 +24,7 @@
 2. 在 duty-cycling（周期睡眠）导致目标节点长期离线的情况下，DTN 的 store-carry-forward 机制能否保证消息最终交付？交付时延与 duty-cycle 参数之间是否存在可解释的关系？
 3. 系统的握手认证流程能否给出可复现、可审计的安全性论证材料（形式化模型骨架）？
 
-开题阶段的研究设想、模型与计划见 `docs/shepherd_paper.md`。
+开题阶段的研究设想、模型与计划见 `docs/paper.md`。
 
 ---
 
@@ -53,7 +53,7 @@
 
 - **可复现实验框架（Trace 回放）**：`experiments/trace_replay/` 支持在本机启动 mini-cluster，注入睡眠/DTN 入队/故障等事件，并导出 `metrics.jsonl`。
 - **实验分析与出图**：`experiments/analysis/` 将 `metrics.jsonl` 转为 CSV，并生成 SVG 图表。
-- **一键实验脚本**：`script/run_experiments_local.sh` 端到端生成 `docs/data/*.csv` 与 `docs/figures/*.svg`，用于中期/论文写作的“可复现产物”管理。
+- **一键实验脚本**：`script/experiments.sh` 端到端生成 `docs/data/*.csv` 与 `docs/figures/*.svg`，用于中期/论文写作的“可复现产物”管理。
 - **形式化验证骨架**：`formal/` 提供握手流程的 ProVerif/Tamarin 模型与 Docker 复现说明（中期阶段以“骨架可跑通”为目标）。
 
 ### 3.2 进行中/待补齐
@@ -66,7 +66,7 @@
 
 ## 4 可复现实验设计与阶段性结果
 
-本节给出中期阶段两组实验：**拓扑收敛**与 **duty-cycling 下 DTN 交付时延**。所有结果均可通过 `bash script/run_experiments_local.sh` 在本机复现，并生成 CSV 与 SVG 图表作为论文插图来源。
+本节给出中期阶段两组实验：**拓扑收敛**与 **duty-cycling 下 DTN 交付时延**。所有结果均可通过 `bash script/experiments.sh` 在本机复现，并生成 CSV 与 SVG 图表作为论文插图来源。
 
 ### 4.1 实验 A：拓扑 bootstrap/收敛时间
 
@@ -162,7 +162,7 @@ E[T_w] = \frac{T_{sleep}^2}{2(T_{sleep}+T_{work})}.
 原因：carry-forward 队列的 backoff 与 hold-until 触发条件叠加，错过了关键唤醒窗口。  
 修复：当子连接（或补链连接）就绪时触发一次“强制 flush”，优先清空 carry 队列，避免被 hold-until 阻塞。
 
-上述修复使得 `script/run_experiments_local.sh` 所覆盖的中期实验场景能够稳定复跑并得到一致结论（见第 4 节）。
+上述修复使得 `script/experiments.sh` 所覆盖的中期实验场景能够稳定复跑并得到一致结论（见第 4 节）。
 
 ---
 
@@ -185,9 +185,9 @@ E[T_w] = \frac{T_{sleep}^2}{2(T_{sleep}+T_{work})}.
 
 | 创新主张 | 关键机制 | 代码落点（函数级） | 阶段性证据 |
 | --- | --- | --- | --- |
-| C1：Duty-cycling 感知的路由与 DTN 协同 | 发送时机与 ACK 超时显式考虑睡眠预算，节点重在线时立即释放 hold | `internal/kelpie/topology/latency.go` 的 `dutyCycleWaitSeconds()`、`RecommendSendDelay()`；`internal/kelpie/process/process.go` 的 `dtnAckTimeout()`、`onNodeReonline()`；`internal/kelpie/topology/nodes.go` 的 `markNodeOffline()`/`markStaleOffline()` | 实验 B 中 `sleep8/work2` 与 `sleep16/work2` 的时延单调上升且仍保持 6/6 交付 |
-| C2：面向离线波动的补链自愈调度器 | 候选评分（质量/睡眠/重叠/深度/冗余/工作窗）+ 失败重试/repair + duty-cycle 感知离线探测 | `internal/kelpie/process/supplemental_planner.go` 的 `candidateScore()`、`nodeQualityScore()`、`adjustQualityWeights()`、`tryRepair()`、`performRepair()`、`offlineProbeDelay()`、`offlineProbeThreshold()` | 关键缺陷修复后，睡眠场景下补链与 DTN 不再出现长期“窗口错过” |
-| C3：在 DTN 承载下的可靠流式传输 | 自适应 RTO（SRTT/RTTVAR）+ AIMD 窗口控制 + 乱序缓存重组 + 会话诊断 | `internal/kelpie/stream/engine.go` 的 `observeRTTLocked()`、`adjustWindowOnAckLocked()`、`reduceWindowOnLossLocked()`、`HandleData()`、`Diagnostics()`；`internal/kelpie/process/process.go` 的 `initStreamEngine()` DTN 友好参数 | 已具备 `stream_proxy` 与 `dataplane_*` trace，可用于后续系统级 IO 评估 |
+| C1：Duty-cycling 感知的路由与 DTN 协同 | 发送时机与 ACK 超时显式考虑睡眠预算，节点重在线时立即释放 hold | `internal/kelpie/topology/latency.go` 的 `dutyCycleWaitSeconds()`、`RecommendSendDelay()`；`internal/kelpie/process/dtn.go` 的 `dtnAckTimeout()`、`onNodeReonline()`；`internal/kelpie/topology/nodes.go` 的 `markNodeOffline()`/`markStaleOffline()` | 实验 B 中 `sleep8/work2` 与 `sleep16/work2` 的时延单调上升且仍保持 6/6 交付 |
+| C2：面向离线波动的补链自愈调度器 | 候选评分（质量/睡眠/重叠/深度/冗余/工作窗）+ 失败重试/repair + duty-cycle 感知离线探测 | `internal/kelpie/planner/metrics.go` 的 `candidateScore()`、`nodeQualityScore()`、`adjustQualityWeights()`；`internal/kelpie/planner/planner.go` 的 `tryRepair()`、`performRepair()`；`internal/kelpie/planner/events.go` 的 `offlineProbeDelay()`、`offlineProbeThreshold()` | 关键缺陷修复后，睡眠场景下补链与 DTN 不再出现长期“窗口错过” |
+| C3：在 DTN 承载下的可靠流式传输 | 自适应 RTO（SRTT/RTTVAR）+ AIMD 窗口控制 + 乱序缓存重组 + 会话诊断 | `internal/kelpie/stream/engine.go` 的 `observeRTTLocked()`、`adjustWindowOnAckLocked()`、`reduceWindowOnLossLocked()`、`HandleData()`、`Diagnostics()`；`internal/kelpie/process/stream.go` 的 `initStreamEngine()` DTN 友好参数 | 已具备 `stream_proxy` 与 `dataplane_*` trace，可用于后续系统级 IO 评估 |
 
 结论：当前创新点不是“模块拼接”，而是围绕“睡眠窗口+多跳+断续连接”这一核心矛盾做协同设计，且每个主张都能落到实现函数与可复现实验。
 
@@ -232,7 +232,7 @@ E[T_w] = \frac{T_{sleep}^2}{2(T_{sleep}+T_{work})}.
 | 握手阶段事件（start/dial/tls/negotiate/preauth/mfa/exchange/complete） | `pkg/share/handshake/handshake.go` 的 `Transcript` 与 `Code*`；`internal/flock/initial/method.go` 记录并 `Annotate` 错误 | 已对齐 | 在服务端同样补充结构化事件并统一导出 |
 | HI/UUID 交换对应性 | `handshake.NewHIMess()` + `achieveUUID()`（agent 初始流程） | 已对齐（骨架级） | 增加会话绑定与抗重放细化 |
 | 秘钥与口令约束 | `ValidateSecretComplexity()`、`ValidateMFAPin()`、`SessionSecret()` | 已实现 | 将复杂度与策略约束纳入形式化假设说明 |
-| 形式化性质 | `formal/proverif/shepherd_handshake.pv`、`formal/tamarin/shepherd_handshake.spthy` | 中期为“骨架可跑通” | 扩展并发会话、注入一致性、重放场景 |
+| 形式化性质 | `formal/proverif/handshake.pv`、`formal/tamarin/handshake.spthy` | 中期为“骨架可跑通” | 扩展并发会话、注入一致性、重放场景 |
 
 结论：形式化与代码已建立“骨架级一一对应”，但要达到论文强结论，必须在 M3 完成并发与重放分支的精化证明。
 
@@ -248,7 +248,7 @@ E[T_w] = \frac{T_{sleep}^2}{2(T_{sleep}+T_{work})}.
 
 ## 8 参考文献
 
-本中期报告的理论背景与主要参考文献沿用开题报告 `docs/shepherd_paper.md`，中期阶段新增的实验数据与图表均可由 `script/run_experiments_local.sh` 复现生成。
+本中期报告的理论背景与主要参考文献沿用开题报告 `docs/paper.md`，中期阶段新增的实验数据与图表均可由 `script/experiments.sh` 复现生成。
 
 ---
 
@@ -256,6 +256,6 @@ E[T_w] = \frac{T_{sleep}^2}{2(T_{sleep}+T_{work})}.
 
 为避免中期报告正文继续膨胀，答辩讲稿级的系统架构说明，以及“论文目录 - 代码/实验材料”映射，已单独整理在：
 
-- `docs/defense_architecture_map.md`
+- `docs/architecture.md`
 
 建议配合本报告的第 2 节（系统设计与实现概述）、第 4 节（实验结果）和第 7 节（答辩核心）一起使用。该补充文档更偏“怎么讲、怎么写、材料放在哪”，适合直接拿去整理 PPT、讲稿和论文目录。

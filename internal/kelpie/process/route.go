@@ -66,7 +66,7 @@ func (admin *Admin) sessionForRoute(route string) session.Session {
 	if route == "" {
 		return admin.currentSession()
 	}
-	firstHop := dtnRouteFirstHop(route)
+	firstHop := routeFirstHop(route)
 	if firstHop != "" {
 		if sess := admin.sessionForComponent(firstHop); sess != nil && sess.Conn() != nil {
 			return sess
@@ -124,6 +124,45 @@ func (admin *Admin) fetchRoute(uuid string) (string, bool) {
 		return "", false
 	}
 	return res.Route, true
+}
+
+func routeFirstHop(route string) string {
+	route = strings.TrimSpace(route)
+	if route == "" {
+		return ""
+	}
+	parts := strings.Split(route, ":")
+	for _, part := range parts {
+		part = strings.TrimSpace(part)
+		if part == "" {
+			continue
+		}
+		hop, _ := stripRouteSegment(part)
+		return hop
+	}
+	return ""
+}
+
+func routeIncludesUUID(route, uuid string) bool {
+	if route == "" || uuid == "" {
+		return false
+	}
+	parts := strings.Split(route, ":")
+	for _, part := range parts {
+		next, _ := stripRouteSegment(part)
+		if next == uuid {
+			return true
+		}
+	}
+	return false
+}
+
+func stripRouteSegment(segment string) (string, bool) {
+	const suffix = "#supp"
+	if strings.HasSuffix(segment, suffix) {
+		return strings.TrimSuffix(segment, suffix), true
+	}
+	return segment, false
 }
 
 // TopologySnapshot 返回适合 UI 展示的当前节点和边快照。

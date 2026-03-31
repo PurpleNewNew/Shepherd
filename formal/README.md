@@ -27,8 +27,8 @@ docker compose -f formal/docker-compose.yml run --rm tamarin
 
 说明：
 
-- `proverif` 会验证 `formal/proverif/shepherd_handshake.pv` 中的查询（如 PSK 保密性、基本对应性性质）。
-- `tamarin` 会证明 `formal/tamarin/shepherd_handshake.spthy` 中的 `psk_secrecy` 引理。
+- `proverif` 会验证 `formal/proverif/handshake.pv` 中的查询（如 PSK 保密性、基本对应性性质）。
+- `tamarin` 会证明 `formal/tamarin/handshake.spthy` 中的 `psk_secrecy` 引理。
 - 在 Apple Silicon（arm64）上，这两个镜像可能以 `linux/amd64` 运行，Docker Desktop 会自动进行仿真，速度会慢一些，但对本仓库的模型规模通常可接受。
 
 ## 本地运行（可选）
@@ -36,8 +36,8 @@ docker compose -f formal/docker-compose.yml run --rm tamarin
 若你希望不依赖 Docker，可本机安装工具后运行：
 
 ```sh
-proverif formal/proverif/shepherd_handshake.pv
-tamarin-prover --prove formal/tamarin/shepherd_handshake.spthy
+proverif formal/proverif/handshake.pv
+tamarin-prover --prove formal/tamarin/handshake.spthy
 ```
 
 ## 目前已覆盖的性质（示例）

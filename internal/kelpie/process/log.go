@@ -19,16 +19,16 @@ func printRuntimeLog(entry string, log *protocol.RuntimeLog) {
 	}
 	prefix := ""
 	if entry != "" {
-		prefix = fmt.Sprintf("[entry %s] ", shortRuntimeUUID(entry))
+		prefix = fmt.Sprintf("[entry %s] ", shortID(entry))
 	}
 	if log.UUID != "" {
-		printer.Warning("\r\n%s[agent %s] %s\r\n", prefix, shortRuntimeUUID(log.UUID), message)
+		printer.Warning("\r\n%s[agent %s] %s\r\n", prefix, shortID(log.UUID), message)
 	} else {
 		printer.Warning("\r\n%s%s\r\n", prefix, message)
 	}
 }
 
-func shortRuntimeUUID(id string) string {
+func shortID(id string) string {
 	if len(id) <= 8 {
 		return id
 	}

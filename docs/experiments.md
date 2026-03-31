@@ -25,7 +25,7 @@
 - **Go**：1.22（见 `go.mod`）
 - **Make**：用于构建 `build/kelpie` 与 `build/flock`
 - **Python 3**：仅使用标准库（用于 CSV 汇总与 SVG 出图，见 `experiments/analysis/`）
-- **Bash**：运行一键脚本（`script/run_experiments_local.sh`）
+- **Bash**：运行一键脚本（`script/experiments.sh`）
 
 ### 2.2 可选环境（后续阶段）
 
@@ -64,7 +64,7 @@
 
 ### 4.1 拓扑收敛时间
 
-在 `experiments/analysis/analyze_bootstrap.py` 中，收敛时间 `converged_ms` 采用如下判据提取：
+在 `experiments/analysis/bootstrap.py` 中，收敛时间 `converged_ms` 采用如下判据提取：
 
 - 指标快照中拓扑节点总数达到期望值；
 - 节点全部处于 online 状态；
@@ -72,7 +72,7 @@
 
 ### 4.2 DTN 交付时延
 
-在 `experiments/analysis/analyze_dtn_latency.py` 中，DTN 交付时延按“入队时刻”与“交付计数增长时刻”的差值计算：
+在 `experiments/analysis/latency.py` 中，DTN 交付时延按“入队时刻”与“交付计数增长时刻”的差值计算：
 
 - `enqueue_ms`：trace_action 中 `dtn_enqueue` 的 `since_start_ms`
 - `deliver_ms`：metrics 快照中 `dtn_metrics.delivered` 相比上一快照增量的时间戳（`since_start_ms`）
@@ -91,7 +91,7 @@
 
 ### 5.1 场景 A：拓扑 bootstrap/收敛（Gossip）
 
-脚本：`script/run_experiments_local.sh`（第 2/4 步）  
+脚本：`script/experiments.sh`（第 2/4 步）  
 参数：
 
 - topology：`star`、`chain`
@@ -105,7 +105,7 @@
 
 ### 5.2 场景 B：duty-cycling 下 DTN 交付时延
 
-脚本：`script/run_experiments_local.sh`（第 3/4 步）  
+脚本：`script/experiments.sh`（第 3/4 步）  
 固定参数：
 
 - topology：`chain`
@@ -134,7 +134,7 @@ trace（JSONL）：
 在仓库根目录执行：
 
 ```sh
-bash script/run_experiments_local.sh
+bash script/experiments.sh
 ```
 
 该脚本会：
@@ -234,7 +234,7 @@ E[T_w] = \frac{T_{sleep}^2}{2(T_{sleep}+T_{work})}.
 
 复现脚本：
 
-- `script/run_experiments_local.sh`
+- `script/experiments.sh`
 
 数据与图表（由脚本生成，可版本化）：
 
@@ -247,9 +247,9 @@ E[T_w] = \frac{T_{sleep}^2}{2(T_{sleep}+T_{work})}.
 Trace 与分析脚本：
 
 - `experiments/trace_replay/traces/*.jsonl`
-- `experiments/analysis/analyze_bootstrap.py`
-- `experiments/analysis/analyze_dtn_latency.py`
-- `experiments/analysis/plot_svg.py`
+- `experiments/analysis/bootstrap.py`
+- `experiments/analysis/latency.py`
+- `experiments/analysis/plotsvg.py`
 
 形式化验证骨架：
 

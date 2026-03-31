@@ -37,7 +37,7 @@ make admin agent
 
 ## 拓扑脚本
 
-`shepherd_topo.py` 提供一个星型拓扑的最小示例：
+`topo.py` 提供一个星型拓扑的最小示例：
 
 - 一个 root host 连接到交换机
 - N 个子 host 同样连接该交换机

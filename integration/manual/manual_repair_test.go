@@ -7,8 +7,8 @@ import (
 	"time"
 
 	adminInitial "codeberg.org/agnoie/shepherd/internal/kelpie/initial"
+	plannerpkg "codeberg.org/agnoie/shepherd/internal/kelpie/planner"
 	"codeberg.org/agnoie/shepherd/internal/kelpie/printer"
-	"codeberg.org/agnoie/shepherd/internal/kelpie/process"
 	"codeberg.org/agnoie/shepherd/internal/kelpie/topology"
 	"codeberg.org/agnoie/shepherd/pkg/global"
 	"codeberg.org/agnoie/shepherd/pkg/share"
@@ -35,7 +35,7 @@ func TestManualRepairRestoresConnection(t *testing.T) {
 		t.Fatalf("set preauth token: %v", err)
 	}
 
-	planner := process.NewSupplementalPlanner(topo, svc, nil, store)
+	planner := plannerpkg.NewSupplementalPlanner(topo, svc, nil, store)
 	baseOptions := &adminInitial.Options{
 		Mode:         adminInitial.NORMAL_ACTIVE,
 		Secret:       secret,

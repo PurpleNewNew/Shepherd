@@ -12,12 +12,12 @@
 - `make check`：执行 `go test -race ./...` 以及 trace replay 回归测试。
 - `make regress`：回放标准 `star` 与 `chain` 拓扑 trace。
 - `make soak`：运行高风险回放集；可用 `SOAK_REPEAT=50` 或 `SOAK_TOPOS=chain` 调整参数。
-- `bash script/run_experiments_local.sh`：重新生成 `docs/` 下的实验 CSV 和 SVG 图表。
+- `bash script/experiments.sh`：重新生成 `docs/` 下的实验 CSV 和 SVG 图表。
 
 构建、测试、回放和生成类命令不要并行执行。`make all`、`make test`、`make check`、`make regress`、`make soak` 以及 protobuf 生成流程会共享 `build/`、CMake 构建目录或中间产物，并行运行时容易因锁竞争或输出互相覆盖导致失败；需要跑多项检查时请按顺序串行执行。
 
 ## 编码风格与命名约定
-Go 代码遵循标准 `gofmt` 格式，包名保持小写并使用惯用命名，例如 `pkg/logging`、`internal/kelpie/ui`。测试文件统一使用 `*_test.go` 命名，并尽量与被测代码放在同一包内。Qt/C++ 代码沿用现有风格：4 空格缩进、类型名使用 `PascalCase`，并按现有目录组织，例如 `clientui/src/UserInterface/`。修改 `.proto` 后，使用 `script/gen_go_protos.sh` 重新生成 Go 绑定，使用 `script/gen_clientui_protos.sh` 重新生成 Stockman 的 C++ 绑定。
+Go 代码遵循标准 `gofmt` 格式，包名保持小写并使用惯用命名，例如 `pkg/logging`、`internal/kelpie/ui`。测试文件统一使用 `*_test.go` 命名，并尽量与被测代码放在同一包内。Qt/C++ 代码沿用现有风格：4 空格缩进、类型名使用 `PascalCase`，并按现有目录组织，例如 `clientui/src/UserInterface/`。修改 `.proto` 后，使用 `script/goprotos.sh` 重新生成 Go 绑定，使用 `script/clientuiprotos.sh` 重新生成 Stockman 的 C++ 绑定。
 
 ## 测试指南
 主要测试覆盖位于 `pkg/`、`protocol/`、`internal/` 和 `integration/`。小范围改动至少运行 `make test`；涉及行为变化、传输层、协议或回放逻辑的改动，在合并前运行 `make check`。新增测试应尽量靠近变更代码；端到端或场景类验证放在 `integration/` 或 trace replay 测试中。

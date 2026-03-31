@@ -10,9 +10,11 @@ import (
 
 func TestDTNInflightTimeoutRequeuesAndLateAckCancelsRetry(t *testing.T) {
 	admin := &Admin{
-		dtnManager:              dtn.NewManager(dtn.DefaultConfig()),
-		dtnInflight:             make(map[string]*dtnInflightRecord),
-		dtnMaxInflightPerTarget: 2,
+		adminDTNState: adminDTNState{
+			dtnManager:              dtn.NewManager(dtn.DefaultConfig()),
+			dtnInflight:             make(map[string]*dtnInflightRecord),
+			dtnMaxInflightPerTarget: 2,
+		},
 	}
 
 	target := "n3"

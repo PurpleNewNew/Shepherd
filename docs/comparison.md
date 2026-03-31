@@ -83,7 +83,7 @@
 最能说明这一点的实现落点有：
 
 - `internal/kelpie/topology/`
-- `internal/kelpie/process/supplemental_planner.go`
+- `internal/kelpie/planner/`
 - `internal/kelpie/dtn/`
 - `internal/kelpie/stream/`
 - `internal/flock/process/sleep.go`
@@ -173,7 +173,7 @@ Shepherd 不是简单给会话加一个 `sleep/jitter`，而是把：
 
 放在同一个 sleep-aware 框架下协同处理。
 
-这在 `sleep.go`、`offline.go`、`supplemental_planner.go`、`dtn.go` 之间是对齐的。
+这在 `sleep.go`、`offline.go`、`internal/kelpie/planner/`、`dtn.go` 之间是对齐的。
 
 ### 7.2 拓扑与自愈是一等公民
 

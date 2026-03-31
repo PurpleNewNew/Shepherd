@@ -120,7 +120,7 @@ f(n)=\min\left(F_{\max}, F_{\text{base}} + \lceil \log_2 n \rceil\right),
 ## 8 阶段成果与代码改进
 
 1. **自适应 Gossip 实现**：在 `internal/flock/process/gossip.go` 新增 `dynamicFanout()`、`dynamicTTL()` 等函数，实现基于 $\log n$ 的 fanout/TTL 调整，并在任务触发、发现流程中替换原固定参数，响应了文献~[1,2] 对负载均衡的建议。
-2. **补链评分框架**：`SupplementalPlanner` 在 `internal/kelpie/process/supplemental_planner.go` 引入 candidate score 函数，将 nodeQuality、睡眠预算与路径重叠度归一化后按权重组合，实现了参考最小割/Spanner 文献~[5] 的成本驱动策略。
+2. **补链评分框架**：`SupplementalPlanner` 现在独立位于 `internal/kelpie/planner/`，其中 `metrics.go` 与 `events.go` 引入 candidate score、nodeQuality 与 duty-cycle 感知探测逻辑，将睡眠预算与路径重叠度归一化后按权重组合，实现了参考最小割/Spanner 文献~[5] 的成本驱动策略。
 3. **睡眠信息上报**：`buildNodeInfo()` 现根据 `sleep_predictor` 将 `SleepSeconds` 与 `NextWake` 写入 gossip payload，便于 Kelpie 在 duty cycling 环境中做拓扑判定，对应 Versatile MAC/X-MAC 的随机唤醒思想~[6,7]。
 4. **理论-实现联动文档**：本稿补充了 fanout/TTL 数学公式、补链代价函数与实验计划，形成中期汇报所需的学术化材料。
 5. **DTN 队列观测与内存多级队列**：受 BPv7 与 MaxProp 对丢弃策略的启发~[3,15]，`internal/kelpie/dtn` 将 per-target 队列升级为多级优先级缓冲并统计水位、平均等待时延、按优先级丢包次数等指标；CLI 的 `dtn queue` 命令能实时展示 `ready/held` 队列深度与抛弃原因，实现 RFC 4838 所倡导的可观测内存存储，同时保持“只驻留内存、不落盘”的隐蔽性约束。

@@ -56,17 +56,17 @@ make stockman
 重生成 Go 绑定：
 
 ```sh
-bash script/gen_go_protos.sh
+bash script/goprotos.sh
 ```
 
 重生成 Stockman 的 C++ 绑定：
 
 ```sh
-bash script/gen_clientui_protos.sh
+bash script/clientuiprotos.sh
 ```
 
 ## 说明
 
-- `clientui/generated/` 下的 C++ protobuf 绑定需要与本机 `protobuf`/`grpc` 版本匹配；升级这两个依赖后，应重新运行 `script/gen_clientui_protos.sh`。
-- `internal/kelpie/uipb/` 和 `internal/dataplanepb/` 的 Go 绑定不应手工修改；如需更新，请通过 `script/gen_go_protos.sh` 重生成。
+- `clientui/generated/` 下的 C++ protobuf 绑定需要与本机 `protobuf`/`grpc` 版本匹配；升级这两个依赖后，应重新运行 `script/clientuiprotos.sh`。
+- `internal/kelpie/uipb/` 和 `internal/dataplanepb/` 的 Go 绑定不应手工修改；如需更新，请通过 `script/goprotos.sh` 重生成。
 - `clientui/CMakeLists.txt` 已改为使用 Homebrew 安装的 CMake config 包，不再依赖仓库外部的 `external/` 头文件目录。

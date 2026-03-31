@@ -27,11 +27,13 @@ func TestSessionForUUIDPrefersRouteFirstHop(t *testing.T) {
 
 	admin := &Admin{
 		store: store,
-		routeOverride: func(uuid string) (string, bool) {
-			if uuid == "target" {
-				return "root:target", true
-			}
-			return "", false
+		adminStreamState: adminStreamState{
+			routeOverride: func(uuid string) (string, bool) {
+				if uuid == "target" {
+					return "root:target", true
+				}
+				return "", false
+			},
 		},
 	}
 
@@ -50,11 +52,13 @@ func TestSessionForUUIDNoFallbackToUnrelatedActiveSession(t *testing.T) {
 
 	admin := &Admin{
 		store: store,
-		routeOverride: func(uuid string) (string, bool) {
-			if uuid == "target" {
-				return "root:target", true
-			}
-			return "", false
+		adminStreamState: adminStreamState{
+			routeOverride: func(uuid string) (string, bool) {
+				if uuid == "target" {
+					return "root:target", true
+				}
+				return "", false
+			},
 		},
 	}
 

@@ -60,7 +60,7 @@ type ChatRecord struct {
 	CreatedAt time.Time
 }
 
-func (s *Store) ensureCollabSchema() error {
+func (s *CollabRepository) ensureCollabSchema() error {
 	if s == nil || s.db == nil {
 		return nil
 	}
@@ -125,7 +125,7 @@ func (s *Store) ensureCollabSchema() error {
 	return nil
 }
 
-func (s *Store) CountUsers() (int, error) {
+func (s *CollabRepository) CountUsers() (int, error) {
 	if s == nil || s.db == nil {
 		return 0, fmt.Errorf("store unavailable")
 	}
@@ -137,7 +137,7 @@ func (s *Store) CountUsers() (int, error) {
 	return count, nil
 }
 
-func (s *Store) UpsertUser(rec UserRecord) error {
+func (s *CollabRepository) UpsertUser(rec UserRecord) error {
 	if s == nil || s.db == nil {
 		return fmt.Errorf("store unavailable")
 	}
@@ -163,7 +163,7 @@ func (s *Store) UpsertUser(rec UserRecord) error {
 	return err
 }
 
-func (s *Store) GetUser(username string) (UserRecord, error) {
+func (s *CollabRepository) GetUser(username string) (UserRecord, error) {
 	var rec UserRecord
 	if s == nil || s.db == nil {
 		return rec, fmt.Errorf("store unavailable")
@@ -180,7 +180,7 @@ func (s *Store) GetUser(username string) (UserRecord, error) {
 	return rec, nil
 }
 
-func (s *Store) CreateSession(rec AuthSessionRecord) error {
+func (s *CollabRepository) CreateSession(rec AuthSessionRecord) error {
 	if s == nil || s.db == nil {
 		return fmt.Errorf("store unavailable")
 	}
@@ -196,7 +196,7 @@ func (s *Store) CreateSession(rec AuthSessionRecord) error {
 	return err
 }
 
-func (s *Store) updateSessionTokens(rec AuthSessionRecord) error {
+func (s *CollabRepository) updateSessionTokens(rec AuthSessionRecord) error {
 	if s == nil || s.db == nil {
 		return fmt.Errorf("store unavailable")
 	}
@@ -206,15 +206,15 @@ func (s *Store) updateSessionTokens(rec AuthSessionRecord) error {
 	return err
 }
 
-func (s *Store) SessionByAccessHash(hash string) (AuthSessionRecord, error) {
+func (s *CollabRepository) SessionByAccessHash(hash string) (AuthSessionRecord, error) {
 	return s.fetchSession(`access_token_hash = ?`, hash)
 }
 
-func (s *Store) SessionByRefreshHash(hash string) (AuthSessionRecord, error) {
+func (s *CollabRepository) SessionByRefreshHash(hash string) (AuthSessionRecord, error) {
 	return s.fetchSession(`refresh_token_hash = ?`, hash)
 }
 
-func (s *Store) fetchSession(where string, arg any) (AuthSessionRecord, error) {
+func (s *CollabRepository) fetchSession(where string, arg any) (AuthSessionRecord, error) {
 	var rec AuthSessionRecord
 	if s == nil || s.db == nil {
 		return rec, fmt.Errorf("store unavailable")
@@ -234,7 +234,7 @@ func (s *Store) fetchSession(where string, arg any) (AuthSessionRecord, error) {
 	return rec, nil
 }
 
-func (s *Store) RevokeSession(sessionID string) error {
+func (s *CollabRepository) RevokeSession(sessionID string) error {
 	if s == nil || s.db == nil {
 		return fmt.Errorf("store unavailable")
 	}
@@ -242,7 +242,7 @@ func (s *Store) RevokeSession(sessionID string) error {
 	return err
 }
 
-func (s *Store) InsertAudit(rec AuditRecord) error {
+func (s *CollabRepository) InsertAudit(rec AuditRecord) error {
 	if s == nil || s.db == nil {
 		return fmt.Errorf("store unavailable")
 	}
@@ -254,7 +254,7 @@ func (s *Store) InsertAudit(rec AuditRecord) error {
 	return err
 }
 
-func (s *Store) ListAudit(filter AuditFilter) ([]AuditRecord, error) {
+func (s *CollabRepository) ListAudit(filter AuditFilter) ([]AuditRecord, error) {
 	if s == nil || s.db == nil {
 		return nil, fmt.Errorf("store unavailable")
 	}
@@ -303,7 +303,7 @@ func (s *Store) ListAudit(filter AuditFilter) ([]AuditRecord, error) {
 	return records, rows.Err()
 }
 
-func (s *Store) InsertChat(rec ChatRecord) error {
+func (s *CollabRepository) InsertChat(rec ChatRecord) error {
 	if s == nil || s.db == nil {
 		return fmt.Errorf("store unavailable")
 	}
@@ -314,7 +314,7 @@ func (s *Store) InsertChat(rec ChatRecord) error {
 	return err
 }
 
-func (s *Store) ListChat(limit int, before time.Time) ([]ChatRecord, error) {
+func (s *CollabRepository) ListChat(limit int, before time.Time) ([]ChatRecord, error) {
 	if s == nil || s.db == nil {
 		return nil, fmt.Errorf("store unavailable")
 	}
@@ -353,14 +353,14 @@ func boolToInt(v bool) int {
 	return 0
 }
 
-func (s *Store) UpdateSession(rec AuthSessionRecord) error {
+func (s *CollabRepository) UpdateSession(rec AuthSessionRecord) error {
 	if s == nil || s.db == nil {
 		return fmt.Errorf("store unavailable")
 	}
 	return s.updateSessionTokens(rec)
 }
 
-func (s *Store) DeleteSession(sessionID string) error {
+func (s *CollabRepository) DeleteSession(sessionID string) error {
 	if s == nil || s.db == nil {
 		return fmt.Errorf("store unavailable")
 	}

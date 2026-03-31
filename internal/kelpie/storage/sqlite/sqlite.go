@@ -15,6 +15,81 @@ import (
 // Store 将拓扑快照持久化到 SQLite 数据库。
 type Store struct {
 	db *sql.DB
+
+	*TopologyRepository
+	*ListenerRepository
+	*ControllerListenerRepository
+	*LootRepository
+	*DTNRepository
+	*CollabRepository
+}
+
+type repoBase struct {
+	db *sql.DB
+}
+
+// TopologyRepository 负责拓扑与补链元数据。
+type TopologyRepository struct{ repoBase }
+
+// ListenerRepository 负责 pivot listener 持久化。
+type ListenerRepository struct{ repoBase }
+
+// ControllerListenerRepository 负责 controller listener 持久化。
+type ControllerListenerRepository struct{ repoBase }
+
+// LootRepository 负责 loot 元数据持久化。
+type LootRepository struct{ repoBase }
+
+// DTNRepository 负责 DTN bundle 持久化。
+type DTNRepository struct{ repoBase }
+
+// CollabRepository 负责认证、审计和聊天持久化。
+type CollabRepository struct{ repoBase }
+
+func newRepoBase(db *sql.DB) repoBase {
+	return repoBase{db: db}
+}
+
+func (s *Store) Topology() *TopologyRepository {
+	if s == nil {
+		return nil
+	}
+	return s.TopologyRepository
+}
+
+func (s *Store) Listeners() *ListenerRepository {
+	if s == nil {
+		return nil
+	}
+	return s.ListenerRepository
+}
+
+func (s *Store) ControllerListeners() *ControllerListenerRepository {
+	if s == nil {
+		return nil
+	}
+	return s.ControllerListenerRepository
+}
+
+func (s *Store) Loot() *LootRepository {
+	if s == nil {
+		return nil
+	}
+	return s.LootRepository
+}
+
+func (s *Store) DTN() *DTNRepository {
+	if s == nil {
+		return nil
+	}
+	return s.DTNRepository
+}
+
+func (s *Store) Collab() *CollabRepository {
+	if s == nil {
+		return nil
+	}
+	return s.CollabRepository
 }
 
 // New 在指定路径创建或打开 SQLite 数据库并初始化结构。
@@ -39,6 +114,12 @@ func New(path string) (*Store, error) {
 	// 为 admin UI telemetry 提供一个较合理的耐久性与性能折中。
 	_, _ = db.Exec(`PRAGMA synchronous=NORMAL;`)
 	s := &Store{db: db}
+	s.TopologyRepository = &TopologyRepository{repoBase: newRepoBase(db)}
+	s.ListenerRepository = &ListenerRepository{repoBase: newRepoBase(db)}
+	s.ControllerListenerRepository = &ControllerListenerRepository{repoBase: newRepoBase(db)}
+	s.LootRepository = &LootRepository{repoBase: newRepoBase(db)}
+	s.DTNRepository = &DTNRepository{repoBase: newRepoBase(db)}
+	s.CollabRepository = &CollabRepository{repoBase: newRepoBase(db)}
 	if err := s.initSchema(); err != nil {
 		_ = db.Close()
 		return nil, err
@@ -189,8 +270,8 @@ func (s *Store) initSchema() error {
 	return nil
 }
 
-func (s *Store) ensureNodeColumns() error {
-	if s == nil || s.db == nil {
+func (r *TopologyRepository) ensureNodeColumns() error {
+	if r == nil || r.db == nil {
 		return nil
 	}
 	columns := []struct {
@@ -206,15 +287,15 @@ func (s *Store) ensureNodeColumns() error {
 		{"repair_updated", "TEXT"},
 	}
 	for _, col := range columns {
-		if err := s.ensureColumn("nodes", col.name, col.def); err != nil {
+		if err := r.ensureColumn("nodes", col.name, col.def); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (s *Store) ensureLootColumns() error {
-	if s == nil || s.db == nil {
+func (r *LootRepository) ensureLootColumns() error {
+	if r == nil || r.db == nil {
 		return nil
 	}
 	columns := []struct {
@@ -230,15 +311,15 @@ func (s *Store) ensureLootColumns() error {
 		{"tags", "TEXT"},
 	}
 	for _, col := range columns {
-		if err := s.ensureColumn("loot", col.name, col.def); err != nil {
+		if err := r.ensureColumn("loot", col.name, col.def); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (s *Store) ensurePlannerMetricsColumns() error {
-	if s == nil || s.db == nil {
+func (r *TopologyRepository) ensurePlannerMetricsColumns() error {
+	if r == nil || r.db == nil {
 		return nil
 	}
 	columns := []struct {
@@ -250,19 +331,19 @@ func (s *Store) ensurePlannerMetricsColumns() error {
 		{"repair_failures", "INTEGER"},
 	}
 	for _, col := range columns {
-		if err := s.ensureColumn("planner_metrics", col.name, col.def); err != nil {
+		if err := r.ensureColumn("planner_metrics", col.name, col.def); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (s *Store) ensureColumn(table, column, definition string) error {
-	if s == nil || s.db == nil {
+func (r *repoBase) ensureColumn(table, column, definition string) error {
+	if r == nil || r.db == nil {
 		return nil
 	}
 	query := fmt.Sprintf("SELECT 1 FROM pragma_table_info('%s') WHERE name = ?", table)
-	row := s.db.QueryRow(query, column)
+	row := r.db.QueryRow(query, column)
 	var dummy int
 	err := row.Scan(&dummy)
 	switch {
@@ -270,7 +351,7 @@ func (s *Store) ensureColumn(table, column, definition string) error {
 		return nil
 	case errors.Is(err, sql.ErrNoRows):
 		alter := fmt.Sprintf("ALTER TABLE %s ADD COLUMN %s %s", table, column, definition)
-		if _, execErr := s.db.Exec(alter); execErr != nil {
+		if _, execErr := r.db.Exec(alter); execErr != nil {
 			return fmt.Errorf("alter table %s add column %s: %w", table, column, execErr)
 		}
 		return nil
@@ -288,7 +369,7 @@ func (s *Store) Close() error {
 }
 
 // UpsertNode 实现 topology.Persistence 接口的节点写入逻辑。
-func (s *Store) UpsertNode(node topology.NodeSnapshot) error {
+func (s *TopologyRepository) UpsertNode(node topology.NodeSnapshot) error {
 	if s == nil || s.db == nil {
 		return nil
 	}
@@ -358,7 +439,7 @@ func (s *Store) UpsertNode(node topology.NodeSnapshot) error {
 }
 
 // DeleteNode 删除节点记录。
-func (s *Store) DeleteNode(uuid string) error {
+func (s *TopologyRepository) DeleteNode(uuid string) error {
 	if s == nil || s.db == nil {
 		return nil
 	}
@@ -374,7 +455,7 @@ func (s *Store) DeleteNode(uuid string) error {
 }
 
 // UpsertEdge 写入或更新边记录。
-func (s *Store) UpsertEdge(edge topology.EdgeSnapshot) error {
+func (s *TopologyRepository) UpsertEdge(edge topology.EdgeSnapshot) error {
 	if s == nil || s.db == nil {
 		return nil
 	}
@@ -388,7 +469,7 @@ func (s *Store) UpsertEdge(edge topology.EdgeSnapshot) error {
 }
 
 // DeleteEdge 删除边记录。
-func (s *Store) DeleteEdge(from, to string) error {
+func (s *TopologyRepository) DeleteEdge(from, to string) error {
 	if s == nil || s.db == nil {
 		return nil
 	}
@@ -400,7 +481,7 @@ func (s *Store) DeleteEdge(from, to string) error {
 }
 
 // UpsertNetwork 记录 target 与网络的关联关系。
-func (s *Store) UpsertNetwork(targetUUID, networkID string) error {
+func (s *TopologyRepository) UpsertNetwork(targetUUID, networkID string) error {
 	if s == nil || s.db == nil {
 		return nil
 	}
@@ -413,7 +494,7 @@ func (s *Store) UpsertNetwork(targetUUID, networkID string) error {
 }
 
 // DeleteNetwork 删除 target 对应的网络映射。
-func (s *Store) DeleteNetwork(targetUUID string) error {
+func (s *TopologyRepository) DeleteNetwork(targetUUID string) error {
 	if s == nil || s.db == nil {
 		return nil
 	}
@@ -425,7 +506,7 @@ func (s *Store) DeleteNetwork(targetUUID string) error {
 }
 
 // UpsertSupplementalLink 持久化补链状态。
-func (s *Store) UpsertSupplementalLink(link topology.SupplementalLinkSnapshot) error {
+func (s *TopologyRepository) UpsertSupplementalLink(link topology.SupplementalLinkSnapshot) error {
 	if s == nil || s.db == nil {
 		return nil
 	}
@@ -450,7 +531,7 @@ func (s *Store) UpsertSupplementalLink(link topology.SupplementalLinkSnapshot) e
 }
 
 // DeleteSupplementalLink 删除补链记录。
-func (s *Store) DeleteSupplementalLink(linkUUID string) error {
+func (s *TopologyRepository) DeleteSupplementalLink(linkUUID string) error {
 	if s == nil || s.db == nil {
 		return nil
 	}
@@ -462,7 +543,7 @@ func (s *Store) DeleteSupplementalLink(linkUUID string) error {
 }
 
 // UpsertPlannerMetrics 持久化调度器聚合指标。
-func (s *Store) UpsertPlannerMetrics(metrics topology.PlannerMetricsSnapshot) error {
+func (s *TopologyRepository) UpsertPlannerMetrics(metrics topology.PlannerMetricsSnapshot) error {
 	if s == nil || s.db == nil {
 		return nil
 	}

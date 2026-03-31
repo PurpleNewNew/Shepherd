@@ -645,10 +645,10 @@ func (admin *Admin) StartListener(targetUUID, bind string, mode int, listenerID 
 	select {
 	case ok := <-ackCh:
 		if !ok {
-			return "", fmt.Errorf("listener %s rejected", shorten(listenerID))
+			return "", fmt.Errorf("listener %s rejected", shortID(listenerID))
 		}
 	case <-time.After(defaults.ListenerAckTimeout):
-		return "", fmt.Errorf("listener %s start timeout", shorten(listenerID))
+		return "", fmt.Errorf("listener %s start timeout", shortID(listenerID))
 	}
 	return route, nil
 }
@@ -673,10 +673,10 @@ func (admin *Admin) StopListener(targetUUID, listenerID string) error {
 	select {
 	case ok := <-ackCh:
 		if !ok {
-			return fmt.Errorf("listener %s stop rejected", shorten(listenerID))
+			return fmt.Errorf("listener %s stop rejected", shortID(listenerID))
 		}
 	case <-time.After(defaults.ListenerAckTimeout):
-		return fmt.Errorf("listener %s stop timeout", shorten(listenerID))
+		return fmt.Errorf("listener %s stop timeout", shortID(listenerID))
 	}
 	return nil
 }

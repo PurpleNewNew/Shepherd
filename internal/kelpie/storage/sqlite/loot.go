@@ -12,7 +12,7 @@ import (
 )
 
 // SaveLoot 持久化一条 loot 记录。
-func (s *Store) SaveLoot(rec process.LootRecord) error {
+func (s *LootRepository) SaveLoot(rec process.LootRecord) error {
 	if s == nil || s.db == nil || rec.ID == "" {
 		return nil
 	}
@@ -58,7 +58,7 @@ func (s *Store) SaveLoot(rec process.LootRecord) error {
 }
 
 // ListLoot 返回最近的若干条 loot 记录。
-func (s *Store) ListLoot(filter process.LootFilter) ([]process.LootRecord, error) {
+func (s *LootRepository) ListLoot(filter process.LootFilter) ([]process.LootRecord, error) {
 	if s == nil || s.db == nil {
 		return nil, nil
 	}
@@ -182,7 +182,7 @@ func (s *Store) ListLoot(filter process.LootFilter) ([]process.LootRecord, error
 }
 
 // GetLoot 返回指定 loot 记录。
-func (s *Store) GetLoot(lootID string) (process.LootRecord, error) {
+func (s *LootRepository) GetLoot(lootID string) (process.LootRecord, error) {
 	if s == nil || s.db == nil {
 		return process.LootRecord{}, fmt.Errorf("loot store unavailable")
 	}

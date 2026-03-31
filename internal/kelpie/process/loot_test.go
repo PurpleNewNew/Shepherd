@@ -42,8 +42,10 @@ func TestSubmitLootStoresContentAndLoadsItBack(t *testing.T) {
 		t.Fatalf("new loot store: %v", err)
 	}
 	admin := &Admin{
-		lootStore:        &memoryLootStore{},
-		lootContentStore: contentStore,
+		adminListenerState: adminListenerState{
+			lootStore:        &memoryLootStore{},
+			lootContentStore: contentStore,
+		},
 	}
 
 	saved, err := admin.SubmitLoot(LootRecord{

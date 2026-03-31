@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"codeberg.org/agnoie/shepherd/internal/kelpie/manager"
+	"codeberg.org/agnoie/shepherd/internal/kelpie/planner"
 	"codeberg.org/agnoie/shepherd/internal/kelpie/printer"
 	"codeberg.org/agnoie/shepherd/internal/kelpie/supp"
 	"codeberg.org/agnoie/shepherd/internal/kelpie/topology"
@@ -20,7 +21,7 @@ type routerCore struct {
 	bus         *bus.Router
 	manager     *manager.Manager
 	topo        *topology.Topology
-	planner     *SupplementalPlanner
+	planner     *planner.SupplementalPlanner
 	dtnAck      func(*protocol.DTNAck)
 	streamOpen  func(*protocol.Header, *protocol.StreamOpen)
 	streamData  func(*protocol.Header, *protocol.StreamData)
@@ -39,7 +40,7 @@ func newRouterCore(ctx context.Context, mgr *manager.Manager, topo *topology.Top
 	return core
 }
 
-func (core *routerCore) setPlanner(planner *SupplementalPlanner) {
+func (core *routerCore) setPlanner(planner *planner.SupplementalPlanner) {
 	if core == nil {
 		return
 	}
@@ -195,9 +196,9 @@ func (core *routerCore) dispatchDTNAck() bus.Handler {
 			status = "ERR"
 		}
 		if ack.OK == 0 && ack.Error != "" {
-			printer.Warning("\r\n[*] DTN ack bundle=%s status=%s error=%s\r\n", shorten(ack.BundleID), status, ack.Error)
+			printer.Warning("\r\n[*] DTN ack bundle=%s status=%s error=%s\r\n", shortID(ack.BundleID), status, ack.Error)
 		} else {
-			printer.Success("\r\n[*] DTN ack bundle=%s status=%s\r\n", shorten(ack.BundleID), status)
+			printer.Success("\r\n[*] DTN ack bundle=%s status=%s\r\n", shortID(ack.BundleID), status)
 		}
 
 		// Trace 辅助：对于成功的 DTN "log:" 载荷，
@@ -300,7 +301,7 @@ func (core *routerCore) dispatchSleepUpdateAck() bus.Handler {
 		}
 		target := "node"
 		if header != nil && header.Sender != "" {
-			target = shortUUID(header.Sender)
+			target = shortID(header.Sender)
 		}
 		if ack.OK == 1 {
 			printer.Success("\r\n[*] Sleep update applied on %s.\r\n", target)
