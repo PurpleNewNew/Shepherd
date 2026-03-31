@@ -17,9 +17,7 @@ import (
 	"syscall"
 	"time"
 
-	"codeberg.org/agnoie/shepherd/internal/kelpie/collab/audit"
-	"codeberg.org/agnoie/shepherd/internal/kelpie/collab/auth"
-	"codeberg.org/agnoie/shepherd/internal/kelpie/collab/chat"
+	"codeberg.org/agnoie/shepherd/internal/kelpie/collab"
 	"codeberg.org/agnoie/shepherd/internal/kelpie/dataplane"
 	"codeberg.org/agnoie/shepherd/internal/kelpie/initial"
 	"codeberg.org/agnoie/shepherd/internal/kelpie/printer"
@@ -127,8 +125,8 @@ func main() {
 		}
 	}
 	printer.Warning("[*] Kelpie running in TEAMSERVER mode (no per-user auth)\r\n")
-	auditRecorder := audit.NewRecorder(sqlStore)
-	chatService := chat.NewService(sqlStore)
+	auditRecorder := collab.NewRecorder(sqlStore)
+	chatService := collab.NewService(sqlStore)
 	topo.SetPersistence(sqlStore)
 	snapshot, err := sqlStore.Load()
 	if err != nil {
@@ -198,7 +196,7 @@ func main() {
 	}
 }
 
-func recordDataplaneAuditHook(recorder *audit.Recorder, meta dataplane.TokenMeta, bytes int64, err error) {
+func recordDataplaneAuditHook(recorder *collab.Recorder, meta dataplane.TokenMeta, bytes int64, err error) {
 	if recorder == nil {
 		return
 	}
@@ -212,10 +210,10 @@ func recordDataplaneAuditHook(recorder *audit.Recorder, meta dataplane.TokenMeta
 	if bytes > 0 {
 		params = fmt.Sprintf("bytes=%d", bytes)
 	}
-	recorder.Record(audit.Entry{
+	recorder.Record(collab.Entry{
 		Tenant:   strings.TrimSpace(meta.Tenant),
 		Username: strings.TrimSpace(meta.Operator),
-		Role:     auth.RoleAdmin,
+		Role:     collab.RoleAdmin,
 		Method:   fmt.Sprintf("dataplane/%s", meta.Direction),
 		Target:   meta.Target,
 		Params:   params,
@@ -278,7 +276,7 @@ func connectWithRetry(options *initial.Options, topo *topology.Topology) (net.Co
 	return nil, nil, err
 }
 
-func serveGRPCUI(ctx context.Context, admin *process.Admin, opts *initial.Options, auditor *audit.Recorder, chatSvc *chat.Service) error {
+func serveGRPCUI(ctx context.Context, admin *process.Admin, opts *initial.Options, auditor *collab.Recorder, chatSvc *collab.Service) error {
 	if admin == nil {
 		return fmt.Errorf("admin unavailable")
 	}
@@ -345,7 +343,7 @@ func serveGRPCUI(ctx context.Context, admin *process.Admin, opts *initial.Option
 	}
 }
 
-func grpcServerOptionsFromConfig(opts *initial.Options, auditor *audit.Recorder) ([]grpc.ServerOption, error) {
+func grpcServerOptionsFromConfig(opts *initial.Options, auditor *collab.Recorder) ([]grpc.ServerOption, error) {
 	serverOpts := make([]grpc.ServerOption, 0, 2)
 	if opts == nil {
 		return serverOpts, nil
@@ -527,12 +525,12 @@ func teamserverUnaryInterceptor(bootstrap string) grpc.UnaryServerInterceptor {
 		}
 		username := operatorNameFromMetadata(ctx)
 		tenant := strings.ToLower(strings.TrimSpace(username))
-		claims := auth.Claims{
+		claims := collab.Claims{
 			Username: username,
-			Role:     auth.RoleAdmin,
+			Role:     collab.RoleAdmin,
 			Tenant:   tenant,
 		}
-		ctx = auth.ContextWithClaims(ctx, claims)
+		ctx = collab.ContextWithClaims(ctx, claims)
 		return handler(ctx, req)
 	}
 }
@@ -564,17 +562,17 @@ func teamserverStreamInterceptor(bootstrap string) grpc.StreamServerInterceptor 
 		}
 		username := operatorNameFromMetadata(ctx)
 		tenant := strings.ToLower(strings.TrimSpace(username))
-		claims := auth.Claims{
+		claims := collab.Claims{
 			Username: username,
-			Role:     auth.RoleAdmin,
+			Role:     collab.RoleAdmin,
 			Tenant:   tenant,
 		}
-		ctx = auth.ContextWithClaims(ctx, claims)
+		ctx = collab.ContextWithClaims(ctx, claims)
 		return handler(srv, &wrappedTeamserverStream{ServerStream: ss, ctx: ctx})
 	}
 }
 
-func auditUnaryInterceptor(recorder *audit.Recorder) grpc.UnaryServerInterceptor {
+func auditUnaryInterceptor(recorder *collab.Recorder) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 		resp, err := handler(ctx, req)
 		recordAudit(ctx, recorder, info.FullMethod, err)
@@ -582,7 +580,7 @@ func auditUnaryInterceptor(recorder *audit.Recorder) grpc.UnaryServerInterceptor
 	}
 }
 
-func auditStreamInterceptor(recorder *audit.Recorder) grpc.StreamServerInterceptor {
+func auditStreamInterceptor(recorder *collab.Recorder) grpc.StreamServerInterceptor {
 	return func(srv interface{}, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
 		err := handler(srv, ss)
 		recordAudit(ss.Context(), recorder, info.FullMethod, err)
@@ -590,11 +588,11 @@ func auditStreamInterceptor(recorder *audit.Recorder) grpc.StreamServerIntercept
 	}
 }
 
-func recordAudit(ctx context.Context, recorder *audit.Recorder, method string, err error) {
+func recordAudit(ctx context.Context, recorder *collab.Recorder, method string, err error) {
 	if recorder == nil || skipAudit(method) {
 		return
 	}
-	claims, _ := auth.ClaimsFromContext(ctx)
+	claims, _ := collab.ClaimsFromContext(ctx)
 	tenant := strings.TrimSpace(claims.Tenant)
 	if tenant == "" {
 		tenant = strings.TrimSpace(claims.Username)
@@ -605,7 +603,7 @@ func recordAudit(ctx context.Context, recorder *audit.Recorder, method string, e
 		statusText = status.Code(err).String()
 		msg = err.Error()
 	}
-	recorder.Record(audit.Entry{
+	recorder.Record(collab.Entry{
 		Tenant:   tenant,
 		Username: claims.Username,
 		Role:     claims.Role,

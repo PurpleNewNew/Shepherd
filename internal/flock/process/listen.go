@@ -10,7 +10,6 @@ import (
 
 	"codeberg.org/agnoie/shepherd/internal/flock/initial"
 	"codeberg.org/agnoie/shepherd/internal/flock/manager"
-	"codeberg.org/agnoie/shepherd/internal/flock/state"
 	"codeberg.org/agnoie/shepherd/pkg/share"
 	"codeberg.org/agnoie/shepherd/pkg/share/handshake"
 	"codeberg.org/agnoie/shepherd/pkg/share/transport"
@@ -151,7 +150,7 @@ func (listen *Listen) normalListen(mgr *manager.Manager, options *initial.Option
 	defer cleanup()
 	sendListenAck(mgr, true, listen.listenerID)
 
-	state.SetCurrentListenAddr(listener.Addr().String())
+	setCurrentListenAddr(listener.Addr().String())
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
@@ -413,7 +412,7 @@ func (listen *Listen) iptablesListen(mgr *manager.Manager, options *initial.Opti
 	cleanup := listen.registerActive(mgr)
 	defer cleanup()
 	sendListenAck(mgr, true, listen.listenerID)
-	state.SetCurrentListenAddr(listener.Addr().String())
+	setCurrentListenAddr(listener.Addr().String())
 
 	for {
 		conn, err := listener.Accept()
@@ -652,7 +651,7 @@ func (listen *Listen) soReuseListen(mgr *manager.Manager, options *initial.Optio
 	cleanup := listen.registerActive(mgr)
 	defer cleanup()
 	sendListenAck(mgr, true, listen.listenerID)
-	state.SetCurrentListenAddr(listener.Addr().String())
+	setCurrentListenAddr(listener.Addr().String())
 
 	for {
 		conn, err := listener.Accept()

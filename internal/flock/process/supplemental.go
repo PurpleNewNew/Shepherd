@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"codeberg.org/agnoie/shepherd/internal/flock/manager"
-	"codeberg.org/agnoie/shepherd/internal/flock/state"
 	"codeberg.org/agnoie/shepherd/pkg/utils"
 	"codeberg.org/agnoie/shepherd/protocol"
 )
@@ -213,7 +212,7 @@ func closeActiveListener(linkUUID string) {
 }
 
 func listenerIPForResponse(mgr *manager.Manager) string {
-	addr := state.GetCurrentListenAddr()
+	addr := currentListenAddrValue()
 	if host, _, err := net.SplitHostPort(addr); err == nil && host != "" {
 		if ip := net.ParseIP(host); ip != nil && !ip.IsUnspecified() {
 			return ip.String()

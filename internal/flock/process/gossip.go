@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"codeberg.org/agnoie/shepherd/internal/flock/gossip"
-	"codeberg.org/agnoie/shepherd/internal/flock/state"
 	"codeberg.org/agnoie/shepherd/pkg/utils"
 	"codeberg.org/agnoie/shepherd/protocol"
 )
@@ -519,7 +518,7 @@ func (agent *Agent) optionPreferredIP() string {
 }
 
 func (agent *Agent) localListenPort() uint16 {
-	if port := parsePort(state.GetCurrentListenAddr()); port != 0 {
+	if port := parsePort(currentListenAddrValue()); port != 0 {
 		return port
 	}
 	if agent == nil || agent.options == nil {

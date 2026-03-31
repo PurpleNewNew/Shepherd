@@ -13,9 +13,7 @@ import (
 	"time"
 
 	"codeberg.org/agnoie/shepherd/internal/dataplanepb"
-	"codeberg.org/agnoie/shepherd/internal/kelpie/collab/audit"
-	"codeberg.org/agnoie/shepherd/internal/kelpie/collab/auth"
-	"codeberg.org/agnoie/shepherd/internal/kelpie/collab/chat"
+	"codeberg.org/agnoie/shepherd/internal/kelpie/collab"
 	"codeberg.org/agnoie/shepherd/internal/kelpie/dataplane"
 	"codeberg.org/agnoie/shepherd/internal/kelpie/dtn"
 	"codeberg.org/agnoie/shepherd/internal/kelpie/printer"
@@ -39,7 +37,7 @@ type Server struct {
 }
 
 // New 使用给定的 admin 实例创建一个 UI gRPC 服务端。
-func New(admin *process.Admin, auditor *audit.Recorder, chatSvc *chat.Service, dpManager *dataplane.Manager, bootstrapToken string, opts ...grpc.ServerOption) *Server {
+func New(admin *process.Admin, auditor *collab.Recorder, chatSvc *collab.Service, dpManager *dataplane.Manager, bootstrapToken string, opts ...grpc.ServerOption) *Server {
 	svc := &service{
 		admin:          admin,
 		auditor:        auditor,
@@ -106,8 +104,8 @@ type service struct {
 	logHookCancel  func()
 	suppHookCancel []func()
 	dropCount      atomic.Uint64
-	auditor        *audit.Recorder
-	chatService    *chat.Service
+	auditor        *collab.Recorder
+	chatService    *collab.Service
 	dataplane      *dataplane.Manager
 	bootstrapToken string
 	// 测试钩子
@@ -345,7 +343,7 @@ func (s *service) ListAuditLogs(ctx context.Context, req *uipb.ListAuditLogsRequ
 	if s == nil || s.auditor == nil {
 		return nil, status.Error(codes.Unavailable, "audit unavailable")
 	}
-	filter := audit.Filter{}
+	filter := collab.Filter{}
 	// 默认按当前租户隔离视图，实现按人多租。
 	if tenant := s.currentTenant(ctx); tenant != "" {
 		filter.Tenant = tenant
@@ -1007,7 +1005,7 @@ func (s *service) PrepareTransfer(ctx context.Context, req *dataplanepb.PrepareT
 		return nil, status.Error(codes.InvalidArgument, "hash must be 64-char hex (sha256)")
 	}
 	ttl := time.Duration(req.GetTtlSeconds()) * time.Second
-	claims, _ := auth.ClaimsFromContext(ctx)
+	claims, _ := collab.ClaimsFromContext(ctx)
 	extras := req.GetMetadata()
 	if extras == nil {
 		extras = make(map[string]string)
@@ -1068,7 +1066,7 @@ func (s *service) PrepareProxy(ctx context.Context, req *dataplanepb.PrepareProx
 		return nil, status.Error(codes.InvalidArgument, "missing target uuid")
 	}
 	ttl := time.Duration(req.GetTtlSeconds()) * time.Second
-	claims, _ := auth.ClaimsFromContext(ctx)
+	claims, _ := collab.ClaimsFromContext(ctx)
 	token, endpoint, meta := s.dataplane.PrepareProxy(
 		claims.Tenant,
 		claims.Username,
@@ -1130,8 +1128,8 @@ func (s *service) recordDataplaneAudit(ctx context.Context, method, target, stat
 	if s == nil || s.auditor == nil {
 		return
 	}
-	claims, _ := auth.ClaimsFromContext(ctx)
-	entry := audit.Entry{
+	claims, _ := collab.ClaimsFromContext(ctx)
+	entry := collab.Entry{
 		Tenant:   strings.TrimSpace(claims.Tenant),
 		Username: claims.Username,
 		Role:     claims.Role,
@@ -1387,7 +1385,7 @@ func (s *service) handlePrinterHook(level, msg string) {
 }
 
 func (s *service) currentOperator(ctx context.Context) string {
-	claims, ok := auth.ClaimsFromContext(ctx)
+	claims, ok := collab.ClaimsFromContext(ctx)
 	if !ok {
 		return ""
 	}
@@ -1395,7 +1393,7 @@ func (s *service) currentOperator(ctx context.Context) string {
 }
 
 func (s *service) operatorRole(ctx context.Context) string {
-	claims, ok := auth.ClaimsFromContext(ctx)
+	claims, ok := collab.ClaimsFromContext(ctx)
 	if !ok {
 		return ""
 	}
@@ -1406,7 +1404,7 @@ func (s *service) operatorRole(ctx context.Context) string {
 // 在 teamserver 模式下，我们直接用 Client Name（即 Claims.Username）
 // 作为租户，将审计视图按人隔离。
 func (s *service) currentTenant(ctx context.Context) string {
-	claims, ok := auth.ClaimsFromContext(ctx)
+	claims, ok := collab.ClaimsFromContext(ctx)
 	if !ok {
 		return ""
 	}

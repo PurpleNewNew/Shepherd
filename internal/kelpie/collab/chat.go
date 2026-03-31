@@ -1,4 +1,4 @@
-package chat
+package collab
 
 import (
 	"fmt"
@@ -11,18 +11,18 @@ import (
 	"codeberg.org/agnoie/shepherd/internal/kelpie/storage/sqlite"
 )
 
-type Store interface {
+type ChatStore interface {
 	InsertChat(sqlite.ChatRecord) error
 	ListChat(limit int, before time.Time) ([]sqlite.ChatRecord, error)
 }
 
 type Service struct {
-	store Store
+	store ChatStore
 	mu    sync.RWMutex
 	sinks []func(sqlite.ChatRecord)
 }
 
-func NewService(store Store) *Service {
+func NewService(store ChatStore) *Service {
 	return &Service{store: store}
 }
 

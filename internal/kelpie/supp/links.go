@@ -11,7 +11,6 @@ import (
 	"syscall"
 	"time"
 
-	"codeberg.org/agnoie/shepherd/internal/kelpie/logging"
 	"codeberg.org/agnoie/shepherd/internal/kelpie/manager"
 	"codeberg.org/agnoie/shepherd/internal/kelpie/printer"
 	"codeberg.org/agnoie/shepherd/internal/kelpie/topology"
@@ -931,7 +930,7 @@ func warnRuntime(code string, retryable bool, err error, format string, args ...
 	if isBenignNetClose(err) {
 		return
 	}
-	logging.Warn(code, retryable, err, format, args...)
+	printer.Warn(code, retryable, err, format, args...)
 }
 
 func isBenignNetClose(err error) bool {

@@ -6,7 +6,6 @@ import (
 	"math"
 	"strings"
 
-	"codeberg.org/agnoie/shepherd/internal/kelpie/logging"
 	"codeberg.org/agnoie/shepherd/internal/kelpie/manager"
 	"codeberg.org/agnoie/shepherd/internal/kelpie/printer"
 	"codeberg.org/agnoie/shepherd/internal/kelpie/supp"
@@ -61,7 +60,7 @@ func nodeOffline(mgr *manager.Manager, topo *topology.Topology, uuid string) {
 	// DTN/短连接友好：不删除拓扑节点，仅标记离线，保留路由信息以便 carry-forward。
 	result, err := topoRequestDefault(topo, &topology.TopoTask{Mode: topology.MARKNODEOFFLINE, UUID: uuid})
 	if err != nil || result == nil {
-		logging.Warn("ADMIN_CHILDREN_MARK_OFFLINE", true, err, "mark node %s offline failed", uuid)
+		printer.Warn("ADMIN_CHILDREN_MARK_OFFLINE", true, err, "mark node %s offline failed", uuid)
 		return
 	}
 	allNodes := result.AllNodes
@@ -115,7 +114,7 @@ func attemptSupplementalFailover(mgr *manager.Manager, topo *topology.Topology, 
 	// 就可能与消息下发竞争，把晋升消息卡在已断裂的父边之后。
 	if topo != nil {
 		if err := topoExecute(topo, &topology.TopoTask{Mode: topology.CALCULATE}); err != nil {
-			logging.Warn("ADMIN_CHILDREN_FAILOVER_CALC", true, err, "calculate routes after reparent %s->%s failed", uuid, target)
+			printer.Warn("ADMIN_CHILDREN_FAILOVER_CALC", true, err, "calculate routes after reparent %s->%s failed", uuid, target)
 		}
 	}
 
@@ -209,7 +208,7 @@ func nodeReonline(mgr *manager.Manager, topo *topology.Topology, mess *protocol.
 		ParentUUID: mess.ParentUUID,
 		IsFirst:    false,
 	}); err != nil {
-		logging.Warn("ADMIN_CHILDREN_REONLINE_NODE", true, err, "reonline node %s failed", mess.UUID)
+		printer.Warn("ADMIN_CHILDREN_REONLINE_NODE", true, err, "reonline node %s failed", mess.UUID)
 		return
 	}
 
@@ -236,7 +235,7 @@ func nodeReonline(mgr *manager.Manager, topo *topology.Topology, mess *protocol.
 		NeighborUUID: mess.UUID,
 		EdgeType:     edgeType,
 	}); err != nil {
-		logging.Warn("ADMIN_CHILDREN_ADD_EDGE", true, err, "add edge for reonline node %s failed", mess.UUID)
+		printer.Warn("ADMIN_CHILDREN_ADD_EDGE", true, err, "add edge for reonline node %s failed", mess.UUID)
 	}
 
 	// 重新计算路由（节流）
@@ -246,7 +245,7 @@ func nodeReonline(mgr *manager.Manager, topo *topology.Topology, mess *protocol.
 
 	result, err := topoRequestDefault(topo, &topology.TopoTask{Mode: topology.GETUUIDNUM, UUID: mess.UUID})
 	if err != nil || result == nil {
-		logging.Warn("ADMIN_CHILDREN_FETCH_ID", true, err, "fetch id for reonline node %s failed", mess.UUID)
+		printer.Warn("ADMIN_CHILDREN_FETCH_ID", true, err, "fetch id for reonline node %s failed", mess.UUID)
 		return
 	}
 
@@ -352,7 +351,7 @@ func detachBrokenTreeEdge(topo *topology.Topology, parent, child string) {
 		UUID:         parent,
 		NeighborUUID: child,
 	}); err != nil {
-		logging.Warn("ADMIN_CHILDREN_DETACH_EDGE", true, err, "detach tree edge %s-%s failed", parent, child)
+		printer.Warn("ADMIN_CHILDREN_DETACH_EDGE", true, err, "detach tree edge %s-%s failed", parent, child)
 	}
 }
 
@@ -362,14 +361,14 @@ func reparentTree(topo *topology.Topology, child, newParent string) {
 		UUID:       child,
 		ParentUUID: newParent,
 	}); err != nil {
-		logging.Warn("ADMIN_CHILDREN_REPARENT_NODE", true, err, "reparent node %s to %s failed", child, newParent)
+		printer.Warn("ADMIN_CHILDREN_REPARENT_NODE", true, err, "reparent node %s to %s failed", child, newParent)
 	}
 }
 
 func fetchParentUUID(topo *topology.Topology, uuid string) string {
 	result, err := topoRequestDefault(topo, &topology.TopoTask{Mode: topology.GETNODEMETA, UUID: uuid})
 	if err != nil || result == nil {
-		logging.Warn("ADMIN_CHILDREN_FETCH_PARENT", true, err, "fetch parent for node %s failed", uuid)
+		printer.Warn("ADMIN_CHILDREN_FETCH_PARENT", true, err, "fetch parent for node %s failed", uuid)
 		return ""
 	}
 	return result.Parent
@@ -378,7 +377,7 @@ func fetchParentUUID(topo *topology.Topology, uuid string) string {
 func fetchNodeDepth(topo *topology.Topology, uuid string) int {
 	result, err := topoRequestDefault(topo, &topology.TopoTask{Mode: topology.GETDEPTH, UUID: uuid})
 	if err != nil || result == nil {
-		logging.Warn("ADMIN_CHILDREN_FETCH_DEPTH", true, err, "fetch depth for node %s failed", uuid)
+		printer.Warn("ADMIN_CHILDREN_FETCH_DEPTH", true, err, "fetch depth for node %s failed", uuid)
 		return 0
 	}
 	return result.Depth
@@ -387,7 +386,7 @@ func fetchNodeDepth(topo *topology.Topology, uuid string) int {
 func fetchRouteString(topo *topology.Topology, uuid string) string {
 	result, err := topoRequestDefault(topo, &topology.TopoTask{Mode: topology.GETROUTE, UUID: uuid})
 	if err != nil || result == nil {
-		logging.Warn("ADMIN_CHILDREN_FETCH_ROUTE", true, err, "fetch route for node %s failed", uuid)
+		printer.Warn("ADMIN_CHILDREN_FETCH_ROUTE", true, err, "fetch route for node %s failed", uuid)
 		return ""
 	}
 	return result.Route

@@ -1,4 +1,4 @@
-package audit
+package collab
 
 import (
 	"sync"
@@ -9,13 +9,13 @@ import (
 	"codeberg.org/agnoie/shepherd/internal/kelpie/storage/sqlite"
 )
 
-type Store interface {
+type AuditStore interface {
 	InsertAudit(sqlite.AuditRecord) error
 	ListAudit(sqlite.AuditFilter) ([]sqlite.AuditRecord, error)
 }
 
 type Recorder struct {
-	store Store
+	store AuditStore
 	mu    sync.RWMutex
 	sinks []func(sqlite.AuditRecord)
 }
@@ -41,7 +41,7 @@ type Filter struct {
 	Limit    int
 }
 
-func NewRecorder(store Store) *Recorder {
+func NewRecorder(store AuditStore) *Recorder {
 	return &Recorder{store: store}
 }
 

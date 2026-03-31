@@ -1,10 +1,9 @@
-package logging
+package printer
 
 import (
 	"fmt"
 	"strings"
 
-	"codeberg.org/agnoie/shepherd/internal/kelpie/printer"
 	"codeberg.org/agnoie/shepherd/pkg/utils/runtimeerr"
 )
 
@@ -29,6 +28,6 @@ func Warn(code string, retryable bool, err error, format string, args ...interfa
 	} else {
 		rerr = runtimeerr.New(code, runtimeerr.SeverityWarn, retryable, format, args...)
 	}
-	printer.Warning("\r\n%s\r\n", RuntimeMessage(rerr))
+	Warning("\r\n%s\r\n", RuntimeMessage(rerr))
 	return rerr
 }
