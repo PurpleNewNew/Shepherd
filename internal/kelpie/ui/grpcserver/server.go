@@ -719,31 +719,6 @@ func (s *service) EnqueueDtnPayload(ctx context.Context, req *uipb.EnqueueDtnPay
 	return &uipb.EnqueueDtnPayloadResponse{BundleId: id}, nil
 }
 
-func (s *service) GetRoutingStrategy(ctx context.Context, _ *uipb.GetRoutingStrategyRequest) (*uipb.GetRoutingStrategyResponse, error) {
-	if s == nil || s.admin == nil {
-		return nil, status.Error(codes.Unavailable, "admin unavailable")
-	}
-	strategy := mapRoutingStrategyToProto(s.admin.RoutingStrategy())
-	return &uipb.GetRoutingStrategyResponse{Strategy: strategy}, nil
-}
-
-func (s *service) SetRoutingStrategy(ctx context.Context, req *uipb.SetRoutingStrategyRequest) (*uipb.SetRoutingStrategyResponse, error) {
-	if s == nil || s.admin == nil {
-		return nil, status.Error(codes.Unavailable, "admin unavailable")
-	}
-	if req == nil {
-		return nil, status.Error(codes.InvalidArgument, "missing request")
-	}
-	strategy, err := mapProtoRoutingStrategy(req.GetStrategy())
-	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
-	}
-	if err := s.admin.SetRoutingStrategy(strategy); err != nil {
-		return nil, status.Errorf(codes.Internal, "routing update failed: %v", err)
-	}
-	return &uipb.SetRoutingStrategyResponse{Strategy: mapRoutingStrategyToProto(strategy)}, nil
-}
-
 func (s *service) registerSubscriber() (uint64, chan *uipb.UiEvent) {
 	id := s.nextSubID.Add(1)
 	ch := make(chan *uipb.UiEvent, 256)
@@ -1557,34 +1532,6 @@ func mapProtoDtnPriority(p uipb.DtnPriority) dtn.Priority {
 		return dtn.PriorityLow
 	default:
 		return dtn.PriorityNormal
-	}
-}
-
-func mapRoutingStrategyToProto(strategy topology.RoutingStrategy) uipb.RoutingStrategy {
-	switch strategy {
-	case topology.RoutingByHops:
-		return uipb.RoutingStrategy_ROUTING_STRATEGY_HOPS
-	case topology.RoutingByWeight:
-		return uipb.RoutingStrategy_ROUTING_STRATEGY_WEIGHT
-	case topology.RoutingByLatency:
-		return uipb.RoutingStrategy_ROUTING_STRATEGY_LATENCY
-	default:
-		return uipb.RoutingStrategy_ROUTING_STRATEGY_LATENCY
-	}
-}
-
-func mapProtoRoutingStrategy(strategy uipb.RoutingStrategy) (topology.RoutingStrategy, error) {
-	switch strategy {
-	case uipb.RoutingStrategy_ROUTING_STRATEGY_HOPS:
-		return topology.RoutingByHops, nil
-	case uipb.RoutingStrategy_ROUTING_STRATEGY_WEIGHT:
-		return topology.RoutingByWeight, nil
-	case uipb.RoutingStrategy_ROUTING_STRATEGY_LATENCY:
-		return topology.RoutingByLatency, nil
-	case uipb.RoutingStrategy_ROUTING_STRATEGY_UNSPECIFIED:
-		return topology.RoutingByLatency, nil
-	default:
-		return topology.RoutingByLatency, fmt.Errorf("unknown routing strategy")
 	}
 }
 

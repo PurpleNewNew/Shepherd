@@ -200,26 +200,6 @@ func (admin *Admin) SupplementalRepairs() ([]RepairStatusSnapshot, error) {
 	return admin.suppPlanner.RepairStatuses(), nil
 }
 
-// RoutingStrategy 返回当前拓扑的路由策略。
-func (admin *Admin) RoutingStrategy() topology.RoutingStrategy {
-	if admin == nil || admin.topology == nil {
-		return topology.RoutingByLatency
-	}
-	return admin.topology.RoutingStrategy()
-}
-
-// SetRoutingStrategy 在运行时切换拓扑路由策略。
-func (admin *Admin) SetRoutingStrategy(strategy topology.RoutingStrategy) error {
-	if admin == nil || admin.topology == nil {
-		return fmt.Errorf("topology unavailable")
-	}
-	_, err := admin.topology.Execute(&topology.TopoTask{
-		Mode:    topology.SETROUTINGSTRATEGY,
-		UUIDNum: int(strategy),
-	})
-	return err
-}
-
 func (admin *Admin) ActiveNetworkID() string {
 	if admin == nil {
 		return ""

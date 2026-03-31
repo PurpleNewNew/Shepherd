@@ -658,31 +658,6 @@ bool KelpieController::invokeUnary(QString& errorMessage,
         return true;
     }
 
-    bool KelpieController::GetRoutingStrategy(kelpieui::v1::RoutingStrategy* strategy, QString& errorMessage)
-    {
-        kelpieui::v1::GetRoutingStrategyRequest req;
-        kelpieui::v1::GetRoutingStrategyResponse resp;
-        if ( !invokeUnary<kelpieui::v1::KelpieUIService>(
-                 errorMessage, req, &resp, &kelpieui::v1::KelpieUIService::Stub::GetRoutingStrategy) )
-        {
-            return false;
-        }
-        if ( strategy != nullptr )
-        {
-            *strategy = resp.strategy();
-        }
-        return true;
-    }
-
-    bool KelpieController::SetRoutingStrategy(kelpieui::v1::RoutingStrategy strategy, QString& errorMessage)
-    {
-        kelpieui::v1::SetRoutingStrategyRequest req;
-        req.set_strategy(strategy);
-        kelpieui::v1::SetRoutingStrategyResponse resp;
-        return invokeUnary<kelpieui::v1::KelpieUIService>(
-            errorMessage, req, &resp, &kelpieui::v1::KelpieUIService::Stub::SetRoutingStrategy);
-    }
-
     bool KelpieController::GetSupplementalStatus(kelpieui::v1::SupplementalStatus* statusOut, QString& errorMessage)
     {
         kelpieui::v1::SupplementalEmpty req;

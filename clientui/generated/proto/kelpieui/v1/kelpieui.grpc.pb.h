@@ -237,20 +237,6 @@ class KelpieUIService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::kelpieui::v1::EnqueueDtnPayloadResponse>> PrepareAsyncEnqueueDtnPayload(::grpc::ClientContext* context, const ::kelpieui::v1::EnqueueDtnPayloadRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::kelpieui::v1::EnqueueDtnPayloadResponse>>(PrepareAsyncEnqueueDtnPayloadRaw(context, request, cq));
     }
-    virtual ::grpc::Status GetRoutingStrategy(::grpc::ClientContext* context, const ::kelpieui::v1::GetRoutingStrategyRequest& request, ::kelpieui::v1::GetRoutingStrategyResponse* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::kelpieui::v1::GetRoutingStrategyResponse>> AsyncGetRoutingStrategy(::grpc::ClientContext* context, const ::kelpieui::v1::GetRoutingStrategyRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::kelpieui::v1::GetRoutingStrategyResponse>>(AsyncGetRoutingStrategyRaw(context, request, cq));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::kelpieui::v1::GetRoutingStrategyResponse>> PrepareAsyncGetRoutingStrategy(::grpc::ClientContext* context, const ::kelpieui::v1::GetRoutingStrategyRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::kelpieui::v1::GetRoutingStrategyResponse>>(PrepareAsyncGetRoutingStrategyRaw(context, request, cq));
-    }
-    virtual ::grpc::Status SetRoutingStrategy(::grpc::ClientContext* context, const ::kelpieui::v1::SetRoutingStrategyRequest& request, ::kelpieui::v1::SetRoutingStrategyResponse* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::kelpieui::v1::SetRoutingStrategyResponse>> AsyncSetRoutingStrategy(::grpc::ClientContext* context, const ::kelpieui::v1::SetRoutingStrategyRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::kelpieui::v1::SetRoutingStrategyResponse>>(AsyncSetRoutingStrategyRaw(context, request, cq));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::kelpieui::v1::SetRoutingStrategyResponse>> PrepareAsyncSetRoutingStrategy(::grpc::ClientContext* context, const ::kelpieui::v1::SetRoutingStrategyRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::kelpieui::v1::SetRoutingStrategyResponse>>(PrepareAsyncSetRoutingStrategyRaw(context, request, cq));
-    }
     virtual ::grpc::Status NodeStatus(::grpc::ClientContext* context, const ::kelpieui::v1::NodeStatusRequest& request, ::kelpieui::v1::NodeStatusResponse* response) = 0;
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::kelpieui::v1::NodeStatusResponse>> AsyncNodeStatus(::grpc::ClientContext* context, const ::kelpieui::v1::NodeStatusRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::kelpieui::v1::NodeStatusResponse>>(AsyncNodeStatusRaw(context, request, cq));
@@ -371,10 +357,6 @@ class KelpieUIService final {
       virtual void ListDtnBundles(::grpc::ClientContext* context, const ::kelpieui::v1::ListDtnBundlesRequest* request, ::kelpieui::v1::ListDtnBundlesResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       virtual void EnqueueDtnPayload(::grpc::ClientContext* context, const ::kelpieui::v1::EnqueueDtnPayloadRequest* request, ::kelpieui::v1::EnqueueDtnPayloadResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void EnqueueDtnPayload(::grpc::ClientContext* context, const ::kelpieui::v1::EnqueueDtnPayloadRequest* request, ::kelpieui::v1::EnqueueDtnPayloadResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
-      virtual void GetRoutingStrategy(::grpc::ClientContext* context, const ::kelpieui::v1::GetRoutingStrategyRequest* request, ::kelpieui::v1::GetRoutingStrategyResponse* response, std::function<void(::grpc::Status)>) = 0;
-      virtual void GetRoutingStrategy(::grpc::ClientContext* context, const ::kelpieui::v1::GetRoutingStrategyRequest* request, ::kelpieui::v1::GetRoutingStrategyResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
-      virtual void SetRoutingStrategy(::grpc::ClientContext* context, const ::kelpieui::v1::SetRoutingStrategyRequest* request, ::kelpieui::v1::SetRoutingStrategyResponse* response, std::function<void(::grpc::Status)>) = 0;
-      virtual void SetRoutingStrategy(::grpc::ClientContext* context, const ::kelpieui::v1::SetRoutingStrategyRequest* request, ::kelpieui::v1::SetRoutingStrategyResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       virtual void NodeStatus(::grpc::ClientContext* context, const ::kelpieui::v1::NodeStatusRequest* request, ::kelpieui::v1::NodeStatusResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void NodeStatus(::grpc::ClientContext* context, const ::kelpieui::v1::NodeStatusRequest* request, ::kelpieui::v1::NodeStatusResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       virtual void ListNetworks(::grpc::ClientContext* context, const ::kelpieui::v1::ListNetworksRequest* request, ::kelpieui::v1::ListNetworksResponse* response, std::function<void(::grpc::Status)>) = 0;
@@ -456,10 +438,6 @@ class KelpieUIService final {
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::kelpieui::v1::ListDtnBundlesResponse>* PrepareAsyncListDtnBundlesRaw(::grpc::ClientContext* context, const ::kelpieui::v1::ListDtnBundlesRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::kelpieui::v1::EnqueueDtnPayloadResponse>* AsyncEnqueueDtnPayloadRaw(::grpc::ClientContext* context, const ::kelpieui::v1::EnqueueDtnPayloadRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::kelpieui::v1::EnqueueDtnPayloadResponse>* PrepareAsyncEnqueueDtnPayloadRaw(::grpc::ClientContext* context, const ::kelpieui::v1::EnqueueDtnPayloadRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::kelpieui::v1::GetRoutingStrategyResponse>* AsyncGetRoutingStrategyRaw(::grpc::ClientContext* context, const ::kelpieui::v1::GetRoutingStrategyRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::kelpieui::v1::GetRoutingStrategyResponse>* PrepareAsyncGetRoutingStrategyRaw(::grpc::ClientContext* context, const ::kelpieui::v1::GetRoutingStrategyRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::kelpieui::v1::SetRoutingStrategyResponse>* AsyncSetRoutingStrategyRaw(::grpc::ClientContext* context, const ::kelpieui::v1::SetRoutingStrategyRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::kelpieui::v1::SetRoutingStrategyResponse>* PrepareAsyncSetRoutingStrategyRaw(::grpc::ClientContext* context, const ::kelpieui::v1::SetRoutingStrategyRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::kelpieui::v1::NodeStatusResponse>* AsyncNodeStatusRaw(::grpc::ClientContext* context, const ::kelpieui::v1::NodeStatusRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::kelpieui::v1::NodeStatusResponse>* PrepareAsyncNodeStatusRaw(::grpc::ClientContext* context, const ::kelpieui::v1::NodeStatusRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::kelpieui::v1::ListNetworksResponse>* AsyncListNetworksRaw(::grpc::ClientContext* context, const ::kelpieui::v1::ListNetworksRequest& request, ::grpc::CompletionQueue* cq) = 0;
@@ -682,20 +660,6 @@ class KelpieUIService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::kelpieui::v1::EnqueueDtnPayloadResponse>> PrepareAsyncEnqueueDtnPayload(::grpc::ClientContext* context, const ::kelpieui::v1::EnqueueDtnPayloadRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::kelpieui::v1::EnqueueDtnPayloadResponse>>(PrepareAsyncEnqueueDtnPayloadRaw(context, request, cq));
     }
-    ::grpc::Status GetRoutingStrategy(::grpc::ClientContext* context, const ::kelpieui::v1::GetRoutingStrategyRequest& request, ::kelpieui::v1::GetRoutingStrategyResponse* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::kelpieui::v1::GetRoutingStrategyResponse>> AsyncGetRoutingStrategy(::grpc::ClientContext* context, const ::kelpieui::v1::GetRoutingStrategyRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::kelpieui::v1::GetRoutingStrategyResponse>>(AsyncGetRoutingStrategyRaw(context, request, cq));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::kelpieui::v1::GetRoutingStrategyResponse>> PrepareAsyncGetRoutingStrategy(::grpc::ClientContext* context, const ::kelpieui::v1::GetRoutingStrategyRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::kelpieui::v1::GetRoutingStrategyResponse>>(PrepareAsyncGetRoutingStrategyRaw(context, request, cq));
-    }
-    ::grpc::Status SetRoutingStrategy(::grpc::ClientContext* context, const ::kelpieui::v1::SetRoutingStrategyRequest& request, ::kelpieui::v1::SetRoutingStrategyResponse* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::kelpieui::v1::SetRoutingStrategyResponse>> AsyncSetRoutingStrategy(::grpc::ClientContext* context, const ::kelpieui::v1::SetRoutingStrategyRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::kelpieui::v1::SetRoutingStrategyResponse>>(AsyncSetRoutingStrategyRaw(context, request, cq));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::kelpieui::v1::SetRoutingStrategyResponse>> PrepareAsyncSetRoutingStrategy(::grpc::ClientContext* context, const ::kelpieui::v1::SetRoutingStrategyRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::kelpieui::v1::SetRoutingStrategyResponse>>(PrepareAsyncSetRoutingStrategyRaw(context, request, cq));
-    }
     ::grpc::Status NodeStatus(::grpc::ClientContext* context, const ::kelpieui::v1::NodeStatusRequest& request, ::kelpieui::v1::NodeStatusResponse* response) override;
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::kelpieui::v1::NodeStatusResponse>> AsyncNodeStatus(::grpc::ClientContext* context, const ::kelpieui::v1::NodeStatusRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::kelpieui::v1::NodeStatusResponse>>(AsyncNodeStatusRaw(context, request, cq));
@@ -816,10 +780,6 @@ class KelpieUIService final {
       void ListDtnBundles(::grpc::ClientContext* context, const ::kelpieui::v1::ListDtnBundlesRequest* request, ::kelpieui::v1::ListDtnBundlesResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       void EnqueueDtnPayload(::grpc::ClientContext* context, const ::kelpieui::v1::EnqueueDtnPayloadRequest* request, ::kelpieui::v1::EnqueueDtnPayloadResponse* response, std::function<void(::grpc::Status)>) override;
       void EnqueueDtnPayload(::grpc::ClientContext* context, const ::kelpieui::v1::EnqueueDtnPayloadRequest* request, ::kelpieui::v1::EnqueueDtnPayloadResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
-      void GetRoutingStrategy(::grpc::ClientContext* context, const ::kelpieui::v1::GetRoutingStrategyRequest* request, ::kelpieui::v1::GetRoutingStrategyResponse* response, std::function<void(::grpc::Status)>) override;
-      void GetRoutingStrategy(::grpc::ClientContext* context, const ::kelpieui::v1::GetRoutingStrategyRequest* request, ::kelpieui::v1::GetRoutingStrategyResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
-      void SetRoutingStrategy(::grpc::ClientContext* context, const ::kelpieui::v1::SetRoutingStrategyRequest* request, ::kelpieui::v1::SetRoutingStrategyResponse* response, std::function<void(::grpc::Status)>) override;
-      void SetRoutingStrategy(::grpc::ClientContext* context, const ::kelpieui::v1::SetRoutingStrategyRequest* request, ::kelpieui::v1::SetRoutingStrategyResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       void NodeStatus(::grpc::ClientContext* context, const ::kelpieui::v1::NodeStatusRequest* request, ::kelpieui::v1::NodeStatusResponse* response, std::function<void(::grpc::Status)>) override;
       void NodeStatus(::grpc::ClientContext* context, const ::kelpieui::v1::NodeStatusRequest* request, ::kelpieui::v1::NodeStatusResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       void ListNetworks(::grpc::ClientContext* context, const ::kelpieui::v1::ListNetworksRequest* request, ::kelpieui::v1::ListNetworksResponse* response, std::function<void(::grpc::Status)>) override;
@@ -907,10 +867,6 @@ class KelpieUIService final {
     ::grpc::ClientAsyncResponseReader< ::kelpieui::v1::ListDtnBundlesResponse>* PrepareAsyncListDtnBundlesRaw(::grpc::ClientContext* context, const ::kelpieui::v1::ListDtnBundlesRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::kelpieui::v1::EnqueueDtnPayloadResponse>* AsyncEnqueueDtnPayloadRaw(::grpc::ClientContext* context, const ::kelpieui::v1::EnqueueDtnPayloadRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::kelpieui::v1::EnqueueDtnPayloadResponse>* PrepareAsyncEnqueueDtnPayloadRaw(::grpc::ClientContext* context, const ::kelpieui::v1::EnqueueDtnPayloadRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::kelpieui::v1::GetRoutingStrategyResponse>* AsyncGetRoutingStrategyRaw(::grpc::ClientContext* context, const ::kelpieui::v1::GetRoutingStrategyRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::kelpieui::v1::GetRoutingStrategyResponse>* PrepareAsyncGetRoutingStrategyRaw(::grpc::ClientContext* context, const ::kelpieui::v1::GetRoutingStrategyRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::kelpieui::v1::SetRoutingStrategyResponse>* AsyncSetRoutingStrategyRaw(::grpc::ClientContext* context, const ::kelpieui::v1::SetRoutingStrategyRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::kelpieui::v1::SetRoutingStrategyResponse>* PrepareAsyncSetRoutingStrategyRaw(::grpc::ClientContext* context, const ::kelpieui::v1::SetRoutingStrategyRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::kelpieui::v1::NodeStatusResponse>* AsyncNodeStatusRaw(::grpc::ClientContext* context, const ::kelpieui::v1::NodeStatusRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::kelpieui::v1::NodeStatusResponse>* PrepareAsyncNodeStatusRaw(::grpc::ClientContext* context, const ::kelpieui::v1::NodeStatusRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::kelpieui::v1::ListNetworksResponse>* AsyncListNetworksRaw(::grpc::ClientContext* context, const ::kelpieui::v1::ListNetworksRequest& request, ::grpc::CompletionQueue* cq) override;
@@ -957,8 +913,6 @@ class KelpieUIService final {
     const ::grpc::internal::RpcMethod rpcmethod_GetDtnQueueStats_;
     const ::grpc::internal::RpcMethod rpcmethod_ListDtnBundles_;
     const ::grpc::internal::RpcMethod rpcmethod_EnqueueDtnPayload_;
-    const ::grpc::internal::RpcMethod rpcmethod_GetRoutingStrategy_;
-    const ::grpc::internal::RpcMethod rpcmethod_SetRoutingStrategy_;
     const ::grpc::internal::RpcMethod rpcmethod_NodeStatus_;
     const ::grpc::internal::RpcMethod rpcmethod_ListNetworks_;
     const ::grpc::internal::RpcMethod rpcmethod_UseNetwork_;
@@ -1003,8 +957,6 @@ class KelpieUIService final {
     virtual ::grpc::Status GetDtnQueueStats(::grpc::ServerContext* context, const ::kelpieui::v1::GetDtnQueueStatsRequest* request, ::kelpieui::v1::GetDtnQueueStatsResponse* response);
     virtual ::grpc::Status ListDtnBundles(::grpc::ServerContext* context, const ::kelpieui::v1::ListDtnBundlesRequest* request, ::kelpieui::v1::ListDtnBundlesResponse* response);
     virtual ::grpc::Status EnqueueDtnPayload(::grpc::ServerContext* context, const ::kelpieui::v1::EnqueueDtnPayloadRequest* request, ::kelpieui::v1::EnqueueDtnPayloadResponse* response);
-    virtual ::grpc::Status GetRoutingStrategy(::grpc::ServerContext* context, const ::kelpieui::v1::GetRoutingStrategyRequest* request, ::kelpieui::v1::GetRoutingStrategyResponse* response);
-    virtual ::grpc::Status SetRoutingStrategy(::grpc::ServerContext* context, const ::kelpieui::v1::SetRoutingStrategyRequest* request, ::kelpieui::v1::SetRoutingStrategyResponse* response);
     virtual ::grpc::Status NodeStatus(::grpc::ServerContext* context, const ::kelpieui::v1::NodeStatusRequest* request, ::kelpieui::v1::NodeStatusResponse* response);
     virtual ::grpc::Status ListNetworks(::grpc::ServerContext* context, const ::kelpieui::v1::ListNetworksRequest* request, ::kelpieui::v1::ListNetworksResponse* response);
     virtual ::grpc::Status UseNetwork(::grpc::ServerContext* context, const ::kelpieui::v1::UseNetworkRequest* request, ::kelpieui::v1::UseNetworkResponse* response);
@@ -1576,52 +1528,12 @@ class KelpieUIService final {
     }
   };
   template <class BaseClass>
-  class WithAsyncMethod_GetRoutingStrategy : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithAsyncMethod_GetRoutingStrategy() {
-      ::grpc::Service::MarkMethodAsync(28);
-    }
-    ~WithAsyncMethod_GetRoutingStrategy() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status GetRoutingStrategy(::grpc::ServerContext* /*context*/, const ::kelpieui::v1::GetRoutingStrategyRequest* /*request*/, ::kelpieui::v1::GetRoutingStrategyResponse* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestGetRoutingStrategy(::grpc::ServerContext* context, ::kelpieui::v1::GetRoutingStrategyRequest* request, ::grpc::ServerAsyncResponseWriter< ::kelpieui::v1::GetRoutingStrategyResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(28, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
-  class WithAsyncMethod_SetRoutingStrategy : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithAsyncMethod_SetRoutingStrategy() {
-      ::grpc::Service::MarkMethodAsync(29);
-    }
-    ~WithAsyncMethod_SetRoutingStrategy() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status SetRoutingStrategy(::grpc::ServerContext* /*context*/, const ::kelpieui::v1::SetRoutingStrategyRequest* /*request*/, ::kelpieui::v1::SetRoutingStrategyResponse* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestSetRoutingStrategy(::grpc::ServerContext* context, ::kelpieui::v1::SetRoutingStrategyRequest* request, ::grpc::ServerAsyncResponseWriter< ::kelpieui::v1::SetRoutingStrategyResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(29, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
   class WithAsyncMethod_NodeStatus : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_NodeStatus() {
-      ::grpc::Service::MarkMethodAsync(30);
+      ::grpc::Service::MarkMethodAsync(28);
     }
     ~WithAsyncMethod_NodeStatus() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1632,7 +1544,7 @@ class KelpieUIService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestNodeStatus(::grpc::ServerContext* context, ::kelpieui::v1::NodeStatusRequest* request, ::grpc::ServerAsyncResponseWriter< ::kelpieui::v1::NodeStatusResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(30, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(28, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1641,7 +1553,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_ListNetworks() {
-      ::grpc::Service::MarkMethodAsync(31);
+      ::grpc::Service::MarkMethodAsync(29);
     }
     ~WithAsyncMethod_ListNetworks() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1652,7 +1564,7 @@ class KelpieUIService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestListNetworks(::grpc::ServerContext* context, ::kelpieui::v1::ListNetworksRequest* request, ::grpc::ServerAsyncResponseWriter< ::kelpieui::v1::ListNetworksResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(31, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(29, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1661,7 +1573,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_UseNetwork() {
-      ::grpc::Service::MarkMethodAsync(32);
+      ::grpc::Service::MarkMethodAsync(30);
     }
     ~WithAsyncMethod_UseNetwork() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1672,7 +1584,7 @@ class KelpieUIService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestUseNetwork(::grpc::ServerContext* context, ::kelpieui::v1::UseNetworkRequest* request, ::grpc::ServerAsyncResponseWriter< ::kelpieui::v1::UseNetworkResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(32, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(30, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1681,7 +1593,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_ResetNetwork() {
-      ::grpc::Service::MarkMethodAsync(33);
+      ::grpc::Service::MarkMethodAsync(31);
     }
     ~WithAsyncMethod_ResetNetwork() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1692,7 +1604,7 @@ class KelpieUIService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestResetNetwork(::grpc::ServerContext* context, ::kelpieui::v1::ResetNetworkRequest* request, ::grpc::ServerAsyncResponseWriter< ::kelpieui::v1::ResetNetworkResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(33, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(31, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1701,7 +1613,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_SetNodeNetwork() {
-      ::grpc::Service::MarkMethodAsync(34);
+      ::grpc::Service::MarkMethodAsync(32);
     }
     ~WithAsyncMethod_SetNodeNetwork() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1712,7 +1624,7 @@ class KelpieUIService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSetNodeNetwork(::grpc::ServerContext* context, ::kelpieui::v1::SetNodeNetworkRequest* request, ::grpc::ServerAsyncResponseWriter< ::kelpieui::v1::SetNodeNetworkResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(34, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(32, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1721,7 +1633,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_PruneOffline() {
-      ::grpc::Service::MarkMethodAsync(35);
+      ::grpc::Service::MarkMethodAsync(33);
     }
     ~WithAsyncMethod_PruneOffline() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1732,7 +1644,7 @@ class KelpieUIService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestPruneOffline(::grpc::ServerContext* context, ::kelpieui::v1::PruneOfflineRequest* request, ::grpc::ServerAsyncResponseWriter< ::kelpieui::v1::PruneOfflineResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(35, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(33, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1741,7 +1653,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_SendChatMessage() {
-      ::grpc::Service::MarkMethodAsync(36);
+      ::grpc::Service::MarkMethodAsync(34);
     }
     ~WithAsyncMethod_SendChatMessage() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1752,7 +1664,7 @@ class KelpieUIService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSendChatMessage(::grpc::ServerContext* context, ::kelpieui::v1::SendChatMessageRequest* request, ::grpc::ServerAsyncResponseWriter< ::kelpieui::v1::SendChatMessageResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(36, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(34, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1761,7 +1673,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_ListChatMessages() {
-      ::grpc::Service::MarkMethodAsync(37);
+      ::grpc::Service::MarkMethodAsync(35);
     }
     ~WithAsyncMethod_ListChatMessages() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1772,7 +1684,7 @@ class KelpieUIService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestListChatMessages(::grpc::ServerContext* context, ::kelpieui::v1::ListChatMessagesRequest* request, ::grpc::ServerAsyncResponseWriter< ::kelpieui::v1::ListChatMessagesResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(37, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(35, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1781,7 +1693,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_ListAuditLogs() {
-      ::grpc::Service::MarkMethodAsync(38);
+      ::grpc::Service::MarkMethodAsync(36);
     }
     ~WithAsyncMethod_ListAuditLogs() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1792,10 +1704,10 @@ class KelpieUIService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestListAuditLogs(::grpc::ServerContext* context, ::kelpieui::v1::ListAuditLogsRequest* request, ::grpc::ServerAsyncResponseWriter< ::kelpieui::v1::ListAuditLogsResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(38, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(36, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_GetSnapshot<WithAsyncMethod_ListNodes<WithAsyncMethod_GetTopology<WithAsyncMethod_WatchEvents<WithAsyncMethod_ListLoot<WithAsyncMethod_SubmitLoot<WithAsyncMethod_GetLoot<WithAsyncMethod_ProxyStream<WithAsyncMethod_StartShell<WithAsyncMethod_StartSocksProxy<WithAsyncMethod_StartSshSession<WithAsyncMethod_UpdateNodeMemo<WithAsyncMethod_ListSessions<WithAsyncMethod_MarkSession<WithAsyncMethod_RepairSession<WithAsyncMethod_ReconnectSession<WithAsyncMethod_TerminateSession<WithAsyncMethod_GetSessionDiagnostics<WithAsyncMethod_CloseStream<WithAsyncMethod_StartSshTunnel<WithAsyncMethod_ShutdownNode<WithAsyncMethod_StreamStats<WithAsyncMethod_StreamDiagnostics<WithAsyncMethod_StreamPing<WithAsyncMethod_GetMetrics<WithAsyncMethod_GetDtnQueueStats<WithAsyncMethod_ListDtnBundles<WithAsyncMethod_EnqueueDtnPayload<WithAsyncMethod_GetRoutingStrategy<WithAsyncMethod_SetRoutingStrategy<WithAsyncMethod_NodeStatus<WithAsyncMethod_ListNetworks<WithAsyncMethod_UseNetwork<WithAsyncMethod_ResetNetwork<WithAsyncMethod_SetNodeNetwork<WithAsyncMethod_PruneOffline<WithAsyncMethod_SendChatMessage<WithAsyncMethod_ListChatMessages<WithAsyncMethod_ListAuditLogs<Service > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > AsyncService;
+  typedef WithAsyncMethod_GetSnapshot<WithAsyncMethod_ListNodes<WithAsyncMethod_GetTopology<WithAsyncMethod_WatchEvents<WithAsyncMethod_ListLoot<WithAsyncMethod_SubmitLoot<WithAsyncMethod_GetLoot<WithAsyncMethod_ProxyStream<WithAsyncMethod_StartShell<WithAsyncMethod_StartSocksProxy<WithAsyncMethod_StartSshSession<WithAsyncMethod_UpdateNodeMemo<WithAsyncMethod_ListSessions<WithAsyncMethod_MarkSession<WithAsyncMethod_RepairSession<WithAsyncMethod_ReconnectSession<WithAsyncMethod_TerminateSession<WithAsyncMethod_GetSessionDiagnostics<WithAsyncMethod_CloseStream<WithAsyncMethod_StartSshTunnel<WithAsyncMethod_ShutdownNode<WithAsyncMethod_StreamStats<WithAsyncMethod_StreamDiagnostics<WithAsyncMethod_StreamPing<WithAsyncMethod_GetMetrics<WithAsyncMethod_GetDtnQueueStats<WithAsyncMethod_ListDtnBundles<WithAsyncMethod_EnqueueDtnPayload<WithAsyncMethod_NodeStatus<WithAsyncMethod_ListNetworks<WithAsyncMethod_UseNetwork<WithAsyncMethod_ResetNetwork<WithAsyncMethod_SetNodeNetwork<WithAsyncMethod_PruneOffline<WithAsyncMethod_SendChatMessage<WithAsyncMethod_ListChatMessages<WithAsyncMethod_ListAuditLogs<Service > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > AsyncService;
   template <class BaseClass>
   class WithCallbackMethod_GetSnapshot : public BaseClass {
    private:
@@ -2544,72 +2456,18 @@ class KelpieUIService final {
       ::grpc::CallbackServerContext* /*context*/, const ::kelpieui::v1::EnqueueDtnPayloadRequest* /*request*/, ::kelpieui::v1::EnqueueDtnPayloadResponse* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
-  class WithCallbackMethod_GetRoutingStrategy : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithCallbackMethod_GetRoutingStrategy() {
-      ::grpc::Service::MarkMethodCallback(28,
-          new ::grpc::internal::CallbackUnaryHandler< ::kelpieui::v1::GetRoutingStrategyRequest, ::kelpieui::v1::GetRoutingStrategyResponse>(
-            [this](
-                   ::grpc::CallbackServerContext* context, const ::kelpieui::v1::GetRoutingStrategyRequest* request, ::kelpieui::v1::GetRoutingStrategyResponse* response) { return this->GetRoutingStrategy(context, request, response); }));}
-    void SetMessageAllocatorFor_GetRoutingStrategy(
-        ::grpc::MessageAllocator< ::kelpieui::v1::GetRoutingStrategyRequest, ::kelpieui::v1::GetRoutingStrategyResponse>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(28);
-      static_cast<::grpc::internal::CallbackUnaryHandler< ::kelpieui::v1::GetRoutingStrategyRequest, ::kelpieui::v1::GetRoutingStrategyResponse>*>(handler)
-              ->SetMessageAllocator(allocator);
-    }
-    ~WithCallbackMethod_GetRoutingStrategy() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status GetRoutingStrategy(::grpc::ServerContext* /*context*/, const ::kelpieui::v1::GetRoutingStrategyRequest* /*request*/, ::kelpieui::v1::GetRoutingStrategyResponse* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    virtual ::grpc::ServerUnaryReactor* GetRoutingStrategy(
-      ::grpc::CallbackServerContext* /*context*/, const ::kelpieui::v1::GetRoutingStrategyRequest* /*request*/, ::kelpieui::v1::GetRoutingStrategyResponse* /*response*/)  { return nullptr; }
-  };
-  template <class BaseClass>
-  class WithCallbackMethod_SetRoutingStrategy : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithCallbackMethod_SetRoutingStrategy() {
-      ::grpc::Service::MarkMethodCallback(29,
-          new ::grpc::internal::CallbackUnaryHandler< ::kelpieui::v1::SetRoutingStrategyRequest, ::kelpieui::v1::SetRoutingStrategyResponse>(
-            [this](
-                   ::grpc::CallbackServerContext* context, const ::kelpieui::v1::SetRoutingStrategyRequest* request, ::kelpieui::v1::SetRoutingStrategyResponse* response) { return this->SetRoutingStrategy(context, request, response); }));}
-    void SetMessageAllocatorFor_SetRoutingStrategy(
-        ::grpc::MessageAllocator< ::kelpieui::v1::SetRoutingStrategyRequest, ::kelpieui::v1::SetRoutingStrategyResponse>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(29);
-      static_cast<::grpc::internal::CallbackUnaryHandler< ::kelpieui::v1::SetRoutingStrategyRequest, ::kelpieui::v1::SetRoutingStrategyResponse>*>(handler)
-              ->SetMessageAllocator(allocator);
-    }
-    ~WithCallbackMethod_SetRoutingStrategy() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status SetRoutingStrategy(::grpc::ServerContext* /*context*/, const ::kelpieui::v1::SetRoutingStrategyRequest* /*request*/, ::kelpieui::v1::SetRoutingStrategyResponse* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    virtual ::grpc::ServerUnaryReactor* SetRoutingStrategy(
-      ::grpc::CallbackServerContext* /*context*/, const ::kelpieui::v1::SetRoutingStrategyRequest* /*request*/, ::kelpieui::v1::SetRoutingStrategyResponse* /*response*/)  { return nullptr; }
-  };
-  template <class BaseClass>
   class WithCallbackMethod_NodeStatus : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_NodeStatus() {
-      ::grpc::Service::MarkMethodCallback(30,
+      ::grpc::Service::MarkMethodCallback(28,
           new ::grpc::internal::CallbackUnaryHandler< ::kelpieui::v1::NodeStatusRequest, ::kelpieui::v1::NodeStatusResponse>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::kelpieui::v1::NodeStatusRequest* request, ::kelpieui::v1::NodeStatusResponse* response) { return this->NodeStatus(context, request, response); }));}
     void SetMessageAllocatorFor_NodeStatus(
         ::grpc::MessageAllocator< ::kelpieui::v1::NodeStatusRequest, ::kelpieui::v1::NodeStatusResponse>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(30);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(28);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::kelpieui::v1::NodeStatusRequest, ::kelpieui::v1::NodeStatusResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -2630,13 +2488,13 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_ListNetworks() {
-      ::grpc::Service::MarkMethodCallback(31,
+      ::grpc::Service::MarkMethodCallback(29,
           new ::grpc::internal::CallbackUnaryHandler< ::kelpieui::v1::ListNetworksRequest, ::kelpieui::v1::ListNetworksResponse>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::kelpieui::v1::ListNetworksRequest* request, ::kelpieui::v1::ListNetworksResponse* response) { return this->ListNetworks(context, request, response); }));}
     void SetMessageAllocatorFor_ListNetworks(
         ::grpc::MessageAllocator< ::kelpieui::v1::ListNetworksRequest, ::kelpieui::v1::ListNetworksResponse>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(31);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(29);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::kelpieui::v1::ListNetworksRequest, ::kelpieui::v1::ListNetworksResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -2657,13 +2515,13 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_UseNetwork() {
-      ::grpc::Service::MarkMethodCallback(32,
+      ::grpc::Service::MarkMethodCallback(30,
           new ::grpc::internal::CallbackUnaryHandler< ::kelpieui::v1::UseNetworkRequest, ::kelpieui::v1::UseNetworkResponse>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::kelpieui::v1::UseNetworkRequest* request, ::kelpieui::v1::UseNetworkResponse* response) { return this->UseNetwork(context, request, response); }));}
     void SetMessageAllocatorFor_UseNetwork(
         ::grpc::MessageAllocator< ::kelpieui::v1::UseNetworkRequest, ::kelpieui::v1::UseNetworkResponse>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(32);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(30);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::kelpieui::v1::UseNetworkRequest, ::kelpieui::v1::UseNetworkResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -2684,13 +2542,13 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_ResetNetwork() {
-      ::grpc::Service::MarkMethodCallback(33,
+      ::grpc::Service::MarkMethodCallback(31,
           new ::grpc::internal::CallbackUnaryHandler< ::kelpieui::v1::ResetNetworkRequest, ::kelpieui::v1::ResetNetworkResponse>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::kelpieui::v1::ResetNetworkRequest* request, ::kelpieui::v1::ResetNetworkResponse* response) { return this->ResetNetwork(context, request, response); }));}
     void SetMessageAllocatorFor_ResetNetwork(
         ::grpc::MessageAllocator< ::kelpieui::v1::ResetNetworkRequest, ::kelpieui::v1::ResetNetworkResponse>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(33);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(31);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::kelpieui::v1::ResetNetworkRequest, ::kelpieui::v1::ResetNetworkResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -2711,13 +2569,13 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_SetNodeNetwork() {
-      ::grpc::Service::MarkMethodCallback(34,
+      ::grpc::Service::MarkMethodCallback(32,
           new ::grpc::internal::CallbackUnaryHandler< ::kelpieui::v1::SetNodeNetworkRequest, ::kelpieui::v1::SetNodeNetworkResponse>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::kelpieui::v1::SetNodeNetworkRequest* request, ::kelpieui::v1::SetNodeNetworkResponse* response) { return this->SetNodeNetwork(context, request, response); }));}
     void SetMessageAllocatorFor_SetNodeNetwork(
         ::grpc::MessageAllocator< ::kelpieui::v1::SetNodeNetworkRequest, ::kelpieui::v1::SetNodeNetworkResponse>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(34);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(32);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::kelpieui::v1::SetNodeNetworkRequest, ::kelpieui::v1::SetNodeNetworkResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -2738,13 +2596,13 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_PruneOffline() {
-      ::grpc::Service::MarkMethodCallback(35,
+      ::grpc::Service::MarkMethodCallback(33,
           new ::grpc::internal::CallbackUnaryHandler< ::kelpieui::v1::PruneOfflineRequest, ::kelpieui::v1::PruneOfflineResponse>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::kelpieui::v1::PruneOfflineRequest* request, ::kelpieui::v1::PruneOfflineResponse* response) { return this->PruneOffline(context, request, response); }));}
     void SetMessageAllocatorFor_PruneOffline(
         ::grpc::MessageAllocator< ::kelpieui::v1::PruneOfflineRequest, ::kelpieui::v1::PruneOfflineResponse>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(35);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(33);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::kelpieui::v1::PruneOfflineRequest, ::kelpieui::v1::PruneOfflineResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -2765,13 +2623,13 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_SendChatMessage() {
-      ::grpc::Service::MarkMethodCallback(36,
+      ::grpc::Service::MarkMethodCallback(34,
           new ::grpc::internal::CallbackUnaryHandler< ::kelpieui::v1::SendChatMessageRequest, ::kelpieui::v1::SendChatMessageResponse>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::kelpieui::v1::SendChatMessageRequest* request, ::kelpieui::v1::SendChatMessageResponse* response) { return this->SendChatMessage(context, request, response); }));}
     void SetMessageAllocatorFor_SendChatMessage(
         ::grpc::MessageAllocator< ::kelpieui::v1::SendChatMessageRequest, ::kelpieui::v1::SendChatMessageResponse>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(36);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(34);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::kelpieui::v1::SendChatMessageRequest, ::kelpieui::v1::SendChatMessageResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -2792,13 +2650,13 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_ListChatMessages() {
-      ::grpc::Service::MarkMethodCallback(37,
+      ::grpc::Service::MarkMethodCallback(35,
           new ::grpc::internal::CallbackUnaryHandler< ::kelpieui::v1::ListChatMessagesRequest, ::kelpieui::v1::ListChatMessagesResponse>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::kelpieui::v1::ListChatMessagesRequest* request, ::kelpieui::v1::ListChatMessagesResponse* response) { return this->ListChatMessages(context, request, response); }));}
     void SetMessageAllocatorFor_ListChatMessages(
         ::grpc::MessageAllocator< ::kelpieui::v1::ListChatMessagesRequest, ::kelpieui::v1::ListChatMessagesResponse>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(37);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(35);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::kelpieui::v1::ListChatMessagesRequest, ::kelpieui::v1::ListChatMessagesResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -2819,13 +2677,13 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_ListAuditLogs() {
-      ::grpc::Service::MarkMethodCallback(38,
+      ::grpc::Service::MarkMethodCallback(36,
           new ::grpc::internal::CallbackUnaryHandler< ::kelpieui::v1::ListAuditLogsRequest, ::kelpieui::v1::ListAuditLogsResponse>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::kelpieui::v1::ListAuditLogsRequest* request, ::kelpieui::v1::ListAuditLogsResponse* response) { return this->ListAuditLogs(context, request, response); }));}
     void SetMessageAllocatorFor_ListAuditLogs(
         ::grpc::MessageAllocator< ::kelpieui::v1::ListAuditLogsRequest, ::kelpieui::v1::ListAuditLogsResponse>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(38);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(36);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::kelpieui::v1::ListAuditLogsRequest, ::kelpieui::v1::ListAuditLogsResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -2840,7 +2698,7 @@ class KelpieUIService final {
     virtual ::grpc::ServerUnaryReactor* ListAuditLogs(
       ::grpc::CallbackServerContext* /*context*/, const ::kelpieui::v1::ListAuditLogsRequest* /*request*/, ::kelpieui::v1::ListAuditLogsResponse* /*response*/)  { return nullptr; }
   };
-  typedef WithCallbackMethod_GetSnapshot<WithCallbackMethod_ListNodes<WithCallbackMethod_GetTopology<WithCallbackMethod_WatchEvents<WithCallbackMethod_ListLoot<WithCallbackMethod_SubmitLoot<WithCallbackMethod_GetLoot<WithCallbackMethod_ProxyStream<WithCallbackMethod_StartShell<WithCallbackMethod_StartSocksProxy<WithCallbackMethod_StartSshSession<WithCallbackMethod_UpdateNodeMemo<WithCallbackMethod_ListSessions<WithCallbackMethod_MarkSession<WithCallbackMethod_RepairSession<WithCallbackMethod_ReconnectSession<WithCallbackMethod_TerminateSession<WithCallbackMethod_GetSessionDiagnostics<WithCallbackMethod_CloseStream<WithCallbackMethod_StartSshTunnel<WithCallbackMethod_ShutdownNode<WithCallbackMethod_StreamStats<WithCallbackMethod_StreamDiagnostics<WithCallbackMethod_StreamPing<WithCallbackMethod_GetMetrics<WithCallbackMethod_GetDtnQueueStats<WithCallbackMethod_ListDtnBundles<WithCallbackMethod_EnqueueDtnPayload<WithCallbackMethod_GetRoutingStrategy<WithCallbackMethod_SetRoutingStrategy<WithCallbackMethod_NodeStatus<WithCallbackMethod_ListNetworks<WithCallbackMethod_UseNetwork<WithCallbackMethod_ResetNetwork<WithCallbackMethod_SetNodeNetwork<WithCallbackMethod_PruneOffline<WithCallbackMethod_SendChatMessage<WithCallbackMethod_ListChatMessages<WithCallbackMethod_ListAuditLogs<Service > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > CallbackService;
+  typedef WithCallbackMethod_GetSnapshot<WithCallbackMethod_ListNodes<WithCallbackMethod_GetTopology<WithCallbackMethod_WatchEvents<WithCallbackMethod_ListLoot<WithCallbackMethod_SubmitLoot<WithCallbackMethod_GetLoot<WithCallbackMethod_ProxyStream<WithCallbackMethod_StartShell<WithCallbackMethod_StartSocksProxy<WithCallbackMethod_StartSshSession<WithCallbackMethod_UpdateNodeMemo<WithCallbackMethod_ListSessions<WithCallbackMethod_MarkSession<WithCallbackMethod_RepairSession<WithCallbackMethod_ReconnectSession<WithCallbackMethod_TerminateSession<WithCallbackMethod_GetSessionDiagnostics<WithCallbackMethod_CloseStream<WithCallbackMethod_StartSshTunnel<WithCallbackMethod_ShutdownNode<WithCallbackMethod_StreamStats<WithCallbackMethod_StreamDiagnostics<WithCallbackMethod_StreamPing<WithCallbackMethod_GetMetrics<WithCallbackMethod_GetDtnQueueStats<WithCallbackMethod_ListDtnBundles<WithCallbackMethod_EnqueueDtnPayload<WithCallbackMethod_NodeStatus<WithCallbackMethod_ListNetworks<WithCallbackMethod_UseNetwork<WithCallbackMethod_ResetNetwork<WithCallbackMethod_SetNodeNetwork<WithCallbackMethod_PruneOffline<WithCallbackMethod_SendChatMessage<WithCallbackMethod_ListChatMessages<WithCallbackMethod_ListAuditLogs<Service > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > CallbackService;
   typedef CallbackService ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod_GetSnapshot : public BaseClass {
@@ -3319,46 +3177,12 @@ class KelpieUIService final {
     }
   };
   template <class BaseClass>
-  class WithGenericMethod_GetRoutingStrategy : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithGenericMethod_GetRoutingStrategy() {
-      ::grpc::Service::MarkMethodGeneric(28);
-    }
-    ~WithGenericMethod_GetRoutingStrategy() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status GetRoutingStrategy(::grpc::ServerContext* /*context*/, const ::kelpieui::v1::GetRoutingStrategyRequest* /*request*/, ::kelpieui::v1::GetRoutingStrategyResponse* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-  };
-  template <class BaseClass>
-  class WithGenericMethod_SetRoutingStrategy : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithGenericMethod_SetRoutingStrategy() {
-      ::grpc::Service::MarkMethodGeneric(29);
-    }
-    ~WithGenericMethod_SetRoutingStrategy() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status SetRoutingStrategy(::grpc::ServerContext* /*context*/, const ::kelpieui::v1::SetRoutingStrategyRequest* /*request*/, ::kelpieui::v1::SetRoutingStrategyResponse* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-  };
-  template <class BaseClass>
   class WithGenericMethod_NodeStatus : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_NodeStatus() {
-      ::grpc::Service::MarkMethodGeneric(30);
+      ::grpc::Service::MarkMethodGeneric(28);
     }
     ~WithGenericMethod_NodeStatus() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3375,7 +3199,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_ListNetworks() {
-      ::grpc::Service::MarkMethodGeneric(31);
+      ::grpc::Service::MarkMethodGeneric(29);
     }
     ~WithGenericMethod_ListNetworks() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3392,7 +3216,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_UseNetwork() {
-      ::grpc::Service::MarkMethodGeneric(32);
+      ::grpc::Service::MarkMethodGeneric(30);
     }
     ~WithGenericMethod_UseNetwork() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3409,7 +3233,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_ResetNetwork() {
-      ::grpc::Service::MarkMethodGeneric(33);
+      ::grpc::Service::MarkMethodGeneric(31);
     }
     ~WithGenericMethod_ResetNetwork() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3426,7 +3250,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_SetNodeNetwork() {
-      ::grpc::Service::MarkMethodGeneric(34);
+      ::grpc::Service::MarkMethodGeneric(32);
     }
     ~WithGenericMethod_SetNodeNetwork() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3443,7 +3267,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_PruneOffline() {
-      ::grpc::Service::MarkMethodGeneric(35);
+      ::grpc::Service::MarkMethodGeneric(33);
     }
     ~WithGenericMethod_PruneOffline() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3460,7 +3284,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_SendChatMessage() {
-      ::grpc::Service::MarkMethodGeneric(36);
+      ::grpc::Service::MarkMethodGeneric(34);
     }
     ~WithGenericMethod_SendChatMessage() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3477,7 +3301,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_ListChatMessages() {
-      ::grpc::Service::MarkMethodGeneric(37);
+      ::grpc::Service::MarkMethodGeneric(35);
     }
     ~WithGenericMethod_ListChatMessages() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3494,7 +3318,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_ListAuditLogs() {
-      ::grpc::Service::MarkMethodGeneric(38);
+      ::grpc::Service::MarkMethodGeneric(36);
     }
     ~WithGenericMethod_ListAuditLogs() override {
       BaseClassMustBeDerivedFromService(this);
@@ -4066,52 +3890,12 @@ class KelpieUIService final {
     }
   };
   template <class BaseClass>
-  class WithRawMethod_GetRoutingStrategy : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithRawMethod_GetRoutingStrategy() {
-      ::grpc::Service::MarkMethodRaw(28);
-    }
-    ~WithRawMethod_GetRoutingStrategy() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status GetRoutingStrategy(::grpc::ServerContext* /*context*/, const ::kelpieui::v1::GetRoutingStrategyRequest* /*request*/, ::kelpieui::v1::GetRoutingStrategyResponse* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestGetRoutingStrategy(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(28, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
-  class WithRawMethod_SetRoutingStrategy : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithRawMethod_SetRoutingStrategy() {
-      ::grpc::Service::MarkMethodRaw(29);
-    }
-    ~WithRawMethod_SetRoutingStrategy() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status SetRoutingStrategy(::grpc::ServerContext* /*context*/, const ::kelpieui::v1::SetRoutingStrategyRequest* /*request*/, ::kelpieui::v1::SetRoutingStrategyResponse* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestSetRoutingStrategy(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(29, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
   class WithRawMethod_NodeStatus : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_NodeStatus() {
-      ::grpc::Service::MarkMethodRaw(30);
+      ::grpc::Service::MarkMethodRaw(28);
     }
     ~WithRawMethod_NodeStatus() override {
       BaseClassMustBeDerivedFromService(this);
@@ -4122,7 +3906,7 @@ class KelpieUIService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestNodeStatus(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(30, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(28, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -4131,7 +3915,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_ListNetworks() {
-      ::grpc::Service::MarkMethodRaw(31);
+      ::grpc::Service::MarkMethodRaw(29);
     }
     ~WithRawMethod_ListNetworks() override {
       BaseClassMustBeDerivedFromService(this);
@@ -4142,7 +3926,7 @@ class KelpieUIService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestListNetworks(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(31, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(29, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -4151,7 +3935,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_UseNetwork() {
-      ::grpc::Service::MarkMethodRaw(32);
+      ::grpc::Service::MarkMethodRaw(30);
     }
     ~WithRawMethod_UseNetwork() override {
       BaseClassMustBeDerivedFromService(this);
@@ -4162,7 +3946,7 @@ class KelpieUIService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestUseNetwork(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(32, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(30, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -4171,7 +3955,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_ResetNetwork() {
-      ::grpc::Service::MarkMethodRaw(33);
+      ::grpc::Service::MarkMethodRaw(31);
     }
     ~WithRawMethod_ResetNetwork() override {
       BaseClassMustBeDerivedFromService(this);
@@ -4182,7 +3966,7 @@ class KelpieUIService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestResetNetwork(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(33, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(31, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -4191,7 +3975,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_SetNodeNetwork() {
-      ::grpc::Service::MarkMethodRaw(34);
+      ::grpc::Service::MarkMethodRaw(32);
     }
     ~WithRawMethod_SetNodeNetwork() override {
       BaseClassMustBeDerivedFromService(this);
@@ -4202,7 +3986,7 @@ class KelpieUIService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSetNodeNetwork(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(34, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(32, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -4211,7 +3995,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_PruneOffline() {
-      ::grpc::Service::MarkMethodRaw(35);
+      ::grpc::Service::MarkMethodRaw(33);
     }
     ~WithRawMethod_PruneOffline() override {
       BaseClassMustBeDerivedFromService(this);
@@ -4222,7 +4006,7 @@ class KelpieUIService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestPruneOffline(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(35, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(33, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -4231,7 +4015,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_SendChatMessage() {
-      ::grpc::Service::MarkMethodRaw(36);
+      ::grpc::Service::MarkMethodRaw(34);
     }
     ~WithRawMethod_SendChatMessage() override {
       BaseClassMustBeDerivedFromService(this);
@@ -4242,7 +4026,7 @@ class KelpieUIService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSendChatMessage(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(36, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(34, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -4251,7 +4035,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_ListChatMessages() {
-      ::grpc::Service::MarkMethodRaw(37);
+      ::grpc::Service::MarkMethodRaw(35);
     }
     ~WithRawMethod_ListChatMessages() override {
       BaseClassMustBeDerivedFromService(this);
@@ -4262,7 +4046,7 @@ class KelpieUIService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestListChatMessages(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(37, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(35, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -4271,7 +4055,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_ListAuditLogs() {
-      ::grpc::Service::MarkMethodRaw(38);
+      ::grpc::Service::MarkMethodRaw(36);
     }
     ~WithRawMethod_ListAuditLogs() override {
       BaseClassMustBeDerivedFromService(this);
@@ -4282,7 +4066,7 @@ class KelpieUIService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestListAuditLogs(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(38, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(36, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -4903,56 +4687,12 @@ class KelpieUIService final {
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
-  class WithRawCallbackMethod_GetRoutingStrategy : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithRawCallbackMethod_GetRoutingStrategy() {
-      ::grpc::Service::MarkMethodRawCallback(28,
-          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
-            [this](
-                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->GetRoutingStrategy(context, request, response); }));
-    }
-    ~WithRawCallbackMethod_GetRoutingStrategy() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status GetRoutingStrategy(::grpc::ServerContext* /*context*/, const ::kelpieui::v1::GetRoutingStrategyRequest* /*request*/, ::kelpieui::v1::GetRoutingStrategyResponse* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    virtual ::grpc::ServerUnaryReactor* GetRoutingStrategy(
-      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
-  };
-  template <class BaseClass>
-  class WithRawCallbackMethod_SetRoutingStrategy : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithRawCallbackMethod_SetRoutingStrategy() {
-      ::grpc::Service::MarkMethodRawCallback(29,
-          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
-            [this](
-                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->SetRoutingStrategy(context, request, response); }));
-    }
-    ~WithRawCallbackMethod_SetRoutingStrategy() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status SetRoutingStrategy(::grpc::ServerContext* /*context*/, const ::kelpieui::v1::SetRoutingStrategyRequest* /*request*/, ::kelpieui::v1::SetRoutingStrategyResponse* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    virtual ::grpc::ServerUnaryReactor* SetRoutingStrategy(
-      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
-  };
-  template <class BaseClass>
   class WithRawCallbackMethod_NodeStatus : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_NodeStatus() {
-      ::grpc::Service::MarkMethodRawCallback(30,
+      ::grpc::Service::MarkMethodRawCallback(28,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->NodeStatus(context, request, response); }));
@@ -4974,7 +4714,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_ListNetworks() {
-      ::grpc::Service::MarkMethodRawCallback(31,
+      ::grpc::Service::MarkMethodRawCallback(29,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->ListNetworks(context, request, response); }));
@@ -4996,7 +4736,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_UseNetwork() {
-      ::grpc::Service::MarkMethodRawCallback(32,
+      ::grpc::Service::MarkMethodRawCallback(30,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->UseNetwork(context, request, response); }));
@@ -5018,7 +4758,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_ResetNetwork() {
-      ::grpc::Service::MarkMethodRawCallback(33,
+      ::grpc::Service::MarkMethodRawCallback(31,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->ResetNetwork(context, request, response); }));
@@ -5040,7 +4780,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_SetNodeNetwork() {
-      ::grpc::Service::MarkMethodRawCallback(34,
+      ::grpc::Service::MarkMethodRawCallback(32,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->SetNodeNetwork(context, request, response); }));
@@ -5062,7 +4802,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_PruneOffline() {
-      ::grpc::Service::MarkMethodRawCallback(35,
+      ::grpc::Service::MarkMethodRawCallback(33,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->PruneOffline(context, request, response); }));
@@ -5084,7 +4824,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_SendChatMessage() {
-      ::grpc::Service::MarkMethodRawCallback(36,
+      ::grpc::Service::MarkMethodRawCallback(34,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->SendChatMessage(context, request, response); }));
@@ -5106,7 +4846,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_ListChatMessages() {
-      ::grpc::Service::MarkMethodRawCallback(37,
+      ::grpc::Service::MarkMethodRawCallback(35,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->ListChatMessages(context, request, response); }));
@@ -5128,7 +4868,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_ListAuditLogs() {
-      ::grpc::Service::MarkMethodRawCallback(38,
+      ::grpc::Service::MarkMethodRawCallback(36,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->ListAuditLogs(context, request, response); }));
@@ -5847,66 +5587,12 @@ class KelpieUIService final {
     virtual ::grpc::Status StreamedEnqueueDtnPayload(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::kelpieui::v1::EnqueueDtnPayloadRequest,::kelpieui::v1::EnqueueDtnPayloadResponse>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
-  class WithStreamedUnaryMethod_GetRoutingStrategy : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithStreamedUnaryMethod_GetRoutingStrategy() {
-      ::grpc::Service::MarkMethodStreamed(28,
-        new ::grpc::internal::StreamedUnaryHandler<
-          ::kelpieui::v1::GetRoutingStrategyRequest, ::kelpieui::v1::GetRoutingStrategyResponse>(
-            [this](::grpc::ServerContext* context,
-                   ::grpc::ServerUnaryStreamer<
-                     ::kelpieui::v1::GetRoutingStrategyRequest, ::kelpieui::v1::GetRoutingStrategyResponse>* streamer) {
-                       return this->StreamedGetRoutingStrategy(context,
-                         streamer);
-                  }));
-    }
-    ~WithStreamedUnaryMethod_GetRoutingStrategy() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable regular version of this method
-    ::grpc::Status GetRoutingStrategy(::grpc::ServerContext* /*context*/, const ::kelpieui::v1::GetRoutingStrategyRequest* /*request*/, ::kelpieui::v1::GetRoutingStrategyResponse* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedGetRoutingStrategy(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::kelpieui::v1::GetRoutingStrategyRequest,::kelpieui::v1::GetRoutingStrategyResponse>* server_unary_streamer) = 0;
-  };
-  template <class BaseClass>
-  class WithStreamedUnaryMethod_SetRoutingStrategy : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithStreamedUnaryMethod_SetRoutingStrategy() {
-      ::grpc::Service::MarkMethodStreamed(29,
-        new ::grpc::internal::StreamedUnaryHandler<
-          ::kelpieui::v1::SetRoutingStrategyRequest, ::kelpieui::v1::SetRoutingStrategyResponse>(
-            [this](::grpc::ServerContext* context,
-                   ::grpc::ServerUnaryStreamer<
-                     ::kelpieui::v1::SetRoutingStrategyRequest, ::kelpieui::v1::SetRoutingStrategyResponse>* streamer) {
-                       return this->StreamedSetRoutingStrategy(context,
-                         streamer);
-                  }));
-    }
-    ~WithStreamedUnaryMethod_SetRoutingStrategy() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable regular version of this method
-    ::grpc::Status SetRoutingStrategy(::grpc::ServerContext* /*context*/, const ::kelpieui::v1::SetRoutingStrategyRequest* /*request*/, ::kelpieui::v1::SetRoutingStrategyResponse* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedSetRoutingStrategy(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::kelpieui::v1::SetRoutingStrategyRequest,::kelpieui::v1::SetRoutingStrategyResponse>* server_unary_streamer) = 0;
-  };
-  template <class BaseClass>
   class WithStreamedUnaryMethod_NodeStatus : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_NodeStatus() {
-      ::grpc::Service::MarkMethodStreamed(30,
+      ::grpc::Service::MarkMethodStreamed(28,
         new ::grpc::internal::StreamedUnaryHandler<
           ::kelpieui::v1::NodeStatusRequest, ::kelpieui::v1::NodeStatusResponse>(
             [this](::grpc::ServerContext* context,
@@ -5933,7 +5619,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_ListNetworks() {
-      ::grpc::Service::MarkMethodStreamed(31,
+      ::grpc::Service::MarkMethodStreamed(29,
         new ::grpc::internal::StreamedUnaryHandler<
           ::kelpieui::v1::ListNetworksRequest, ::kelpieui::v1::ListNetworksResponse>(
             [this](::grpc::ServerContext* context,
@@ -5960,7 +5646,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_UseNetwork() {
-      ::grpc::Service::MarkMethodStreamed(32,
+      ::grpc::Service::MarkMethodStreamed(30,
         new ::grpc::internal::StreamedUnaryHandler<
           ::kelpieui::v1::UseNetworkRequest, ::kelpieui::v1::UseNetworkResponse>(
             [this](::grpc::ServerContext* context,
@@ -5987,7 +5673,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_ResetNetwork() {
-      ::grpc::Service::MarkMethodStreamed(33,
+      ::grpc::Service::MarkMethodStreamed(31,
         new ::grpc::internal::StreamedUnaryHandler<
           ::kelpieui::v1::ResetNetworkRequest, ::kelpieui::v1::ResetNetworkResponse>(
             [this](::grpc::ServerContext* context,
@@ -6014,7 +5700,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_SetNodeNetwork() {
-      ::grpc::Service::MarkMethodStreamed(34,
+      ::grpc::Service::MarkMethodStreamed(32,
         new ::grpc::internal::StreamedUnaryHandler<
           ::kelpieui::v1::SetNodeNetworkRequest, ::kelpieui::v1::SetNodeNetworkResponse>(
             [this](::grpc::ServerContext* context,
@@ -6041,7 +5727,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_PruneOffline() {
-      ::grpc::Service::MarkMethodStreamed(35,
+      ::grpc::Service::MarkMethodStreamed(33,
         new ::grpc::internal::StreamedUnaryHandler<
           ::kelpieui::v1::PruneOfflineRequest, ::kelpieui::v1::PruneOfflineResponse>(
             [this](::grpc::ServerContext* context,
@@ -6068,7 +5754,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_SendChatMessage() {
-      ::grpc::Service::MarkMethodStreamed(36,
+      ::grpc::Service::MarkMethodStreamed(34,
         new ::grpc::internal::StreamedUnaryHandler<
           ::kelpieui::v1::SendChatMessageRequest, ::kelpieui::v1::SendChatMessageResponse>(
             [this](::grpc::ServerContext* context,
@@ -6095,7 +5781,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_ListChatMessages() {
-      ::grpc::Service::MarkMethodStreamed(37,
+      ::grpc::Service::MarkMethodStreamed(35,
         new ::grpc::internal::StreamedUnaryHandler<
           ::kelpieui::v1::ListChatMessagesRequest, ::kelpieui::v1::ListChatMessagesResponse>(
             [this](::grpc::ServerContext* context,
@@ -6122,7 +5808,7 @@ class KelpieUIService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_ListAuditLogs() {
-      ::grpc::Service::MarkMethodStreamed(38,
+      ::grpc::Service::MarkMethodStreamed(36,
         new ::grpc::internal::StreamedUnaryHandler<
           ::kelpieui::v1::ListAuditLogsRequest, ::kelpieui::v1::ListAuditLogsResponse>(
             [this](::grpc::ServerContext* context,
@@ -6143,7 +5829,7 @@ class KelpieUIService final {
     // replace default version of method with streamed unary
     virtual ::grpc::Status StreamedListAuditLogs(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::kelpieui::v1::ListAuditLogsRequest,::kelpieui::v1::ListAuditLogsResponse>* server_unary_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod_GetSnapshot<WithStreamedUnaryMethod_ListNodes<WithStreamedUnaryMethod_GetTopology<WithStreamedUnaryMethod_ListLoot<WithStreamedUnaryMethod_SubmitLoot<WithStreamedUnaryMethod_GetLoot<WithStreamedUnaryMethod_StartShell<WithStreamedUnaryMethod_StartSocksProxy<WithStreamedUnaryMethod_StartSshSession<WithStreamedUnaryMethod_UpdateNodeMemo<WithStreamedUnaryMethod_ListSessions<WithStreamedUnaryMethod_MarkSession<WithStreamedUnaryMethod_RepairSession<WithStreamedUnaryMethod_ReconnectSession<WithStreamedUnaryMethod_TerminateSession<WithStreamedUnaryMethod_GetSessionDiagnostics<WithStreamedUnaryMethod_CloseStream<WithStreamedUnaryMethod_StartSshTunnel<WithStreamedUnaryMethod_ShutdownNode<WithStreamedUnaryMethod_StreamStats<WithStreamedUnaryMethod_StreamDiagnostics<WithStreamedUnaryMethod_StreamPing<WithStreamedUnaryMethod_GetMetrics<WithStreamedUnaryMethod_GetDtnQueueStats<WithStreamedUnaryMethod_ListDtnBundles<WithStreamedUnaryMethod_EnqueueDtnPayload<WithStreamedUnaryMethod_GetRoutingStrategy<WithStreamedUnaryMethod_SetRoutingStrategy<WithStreamedUnaryMethod_NodeStatus<WithStreamedUnaryMethod_ListNetworks<WithStreamedUnaryMethod_UseNetwork<WithStreamedUnaryMethod_ResetNetwork<WithStreamedUnaryMethod_SetNodeNetwork<WithStreamedUnaryMethod_PruneOffline<WithStreamedUnaryMethod_SendChatMessage<WithStreamedUnaryMethod_ListChatMessages<WithStreamedUnaryMethod_ListAuditLogs<Service > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > StreamedUnaryService;
+  typedef WithStreamedUnaryMethod_GetSnapshot<WithStreamedUnaryMethod_ListNodes<WithStreamedUnaryMethod_GetTopology<WithStreamedUnaryMethod_ListLoot<WithStreamedUnaryMethod_SubmitLoot<WithStreamedUnaryMethod_GetLoot<WithStreamedUnaryMethod_StartShell<WithStreamedUnaryMethod_StartSocksProxy<WithStreamedUnaryMethod_StartSshSession<WithStreamedUnaryMethod_UpdateNodeMemo<WithStreamedUnaryMethod_ListSessions<WithStreamedUnaryMethod_MarkSession<WithStreamedUnaryMethod_RepairSession<WithStreamedUnaryMethod_ReconnectSession<WithStreamedUnaryMethod_TerminateSession<WithStreamedUnaryMethod_GetSessionDiagnostics<WithStreamedUnaryMethod_CloseStream<WithStreamedUnaryMethod_StartSshTunnel<WithStreamedUnaryMethod_ShutdownNode<WithStreamedUnaryMethod_StreamStats<WithStreamedUnaryMethod_StreamDiagnostics<WithStreamedUnaryMethod_StreamPing<WithStreamedUnaryMethod_GetMetrics<WithStreamedUnaryMethod_GetDtnQueueStats<WithStreamedUnaryMethod_ListDtnBundles<WithStreamedUnaryMethod_EnqueueDtnPayload<WithStreamedUnaryMethod_NodeStatus<WithStreamedUnaryMethod_ListNetworks<WithStreamedUnaryMethod_UseNetwork<WithStreamedUnaryMethod_ResetNetwork<WithStreamedUnaryMethod_SetNodeNetwork<WithStreamedUnaryMethod_PruneOffline<WithStreamedUnaryMethod_SendChatMessage<WithStreamedUnaryMethod_ListChatMessages<WithStreamedUnaryMethod_ListAuditLogs<Service > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > StreamedUnaryService;
   template <class BaseClass>
   class WithSplitStreamingMethod_WatchEvents : public BaseClass {
    private:
@@ -6172,7 +5858,7 @@ class KelpieUIService final {
     virtual ::grpc::Status StreamedWatchEvents(::grpc::ServerContext* context, ::grpc::ServerSplitStreamer< ::kelpieui::v1::WatchEventsRequest,::kelpieui::v1::UiEvent>* server_split_streamer) = 0;
   };
   typedef WithSplitStreamingMethod_WatchEvents<Service > SplitStreamedService;
-  typedef WithStreamedUnaryMethod_GetSnapshot<WithStreamedUnaryMethod_ListNodes<WithStreamedUnaryMethod_GetTopology<WithSplitStreamingMethod_WatchEvents<WithStreamedUnaryMethod_ListLoot<WithStreamedUnaryMethod_SubmitLoot<WithStreamedUnaryMethod_GetLoot<WithStreamedUnaryMethod_StartShell<WithStreamedUnaryMethod_StartSocksProxy<WithStreamedUnaryMethod_StartSshSession<WithStreamedUnaryMethod_UpdateNodeMemo<WithStreamedUnaryMethod_ListSessions<WithStreamedUnaryMethod_MarkSession<WithStreamedUnaryMethod_RepairSession<WithStreamedUnaryMethod_ReconnectSession<WithStreamedUnaryMethod_TerminateSession<WithStreamedUnaryMethod_GetSessionDiagnostics<WithStreamedUnaryMethod_CloseStream<WithStreamedUnaryMethod_StartSshTunnel<WithStreamedUnaryMethod_ShutdownNode<WithStreamedUnaryMethod_StreamStats<WithStreamedUnaryMethod_StreamDiagnostics<WithStreamedUnaryMethod_StreamPing<WithStreamedUnaryMethod_GetMetrics<WithStreamedUnaryMethod_GetDtnQueueStats<WithStreamedUnaryMethod_ListDtnBundles<WithStreamedUnaryMethod_EnqueueDtnPayload<WithStreamedUnaryMethod_GetRoutingStrategy<WithStreamedUnaryMethod_SetRoutingStrategy<WithStreamedUnaryMethod_NodeStatus<WithStreamedUnaryMethod_ListNetworks<WithStreamedUnaryMethod_UseNetwork<WithStreamedUnaryMethod_ResetNetwork<WithStreamedUnaryMethod_SetNodeNetwork<WithStreamedUnaryMethod_PruneOffline<WithStreamedUnaryMethod_SendChatMessage<WithStreamedUnaryMethod_ListChatMessages<WithStreamedUnaryMethod_ListAuditLogs<Service > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > StreamedService;
+  typedef WithStreamedUnaryMethod_GetSnapshot<WithStreamedUnaryMethod_ListNodes<WithStreamedUnaryMethod_GetTopology<WithSplitStreamingMethod_WatchEvents<WithStreamedUnaryMethod_ListLoot<WithStreamedUnaryMethod_SubmitLoot<WithStreamedUnaryMethod_GetLoot<WithStreamedUnaryMethod_StartShell<WithStreamedUnaryMethod_StartSocksProxy<WithStreamedUnaryMethod_StartSshSession<WithStreamedUnaryMethod_UpdateNodeMemo<WithStreamedUnaryMethod_ListSessions<WithStreamedUnaryMethod_MarkSession<WithStreamedUnaryMethod_RepairSession<WithStreamedUnaryMethod_ReconnectSession<WithStreamedUnaryMethod_TerminateSession<WithStreamedUnaryMethod_GetSessionDiagnostics<WithStreamedUnaryMethod_CloseStream<WithStreamedUnaryMethod_StartSshTunnel<WithStreamedUnaryMethod_ShutdownNode<WithStreamedUnaryMethod_StreamStats<WithStreamedUnaryMethod_StreamDiagnostics<WithStreamedUnaryMethod_StreamPing<WithStreamedUnaryMethod_GetMetrics<WithStreamedUnaryMethod_GetDtnQueueStats<WithStreamedUnaryMethod_ListDtnBundles<WithStreamedUnaryMethod_EnqueueDtnPayload<WithStreamedUnaryMethod_NodeStatus<WithStreamedUnaryMethod_ListNetworks<WithStreamedUnaryMethod_UseNetwork<WithStreamedUnaryMethod_ResetNetwork<WithStreamedUnaryMethod_SetNodeNetwork<WithStreamedUnaryMethod_PruneOffline<WithStreamedUnaryMethod_SendChatMessage<WithStreamedUnaryMethod_ListChatMessages<WithStreamedUnaryMethod_ListAuditLogs<Service > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > StreamedService;
 };
 
 class PivotListenerAdminService final {

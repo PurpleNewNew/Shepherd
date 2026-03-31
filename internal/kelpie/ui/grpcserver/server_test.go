@@ -483,40 +483,6 @@ func TestStartShellValidation(t *testing.T) {
 	}
 }
 
-func TestRoutingStrategyHandlers(t *testing.T) {
-	svcNil := &service{}
-	if _, err := svcNil.GetRoutingStrategy(context.Background(), &uipb.GetRoutingStrategyRequest{}); status.Code(err) != codes.Unavailable {
-		t.Fatalf("expected unavailable when admin missing, got %v", err)
-	}
-
-	topo := topology.NewTopology()
-	go topo.Run()
-	t.Cleanup(topo.Stop)
-
-	admin := process.NewAdmin(context.Background(), nil, topo, nil, nil, topology.PlannerMetricsSnapshot{}, nil, nil, nil, nil, nil)
-	svc := &service{admin: admin}
-	resp, err := svc.GetRoutingStrategy(context.Background(), &uipb.GetRoutingStrategyRequest{})
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-	if resp.GetStrategy() != uipb.RoutingStrategy_ROUTING_STRATEGY_LATENCY {
-		t.Fatalf("expected default latency strategy, got %v", resp.GetStrategy())
-	}
-
-	if _, err := svc.SetRoutingStrategy(context.Background(), &uipb.SetRoutingStrategyRequest{
-		Strategy: uipb.RoutingStrategy_ROUTING_STRATEGY_LATENCY,
-	}); err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-	resp, err = svc.GetRoutingStrategy(context.Background(), &uipb.GetRoutingStrategyRequest{})
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-	if resp.GetStrategy() != uipb.RoutingStrategy_ROUTING_STRATEGY_LATENCY {
-		t.Fatalf("expected latency strategy, got %v", resp.GetStrategy())
-	}
-}
-
 func TestStartSocksProxyValidation(t *testing.T) {
 	svc := &service{admin: &process.Admin{}}
 	if _, err := svc.StartSocksProxy(context.Background(), nil); status.Code(err) != codes.InvalidArgument {

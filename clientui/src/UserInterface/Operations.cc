@@ -442,10 +442,6 @@ namespace StockmanNamespace::UserInterface
 	            QString metricsErr;
 	            kelpieui::v1::GetMetricsResponse metrics;
 
-	            bool routingOk{false};
-	            QString routingErr;
-	            kelpieui::v1::RoutingStrategy routingStrategy{kelpieui::v1::ROUTING_STRATEGY_UNSPECIFIED};
-
 	            bool streamStatsOk{false};
 	            QString streamStatsErr;
 	            std::vector<kelpieui::v1::StreamStatInfo> streamStats;
@@ -457,21 +453,15 @@ namespace StockmanNamespace::UserInterface
 	                Result res;
 	                res.epoch = epoch;
 
-	                QString error;
-	                kelpieui::v1::GetMetricsResponse metrics;
-	                res.metricsOk = ctrl->GetMetrics(&metrics, error);
-	                res.metricsErr = error;
-	                res.metrics = metrics;
+		                QString error;
+		                kelpieui::v1::GetMetricsResponse metrics;
+		                res.metricsOk = ctrl->GetMetrics(&metrics, error);
+		                res.metricsErr = error;
+		                res.metrics = metrics;
 
-	                QString routingErr;
-	                kelpieui::v1::RoutingStrategy routingStrategy = kelpieui::v1::ROUTING_STRATEGY_UNSPECIFIED;
-	                res.routingOk = ctrl->GetRoutingStrategy(&routingStrategy, routingErr);
-	                res.routingErr = routingErr;
-	                res.routingStrategy = routingStrategy;
-
-	                QString statsErr;
-	                std::vector<kelpieui::v1::StreamStatInfo> stats;
-	                res.streamStatsOk = ctrl->StreamStats(&stats, statsErr);
+		                QString statsErr;
+		                std::vector<kelpieui::v1::StreamStatInfo> stats;
+		                res.streamStatsOk = ctrl->StreamStats(&stats, statsErr);
 	                res.streamStatsErr = statsErr;
 	                res.streamStats = std::move(stats);
 
@@ -489,55 +479,24 @@ namespace StockmanNamespace::UserInterface
 
 	                if ( !res.metricsOk )
 	                {
-	                    metricsView_->setPlainText(tr("Metrics unavailable: %1").arg(res.metricsErr));
-	                    return;
-	                }
+		                    metricsView_->setPlainText(tr("Metrics unavailable: %1").arg(res.metricsErr));
+		                    return;
+		                }
 
-	                if ( res.routingOk && routingStrategyBox_ )
-	                {
-	                    int idx = routingStrategyBox_->findData(res.routingStrategy);
-	                    if ( idx >= 0 )
-	                    {
-	                        routingStrategyBox_->setCurrentIndex(idx);
-	                    }
-	                }
-
-	                QString text;
-	                text += tr("Router metrics:\n");
+		                QString text;
+		                text += tr("Router metrics:\n");
 	                for (const auto& m : res.metrics.router_metrics())
 	                {
 	                    text += tr("  type %1: dispatched=%2 errors=%3 drops=%4\n")
 	                                .arg(m.message_type())
-	                                .arg(m.dispatched())
-	                                .arg(m.errors())
-	                                .arg(m.drops());
-	                }
-	                if ( res.routingOk )
-	                {
-	                    QString strategyLabel = tr("unknown");
-	                    switch (res.routingStrategy)
-	                    {
-	                    case kelpieui::v1::ROUTING_STRATEGY_HOPS:
-	                        strategyLabel = tr("Hops (BFS, Baseline)");
-	                        break;
-	                    case kelpieui::v1::ROUTING_STRATEGY_WEIGHT:
-	                        strategyLabel = tr("Weight (Dijkstra, Experimental)");
-	                        break;
-	                    case kelpieui::v1::ROUTING_STRATEGY_LATENCY:
-	                        strategyLabel = tr("Latency (ETTD, Default)");
-	                        break;
-	                    default:
-	                        break;
-	                    }
-	                    text += tr("\nRouting strategy: %1\n").arg(strategyLabel);
-	                }
-	                else
-	                {
-	                    text += tr("\nRouting strategy: unavailable (%1)\n").arg(res.routingErr);
-	                }
-	                text += tr("\nReconnect: attempts=%1 success=%2 failures=%3 last_error=%4\n")
-	                            .arg(res.metrics.reconnect_metrics().attempts())
-	                            .arg(res.metrics.reconnect_metrics().success())
+		                                .arg(m.dispatched())
+		                                .arg(m.errors())
+		                                .arg(m.drops());
+		                }
+		                text += tr("\nRouting: ETTD\n");
+		                text += tr("\nReconnect: attempts=%1 success=%2 failures=%3 last_error=%4\n")
+		                            .arg(res.metrics.reconnect_metrics().attempts())
+		                            .arg(res.metrics.reconnect_metrics().success())
 	                            .arg(res.metrics.reconnect_metrics().failures())
 	                            .arg(QString::fromStdString(res.metrics.reconnect_metrics().last_error()));
 	                if ( res.metrics.has_dtn_metrics() )
@@ -591,62 +550,12 @@ namespace StockmanNamespace::UserInterface
 	                        refreshDiagnosticsForNode(targetUuid);
 	                    }
 	                }
-	                refreshStreamDiagnostics();
-	            });
+		                refreshStreamDiagnostics();
+		            });
 	    }
 
-    void KelpiePanel::applyRoutingStrategy()
-    {
-        auto* ctrl = controller();
-        if ( (ctrl == nullptr) || (routingStrategyBox_ == nullptr) )
-        {
-            return;
-        }
-        auto value = routingStrategyBox_->currentData();
-        if ( !value.isValid() )
-        {
-            toastWarn(tr("Select a routing strategy first"));
-            return;
-        }
-        const auto strategy = static_cast<kelpieui::v1::RoutingStrategy>(value.toInt());
-        setWidgetsEnabled({applyRoutingButton_, routingStrategyBox_}, false);
-        toastInfo(tr("Updating routing strategy..."));
-
-        const uint64_t epoch = ctrl->ConnectionEpoch();
-        struct Result {
-            uint64_t epoch{0};
-            bool ok{false};
-            QString error;
-        };
-        runAsync<Result>(
-            this,
-            [ctrl, epoch, strategy]() {
-                Result res;
-                res.epoch = epoch;
-                QString error;
-                res.ok = ctrl->SetRoutingStrategy(strategy, error);
-                res.error = error;
-                return res;
-            },
-            [this](const Result& res) {
-                setWidgetsEnabled({applyRoutingButton_, routingStrategyBox_}, true);
-                auto* ctrl = controller();
-                if ( ctrl == nullptr || ctrl->ConnectionEpoch() != res.epoch )
-                {
-                    return;
-                }
-                if ( !res.ok )
-                {
-                    toastError(tr("Set routing strategy failed: %1").arg(res.error));
-                    return;
-                }
-                toastInfo(tr("Routing strategy updated"));
-                refreshMetrics();
-            });
-    }
-
-    static void appendDiagnosticRow(QTableWidget* table,
-                                    const QString& target,
+	    static void appendDiagnosticRow(QTableWidget* table,
+	                                    const QString& target,
                                     const kelpieui::v1::SessionIssue& issue,
                                     const kelpieui::v1::SessionMetric* metric,
                                     const kelpieui::v1::SessionProcess* proc)

@@ -495,15 +495,7 @@ namespace StockmanNamespace::UserInterface
         metricsLayout->setContentsMargins(0, 0, 0, 0);
 
         auto* routingLayout = new QHBoxLayout();
-        routingStrategyBox_ = new QComboBox(strategyPage_);
-        routingStrategyBox_->addItem(tr("Latency (ETTD, Default)"), kelpieui::v1::ROUTING_STRATEGY_LATENCY);
-        routingStrategyBox_->addItem(tr("Hops (BFS, Baseline)"), kelpieui::v1::ROUTING_STRATEGY_HOPS);
-        routingStrategyBox_->addItem(tr("Weight (Dijkstra, Experimental)"), kelpieui::v1::ROUTING_STRATEGY_WEIGHT);
-        routingStrategyBox_->setCurrentIndex(0);
-        applyRoutingButton_ = new QPushButton(tr("Apply Routing"), strategyPage_);
-        routingLayout->addWidget(new QLabel(tr("Routing:"), strategyPage_));
-        routingLayout->addWidget(routingStrategyBox_);
-        routingLayout->addWidget(applyRoutingButton_);
+        routingLayout->addWidget(new QLabel(tr("Routing: ETTD"), strategyPage_));
         routingLayout->addStretch();
         metricsLayout->addLayout(routingLayout);
 

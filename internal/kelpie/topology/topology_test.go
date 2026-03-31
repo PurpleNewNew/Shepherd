@@ -9,7 +9,7 @@ import (
 	"codeberg.org/agnoie/shepherd/protocol"
 )
 
-func TestTopologyBFSCreatesExpectedRoute(t *testing.T) {
+func TestTopologyCreatesExpectedRoute(t *testing.T) {
 	topology := NewTopology()
 	topology.ResultChan = make(chan *topoResult, 10)
 
@@ -40,7 +40,7 @@ func TestTopologyBFSCreatesExpectedRoute(t *testing.T) {
 		NeighborUUID: nodeB.uuid,
 	})
 
-	topology.calculateOriginalBFS()
+	topology.calculate()
 
 	expected := nodeA.uuid + ":" + nodeB.uuid
 	info := topology.RouteInfo(nodeB.uuid)
@@ -256,8 +256,6 @@ func TestLatencyRoutingRecalculatesOnTimingUpdate(t *testing.T) {
 	waitForTask(t, topology, &TopoTask{Mode: UPDATEDETAIL, UUID: fast.uuid, LatencyMs: 10})
 	waitForTask(t, topology, &TopoTask{Mode: UPDATEDETAIL, UUID: slow.uuid, LatencyMs: 80})
 	waitForTask(t, topology, &TopoTask{Mode: UPDATEDETAIL, UUID: target.uuid, LatencyMs: 10})
-	waitForTask(t, topology, &TopoTask{Mode: SETROUTINGSTRATEGY, UUIDNum: int(RoutingByLatency)})
-
 	waitForRouteDisplay(t, topology, target.uuid, fast.uuid+":"+target.uuid)
 
 	waitForTask(t, topology, &TopoTask{
@@ -293,46 +291,9 @@ func TestLatencyRoutingRecalculatesOnLatencyUpdate(t *testing.T) {
 	waitForTask(t, topology, &TopoTask{Mode: UPDATEDETAIL, UUID: fast.uuid, LatencyMs: 10})
 	waitForTask(t, topology, &TopoTask{Mode: UPDATEDETAIL, UUID: slow.uuid, LatencyMs: 40})
 	waitForTask(t, topology, &TopoTask{Mode: UPDATEDETAIL, UUID: target.uuid, LatencyMs: 10})
-	waitForTask(t, topology, &TopoTask{Mode: SETROUTINGSTRATEGY, UUIDNum: int(RoutingByLatency)})
-
 	waitForRouteDisplay(t, topology, target.uuid, fast.uuid+":"+target.uuid)
 
 	waitForTask(t, topology, &TopoTask{Mode: UPDATEDETAIL, UUID: fast.uuid, LatencyMs: 400})
-
-	waitForRouteDisplay(t, topology, target.uuid, slow.uuid+":"+target.uuid)
-}
-
-func TestWeightedRoutingRecalculatesOnEdgeWeightChange(t *testing.T) {
-	topology := NewTopology()
-	go topology.Run()
-	defer topology.Stop()
-
-	adminNode := NewNode(protocol.ADMIN_UUID, "127.0.0.1")
-	waitForTask(t, topology, &TopoTask{Mode: ADDNODE, Target: adminNode, IsFirst: true})
-
-	fast := NewNode("FAST", "10.0.0.1")
-	slow := NewNode("SLOW", "10.0.0.2")
-	target := NewNode("TARGET", "10.0.0.3")
-	waitForTask(t, topology, &TopoTask{Mode: ADDNODE, Target: fast, ParentUUID: protocol.ADMIN_UUID})
-	waitForTask(t, topology, &TopoTask{Mode: ADDNODE, Target: slow, ParentUUID: protocol.ADMIN_UUID})
-	waitForTask(t, topology, &TopoTask{Mode: ADDNODE, Target: target, ParentUUID: fast.uuid})
-	waitForTask(t, topology, &TopoTask{Mode: ADDEDGE, UUID: protocol.ADMIN_UUID, NeighborUUID: fast.uuid})
-	waitForTask(t, topology, &TopoTask{Mode: ADDEDGE, UUID: protocol.ADMIN_UUID, NeighborUUID: slow.uuid})
-	waitForTask(t, topology, &TopoTask{Mode: ADDEDGE, UUID: fast.uuid, NeighborUUID: target.uuid})
-	waitForTask(t, topology, &TopoTask{Mode: ADDEDGE, UUID: slow.uuid, NeighborUUID: target.uuid})
-
-	waitForTask(t, topology, &TopoTask{Mode: SETEDGEWEIGHT, UUID: protocol.ADMIN_UUID, NeighborUUID: fast.uuid, Weight: 1})
-	waitForTask(t, topology, &TopoTask{Mode: SETEDGEWEIGHT, UUID: fast.uuid, NeighborUUID: target.uuid, Weight: 1})
-	waitForTask(t, topology, &TopoTask{Mode: SETEDGEWEIGHT, UUID: protocol.ADMIN_UUID, NeighborUUID: slow.uuid, Weight: 7})
-	waitForTask(t, topology, &TopoTask{Mode: SETEDGEWEIGHT, UUID: slow.uuid, NeighborUUID: target.uuid, Weight: 7})
-	waitForTask(t, topology, &TopoTask{Mode: SETROUTINGSTRATEGY, UUIDNum: int(RoutingByWeight)})
-
-	waitForRouteDisplay(t, topology, target.uuid, fast.uuid+":"+target.uuid)
-
-	waitForTask(t, topology, &TopoTask{Mode: SETEDGEWEIGHT, UUID: protocol.ADMIN_UUID, NeighborUUID: fast.uuid, Weight: 9})
-	waitForTask(t, topology, &TopoTask{Mode: SETEDGEWEIGHT, UUID: fast.uuid, NeighborUUID: target.uuid, Weight: 9})
-	waitForTask(t, topology, &TopoTask{Mode: SETEDGEWEIGHT, UUID: protocol.ADMIN_UUID, NeighborUUID: slow.uuid, Weight: 1})
-	waitForTask(t, topology, &TopoTask{Mode: SETEDGEWEIGHT, UUID: slow.uuid, NeighborUUID: target.uuid, Weight: 1})
 
 	waitForRouteDisplay(t, topology, target.uuid, slow.uuid+":"+target.uuid)
 }

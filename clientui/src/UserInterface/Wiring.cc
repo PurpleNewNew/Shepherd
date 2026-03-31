@@ -58,7 +58,6 @@ namespace StockmanNamespace::UserInterface
         connect(startForwardButton_, &QPushButton::clicked, this, &KelpiePanel::startForwardProxy);
         connect(startBackwardButton_, &QPushButton::clicked, this, &KelpiePanel::startBackwardProxy);
         connect(stopProxyButton_, &QPushButton::clicked, this, &KelpiePanel::stopSelectedProxy);
-        connect(applyRoutingButton_, &QPushButton::clicked, this, &KelpiePanel::applyRoutingStrategy);
 
         connect(markAliveButton_, &QPushButton::clicked, this, [this]() {
             markCurrentSession(kelpieui::v1::SESSION_MARK_ACTION_ALIVE);

@@ -48,13 +48,6 @@ enum DtnPriority {
   DTN_PRIORITY_HIGH = 3;
 }
 
-enum RoutingStrategy {
-  ROUTING_STRATEGY_UNSPECIFIED = 0;
-  ROUTING_STRATEGY_HOPS = 1;
-  ROUTING_STRATEGY_WEIGHT = 2;
-  ROUTING_STRATEGY_LATENCY = 3;
-}
-
 message DtnQueueStats {
   int32 total = 1;
   int32 ready = 2;
@@ -107,20 +100,6 @@ message EnqueueDtnPayloadRequest {
 
 message EnqueueDtnPayloadResponse {
   string bundle_id = 1;
-}
-
-message GetRoutingStrategyRequest {}
-
-message GetRoutingStrategyResponse {
-  RoutingStrategy strategy = 1;
-}
-
-message SetRoutingStrategyRequest {
-  RoutingStrategy strategy = 1;
-}
-
-message SetRoutingStrategyResponse {
-  RoutingStrategy strategy = 1;
 }
 
 message RouterMetric {
@@ -1145,8 +1124,6 @@ service KelpieUIService {
   rpc GetDtnQueueStats(GetDtnQueueStatsRequest) returns (GetDtnQueueStatsResponse);
   rpc ListDtnBundles(ListDtnBundlesRequest) returns (ListDtnBundlesResponse);
   rpc EnqueueDtnPayload(EnqueueDtnPayloadRequest) returns (EnqueueDtnPayloadResponse);
-  rpc GetRoutingStrategy(GetRoutingStrategyRequest) returns (GetRoutingStrategyResponse);
-  rpc SetRoutingStrategy(SetRoutingStrategyRequest) returns (SetRoutingStrategyResponse);
   rpc NodeStatus(NodeStatusRequest) returns (NodeStatusResponse);
   rpc ListNetworks(ListNetworksRequest) returns (ListNetworksResponse);
   rpc UseNetwork(UseNetworkRequest) returns (UseNetworkResponse);

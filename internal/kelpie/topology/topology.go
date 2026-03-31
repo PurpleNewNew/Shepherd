@@ -3,7 +3,6 @@ package topology
 import (
 	"context"
 	"sync"
-	"sync/atomic"
 	"time"
 
 	"codeberg.org/agnoie/shepherd/protocol"
@@ -27,7 +26,6 @@ const (
 	GETNODEMETA
 	GETNODEINFO
 	GETDEPTH
-	SETROUTINGSTRATEGY
 	// 用户友好
 	UPDATEDETAIL
 	SHOWDETAIL
@@ -52,15 +50,6 @@ const calcDebounceInterval = 250 * time.Millisecond
 
 const topoRequestTimeout = 5 * time.Second
 
-// RoutingStrategy 表示路由算法的策略。
-type RoutingStrategy int
-
-const (
-	RoutingByHops    RoutingStrategy = iota // 基于最小跳数 (BFS)
-	RoutingByWeight                         // 基于最小权重 (Dijkstra)
-	RoutingByLatency                        // 基于延迟测量
-)
-
 // Topology 表示基于图的网络拓扑。
 type Topology struct {
 	mu               sync.RWMutex
@@ -73,7 +62,6 @@ type Topology struct {
 	edgeLatencies    map[string]map[string]latencySample
 	edgeTypes        map[string]map[string]EdgeType
 	routeInfo        map[string]*RouteInfo
-	routingStrategy  atomic.Int32 // 当前路由策略
 	history          map[string]int
 	uuidIndex        map[string]int
 	lastUpdateTime   time.Time
@@ -273,7 +261,6 @@ func NewTopology() *Topology {
 	topology.routeInfo = make(map[string]*RouteInfo)
 	topology.targetNetworks = make(map[string]string)
 	topology.networks = make(map[string]*Network)
-	topology.routingStrategy.Store(int32(RoutingByLatency)) // 默认使用 ETTD 路由
 	topology.history = make(map[string]int)
 	topology.uuidIndex = make(map[string]int)
 	topology.lastUpdateTime = time.Now()
@@ -306,14 +293,6 @@ func (topology *Topology) Service() *Service {
 		topology.service = &Service{topo: topology}
 	}
 	return topology.service
-}
-
-// RoutingStrategy 返回当前的路由策略。
-func (topology *Topology) RoutingStrategy() RoutingStrategy {
-	if topology == nil {
-		return RoutingByLatency
-	}
-	return RoutingStrategy(topology.routingStrategy.Load())
 }
 
 // ScheduleCalculate 会在一个短窗口内合并路由重算请求。
@@ -520,8 +499,6 @@ func (topology *Topology) handleTask(task *TopoTask) {
 		topology.getNeighbors(task)
 	case GETNODEMETA:
 		topology.getNodeMeta(task)
-	case SETROUTINGSTRATEGY:
-		topology.setRoutingStrategy(RoutingStrategy(task.UUIDNum))
 	case GETALLNODES:
 		topology.getAllNodes(task)
 	case GETDEPTH:

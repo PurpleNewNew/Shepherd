@@ -239,8 +239,6 @@ namespace StockmanNamespace
                                int64_t ttlSeconds,
                                QString* bundleId,
                                QString& errorMessage);
-        bool GetRoutingStrategy(kelpieui::v1::RoutingStrategy* strategy, QString& errorMessage);
-        bool SetRoutingStrategy(kelpieui::v1::RoutingStrategy strategy, QString& errorMessage);
 
         bool GetMetrics(kelpieui::v1::GetMetricsResponse* metrics, QString& errorMessage);
         bool StreamStats(std::vector<kelpieui::v1::StreamStatInfo>* stats, QString& errorMessage);

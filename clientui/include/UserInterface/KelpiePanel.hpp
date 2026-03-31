@@ -138,8 +138,6 @@ namespace StockmanNamespace::UserInterface
         QTableWidget*     controllerListenersTable_;
         QTableWidget*     networkTable_;
         QPlainTextEdit*   metricsView_;
-        QComboBox*        routingStrategyBox_;
-        QPushButton*      applyRoutingButton_;
         QTableWidget*     diagnosticsTable_;
         QTableWidget*     dtnBundleTable_;
         QLabel*           dtnStatsLabel_;
@@ -288,7 +286,6 @@ namespace StockmanNamespace::UserInterface
         void startSshSession();
         void startSshTunnel();
         void refreshMetrics();
-        void applyRoutingStrategy();
         void refreshStreamDiagnostics();
         void refreshDtn();
         void enqueueDtn();
