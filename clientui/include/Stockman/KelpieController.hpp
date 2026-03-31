@@ -72,7 +72,7 @@ namespace StockmanNamespace
         std::mutex writeMutex_;
         std::thread readerThread_;
 
-        // Blocking read support for Python plugin API
+        // Blocking read support for synchronous consumers
         std::mutex queueMutex_;
         std::condition_variable queueCv_;
         std::deque<QByteArray> queue_;

@@ -40,7 +40,7 @@ StockmanSpace::Stockman::Stockman( std::shared_ptr<StockmanNamespace::AppContext
         StockmanNamespace::CodeName
     );
 
-    // 数据库优先放在用户数据目录，确保可写；不可写时退回旧路径并告警。
+    // 数据库固定放在用户数据目录；不可写时直接报错并停止启动。
     const QString appDataDir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     const QString dbPath = appDataDir + "/client.db";
     QDir().mkpath(QFileInfo(dbPath).absolutePath());
@@ -85,7 +85,6 @@ void StockmanSpace::Stockman::Init( int argc, char** argv )
     int fontSize = 11;
 
     // Config is optional: it currently controls only UI niceties (fonts, scripts list).
-    // Search in a few common locations so running from arbitrary CWD still works.
     QString foundConfig;
     QStringList candidates;
     if ( Arguments.exist( "config" ) )
@@ -98,8 +97,6 @@ void StockmanSpace::Stockman::Init( int argc, char** argv )
     }
     const QString exeDir = QCoreApplication::applicationDirPath();
     candidates << (exeDir + "/config.toml");
-    candidates << QStringLiteral("clientui/config.toml"); // repo layout
-    candidates << QStringLiteral("config.toml");          // CWD fallback
 
     for (const auto& c : candidates)
     {
