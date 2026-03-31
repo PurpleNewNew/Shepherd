@@ -14,15 +14,15 @@ import (
 )
 
 var (
-	// ErrProxyMissingTarget indicates the caller did not provide a node UUID.
+	// ErrProxyMissingTarget 表示调用方没有提供节点 UUID。
 	ErrProxyMissingTarget = errors.New("missing target uuid")
-	// ErrProxyMissingBind indicates no local bind address/port was provided.
+	// ErrProxyMissingBind 表示没有提供本地绑定地址或端口。
 	ErrProxyMissingBind = errors.New("missing local bind address")
-	// ErrProxyInvalidRemote indicates the remote address is malformed.
+	// ErrProxyInvalidRemote 表示远端地址格式非法。
 	ErrProxyInvalidRemote = errors.New("invalid remote address")
-	// ErrProxyInvalidPort indicates a provided port is not valid.
+	// ErrProxyInvalidPort 表示提供的端口无效。
 	ErrProxyInvalidPort = errors.New("invalid port")
-	// ErrProxyNotFound indicates the requested proxy handle was not found.
+	// ErrProxyNotFound 表示未找到请求的代理句柄。
 	ErrProxyNotFound = errors.New("proxy entry not found")
 )
 
@@ -49,7 +49,7 @@ func newProxyDescriptor(id, target, kind string, options map[string]string) *Pro
 	return &ProxyDescriptor{id: id, target: strings.ToLower(strings.TrimSpace(target)), kind: kind, options: copyOpts}
 }
 
-// NewProxyDescriptor creates a proxy descriptor using the provided fields.
+// NewProxyDescriptor 使用给定字段创建一个代理描述符。
 func NewProxyDescriptor(id, target, kind string, options map[string]string) *ProxyDescriptor {
 	return newProxyDescriptor(id, target, kind, options)
 }

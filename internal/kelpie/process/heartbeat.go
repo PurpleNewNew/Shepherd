@@ -11,7 +11,7 @@ import (
 	"codeberg.org/agnoie/shepherd/protocol"
 )
 
-// runHeartbeat periodically pings the upstream session to detect broken admin routes.
+// runHeartbeat 会周期性探测上游会话，以发现失效的 admin 路由。
 func (admin *Admin) runHeartbeat(ctx context.Context) {
 	if admin == nil || admin.topology == nil || admin.mgr == nil {
 		return

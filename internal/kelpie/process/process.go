@@ -73,14 +73,14 @@ type Admin struct {
 	dtnPersistor        dtn.Persistor
 	dtnInflightMu       sync.Mutex
 	dtnInflight         map[string]*dtnInflightRecord
-	// DTN counters
+	// DTN 计数器
 	dtnEnqueued  uint64
 	dtnDelivered uint64
 	dtnFailed    uint64
 	dtnRetried   uint64
 	dtnSuppMu    sync.Mutex
 	dtnSuppLast  map[string]time.Time
-	// Policy
+	// 策略参数
 	dtnMaxInflightPerTarget int
 	dtnSprayThreshold       float64
 	dtnFocusThreshold       float64
@@ -149,7 +149,7 @@ type NetworkInfo struct {
 	Entries []string
 }
 
-// SleepUpdateParams captures optional fields for runtime sleep updates.
+// SleepUpdateParams 表示运行期 sleep 更新中的可选字段。
 type SleepUpdateParams struct {
 	SleepSeconds  *int
 	WorkSeconds   *int
@@ -203,7 +203,7 @@ func (admin *Admin) currentSession() session.Session {
 			return sess
 		}
 	}
-	// bootstrap fallback (may be stale after failover/reconnect)
+	// 最后回退到缓存的会话指针；在 failover/reconnect 期间可能短暂滞后。
 	if admin.session != nil {
 		return admin.session
 	}
@@ -287,9 +287,9 @@ func (admin *Admin) initDTN(ctx context.Context) {
 		return
 	}
 	cfg := dtn.DefaultConfig()
-	// DTN default pacing is tuned for control-plane diagnostics. For stream/dataplane
-	// traffic we need a tighter dispatch cadence, otherwise large transfers can stall
-	// behind long scheduler ticks and hit upper-layer timeouts.
+	// DTN 默认节奏偏向控制面诊断。对于 stream/dataplane 流量，
+	// 需要更紧凑的调度频率，否则大传输可能被长调度周期拖住，
+	// 进而触发上层超时。
 	cfg.DispatchBatch = 64
 	cfg.DispatchInterval = 500 * time.Millisecond
 	admin.dtnManager = dtn.NewManager(cfg)
@@ -305,8 +305,8 @@ func (admin *Admin) initDTN(ctx context.Context) {
 		}
 	}
 	admin.dtnInflight = make(map[string]*dtnInflightRecord)
-	// Default inflight should be high enough to sustain stream/dataplane throughput.
-	// Traces can tighten this via dtn_policy when testing edge cases.
+	// 默认 inflight 数应足以维持 stream/dataplane 吞吐。
+	// 在测试边界场景时，trace 可以通过 dtn_policy 收紧该值。
 	admin.dtnMaxInflightPerTarget = 16
 	admin.dtnSprayThreshold = 0.6
 	admin.dtnFocusThreshold = 0.85
@@ -329,9 +329,9 @@ func (admin *Admin) initStreamEngine() {
 		if admin == nil {
 			return fmt.Errorf("admin unavailable")
 		}
-		// STREAM_* is latency-sensitive control/data-plane traffic; when DTN queues are under
-		// pressure (e.g., rescue storms), a single dropped STREAM_OPEN / STREAM_CLOSE can
-		// strand the whole transfer. Prefer higher DTN priority for control frames.
+		// STREAM_* 属于对时延敏感的控制/数据面流量；当 DTN 队列承压时
+		// （例如 rescue 风暴），只要丢一个 STREAM_OPEN / STREAM_CLOSE，
+		// 整个传输都可能被卡住。因此控制帧应优先使用更高的 DTN 优先级。
 		prio := dtn.PriorityNormal
 		env := string(payload)
 		if strings.HasPrefix(env, "proto:") && len(env) >= len("proto:0000:") {
@@ -348,12 +348,12 @@ func (admin *Admin) initStreamEngine() {
 	logFn := func(format string, args ...interface{}) {
 		printer.Warning(format, args...)
 	}
-	// DTN-Stream rides on top of the DTN scheduler (sleep windows, repair, focus holds).
-	// Use a DTN-friendly retransmission timeout budget; "LAN TCP-like" RTOs (e.g. 1-3s)
-	// create false losses under churn and can wedge higher-level systems like dataplane.
+	// DTN-Stream 运行在 DTN 调度器之上（sleep 窗口、repair、focus hold 等）。
+	// 这里应采用更适合 DTN 的重传超时预算；如果使用类似局域网 TCP 的 RTO
+	// （例如 1 到 3 秒），在链路抖动下会产生伪丢包，并拖垮 dataplane 等上层系统。
 	cfg := stream.DefaultConfig()
-	// Larger chunks drastically reduce DTN bundle count for file transfers, making dataplane
-	// "big file" scenarios complete within bounded timeouts under DTN scheduling.
+	// 更大的 chunk 能显著减少文件传输时的 DTN bundle 数量，
+	// 让 dataplane 的“大文件”场景在 DTN 调度下也能在有限超时内完成。
 	cfg.ChunkBytes = 8 * 1024
 	cfg.MinWindow = 8
 	cfg.InitialWindow = 12
@@ -421,7 +421,7 @@ func (admin *Admin) rememberStreamReason(streamID uint32, reason string) {
 	admin.streamReasonMu.Unlock()
 }
 
-// StreamCloseReason returns and clears the recorded close reason for a stream ID.
+// StreamCloseReason 返回并清除某个 stream ID 对应的关闭原因记录。
 func (admin *Admin) StreamCloseReason(streamID uint32) string {
 	if admin == nil || streamID == 0 {
 		return ""
@@ -666,7 +666,7 @@ func (admin *Admin) dispatchDTNPull() bus.Handler {
 				continue
 			}
 			if !admin.attemptBundleDelivery(ctx, b) {
-				// push back if failed
+				// 若失败则重新放回队列
 				admin.dtnManager.Requeue(b, admin.nextSendDelay(b.Target))
 			}
 		}
@@ -740,7 +740,7 @@ func (admin *Admin) attemptBundleDelivery(ctx context.Context, bundle *dtn.Bundl
 	if admin == nil || bundle == nil {
 		return false
 	}
-	// per-target inflight limit
+	// 按目标限制 inflight 数量。
 	if admin.inflightForTarget(bundle.Target) >= admin.dtnMaxInflightPerTarget {
 		return false
 	}
@@ -783,7 +783,7 @@ func (admin *Admin) attemptBundleDelivery(ctx context.Context, bundle *dtn.Bundl
 	payload := &protocol.DTNData{BundleIDLen: uint16(len(bundle.ID)), BundleID: bundle.ID, Payload: append([]byte(nil), bundle.Payload...)}
 	protocol.ConstructMessage(msg, header, payload, false)
 	msg.SendMessage()
-	// Track inflight awaiting DTN_ACK
+	// 记录正在等待 DTN_ACK 的 inflight 项。
 	admin.rememberInflightAt(bundle, time.Now())
 	printer.Success("\r\n[*] DTN delivered bundle %s -> %s (route=%s via=%s session=%s conn=%s) [memo len=%d]\r\n",
 		shortUUID(bundle.ID), shortUUID(bundle.Target), route, shortUUID(firstHop), shortUUID(sess.UUID()), connEndpoints(sess.Conn()), len(bundle.Payload))
@@ -847,13 +847,13 @@ func (admin *Admin) onDTNAck(ack *protocol.DTNAck) {
 	if admin == nil || ack == nil || admin.dtnManager == nil {
 		return
 	}
-	// Fetch and forget inflight record
+	// 取出并删除对应的 inflight 记录。
 	bundle := admin.forgetInflight(ack.BundleID)
 	if ack.OK != 0 {
-		// Finalize: ensure queue cleaned up (in case it was requeued after a timeout).
+		// 收尾：确保队列里的同一 bundle 已被清理（防止它在超时后被重新入队）。
 		_, removed := admin.dtnManager.Remove(ack.BundleID)
-		// Count delivery only if this ACK corresponds to an inflight send, or it removed a queued retry.
-		// Otherwise it's a stale/duplicate ACK.
+		// 只有当 ACK 对应一次 inflight 发送，或它确实移除了队列里的重试项时，
+		// 才计入 delivered；否则它只是陈旧或重复的 ACK。
 		if bundle != nil || removed {
 			admin.dtnDelivered++
 		}
@@ -863,7 +863,7 @@ func (admin *Admin) onDTNAck(ack *protocol.DTNAck) {
 		}
 		return
 	}
-	// Error path: re-enqueue if TTL still valid
+	// 错误路径：如果 TTL 仍有效，则重新入队。
 	if bundle == nil {
 		return
 	}
@@ -871,12 +871,12 @@ func (admin *Admin) onDTNAck(ack *protocol.DTNAck) {
 	now := time.Now()
 	if !bundle.DeliverBy.IsZero() {
 		if !bundle.DeliverBy.After(now) {
-			// expired, drop
+			// 已过期，直接丢弃。
 			return
 		}
 	}
-	// Requeue the same bundle to preserve BundleID across retries (important for restart recovery).
-	// Try to align with next expected send window (sleep), otherwise use a bounded backoff.
+	// 重试时复用同一个 bundle，以保留 BundleID（这对重启恢复很重要）。
+	// 优先对齐到下一个预计可发送窗口（sleep），否则使用有界退避。
 	delay := admin.nextSendDelay(bundle.Target)
 	if delay <= 0 && admin.dtnManager != nil {
 		cfg := admin.dtnManager.Config()
@@ -911,9 +911,8 @@ func (admin *Admin) onNodeReonline(uuid string) {
 	if uuid == "" {
 		return
 	}
-	// A node can come back online while its bundles are still waiting on a stale
-	// HoldUntil derived from an older sleep estimate. Release holds immediately so
-	// short work windows are not missed.
+	// 节点重新上线时，它的 bundle 可能还在等待一个由旧 sleep 估计推导出的
+	// 过期 HoldUntil。这里立即释放 hold，避免错过短暂的 work 窗口。
 	if changed := admin.dtnManager.RecalculateHoldForTarget(uuid, time.Time{}); changed > 0 {
 		printer.Warning("\r\n[*] DTN hold released on node reonline: %s bundles=%d\r\n", shortUUID(uuid), changed)
 	}
@@ -932,9 +931,9 @@ func (admin *Admin) dtnAckTimeout(target string) time.Duration {
 	}
 	timeout := dtnBaseAckTimeout
 	if admin.topology != nil && strings.TrimSpace(target) != "" {
-		// Budget is per-direction expected wait. Use a single budget unit here; using 2x
-		// can make retries too sluggish in short traces when intermediate hops lose route
-		// during self-heal (star/chain flake cases).
+		// 预算表示单向的预期等待时长。这里只加一次预算；
+		// 如果乘以 2，在短 trace 中遇到中间跳点于自愈期间丢路由时，
+		// 重试会变得过于迟缓（典型是 star/chain flake 场景）。
 		if budget := admin.topology.PathSleepBudget(target); budget > 0 {
 			timeout += budget
 		}
@@ -979,7 +978,7 @@ func (admin *Admin) requeueExpiredInflight(now time.Time) {
 			continue
 		}
 		if !b.DeliverBy.IsZero() && now.After(b.DeliverBy) {
-			// expired, drop
+			// 已过期，直接丢弃。
 			admin.dtnFailed++
 			continue
 		}
@@ -1099,7 +1098,7 @@ func (admin *Admin) OpenStream(ctx context.Context, target, sessionID string, me
 	return stream, nil
 }
 
-// ShellSessionID returns the current/desired shell session identifier for a node.
+// ShellSessionID 返回节点当前或期望使用的 shell 会话标识。
 func (admin *Admin) ShellSessionID(uuid string) string {
 	if admin == nil || admin.mgr == nil || admin.mgr.ShellManager == nil {
 		return uuid
@@ -1111,7 +1110,7 @@ func (admin *Admin) ShellSessionID(uuid string) string {
 	return sessionID
 }
 
-// DTNStats implements DTNController
+// DTNStats 实现 DTNController。
 func (admin *Admin) DTNStats() (uint64, uint64, uint64, uint64) {
 	if admin == nil {
 		return 0, 0, 0, 0
@@ -1160,7 +1159,7 @@ func (admin *Admin) DTNMetricsSnapshot() (dtn.QueueStats, time.Time) {
 	return snapshot.Stats, snapshot.Captured
 }
 
-// TopologySnapshot returns a UI-friendly snapshot of current nodes and edges.
+// TopologySnapshot 返回适合 UI 展示的当前节点和边快照。
 func (admin *Admin) TopologySnapshot(entry, network string) topology.UISnapshot {
 	if admin == nil || admin.topology == nil {
 		return topology.UISnapshot{}
@@ -1168,7 +1167,7 @@ func (admin *Admin) TopologySnapshot(entry, network string) topology.UISnapshot 
 	return admin.topology.UISnapshot(entry, network)
 }
 
-// StreamDiagnostics exposes current stream engine diagnostics.
+// StreamDiagnostics 暴露当前 stream engine 的诊断信息。
 func (admin *Admin) StreamDiagnostics() []stream.SessionDiag {
 	if admin == nil || admin.streamEngine == nil {
 		return nil
@@ -1231,7 +1230,7 @@ func (admin *Admin) StreamPing(targetUUID string, count, payloadSize int) error 
 	return nil
 }
 
-// DTNPolicy implements DTNController
+// DTNPolicy 实现 DTNController。
 func (admin *Admin) DTNPolicy() map[string]string {
 	if admin == nil {
 		return map[string]string{}
@@ -1245,7 +1244,7 @@ func (admin *Admin) DTNPolicy() map[string]string {
 	}
 }
 
-// SetDTNPolicy implements DTNController
+// SetDTNPolicy 实现 DTNController。
 func (admin *Admin) SetDTNPolicy(key, value string) error {
 	if admin == nil {
 		return fmt.Errorf("admin unavailable")
@@ -1522,7 +1521,7 @@ func (admin *Admin) fetchRoute(uuid string) (string, bool) {
 	return res.Route, true
 }
 
-// UpdateNodeMemo sets memo field for the given node and notifies the agent.
+// UpdateNodeMemo 为指定节点设置 memo 字段，并通知对应 agent。
 func (admin *Admin) UpdateNodeMemo(targetUUID, memo string) error {
 	if admin == nil || admin.mgr == nil {
 		return fmt.Errorf("admin unavailable")
@@ -1558,7 +1557,7 @@ func (admin *Admin) UpdateNodeMemo(targetUUID, memo string) error {
 	return nil
 }
 
-// ConnectNode requests the target node to connect to a downstream address.
+// ConnectNode 请求目标节点主动连接到一个下游地址。
 func (admin *Admin) ConnectNode(ctx context.Context, targetUUID, addr string) error {
 	if admin == nil || admin.mgr == nil {
 		return fmt.Errorf("admin unavailable")
@@ -1703,17 +1702,17 @@ func (admin *Admin) UpdateSleep(targetUUID string, params SleepUpdateParams) err
 	if params.SleepSeconds == nil && params.WorkSeconds == nil && params.JitterPercent == nil {
 		return ErrSleepUpdateNoFields
 	}
-	// Validate payload early so we don't enqueue invalid updates for later dispatch.
+	// 尽早校验载荷，避免把无效更新排进后续发送队列。
 	if _, err := buildSleepUpdatePayload(params); err != nil {
 		return err
 	}
 
-	// Update desired sleep/work settings in topology even if the node is temporarily
-	// unreachable. This prevents Kelpie from misclassifying duty-cycle nodes as
-	// "always-on" and triggering unnecessary self-heal churn.
+	// 即使节点暂时不可达，也要先在拓扑中更新期望的 sleep/work 配置。
+	// 这样可以避免 Kelpie 把 duty-cycle 节点误判成“常在线”，
+	// 从而触发不必要的自愈抖动。
 	admin.updateSleepTopology(targetUUID, params, false)
 
-	// Session metadata is "desired state": update it regardless of immediate dispatch.
+	// 会话元数据表达的是“期望状态”，因此无论是否能立即下发都先更新。
 	state := admin.sessionState(targetUUID)
 	now := time.Now().UTC()
 	if params.JitterPercent != nil {
@@ -1979,7 +1978,7 @@ func (admin *Admin) flushPendingSleepUpdates() {
 
 		admin.pendingSleepMu.Lock()
 		if existing, ok := admin.pendingSleepUpdates[targetUUID]; ok {
-			// Newer updates win; preserve fields already queued after we popped this attempt.
+			// 较新的更新优先；在本次取出后，保留队列里已经排好的其他字段。
 			existing.params = mergeSleepUpdateParams(item.rec.params, existing.params)
 			if existing.enqueuedAt.IsZero() || (!item.rec.enqueuedAt.IsZero() && item.rec.enqueuedAt.Before(existing.enqueuedAt)) {
 				existing.enqueuedAt = item.rec.enqueuedAt
@@ -2096,7 +2095,7 @@ func (admin *Admin) ListProxies() []*ProxyDescriptor {
 	return mgr.List()
 }
 
-// StartListener triggers a passive listener on the given node via the current DTN control path.
+// StartListener 通过当前 DTN 控制路径，在指定节点上触发一个被动监听器。
 func (admin *Admin) StartListener(targetUUID, bind string, mode int, listenerID string) (string, error) {
 	if admin == nil || admin.mgr == nil {
 		return "", fmt.Errorf("admin unavailable")
@@ -2425,7 +2424,7 @@ func (admin *Admin) RouterStats() map[uint16]bus.RouterCounter {
 	return nil
 }
 
-// RoutingStrategy returns the current topology routing strategy.
+// RoutingStrategy 返回当前拓扑的路由策略。
 func (admin *Admin) RoutingStrategy() topology.RoutingStrategy {
 	if admin == nil || admin.topology == nil {
 		return topology.RoutingByHops
@@ -2433,7 +2432,7 @@ func (admin *Admin) RoutingStrategy() topology.RoutingStrategy {
 	return admin.topology.RoutingStrategy()
 }
 
-// SetRoutingStrategy switches the topology routing strategy at runtime.
+// SetRoutingStrategy 在运行时切换拓扑路由策略。
 func (admin *Admin) SetRoutingStrategy(strategy topology.RoutingStrategy) error {
 	if admin == nil || admin.topology == nil {
 		return fmt.Errorf("topology unavailable")
@@ -2468,7 +2467,7 @@ func (admin *Admin) DropEntrySession(entry string) error {
 	return admin.DropSession(entry)
 }
 
-// DropSession forcibly removes a session/component by node UUID.
+// DropSession 按节点 UUID 强制移除一个 session/component。
 func (admin *Admin) DropSession(target string) error {
 	if admin == nil || admin.store == nil {
 		return fmt.Errorf("admin unavailable")

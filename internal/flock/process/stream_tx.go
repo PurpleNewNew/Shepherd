@@ -44,10 +44,10 @@ func (agent *Agent) streamUplinkConn(streamID uint32) (net.Conn, string, bool) {
 	agent.streamMu.Lock()
 	if agent.streams != nil {
 		if st := agent.streams[streamID]; st != nil && st.replyConn != nil {
-			// replyConn records the connection on which STREAM_OPEN arrived. If the upstream
-			// session has since been replaced (reconnect/sleep), the saved conn becomes stale
-			// and will wedge retransmission loops by repeatedly writing to a closed socket.
-			// Prefer the current session connection in that case.
+			// replyConn 记录 STREAM_OPEN 到达时使用的那条连接。
+			// 如果此后上游会话已经被替换（reconnect/sleep），保存下来的 conn
+			// 就会变成过期连接，并让重传循环反复写入已关闭的 socket 而卡住。
+			// 这种情况下应优先使用当前会话连接。
 			if sessConn != nil && !st.replyIsSupplemental && !sameConn(st.replyConn, sessConn) {
 				st.replyConn = nil
 			} else {
@@ -106,8 +106,8 @@ func (agent *Agent) dispatchStreamFrame(streamID, seq uint32, ack uint32, window
 	if agent == nil || frame == nil {
 		return
 	}
-	// Treat stream TX as activity to prevent the sleep manager from tearing down the
-	// upstream session mid-transfer (which can wedge streams and dataplane downloads).
+	// 将 stream 发送视为活跃行为，避免睡眠管理器在传输中途拆掉上游会话
+	// （这会直接卡住 stream 与 dataplane 下载）。
 	agent.noteActivity()
 	conn, secret, ok := agent.streamUplinkConn(streamID)
 	if !ok || conn == nil {
@@ -175,7 +175,7 @@ func (agent *Agent) onStreamFrameTimeout(streamID, seq uint32) {
 	agent.dispatchStreamFrame(streamID, seq, ack, window, frame)
 }
 
-// sendStreamData wraps the reliable sender for non-SOCKS consumers.
+// sendStreamData 为非 SOCKS 使用方封装可靠发送逻辑。
 func (agent *Agent) sendStreamData(streamID uint32, data []byte) {
 	agent.sendReliableStreamData(streamID, data)
 }
@@ -202,9 +202,9 @@ func (agent *Agent) emitStreamClose(streamID uint32, code uint16, reason string,
 	}
 	replyConn := pinnedReplyConn
 
-	// STREAM_CLOSE is not ACKed by the stream layer. Under churn (sleep/reconnect/repair),
-	// sending the close on both the per-stream replyConn (when available) and the current
-	// upstream session connection significantly reduces dataplane upload hangs.
+	// STREAM_CLOSE 在 stream 层没有 ACK。遇到抖动（sleep/reconnect/repair）时，
+	// 同时通过每个 stream 自己的 replyConn（若存在）和当前上游会话连接发送 close，
+	// 能明显减少 dataplane 上传卡死的概率。
 	sameConn := func(a, b net.Conn) bool {
 		if a == nil || b == nil {
 			return false
@@ -241,10 +241,10 @@ func (agent *Agent) emitStreamClose(streamID uint32, code uint16, reason string,
 	send(sessConn)
 }
 
-// sendStreamClose emits a STREAM_CLOSE frame to admin.
+// sendStreamClose 向 admin 发出一个 STREAM_CLOSE 帧。
 func (agent *Agent) sendStreamClose(streamID uint32, code uint16, reason string) {
-	// Snapshot replyConn at call time so duplicates still follow the same uplink even if the
-	// stream state entry is removed before the timers fire (common for inbound file-put/proxy).
+	// 在调用时拍下 replyConn 快照。这样即使 stream 状态在定时器触发前就被删除
+	// （入站 file-put/proxy 很常见），后续重复发送仍会沿同一条上行链路走。
 	var pinnedReplyConn net.Conn
 	agent.streamMu.Lock()
 	if agent.streams != nil {
@@ -254,8 +254,8 @@ func (agent *Agent) sendStreamClose(streamID uint32, code uint16, reason string)
 	}
 	agent.streamMu.Unlock()
 
-	// Best-effort reliability: close frames are not ACKed today.
-	// Under reconnect/sleep churn, sending a couple of duplicates significantly reduces hangs.
+	// 尽力提高可靠性：当前 close 帧还没有 ACK。
+	// 在 reconnect/sleep 抖动下，多发几次重复 close 能明显减少卡死。
 	agent.emitStreamClose(streamID, code, reason, pinnedReplyConn)
 	time.AfterFunc(2*time.Second, func() { agent.emitStreamClose(streamID, code, reason, pinnedReplyConn) })
 	time.AfterFunc(6*time.Second, func() { agent.emitStreamClose(streamID, code, reason, pinnedReplyConn) })

@@ -39,8 +39,8 @@ func agentWarnRuntime(mgr *manager.Manager, code string, retryable bool, err err
 	sendRuntimeLogToAdmin(mgr, rerr)
 }
 
-// isBenignNetClose filters common close-related errors that are expected during
-// shutdown (EOF, use of closed network connection, broken pipe, reset by peer).
+// isBenignNetClose 用于过滤那些在关闭流程中本来就预期会出现的常见 close 相关错误，
+// 例如 EOF、use of closed network connection、broken pipe、reset by peer。
 func isBenignNetClose(err error) bool {
 	if err == nil {
 		return false

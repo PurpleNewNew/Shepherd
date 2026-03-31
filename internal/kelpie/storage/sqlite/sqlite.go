@@ -26,17 +26,17 @@ func New(path string) (*Store, error) {
 	if err != nil {
 		return nil, fmt.Errorf("open sqlite: %w", err)
 	}
-	// Serialize connections to avoid concurrent write contention
+	// 串行化连接，避免并发写入争用。
 	db.SetMaxOpenConns(1)
 	db.SetMaxIdleConns(1)
-	// Improve write concurrency and resilience under bursts
+	// 提升突发场景下的写并发能力与韧性。
 	if _, err := db.Exec(`PRAGMA journal_mode=WAL;`); err != nil {
 		_ = db.Close()
 		return nil, fmt.Errorf("configure sqlite: %w", err)
 	}
-	// Back off rather than failing immediately on transient writer locks
+	// 遇到临时写锁时先退避，而不是立刻失败。
 	_, _ = db.Exec(`PRAGMA busy_timeout=5000;`)
-	// A reasonable durability/perf tradeoff for admin UI telemetry
+	// 为 admin UI telemetry 提供一个较合理的耐久性与性能折中。
 	_, _ = db.Exec(`PRAGMA synchronous=NORMAL;`)
 	s := &Store{db: db}
 	if err := s.initSchema(); err != nil {

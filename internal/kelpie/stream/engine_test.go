@@ -68,7 +68,7 @@ func TestHandleData_ReorderBuffering(t *testing.T) {
 		readErr <- err
 	}()
 
-	// Send seq=2 before seq=1; should buffer and not deliver yet.
+	// 先发送 seq=2 再发送 seq=1；此时应先缓存，暂不投递。
 	e.HandleData(&protocol.StreamData{StreamID: 123, Seq: 2, Payload: []byte("B")})
 	e.HandleData(&protocol.StreamData{StreamID: 123, Seq: 1, Payload: []byte("A")})
 	select {
@@ -83,7 +83,7 @@ func TestHandleData_ReorderBuffering(t *testing.T) {
 		t.Fatalf("got %q, want %q", string(got), string(want))
 	}
 
-	// Sending duplicate should not deliver more bytes.
+	// 发送重复帧不应额外投递更多字节。
 	e.HandleData(&protocol.StreamData{StreamID: 123, Seq: 1, Payload: []byte("A")})
 
 	mu.Lock()
@@ -106,7 +106,7 @@ func TestHandleData_RxBufferOverflowAborts(t *testing.T) {
 	}
 	defer s.Close()
 
-	// Fill rxBuf with out-of-order frames while keeping seq=1 missing.
+	// 在保持 seq=1 缺失的情况下，用乱序帧填满 rxBuf。
 	for i := uint32(2); i < 2+257; i++ {
 		e.HandleData(&protocol.StreamData{StreamID: 456, Seq: i, Payload: []byte("x")})
 	}
@@ -126,7 +126,7 @@ func TestHandleData_RxBufferOverflowAborts(t *testing.T) {
 		t.Fatal("timed out waiting for stream abort")
 	}
 
-	// Session should be removed.
+	// 该会话应当被移除。
 	if meta := e.SessionMeta(456); meta != nil {
 		t.Fatalf("expected session to be removed, got meta=%v", meta)
 	}

@@ -226,8 +226,8 @@ func (c *suppLinkController) markFailed(linkUUID, reason string) (*suppLinkRecor
 	if !ok {
 		return nil, false
 	}
-	// Idempotent: once a link is marked degraded/retired, do not re-trigger failure processing.
-	// The caller uses the transition flag to avoid repeated teardowns and log spam.
+	// 幂等处理：一旦链路被标记为 degraded/retired，就不要重复触发失败处理。
+	// 调用方会利用 transition 标记避免反复 teardown 和日志刷屏。
 	if entry.Status == SuppLinkDegraded || entry.Status == SuppLinkRetired {
 		if entry.FailureReason == "" && reason != "" {
 			entry.FailureReason = reason

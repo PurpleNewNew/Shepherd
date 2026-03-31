@@ -137,7 +137,7 @@ func main() {
 	}
 	if snapshot != nil {
 		topo.ApplySnapshot(snapshot)
-		// 启动前统一将历史在线状态重置为离线，等待节点上线消息重新置位，避免“幽灵在线”
+		// 启动前统一将快照中的在线标记重置为离线，等待新的上线消息重新置位。
 		topo.MarkAllOffline()
 		supp.RestoreSupplementalLinks(snapshot.SupplementalLinks)
 	}
@@ -363,8 +363,7 @@ func grpcServerOptionsFromConfig(opts *initial.Options, auditor *audit.Recorder)
 		unary = append(unary, rateLimitUnaryInterceptor(limiter))
 		stream = append(stream, rateLimitStreamInterceptor(limiter))
 	}
-	// 仅保留 teamserver 拦截器；不再依赖用户态 AuthManager。
-	// 先校验 UI bootstrap token（与 teamserver token 相同配置），避免 ensureBootstrapToken 失效。
+	// 先校验 UI token，再附加 teamserver 鉴权上下文。
 	unary = append(unary, bootstrapUnaryInterceptor(opts.UIAuthToken))
 	stream = append(stream, bootstrapStreamInterceptor(opts.UIAuthToken))
 	// teamserver 拦截器附加鉴权上下文
@@ -423,8 +422,8 @@ func extractAuthToken(md metadata.MD) string {
 	return ""
 }
 
-// operatorNameFromMetadata derives a human-readable operator name from
-// incoming metadata. In teamserver mode this is purely for attribution
+// operatorNameFromMetadata 会从传入的 metadata 中提取一个便于阅读的操作者名称。
+// 在 teamserver 模式下，这个名称只用于归属标记。
 // (chat/audit) 且不信任客户端自报的用户名，以防伪造。
 func operatorNameFromMetadata(ctx context.Context) string {
 	name := "teamserver"
@@ -448,11 +447,6 @@ func newRateLimiter(maxRPS float64) *rate.Limiter {
 	return rate.NewLimiter(rate.Limit(maxRPS), burst)
 }
 
-func skipAuth(method string) bool {
-	_ = method
-	return false
-}
-
 func rateLimitUnaryInterceptor(limiter *rate.Limiter) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 		if limiter != nil && !limiter.Allow() {
@@ -471,13 +465,10 @@ func rateLimitStreamInterceptor(limiter *rate.Limiter) grpc.StreamServerIntercep
 	}
 }
 
-// bootstrap token 拦截器：在 teamserver 拦截器之前验证 UI token，避免未接线的 ensureBootstrapToken 失效。
+// bootstrap token 拦截器负责在 teamserver 拦截器之前验证 UI token。
 func bootstrapUnaryInterceptor(token string) grpc.UnaryServerInterceptor {
 	token = strings.TrimSpace(token)
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-		if skipAuth(info.FullMethod) {
-			return handler(ctx, req)
-		}
 		if token == "" {
 			return nil, status.Error(codes.Unauthenticated, "server ui token is not configured")
 		}
@@ -499,9 +490,6 @@ func bootstrapUnaryInterceptor(token string) grpc.UnaryServerInterceptor {
 func bootstrapStreamInterceptor(token string) grpc.StreamServerInterceptor {
 	token = strings.TrimSpace(token)
 	return func(srv interface{}, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
-		if skipAuth(info.FullMethod) {
-			return handler(srv, ss)
-		}
 		if token == "" {
 			return status.Error(codes.Unauthenticated, "server ui token is not configured")
 		}
@@ -523,21 +511,19 @@ func bootstrapStreamInterceptor(token string) grpc.StreamServerInterceptor {
 func teamserverUnaryInterceptor(bootstrap string) grpc.UnaryServerInterceptor {
 	bootstrap = strings.TrimSpace(bootstrap)
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-		if !skipAuth(info.FullMethod) {
-			if bootstrap == "" {
-				return nil, status.Error(codes.Unauthenticated, "server ui token is not configured")
-			}
-			md, ok := metadata.FromIncomingContext(ctx)
-			if !ok {
-				return nil, status.Error(codes.Unauthenticated, "missing auth metadata")
-			}
-			token := strings.TrimSpace(extractAuthToken(md))
-			if token == "" {
-				return nil, status.Error(codes.Unauthenticated, "missing teamserver token")
-			}
-			if subtle.ConstantTimeCompare([]byte(token), []byte(bootstrap)) != 1 {
-				return nil, status.Error(codes.Unauthenticated, "invalid teamserver token")
-			}
+		if bootstrap == "" {
+			return nil, status.Error(codes.Unauthenticated, "server ui token is not configured")
+		}
+		md, ok := metadata.FromIncomingContext(ctx)
+		if !ok {
+			return nil, status.Error(codes.Unauthenticated, "missing auth metadata")
+		}
+		token := strings.TrimSpace(extractAuthToken(md))
+		if token == "" {
+			return nil, status.Error(codes.Unauthenticated, "missing teamserver token")
+		}
+		if subtle.ConstantTimeCompare([]byte(token), []byte(bootstrap)) != 1 {
+			return nil, status.Error(codes.Unauthenticated, "invalid teamserver token")
 		}
 		username := operatorNameFromMetadata(ctx)
 		tenant := strings.ToLower(strings.TrimSpace(username))
@@ -562,21 +548,19 @@ func teamserverStreamInterceptor(bootstrap string) grpc.StreamServerInterceptor 
 	bootstrap = strings.TrimSpace(bootstrap)
 	return func(srv interface{}, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
 		ctx := ss.Context()
-		if !skipAuth(info.FullMethod) {
-			if bootstrap == "" {
-				return status.Error(codes.Unauthenticated, "server ui token is not configured")
-			}
-			md, ok := metadata.FromIncomingContext(ctx)
-			if !ok {
-				return status.Error(codes.Unauthenticated, "missing auth metadata")
-			}
-			token := strings.TrimSpace(extractAuthToken(md))
-			if token == "" {
-				return status.Error(codes.Unauthenticated, "missing teamserver token")
-			}
-			if subtle.ConstantTimeCompare([]byte(token), []byte(bootstrap)) != 1 {
-				return status.Error(codes.Unauthenticated, "invalid teamserver token")
-			}
+		if bootstrap == "" {
+			return status.Error(codes.Unauthenticated, "server ui token is not configured")
+		}
+		md, ok := metadata.FromIncomingContext(ctx)
+		if !ok {
+			return status.Error(codes.Unauthenticated, "missing auth metadata")
+		}
+		token := strings.TrimSpace(extractAuthToken(md))
+		if token == "" {
+			return status.Error(codes.Unauthenticated, "missing teamserver token")
+		}
+		if subtle.ConstantTimeCompare([]byte(token), []byte(bootstrap)) != 1 {
+			return status.Error(codes.Unauthenticated, "invalid teamserver token")
 		}
 		username := operatorNameFromMetadata(ctx)
 		tenant := strings.ToLower(strings.TrimSpace(username))

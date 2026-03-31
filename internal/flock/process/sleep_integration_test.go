@@ -113,7 +113,7 @@ func TestSleepUpdateHandlerAckFailure(t *testing.T) {
 	}
 }
 
-// --- Helpers copied from integration setup ---
+// --- 从集成测试初始化逻辑复制过来的辅助函数 ---
 
 type spyConn struct {
 	buf    []byte

@@ -8,7 +8,7 @@ import (
 	"codeberg.org/agnoie/shepherd/pkg/crypto"
 )
 
-// Transports holds default and per-component transport selections.
+// Transports 保存默认传输方式以及按组件覆盖的传输选择。
 type Transports struct {
 	defaultPair transportPair
 	components  sync.Map
@@ -25,8 +25,8 @@ var (
 
 func DefaultTransports() *Transports { return defaultTransports }
 
-// SetDefaultTransports sets the process-wide default transports.
-// Prefer passing a Transports instance explicitly where possible.
+// SetDefaultTransports 设置进程级默认传输方式。
+// 若条件允许，更推荐显式传入一个 Transports 实例。
 func SetDefaultTransports(upstream, downstream string) {
 	defaultTransports = NewTransports(upstream, downstream)
 }
@@ -101,7 +101,7 @@ const (
 const DefaultProtocolFlags uint16 = FlagSupportChunked
 
 const (
-	// Active control / topology / status messages（仍在路由器中使用）
+	// 活跃的控制、拓扑与状态消息（仍在路由器中使用）
 	HI = iota
 	UUID
 	CHILDUUIDREQ
@@ -142,7 +142,7 @@ const (
 	DTN_DATA
 	DTN_ACK
 	DTN_PULL
-	// Stream control/data over DTN.
+	// 通过 DTN 传输的 Stream 控制与数据消息。
 	STREAM_OPEN
 	STREAM_DATA
 	STREAM_ACK
@@ -281,7 +281,7 @@ type MyMemo struct {
 	Memo    string
 }
 
-// DTNData carries a DTN bundle payload.
+// DTNData 承载一个 DTN bundle 的载荷。
 type DTNData struct {
 	BundleIDLen uint16
 	BundleID    string
@@ -289,7 +289,7 @@ type DTNData struct {
 	Payload     []byte
 }
 
-// DTNAck acknowledges a DTN bundle delivery.
+// DTNAck 用于确认一个 DTN bundle 已完成投递。
 type DTNAck struct {
 	BundleIDLen uint16
 	BundleID    string
@@ -298,20 +298,20 @@ type DTNAck struct {
 	Error       string
 }
 
-// DTNPull requests admin to push up to Limit DTN_DATA messages for the sender.
+// DTNPull 请求 admin 为发送者推送最多 Limit 条 DTN_DATA 消息。
 type DTNPull struct {
 	Limit uint16
 }
 
-// --- Stream messages (DTN-Stream) ---
-// StreamOpen negotiates a new stream with basic options (key=value;...)
+// --- Stream 消息（DTN-Stream） ---
+// StreamOpen 用基础选项（key=value;...）协商创建一个新的 stream。
 type StreamOpen struct {
 	StreamID   uint32
 	OptionsLen uint16
 	Options    string
 }
 
-// StreamData carries a framed payload with basic cumulative ack/window hints.
+// StreamData 承载一个分帧后的载荷，并附带基础的累计 ack/window 提示。
 type StreamData struct {
 	StreamID   uint32
 	Seq        uint32
@@ -321,7 +321,7 @@ type StreamData struct {
 	Payload    []byte
 }
 
-// StreamAck provides ack and optional credit-only updates (without data).
+// StreamAck 提供 ack，以及可选的仅 credit 更新（不含数据）。
 type StreamAck struct {
 	StreamID uint32
 	Ack      uint32
@@ -330,7 +330,7 @@ type StreamAck struct {
 	SACK     []byte
 }
 
-// StreamClose terminates a stream with an application/result code.
+// StreamClose 以应用层结果码结束一个 stream。
 type StreamClose struct {
 	StreamID  uint32
 	Code      uint16
@@ -344,8 +344,8 @@ const (
 	SleepUpdateFlagJitter
 )
 
-// SleepUpdate requests an agent to adjust its sleep/work/jitter configuration.
-// Fields are applied only if the relevant flag bit is set.
+// SleepUpdate 请求 agent 调整其 sleep/work/jitter 配置。
+// 只有对应 flag bit 被置位的字段才会生效。
 type SleepUpdate struct {
 	Flags          uint16
 	SleepSeconds   int32
@@ -353,7 +353,7 @@ type SleepUpdate struct {
 	JitterPermille uint16
 }
 
-// SleepUpdateAck reports whether the configuration was applied.
+// SleepUpdateAck 汇报配置是否已成功应用。
 type SleepUpdateAck struct {
 	OK       uint16
 	ErrorLen uint16

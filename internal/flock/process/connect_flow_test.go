@@ -54,7 +54,7 @@ func TestSendConnectDone(t *testing.T) {
 	}
 }
 
-// Helpers adapted from integration shell tests.
+// 这里的辅助函数改编自 integration shell 测试。
 type connectSpyConn struct {
 	buf    []byte
 	writes chan []byte

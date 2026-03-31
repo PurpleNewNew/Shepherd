@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-// Parse converts key=value;... into a map, decoding URL-escaped values.
+// Parse 会把 key=value;... 转成 map，并解码其中经过 URL 转义的值。
 func Parse(opt string) map[string]string {
 	result := make(map[string]string)
 	fields := strings.Split(opt, ";")
@@ -31,7 +31,7 @@ func Parse(opt string) map[string]string {
 	return result
 }
 
-// Encode builds deterministic key=value list with URL-escaped values.
+// Encode 会构造一个确定顺序的 key=value 列表，并对值做 URL 转义。
 func Encode(meta map[string]string) string {
 	if len(meta) == 0 {
 		return ""

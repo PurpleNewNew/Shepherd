@@ -45,7 +45,7 @@ func (proxy *Socks5Proxy) Dial() (net.Conn, error) {
 	if err != nil {
 		return proxyConn, err
 	}
-	// Apply a short overall deadline to proxy negotiation to avoid hangs
+	// 给代理协商过程加一个较短的整体 deadline，避免卡住。
 	_ = proxyConn.SetDeadline(time.Now().Add(defaults.ProxyHandshakeDeadline))
 
 	host, portS, err := net.SplitHostPort(proxy.PeerAddr)
@@ -195,7 +195,7 @@ func (proxy *Socks5Proxy) Dial() (net.Conn, error) {
 				return proxyConn, err
 			}
 
-			// Clear deadline after successful negotiation
+			// 协商成功后清除 deadline。
 			_ = proxyConn.SetDeadline(time.Time{})
 			return proxyConn, nil
 		} else {
@@ -228,7 +228,7 @@ func (proxy *HTTPProxy) Dial() (net.Conn, error) {
 	if err != nil {
 		return proxyConn, SERVER_ERROR
 	}
-	// Bound CONNECT handshake by a deadline
+	// 用 deadline 约束 CONNECT 握手过程。
 	_ = proxyConn.SetDeadline(time.Now().Add(defaults.ProxyHandshakeDeadline))
 
 	var http_proxy_payload_template = "CONNECT %s HTTP/1.1\r\n" +

@@ -169,7 +169,7 @@ func TestRawTempUUIDMultiHopRouteIsPassThroughOnIntermediateHop(t *testing.T) {
 		msg.SendMessage()
 	}()
 
-	// Intermediate hop: should NOT decrypt, so payload must be raw bytes.
+	// 中间跳点：不应解密，因此 payload 必须保持为原始字节。
 	rMsg := NewDownMsg(server, "phase1-secret", "PIVOT")
 	raw := rMsg.(*RawMessage)
 	raw.CryptoSecret = secret
@@ -221,7 +221,7 @@ func TestRawTempUUIDSingleHopRouteDecryptsForMatchingUUID(t *testing.T) {
 		msg.SendMessage()
 	}()
 
-	// Final hop: route is a single segment that matches our UUID => decrypt+unmarshal.
+	// 最后一跳：route 只剩一个且匹配当前 UUID，因此应解密并反序列化。
 	rMsg := NewDownMsg(server, "phase1-secret", "FINALNODE")
 	raw := rMsg.(*RawMessage)
 	raw.CryptoSecret = secret

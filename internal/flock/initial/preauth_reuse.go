@@ -21,16 +21,15 @@ const (
 	preAuthReuseServerLabel = "shepherd/preauth/server"
 )
 
-// PassivePreAuthOrProxy attempts to complete the passive pre-auth handshake on conn.
+// PassivePreAuthOrProxy 会尝试在 conn 上完成被动预认证握手。
 //
-// In SO_REUSEPORT flows, the same port may be shared with a real service. If the
-// incoming traffic is not Shepherd, this function will start ProxyStream with
-// the buffered bytes and return ok=false, err=nil so the caller can continue
-// accepting new connections.
+// 在 SO_REUSEPORT 场景中，同一个端口可能与真实服务共享。
+// 如果传入流量并不是 Shepherd，本函数会用已缓冲的字节启动 ProxyStream，
+// 并返回 ok=false、err=nil，让调用方继续接收后续连接。
 //
-// NOTE: This reimplements the minimal parts of pkg/share/preauth.go because the
-// generic PassivePreAuth closes the connection on failure, which would break
-// transparent proxying for non-Shepherd traffic.
+// 注意：这里重新实现了 pkg/share/preauth.go 的最小必要逻辑，
+// 因为通用的 PassivePreAuth 在失败时会直接关闭连接，
+// 这会破坏对非 Shepherd 流量的透明代理。
 func PassivePreAuthOrProxy(conn net.Conn, token string, reusePort string, timeout time.Duration) (ok bool, err error) {
 	if conn == nil {
 		return false, fmt.Errorf("preauth: nil connection")

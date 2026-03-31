@@ -1,8 +1,8 @@
 /*
- * @Author: ph4ntom
- * @Date: 2021-03-23 19:01:26
- * @LastEditors: ph4ntom
- * @LastEditTime: 2021-04-02 17:24:21
+ * @作者: ph4ntom
+ * @日期: 2021-03-23 19:01:26
+ * @最后编辑: ph4ntom
+ * @最后编辑时间: 2021-04-02 17:24:21
  */
 package manager
 

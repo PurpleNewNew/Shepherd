@@ -346,7 +346,7 @@ func (listen *Listen) normalListen(mgr *manager.Manager, options *initial.Option
 				mgr.ChildrenManager.AddChild(childUUID, conn)
 				mgr.ChildrenManager.NotifyChild(&manager.ChildInfo{UUID: childUUID, Conn: conn})
 
-				// Keep the listener alive so children can reconnect to the same address/port.
+				// 保持 listener 存活，这样子节点才能重连到同一个地址和端口。
 				continue
 			}
 		}
@@ -589,7 +589,7 @@ func (listen *Listen) iptablesListen(mgr *manager.Manager, options *initial.Opti
 				mgr.ChildrenManager.AddChild(childUUID, conn)
 				mgr.ChildrenManager.NotifyChild(&manager.ChildInfo{UUID: childUUID, Conn: conn})
 
-				// Keep the listener alive so children can reconnect to the same address/port.
+				// 保持 listener 存活，这样子节点才能重连到同一个地址和端口。
 				continue
 			}
 		}
@@ -689,7 +689,7 @@ func (listen *Listen) soReuseListen(mgr *manager.Manager, options *initial.Optio
 			continue
 		}
 		if !ok {
-			// Non-Shepherd traffic was proxied.
+			// 非 Shepherd 流量已经被代理转发。
 			continue
 		}
 
@@ -833,7 +833,7 @@ func (listen *Listen) soReuseListen(mgr *manager.Manager, options *initial.Optio
 				mgr.ChildrenManager.AddChild(childUUID, conn)
 				mgr.ChildrenManager.NotifyChild(&manager.ChildInfo{UUID: childUUID, Conn: conn})
 
-				// Keep the listener alive so children can reconnect to the same address/port.
+				// 保持 listener 存活，这样子节点才能重连到同一个地址和端口。
 				continue
 			}
 		}

@@ -157,16 +157,14 @@ func ParseOptions() (*Options, error) {
 		return nil, err
 	}
 
-	// Preserve the original secret for downstream handshakes; the active session
-	// secret may be overwritten after establishing the first link.
+	// 为下游握手保留原始密钥；当前会话密钥可能会在首条链路建立后被覆盖。
 	args.baseSecret = args.Secret
 
 	return args, nil
 }
 
-// BaseSecret returns the original secret passed via CLI.
-// It is preserved because Options.Secret may be overwritten with the derived
-// session secret after handshake.
+// BaseSecret 返回通过 CLI 传入的原始密钥。
+// 之所以单独保留它，是因为握手后 Options.Secret 可能会被派生出的会话密钥覆盖。
 func (opt *Options) BaseSecret() string {
 	if opt == nil {
 		return ""

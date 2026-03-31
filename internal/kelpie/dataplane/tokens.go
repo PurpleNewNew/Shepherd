@@ -20,7 +20,7 @@ type TokenMeta struct {
 	Offset    int64  // required starting offset for this token
 	SizeHint  int64  // optional total/remaining size (bytes)
 	Retries   int    // allowed retries after failed attempt (consume + requeue)
-	// Optional opaque metadata for auditing / logging.
+	// 可选的不透明元数据，用于审计或日志记录。
 	Extra map[string]string
 }
 

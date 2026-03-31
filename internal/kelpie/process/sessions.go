@@ -17,7 +17,7 @@ import (
 	"codeberg.org/agnoie/shepherd/protocol"
 )
 
-// SessionStatus represents high-level session health.
+// SessionStatus 表示会话的高层健康状态。
 type SessionStatus string
 
 const (
@@ -29,7 +29,7 @@ const (
 	SessionStatusRepairing  SessionStatus = "repairing"
 )
 
-// SessionMarkAction enumerates supported mark operations.
+// SessionMarkAction 枚举支持的标记操作。
 type SessionMarkAction string
 
 const (
@@ -38,7 +38,7 @@ const (
 	SessionMarkMaintenance SessionMarkAction = "maintenance"
 )
 
-// SessionInfo describes a currently tracked session/connection.
+// SessionInfo 描述当前被跟踪的 session/connection。
 type SessionInfo struct {
 	TargetUUID    string
 	Active        bool
@@ -60,7 +60,7 @@ type SessionInfo struct {
 	Metadata      map[string]string
 }
 
-// SessionDiagnostics bundles extended session information.
+// SessionDiagnostics 汇总扩展的会话信息。
 type SessionDiagnostics struct {
 	Session SessionInfo
 	Metrics []SessionMetric
@@ -68,20 +68,20 @@ type SessionDiagnostics struct {
 	Process []SessionProcess
 }
 
-// SessionMetric is a name/value pair in diagnostics.
+// SessionMetric 表示诊断信息中的一个 name/value 对。
 type SessionMetric struct {
 	Name  string
 	Value string
 }
 
-// SessionIssue represents a detected session anomaly.
+// SessionIssue 表示一次检测到的会话异常。
 type SessionIssue struct {
 	Code    string
 	Message string
 	Detail  string
 }
 
-// SessionProcess is a lightweight process/handle description.
+// SessionProcess 表示轻量级的进程或句柄描述。
 type SessionProcess struct {
 	PID   string
 	Name  string
@@ -91,7 +91,7 @@ type SessionProcess struct {
 	Since time.Time
 }
 
-// SessionFilter narrows session listing queries.
+// SessionFilter 用于收窄会话列表查询范围。
 type SessionFilter struct {
 	Targets         []string
 	Statuses        []SessionStatus
@@ -152,7 +152,7 @@ func normalizeSessionFilter(filter SessionFilter) (map[string]struct{}, map[Sess
 	return targets, statuses
 }
 
-// Sessions returns currently known session infos.
+// Sessions 返回当前已知的 session 信息。
 func (admin *Admin) Sessions(filter SessionFilter) []SessionInfo {
 	if admin == nil || admin.store == nil {
 		return nil
@@ -271,7 +271,7 @@ func (admin *Admin) buildSessionInfo(uuid string) SessionInfo {
 	return info
 }
 
-// MarkSession updates the manual status for a session.
+// MarkSession 更新一个 session 的手动状态。
 func (admin *Admin) MarkSession(target string, action SessionMarkAction, operator, reason string) (SessionInfo, error) {
 	target = strings.TrimSpace(target)
 	if admin == nil || admin.store == nil {
@@ -304,7 +304,7 @@ func (admin *Admin) MarkSession(target string, action SessionMarkAction, operato
 	return info, nil
 }
 
-// RepairSession enqueues a manual repair/补链请求.
+// RepairSession 入队一个手动 repair/补链请求。
 func (admin *Admin) RepairSession(target string, force bool, reason string) (SessionInfo, error) {
 	target = strings.TrimSpace(target)
 	if admin == nil {
@@ -326,7 +326,7 @@ func (admin *Admin) RepairSession(target string, force bool, reason string) (Ses
 	return admin.buildSessionInfo(target), nil
 }
 
-// ReconnectSession forces the session to be dropped, prompting a reconnect.
+// ReconnectSession 会强制丢弃该 session，从而触发重连。
 func (admin *Admin) ReconnectSession(target, reason string) (SessionInfo, error) {
 	target = strings.TrimSpace(target)
 	if admin == nil {
@@ -346,7 +346,7 @@ func (admin *Admin) ReconnectSession(target, reason string) (SessionInfo, error)
 	return admin.buildSessionInfo(target), nil
 }
 
-// TerminateSession forcibly removes the session record entirely.
+// TerminateSession 会彻底强制移除该 session 记录。
 func (admin *Admin) TerminateSession(target, reason string) (bool, error) {
 	target = strings.TrimSpace(target)
 	if admin == nil {
@@ -364,7 +364,7 @@ func (admin *Admin) TerminateSession(target, reason string) (bool, error) {
 	return true, nil
 }
 
-// SessionDiagnostics returns extended info and honors include switches from the UI API.
+// SessionDiagnostics 返回扩展信息，并遵循 UI API 的 include 开关。
 func (admin *Admin) SessionDiagnostics(target string, includeProcesses, includeMetrics bool) (SessionDiagnostics, error) {
 	target = strings.TrimSpace(target)
 	if target == "" {

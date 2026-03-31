@@ -31,7 +31,7 @@ type frame struct {
 	payload  []byte
 }
 
-// per-stream state (single connection may carry multiple streams).
+// 每个 stream 的状态（单条连接上可以承载多个 stream）。
 type streamState struct {
 	open   openFrame
 	meta   TokenMeta
@@ -62,15 +62,15 @@ type tcpServer struct {
 }
 
 func estimateUploadCloseWait(meta TokenMeta, written int64) time.Duration {
-	// Baseline wait for small/fast transfers.
+	// 小文件或快速传输时的基线等待时间。
 	wait := 120 * time.Second
 	if written < 0 {
 		written = 0
 	}
 
-	// Under DTN churn (sleep windows, repair, re-route), close propagation can be much
-	// slower than LAN assumptions. Scale the close-wait budget with payload size using
-	// a conservative floor throughput so large transfers are not aborted prematurely.
+	// 在 DTN 抖动场景下（sleep 窗口、repair、重路由），close 的传播
+	// 往往比局域网假设慢得多。这里基于载荷大小按一个保守的最低吞吐率
+	// 缩放 close-wait 预算，避免大传输被过早中止。
 	const (
 		fallbackFloorBps = int64(32 * 1024) // 32 KiB/s conservative DTN floor
 		margin           = 45 * time.Second
@@ -78,7 +78,7 @@ func estimateUploadCloseWait(meta TokenMeta, written int64) time.Duration {
 	)
 	floorBps := fallbackFloorBps
 	if meta.MaxRate > 0 {
-		// MaxRate is an upper bound, but when it is very low it effectively predicts slower drain.
+		// MaxRate 虽然是上限，但当它非常低时，也等价于在预测更慢的排空速度。
 		if capBps := int64(math.Ceil(meta.MaxRate)); capBps > 0 && capBps < floorBps {
 			floorBps = capBps
 		}
@@ -199,7 +199,7 @@ func (s *tcpServer) handleConn(ctx context.Context, conn net.Conn) {
 		ft, sid, payload, err := readFrame(br)
 		if err != nil {
 			if !errors.Is(err, io.EOF) {
-				// drop silently
+				// 静默丢弃。
 			}
 			return
 		}
@@ -243,7 +243,7 @@ func (s *tcpServer) handleConn(ctx context.Context, conn net.Conn) {
 			continue
 		}
 
-		// demux data/close to active stream
+		// 将 data/close 分发到对应的活跃 stream。
 		st, ok := streams[sid]
 		if !ok {
 			continue
@@ -303,7 +303,7 @@ func (s *tcpServer) runUpload(ctx context.Context, conn net.Conn, writer *sync.M
 					return
 				}
 				if limiter != nil && !limiter.AllowN(time.Now(), len(fr.payload)) {
-					// backpressure: wait until tokens available
+					// 背压：等待 token 可用。
 					if err := limiter.WaitN(ctx, len(fr.payload)); err != nil {
 						sendCloseLocked(writer, conn, st.open.StreamID, 1, err.Error())
 						return
@@ -315,8 +315,8 @@ func (s *tcpServer) runUpload(ctx context.Context, conn net.Conn, writer *sync.M
 				}
 				written += int64(len(fr.payload))
 			case frameTypeClose:
-				// Signal EOF upstream so the remote side can finalize (hash/size checks),
-				// then wait for the remote close/error before acknowledging the client.
+				// 先向上游发出 EOF，让远端完成收尾（如 hash/size 校验），
+				// 然后等待远端 close 或 error，再向客户端确认。
 				if wc, ok := st.up.(interface{ CloseWrite() error }); ok && wc != nil {
 					_ = wc.CloseWrite()
 				} else {
@@ -335,9 +335,9 @@ func (s *tcpServer) runUpload(ctx context.Context, conn net.Conn, writer *sync.M
 					}
 				}()
 
-				// Once a token has been consumed and the stream is established, completion should
-				// not be constrained by token expiry. Otherwise large-but-valid transfers may be
-				// aborted solely because close propagation exceeded remaining token TTL.
+				// 一旦 token 已被消费且 stream 已建立，后续完成过程就不应再受 token 过期约束。
+				// 否则一些本来合法的大传输，可能仅仅因为 close 传播时间超过剩余 token TTL
+				// 就被错误中止。
 				wait := estimateUploadCloseWait(st.meta, written)
 				select {
 				case err := <-readDone:
@@ -467,18 +467,18 @@ func streamMeta(of openFrame, tok TokenMeta) map[string]string {
 	return meta
 }
 
-// newRateLimiter returns a limiter when rateBps > 0.
+// newRateLimiter 会在 rateBps > 0 时返回一个限速器。
 func newRateLimiter(rateBps float64) *rate.Limiter {
 	if rateBps <= 0 {
 		return nil
 	}
-	// burst: allow up to 128KB to absorb jitter
+	// burst：允许最多 128KB 的突发，以吸收抖动。
 	burst := int(128 * 1024)
 	lim := rate.NewLimiter(rate.Limit(rateBps), burst)
 	return lim
 }
 
-// --- framing helpers ---
+// --- framing辅助函数 ---
 
 func readFrame(r *bufio.Reader) (ft byte, streamID uint32, payload []byte, err error) {
 	var lenBuf [4]byte

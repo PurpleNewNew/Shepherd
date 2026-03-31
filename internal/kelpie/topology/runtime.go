@@ -2,7 +2,7 @@ package topology
 
 import "codeberg.org/agnoie/shepherd/protocol"
 
-// NodeRuntimeSnapshot returns runtime metadata for a node if present.
+// NodeRuntimeSnapshot 会在节点存在时返回其运行时元数据。
 func (topology *Topology) NodeRuntime(uuid string) (NodeRuntime, bool) {
 	if topology == nil || uuid == "" || uuid == protocol.ADMIN_UUID {
 		return NodeRuntime{}, false

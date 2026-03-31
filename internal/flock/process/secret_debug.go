@@ -15,6 +15,6 @@ func secretFingerprint(secret string) string {
 		return "empty"
 	}
 	sum := sha256.Sum256([]byte(secret))
-	// 8 bytes -> 16 hex chars is enough to correlate secrets without leaking them.
+	// 8 字节转成 16 个十六进制字符，足以关联密钥而不至于泄露完整内容。
 	return hex.EncodeToString(sum[:8])
 }

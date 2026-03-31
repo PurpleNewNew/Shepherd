@@ -9,14 +9,14 @@ import (
 )
 
 const (
-	// upCarryQueueCapacity bounds total buffered admin-bound messages per agent.
-	// Keep this relatively small: this queue is only meant for small control-plane
-	// messages (DTN_ACK / RUNTIMELOG) during short upstream outages.
+	// upCarryQueueCapacity 限制每个 agent 可缓存的 admin 定向消息总量。
+	// 这里应保持相对较小：该队列只用于在短暂上游中断期间缓存
+	// 小型控制面消息（如 DTN_ACK / RUNTIMELOG）。
 	upCarryQueueCapacity = 256
-	// upCarryMaxPayloadBytes prevents buffering large stream/file payloads.
+	// upCarryMaxPayloadBytes 用于阻止缓存过大的 stream/file 载荷。
 	upCarryMaxPayloadBytes = 256 * 1024
-	// upCarryDefaultTTL bounds how long we keep an upstream message when the parent
-	// link is flapping (sleep/failover/reconnect churn).
+	// upCarryDefaultTTL 限制父链路抖动时（sleep/failover/reconnect），
+	// 上游消息在本地最多保留多久。
 	upCarryDefaultTTL = 10 * time.Minute
 )
 
@@ -24,21 +24,21 @@ type upCarryItem struct {
 	header      *protocol.Header
 	payload     interface{}
 	passThrough bool
-	enqueuedAt time.Time
-	expireAt   time.Time
-	holdUntil  time.Time
-	attempts   int
+	enqueuedAt  time.Time
+	expireAt    time.Time
+	holdUntil   time.Time
+	attempts    int
 }
 
 func upCarryTTLForMessageType(msgType uint16) time.Duration {
-	// Buffer only small, high-value control-plane messages. Large/interactive
-	// flows (STREAM_*) should not be buffered here.
+	// 这里只缓存小而关键的控制面消息。大流量或交互式流
+	// （如 STREAM_*）不应该走这里。
 	switch msgType {
 	case uint16(protocol.DTN_ACK):
 		return upCarryDefaultTTL
 	case uint16(protocol.RUNTIMELOG):
 		return upCarryDefaultTTL
-	// Topology/self-heal control-plane (small).
+	// 拓扑与自愈控制面消息（小消息）。
 	case uint16(protocol.NODEOFFLINE), uint16(protocol.NODEREONLINE):
 		return upCarryDefaultTTL
 	case uint16(protocol.SUPPLINKRESP), uint16(protocol.SUPPLINKHEARTBEAT):
@@ -75,8 +75,8 @@ func (agent *Agent) maybeEnqueueUpCarry(header *protocol.Header, message interfa
 		header:      cloneHeader(header),
 		payload:     append([]byte(nil), payload...),
 		passThrough: true,
-		enqueuedAt: now,
-		expireAt:   now.Add(ttl),
+		enqueuedAt:  now,
+		expireAt:    now.Add(ttl),
 	}
 	agent.requeueUpCarryItem(item)
 	return true
@@ -93,7 +93,7 @@ func (agent *Agent) maybeEnqueueUpCarryLocal(header *protocol.Header, payload in
 	if ttl <= 0 {
 		return false
 	}
-	// Best-effort size guard for locally constructed payloads.
+	// 对本地构造载荷做一个尽力而为的大小保护。
 	if buf, err := protocol.EncodePayload(payload); err == nil && len(buf) > upCarryMaxPayloadBytes {
 		return false
 	}
@@ -154,7 +154,7 @@ func (agent *Agent) flushUpCarryQueueMode(force bool) {
 			}
 		}
 		if !item.passThrough {
-			// Local payload: nothing further to validate here.
+			// 本地载荷：这里无需再做额外校验。
 		}
 		if item.header == nil {
 			continue
@@ -204,9 +204,9 @@ func (agent *Agent) sendUpCarryItemOnConn(conn net.Conn, secret, uuid string, he
 	protocol.SetMessageMeta(up, version, flags)
 	protocol.ConstructMessage(up, header, payload, passThrough)
 
-	// Best-effort error reporting: when we can access the underlying buffers, write
-	// directly so we can retry on transient failures (the default SendMessage() path
-	// logs+closes but doesn't return an error).
+	// 尽力改进错误上报：如果能直接访问底层缓冲区，就直接写入，
+	// 这样在临时失败时还可以重试（默认的 SendMessage() 路径会记录日志并关闭，
+	// 但不会返回错误）。
 	switch m := up.(type) {
 	case *protocol.RawMessage:
 		final := append([]byte(nil), m.HeaderBuffer...)

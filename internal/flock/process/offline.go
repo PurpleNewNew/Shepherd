@@ -62,9 +62,9 @@ func (agent *Agent) reconHandshakeSecret(options *initial.Options) string {
 	if options == nil {
 		return ""
 	}
-	// Handshake (HI exchange) must use the original/base secret.
-	// Options.Secret may be overwritten with the derived session secret after the first link,
-	// which would break reconnect handshakes against listeners that decrypt HI with BaseSecret.
+	// 握手（HI 交换）必须使用原始的基础密钥。
+	// 首条链路建立后，Options.Secret 可能会被派生出的会话密钥覆盖，
+	// 这会破坏那些用 BaseSecret 解密 HI 的监听端的重连握手。
 	if base := options.BaseSecret(); base != "" {
 		return base
 	}
@@ -143,22 +143,19 @@ func upstreamOffline(agent *Agent) {
 	if mgr == nil || options == nil {
 		return
 	}
-	// Capture the upstream connection pointer that triggered offline handling. If a
-	// repair/rescue connection arrives in parallel, it will replace the active conn;
-	// we must not keep blocking on sleep/reconnect against stale options.Connect.
+	// 记录触发离线处理的那条上游连接指针。如果 repair/rescue 连接并发到达，
+	// 它会替换当前活跃连接；此时不能继续围绕过期的 options.Connect 阻塞在睡眠或重连逻辑里。
 	oldConn := func() net.Conn {
 		if sess := agent.currentSession(); sess != nil {
 			return sess.Conn()
 		}
 		return nil
 	}()
-	// Important: when the upstream is gone, keep the session/store from holding on to a
-	// closed net.Conn pointer. Otherwise, subsystems that pick "current session conn"
-	// (streams/dataplane ACKs, etc) can wedge by repeatedly writing to a dead socket,
-	// even after a supplemental link has delivered requests to us.
+	// 关键点：当上游消失时，必须避免 session/store 继续持有已关闭的 net.Conn 指针。
+	// 否则依赖“当前会话连接”的子系统（如 stream/dataplane ACK）会反复向死连接写数据，
+	// 即使请求已经通过 supplemental 链路送达，也可能因此卡死。
 	//
-	// We only clear when the session still points to oldConn to avoid racing with a
-	// concurrently-established repair/rescue connection.
+	// 只有当 session 仍然指向 oldConn 时才清理，避免与并发建立的 repair/rescue 连接竞争。
 	if oldConn != nil {
 		if sess := agent.currentSession(); sess != nil && sess.Conn() == oldConn {
 			if agent.store != nil {
@@ -167,19 +164,19 @@ func upstreamOffline(agent *Agent) {
 			agent.updateSessionConn(nil)
 		}
 	}
-	// If our view of ParentUUID has changed (e.g. rescue/reparent), prefer reconnecting to the
-	// parent's advertised gossip/listen endpoint instead of a stale static options.Connect.
+	// 如果我们感知到的 ParentUUID 已经变化（例如 rescue/reparent），
+	// 应优先重连到父节点通过 gossip/监听公布的地址，而不是继续使用过期的静态 options.Connect。
 	//
-	// This matters for short-connection sleep nodes: they intentionally close the upstream session
-	// during sleep and rely on reconnect. If Connect still points at the old parent, the node can
-	// get stuck "online in topology" but unreachable in practice, leading to DTN ACK timeouts.
+	// 这对短连接睡眠节点尤其重要：它们会在睡眠期间主动关闭上游会话，并依赖重连恢复。
+	// 如果 Connect 仍指向旧父节点，节点就可能在拓扑里显示在线、但实际上不可达，
+	// 最终导致 DTN ACK 超时。
 	if connect := agent.preferredUpstreamConnect(options); connect != "" && strings.TrimSpace(connect) != strings.TrimSpace(options.Connect) {
 		clone := *options
 		clone.Connect = connect
 		options = &clone
 	}
 	ctx := agent.context()
-	// If sleeping scheduled, wait until wake time
+	// 如果已经安排了睡眠，则等到唤醒时刻。
 	agent.sleepMu.Lock()
 	until := agent.sleepingUntil
 	agent.sleepMu.Unlock()
@@ -194,15 +191,15 @@ func upstreamOffline(agent *Agent) {
 			case <-timer.C:
 			case <-agent.connChanged:
 				timer.Stop()
-				// A repair/rescue connection may have replaced the upstream session while
-				// we were waiting for wake time; let the read loop pick up the new conn.
+				// 在等待唤醒期间，repair/rescue 连接可能已经替换了上游会话；
+				// 这里让读循环去接管新的连接。
 				if sess := agent.currentSession(); sess != nil && sess.Conn() != nil && sess.Conn() != oldConn {
 					agent.finalizeUpstreamRecovery(ctx)
 					return
 				}
 			}
 		}
-		// clear sleeping
+		// 清除睡眠状态。
 		agent.sleepMu.Lock()
 		agent.sleepingUntil = time.Time{}
 		agent.sleepMu.Unlock()
@@ -265,19 +262,19 @@ func (agent *Agent) finalizeUpstreamRecovery(ctx context.Context) {
 	}
 	tellAdminReonline(agent.mgr)
 	broadcastReonlineMess(ctx, agent.mgr)
-	// Opportunistically pull DTN after reconnection
+	// 重连后顺便主动拉取一次 DTN。
 	agent.requestDTNPull(8)
 }
 
-// preferredUpstreamConnect returns an alternate connect address (host:port) based on the current
-// ParentUUID and the last known gossip NodeInfo for that parent.
+// preferredUpstreamConnect 会根据当前 ParentUUID 与该父节点最近一次 gossip NodeInfo，
+// 返回一个替代的连接地址（host:port）。
 //
-// Returns empty string when no override is available.
+// 如果没有可用的覆盖地址，则返回空字符串。
 func (agent *Agent) preferredUpstreamConnect(options *initial.Options) string {
 	if agent == nil || options == nil {
 		return ""
 	}
-	// Only meaningful for active reconnect modes that already have a connect target.
+	// 只有在主动重连模式且已经存在 connect 目标时，这个覆盖地址才有意义。
 	if strings.TrimSpace(options.Connect) == "" {
 		return ""
 	}
@@ -488,7 +485,7 @@ func (agent *Agent) soReusePassiveReconn(ctx context.Context, options *initial.O
 			continue
 		}
 		if !ok {
-			// Non-Shepherd traffic was proxied.
+			// 非 Shepherd 流量已经被代理转发。
 			continue
 		}
 
@@ -582,7 +579,7 @@ func (agent *Agent) reconnectOnce(ctx context.Context, options *initial.Options,
 		d := &net.Dialer{}
 		conn, err = d.DialContext(ctx, "tcp", options.Connect)
 	} else {
-		// Proxy dial is not context-aware; keep it but ensure subsequent reads have deadlines
+		// Proxy 拨号本身不感知 context；这里保留该行为，但确保后续读取都有 deadline。
 		conn, err = proxy.Dial()
 	}
 	if err != nil {
@@ -718,10 +715,10 @@ func (agent *Agent) setActiveConnection(conn net.Conn) {
 	if agent == nil || conn == nil {
 		return
 	}
-	// Capture the old upstream before we update the session/store. If we are switching
-	// to a new upstream (repair/rescue/failover), we must force the main read loop
-	// (handleDataFromUpstream) to exit the old DestructMessage() blocking read. The
-	// simplest and most reliable way is to close the previous active connection.
+	// 在更新 session/store 之前，先保存旧的上游连接。如果要切换到新的上游
+	// （repair/rescue/failover），必须强制主读循环（handleDataFromUpstream）
+	// 退出旧连接上的 DestructMessage() 阻塞读取。最简单也最可靠的方式，
+	// 就是关闭之前那条活跃连接。
 	var oldConn net.Conn
 	if sess := agent.currentSession(); sess != nil {
 		oldConn = sess.Conn()
@@ -730,19 +727,17 @@ func (agent *Agent) setActiveConnection(conn net.Conn) {
 		agent.store.UpdateActiveConn(conn)
 	}
 	agent.updateSessionConn(conn)
-	// Best-effort signal: allow reconnect loops to exit early when an external
-	// repair/rescue connection has already updated the active session.
+	// 尽力发一个信号：如果外部 repair/rescue 连接已经更新了活跃会话，
+	// 让重连循环可以尽早退出。
 	if agent.connChanged != nil {
 		select {
 		case agent.connChanged <- struct{}{}:
 		default:
 		}
 	}
-	// If we are switching to a different underlying connection, close the old one so
-	// the upstream read loop can rebind to the new session immediately.
+	// 如果底层连接已经切换，就关闭旧连接，让上游读循环立刻绑定到新的会话。
 	if oldConn != nil && oldConn != conn {
-		// Avoid closing the new connection when callers pass a SafeConn wrapper or its
-		// underlying raw connection interchangeably.
+		// 调用方有时会交替传入 SafeConn 包装层和其底层裸连接，这里要避免误关新连接。
 		sameUnderlying := false
 		if sc, ok := oldConn.(*utils.SafeConn); ok && sc != nil && sc.Conn == conn {
 			sameUnderlying = true
@@ -776,7 +771,7 @@ func (agent *Agent) normalReconnActiveReconn(ctx context.Context, options *initi
 		case <-ctx.Done():
 			goto done
 		case <-agent.connChanged:
-			// A repair/rescue connection has already replaced the active upstream session.
+			// repair/rescue 连接已经替换了当前活跃的上游会话。
 			if sess := agent.currentSession(); sess != nil {
 				if conn := sess.Conn(); conn != nil && conn != initialConn {
 					return conn
@@ -841,7 +836,7 @@ func broadcastOfflineMess(ctx context.Context, mgr *manager.Manager) {
 		}
 
 		protocol.ConstructMessage(sMessage, header, offlineMess, false)
-		// Apply a short write deadline to avoid blocking on hung children
+		// 施加一个较短的写超时，避免被卡死的子节点长期阻塞。
 		_ = conn.SetWriteDeadline(time.Now().Add(defaults.BroadcastWriteDeadline))
 		sMessage.SendMessage()
 		_ = conn.SetWriteDeadline(time.Time{})
@@ -894,9 +889,8 @@ func downStreamOffline(agent *Agent, uuid string, expected *childDispatcher, exp
 	if agent == nil {
 		return
 	}
-	// Child reconnect can race with stale reader teardown: if a newer dispatcher is
-	// already installed for the same uuid, this offline callback belongs to an old
-	// connection and must not clear the fresh child route.
+	// 子节点重连可能与旧 reader 的收尾过程并发竞争：如果同一 uuid 已经装上了新的 dispatcher，
+	// 这次 offline 回调就属于旧连接，不应清掉新的子节点路由。
 	if expected != nil {
 		current := agent.currentDispatcher(uuid)
 		if current != expected {

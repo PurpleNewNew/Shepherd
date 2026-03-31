@@ -27,10 +27,10 @@ type Config struct {
 
 func DefaultConfig() Config {
 	return Config{
-		// NOTE: DTN also carries STREAM_/dataplane traffic (bulk payloads via chunking).
-		// A tiny per-node capacity can cause steady-state drops under normal stream windows,
-		// leading to false stream timeouts even on localhost. Keep this comfortably above
-		// typical stream windows to avoid "drop as flow-control".
+		// 注意：DTN 还承载 STREAM_/dataplane 流量（通过 chunking 传大载荷）。
+		// 如果每节点容量太小，即使在正常 stream 窗口下也会稳定丢包，
+		// 从而在 localhost 上都触发伪造的 stream 超时。这里要把它设置得
+		// 明显高于典型 stream 窗口，避免把“丢包”误当成流控手段。
 		PerNodeCapacity:  256,
 		DefaultTTL:       30 * time.Minute,
 		DispatchBatch:    8,
@@ -135,7 +135,7 @@ type Manager struct {
 	mu      sync.Mutex
 	queues  map[string]*nodeQueue
 	persist Persistor
-	// metrics
+	// 指标
 	mEnqueued      uint64
 	mDropped       uint64
 	mExpired       uint64
@@ -188,10 +188,10 @@ func (m *Manager) Now() time.Time {
 	return time.Now()
 }
 
-// Restore re-inserts previously persisted bundles into the in-memory queues.
+// Restore 会把此前持久化的 bundle 重新插入内存队列。
 //
-// It is intended to be used at Kelpie startup to recover DTN state across restarts.
-// Expired bundles are skipped (and deleted from persistence when available).
+// 它主要用于 Kelpie 启动时恢复跨重启保留下来的 DTN 状态。
+// 已过期的 bundle 会被跳过（若持久化层支持，也会顺带删除）。
 func (m *Manager) Restore(bundles []*Bundle) int {
 	if m == nil || len(bundles) == 0 {
 		return 0
@@ -364,7 +364,7 @@ func (m *Manager) ReadyFor(target string, now time.Time, max int) []*Bundle {
 	return clones
 }
 
-// Metrics returns basic queue counters.
+// Metrics 返回基础队列计数器。
 func (m *Manager) Metrics() (enqueued, dropped, expired uint64) {
 	if m == nil {
 		return 0, 0, 0
@@ -410,8 +410,8 @@ func (m *Manager) Requeue(bundle *Bundle, delay time.Duration) {
 	}
 }
 
-// RecalculateHoldForTarget sets a new HoldUntil for all non-expired bundles of a target.
-// If hold.IsZero(), clears HoldUntil (ready immediately). Returns number of bundles updated.
+// RecalculateHoldForTarget 会为某个目标的所有未过期 bundle 设置新的 HoldUntil。
+// 如果 hold.IsZero()，则清空 HoldUntil（立即可发送）。返回被更新的 bundle 数量。
 func (m *Manager) RecalculateHoldForTarget(target string, hold time.Time) int {
 	if m == nil || target == "" {
 		return 0

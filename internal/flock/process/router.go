@@ -101,12 +101,12 @@ func (agent *Agent) memoUpdateHandler() bus.Handler {
 			return fmt.Errorf("expected *protocol.MyMemo, got %T", payload)
 		}
 		agent.Memo = memo.Memo
-		// Memo convergence should not depend solely on the async trigger channel:
-		// under heavy gossip churn a coalesced trigger can delay/skip the newest
-		// memo snapshot. Emit once immediately to guarantee propagation.
+		// Memo 收敛不应只依赖异步触发通道：
+		// 在高频 gossip 抖动下，合并后的触发可能延迟或跳过最新的
+		// memo 快照。这里立即发送一次以确保传播。
 		agent.emitGossipUpdate()
-		// Keep the periodic/async path as a fallback when the immediate emission
-		// cannot proceed (e.g. transient session/connection unavailable).
+		// 当立即发送无法进行时（例如会话或连接暂时不可用），
+		// 仍保留周期性/异步路径作为兜底。
 		agent.triggerGossipUpdate()
 		return nil
 	}
@@ -118,8 +118,8 @@ func (agent *Agent) dtnDataHandler() bus.Handler {
 		if !ok {
 			return fmt.Errorf("expected *protocol.DTNData, got %T", payload)
 		}
-		// Treat DTN delivery as activity so the sleep manager doesn't drop the upstream
-		// connection while we're applying the payload and sending the ACK.
+		// 将 DTN 投递视为活跃行为，避免睡眠管理器在我们处理载荷并发送 ACK 时
+		// 提前断开上游连接。
 		agent.noteActivity()
 		clone := *data
 		if data.Payload != nil {
@@ -127,10 +127,10 @@ func (agent *Agent) dtnDataHandler() bus.Handler {
 		}
 		agent.recordDTNMessage(&clone)
 
-		// Trace helper: "log:<message>" DTN payloads need to be observable at Kelpie.
-		// Instead of relying on a separate RuntimeLog message (which can be lost during
-		// sleep/failover churn), echo the log payload via DTN_ACK.Error on success so it
-		// inherits ACK retry/carry-forward behavior.
+		// Trace 辅助：Kelpie 需要能观察到 "log:<message>" 形式的 DTN 载荷。
+		// 与其依赖单独的 RuntimeLog 消息（它在 sleep/failover 抖动中可能丢失），
+		// 更适合在成功时通过 DTN_ACK.Error 回显日志内容，从而继承 ACK 的
+		// 重试与 carry-forward 行为。
 		var dtnLogEcho string
 		msgText := strings.TrimSpace(string(clone.Payload))
 		lower := strings.ToLower(msgText)
@@ -144,8 +144,8 @@ func (agent *Agent) dtnDataHandler() bus.Handler {
 		if sess == nil {
 			return nil
 		}
-		// Prefer replying via the origin link (e.g. supplemental) so responses can flow
-		// even when the primary upstream session is sleeping/closed.
+		// 优先沿原始链路（例如 supplemental 边）回复，这样即使主上游会话
+		// 正在睡眠或已经关闭，响应仍然可以返回。
 		var adminConn net.Conn
 		if originConn != nil {
 			adminConn = originConn
@@ -155,13 +155,13 @@ func (agent *Agent) dtnDataHandler() bus.Handler {
 			adminConn = sess.Conn()
 		}
 
-		// Optional: apply minimal business actions
+		// 可选：执行最小化的业务处理。
 		applyErr := agent.applyDTNPayload(&clone, adminConn)
 		if applyErr != nil {
-			// keep stored for diagnostics; ACK will carry error
+			// 保留已存储的内容用于诊断；错误信息会由 ACK 携带。
 		}
 
-		// Immediately ACK upstream (OK on stored and applied, ERR if inbox full or apply error)
+		// 立即向上游返回 ACK：存储并处理成功时为 OK，收件箱已满或处理失败时为 ERR。
 		ackHeader := &protocol.Header{
 			Sender:      agent.UUID,
 			Accepter:    protocol.ADMIN_UUID,
@@ -183,7 +183,7 @@ func (agent *Agent) dtnDataHandler() bus.Handler {
 				return nil
 			}
 		}
-		// If the upstream link is flapping (sleep/kill/reconnect), buffer the ACK and retry.
+		// 如果上游链路正在抖动（sleep/kill/reconnect），先缓存 ACK，稍后重试。
 		agent.maybeEnqueueUpCarryLocal(ackHeader, ack)
 		return nil
 	}
@@ -196,9 +196,9 @@ func (agent *Agent) sleepUpdateHandler() bus.Handler {
 			return fmt.Errorf("expected *protocol.SleepUpdate, got %T", payload)
 		}
 		err := agent.applySleepUpdate(update)
-		// Sleep updates often precede follow-up control traffic (supplemental planning, DTN flush, rescue).
-		// If lastActivity is stale, the sleep manager can immediately drop the upstream connection and
-		// strand those messages. Hold the upstream open for (at least) one work window.
+		// sleep 更新后通常会紧跟后续控制流量（supplemental 规划、DTN flush、rescue）。
+		// 如果 lastActivity 过旧，睡眠管理器可能立刻断开上游连接，导致这些消息被卡住。
+		// 因此至少保持一个 work 窗口的唤醒时间。
 		cfg := agent.loadSleepConfig()
 		grace := time.Duration(cfg.workSeconds) * time.Second
 		if grace <= 0 {
@@ -237,10 +237,10 @@ func (agent *Agent) sendSleepUpdateAck(applyErr error) {
 	up.SendMessage()
 }
 
-// applyDTNPayload interprets a minimal DTN payload contract:
-// - "memo:<text>" updates agent memo and triggers gossip update.
-// - "log:<message>" sends a RuntimeLog upstream (INFO).
-// Returns error if unsupported or delivery failed (for log path).
+// applyDTNPayload 解析最小化的 DTN 载荷约定：
+// - "memo:<text>"：更新 agent memo，并触发 gossip 更新。
+// - "log:<message>"：向上游发送一条 RuntimeLog（INFO）。
+// 若载荷不受支持，或在日志路径中投递失败，则返回错误。
 func (agent *Agent) applyDTNPayload(data *protocol.DTNData, adminConn net.Conn) error {
 	if agent == nil || data == nil {
 		return fmt.Errorf("invalid payload")
@@ -252,20 +252,20 @@ func (agent *Agent) applyDTNPayload(data *protocol.DTNData, adminConn net.Conn) 
 		content := strings.TrimSpace(msg[len("memo:"):])
 		agent.Memo = content
 		logger.Infof("[diag/dtn_memo_apply] self=%s bundle=%s memo=%q", agent.UUID, data.BundleID, content)
-		// DTN memo updates must become visible to Kelpie immediately.
+		// DTN memo 更新需要立刻对 Kelpie 可见。
 		agent.emitGossipUpdate()
 		agent.pushMemoSnapshotToAdmin(adminConn)
-		// Preserve eventual convergence when immediate uplink fails.
+		// 若立即上行失败，仍要保留最终收敛能力。
 		agent.triggerGossipUpdate()
 		return nil
 	case strings.HasPrefix(lower, "log:"):
-		// "log:<message>" payloads are echoed via DTN_ACK.Error (see dtnDataHandler),
-		// so we don't need to emit a separate RuntimeLog here.
+		// "log:<message>" 载荷会通过 DTN_ACK.Error 回显（见 dtnDataHandler），
+		// 因此这里不需要再额外发送 RuntimeLog。
 		return nil
 	case strings.HasPrefix(lower, "stream:"):
-		// stream:<subcommand>[:kv]
-		// Prototype: stream:ping[:size=<n>][:seq=<n>]
-		// Respond upstream with a RuntimeLog so admin can see the pong.
+		// stream 子命令格式：<subcommand>[:kv]
+		// 原型格式：stream:ping[:size=<n>][:seq=<n>]
+		// 通过 RuntimeLog 向上游回复，便于 admin 看到 pong。
 		content := strings.TrimSpace(msg[len("stream:"):])
 		sub := content
 		if i := strings.IndexByte(content, ':'); i >= 0 {
@@ -276,7 +276,7 @@ func (agent *Agent) applyDTNPayload(data *protocol.DTNData, adminConn net.Conn) 
 		if sub != "ping" {
 			return fmt.Errorf("unsupported stream subcommand: %s", sub)
 		}
-		// parse params (very lenient)
+		// 解析参数（尽量宽松）。
 		size := 0
 		seq := 0
 		fields := strings.Split(content, ":")
@@ -294,7 +294,7 @@ func (agent *Agent) applyDTNPayload(data *protocol.DTNData, adminConn net.Conn) 
 				fmt.Sscanf(val, "%d", &seq)
 			}
 		}
-		// reply upstream as RuntimeLog (INFO) for prototype visibility
+		// 以 RuntimeLog（INFO）的形式回复上游，便于原型调试时观察。
 		sess := agent.currentSession()
 		header := &protocol.Header{
 			Sender:      agent.UUID,
@@ -325,7 +325,7 @@ func (agent *Agent) applyDTNPayload(data *protocol.DTNData, adminConn net.Conn) 
 		agent.maybeEnqueueUpCarryLocal(header, rlog)
 		return nil
 	default:
-		// proto:<type-hex>:<payload-hex>
+		// proto 封装格式：<type-hex>:<payload-hex>
 		if strings.HasPrefix(lower, "proto:") {
 			rest := msg[len("proto:"):]
 			parts := strings.SplitN(rest, ":", 2)
@@ -344,14 +344,14 @@ func (agent *Agent) applyDTNPayload(data *protocol.DTNData, adminConn net.Conn) 
 			if err != nil {
 				return fmt.Errorf("decode payload: %w", err)
 			}
-			// Preserve the origin connection for inner "proto:*" payloads.
+			// 为内层 "proto:*" 载荷保留原始连接。
 			//
-			// Stream/dataplane frames are delivered over DTN as "proto:<type>:<payload>".
-			// When they traverse a supplemental edge, replies must go back over that same
-			// link; otherwise a sleeping/disconnected upstream session can wedge the flow.
+			// Stream/dataplane 帧会以 "proto:<type>:<payload>" 的形式经 DTN 传递。
+			// 当它们穿过 supplemental 边时，回复也必须沿同一条链路返回；
+			// 否则一旦上游会话睡眠或断开，整个流就可能被卡住。
 			//
-			// dispatchLocalMessage() propagates originConn into handler context, which the
-			// stream layer uses to pin replyConn for reliable uplink.
+			// dispatchLocalMessage() 会把 originConn 传入 handler 上下文，
+			// stream 层再利用它固定 replyConn，以保证上行可靠。
 			header := &protocol.Header{Sender: protocol.ADMIN_UUID, Accepter: agent.UUID, MessageType: uint16(mt), RouteLen: 0, Route: ""}
 			agent.dispatchLocalMessage(header, payload, protocol.ADMIN_UUID, adminConn)
 			return nil
@@ -502,8 +502,8 @@ func (agent *Agent) streamOpenHandler() bus.Handler {
 		if agent.streams == nil {
 			agent.streams = make(map[uint32]*streamState)
 		}
-		// STREAM_DATA can arrive before STREAM_OPEN under DTN reordering.
-		// Preserve any existing rx buffer / ack state so we don't drop already-received frames.
+		// 在 DTN 重排序下，STREAM_DATA 可能先于 STREAM_OPEN 到达。
+		// 这里保留已有的 rx 缓冲区与 ack 状态，避免丢掉已收到的帧。
 		st := agent.streams[open.StreamID]
 		if st == nil {
 			st = &streamState{}
@@ -620,20 +620,20 @@ func (agent *Agent) streamDataHandler() bus.Handler {
 			seq := data.Seq
 			switch {
 			case seq == 0:
-				// ignore
+				// 忽略。
 			case seq <= st.rxAck:
-				// duplicate / old frame; ack current rxAck
+				// 重复帧或旧帧；回 ACK 当前 rxAck。
 			default:
-				// Buffer out-of-order frames; only advance rxAck when gaps are filled.
+				// 缓存乱序帧；只有空洞补齐后才推进 rxAck。
 				if len(data.Payload) > 0 {
 					if _, ok := st.rxBuf[seq]; !ok {
 						st.rxBuf[seq] = append([]byte(nil), data.Payload...)
 					}
 				}
 				if kind != "" {
-					// Only ACK frames that we can actually apply. If STREAM_DATA arrives before
-					// STREAM_OPEN (kind unknown), advancing rxAck would permanently drop data
-					// because the sender stops retransmitting once ACKed.
+					// 仅对真正可应用的帧回 ACK。如果 STREAM_DATA 早于 STREAM_OPEN 到达，
+					// 此时 kind 未知，贸然推进 rxAck 会导致数据被永久丢弃，
+					// 因为发送端一旦收到 ACK 就会停止重传。
 					for {
 						next := st.rxAck + 1
 						payload, ok := st.rxBuf[next]
@@ -761,12 +761,12 @@ func (agent *Agent) streamCloseHandler() bus.Handler {
 			}
 		}
 		agent.streamMu.Unlock()
-		// Do not delete agent.streams[streamID] before running kind-specific close handlers.
+		// 在执行按 kind 区分的 close handler 之前，不要先删除 agent.streams[streamID]。
 		//
-		// file-put/proxy need the per-stream replyConn (pinned to the origin link, often a
-		// supplemental edge) to send their STREAM_CLOSE back upstream reliably. Deleting
-		// the stream state first loses replyConn and can wedge dataplane uploads waiting for
-		// remote finalization under churn (sleep/repair/failover).
+		// file-put/proxy 需要每个 stream 自己的 replyConn（固定到原始链路，通常是
+		// supplemental 边）才能可靠地把 STREAM_CLOSE 发回上游。若先删掉 stream 状态，
+		// 就会丢失 replyConn，并可能让 dataplane 上传在 sleep/repair/failover 抖动下
+		// 卡在等待远端收尾的阶段。
 		agent.cleanupStreamPending(closeMsg.StreamID)
 		switch kind {
 		case "file-put", "file-get":

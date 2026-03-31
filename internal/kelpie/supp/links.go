@@ -41,14 +41,14 @@ func heartbeatTimeoutForEndpoint(uuid string) time.Duration {
 	if !ok || rt.SleepSeconds <= 0 {
 		return timeout
 	}
-	// Sleep nodes intentionally close their upstream session; since supplemental heartbeats are reported
-	// via that upstream, the admin may not receive heartbeats for multiple sleep cycles. Use a larger
-	// timeout so we don't tear down healthy supplemental edges during duty-cycled sleep.
+	// 睡眠节点会主动关闭自己的上游会话；而 supplemental 心跳正是通过这条上游上报给 admin。
+	// 因此 admin 可能跨越多个睡眠周期都收不到心跳。这里使用更大的超时值，
+	// 避免在 duty-cycled 睡眠期间误拆掉本来健康的 supplemental 边。
 	cycle := time.Duration(rt.SleepSeconds+rt.WorkSeconds) * time.Second
 	if cycle <= 0 {
 		cycle = time.Duration(rt.SleepSeconds) * time.Second
 	}
-	// Allow several cycles + a little slack for scheduling jitter and reconnect delays.
+	// 预留多个周期，再额外加一点余量，覆盖调度抖动与重连延迟。
 	sleepyTimeout := cycle*4 + suppHeartbeatInterval
 	if sleepyTimeout > timeout {
 		timeout = sleepyTimeout
@@ -406,7 +406,7 @@ func finalizeSupplementalEdge(topo *topology.Topology, mgr *manager.Manager, rec
 		warnRuntime("ADMIN_SUPP_ADD_EDGE", true, err, "failed to add supplemental edge between %s and %s", record.Listener, record.Dialer)
 		return
 	}
-	// Make the supplemental edge usable immediately (routing, failover commands, DTN dispatch).
+	// 让 supplemental 边立刻可用起来（用于路由、failover 命令和 DTN 分发）。
 	if err := topoExecute(topo, &topology.TopoTask{Mode: topology.CALCULATE}); err != nil {
 		warnRuntime("ADMIN_SUPP_CALC", true, err, "failed to calculate routes after adding supplemental edge between %s and %s", record.Listener, record.Dialer)
 	}
@@ -507,10 +507,10 @@ func FindSuppLinkUUID(a, b string) string {
 	return ""
 }
 
-// FailLinksForEndpoint proactively marks all supplemental links involving the given endpoint as failed.
+// FailLinksForEndpoint 会主动把所有涉及指定端点的 supplemental 链路标记为 failed。
 //
-// This is useful when an always-on node (sleepSeconds=0) goes offline: waiting for heartbeat timeouts
-// can take tens of seconds and strand DTN bundles behind dead "#supp" edges.
+// 这在常在线节点（sleepSeconds=0）离线时尤其有用：如果等心跳超时，
+// 往往要拖几十秒，期间 DTN bundle 会被卡在已经失效的 "#supp" 边之后。
 func FailLinksForEndpoint(topo *topology.Topology, mgr *manager.Manager, endpoint, reason string) {
 	endpoint = strings.TrimSpace(endpoint)
 	if endpoint == "" {
@@ -603,21 +603,21 @@ func checkSuppHeartbeatTimeouts(topo *topology.Topology, mgr *manager.Manager) {
 		if entry == nil {
 			continue
 		}
-		// Avoid repeatedly re-failing links that are already degraded; the first transition
-		// triggers teardown + edge removal, subsequent checks are just noise.
+		// 避免反复对已经 degraded 的链路重复判失败；
+		// 第一次状态变化已经触发 teardown 与移除边，后续检查只会制造噪音。
 		if entry.Status != SuppLinkHealthy && entry.Status != SuppLinkFailoverCandidate {
 			continue
 		}
-		// Heartbeats are reported to the admin via each endpoint's upstream session.
-		// During a parent outage, an endpoint may temporarily lose its upstream while the
-		// supplemental TCP connection is still healthy (the peer can still forward traffic).
+		// 心跳是通过各端点自己的上游会话上报给 admin 的。
+		// 当父节点故障时，某个端点可能暂时失去上游，但 supplemental TCP 连接本身
+		// 仍是健康的（对端依然可以帮它转发流量）。
 		//
-		// If we fail the link as soon as *either* endpoint stops reporting, we can
-		// incorrectly tear down a useful edge right when we need it most, causing flakes
-		// (DTN ACK timeouts) in trace replay.
+		// 如果只要任意一端停止上报就立即判这条链路失败，
+		// 就可能在最需要它的时候误拆一条仍有价值的边，
+		// 从而在 trace replay 中制造抖动（如 DTN ACK 超时）。
 		//
-		// Instead, treat a link as timed out only when *neither* endpoint has reported a
-		// recent heartbeat within its expected timeout window.
+		// 因此只有当两端在各自预期超时窗口内都没有上报最近心跳时，
+		// 才把这条链路视为超时。
 		hasHeartbeat := false
 		hasRecent := false
 		var worstEndpoint string
@@ -684,7 +684,7 @@ func markSuppLinkFailed(topo *topology.Topology, mgr *manager.Manager, linkUUID,
 		return
 	}
 	if !transitioned {
-		// Already marked degraded/retired: avoid re-running teardown/remove-edge loops.
+		// 已经标记为 degraded/retired：避免重复执行 teardown 或 remove-edge 循环。
 		return
 	}
 	persistSuppRecord(topo, record, true)

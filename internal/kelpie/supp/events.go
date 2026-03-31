@@ -14,7 +14,7 @@ const (
 	SuppLinkHealthFailed
 )
 
-// String returns textual representation of SuppLinkHealth.
+// String 返回 SuppLinkHealth 的文本表示。
 func (h SuppLinkHealth) String() string {
 	switch h {
 	case SuppLinkHealthAlive:

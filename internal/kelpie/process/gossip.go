@@ -350,9 +350,9 @@ func (admin *Admin) applyGossipUpdate(gossipMsg *protocol.GossipUpdate) {
 		}
 	}
 
-	// Real-time DTN hold reschedule based on latest telemetry/route
-	// - Recompute hold_until for bundles to this node
-	// - Attempt immediate flush to leverage newly aligned window
+	// 根据最新 telemetry 与 route 实时重排 DTN hold：
+	// - 重新计算发往该节点 bundle 的 hold_until
+	// - 尝试立即 flush，利用新对齐出来的发送窗口
 	admin.recalculateHoldForTarget(nodeInfo.UUID)
 	admin.flushDTNBundles(admin.context())
 }

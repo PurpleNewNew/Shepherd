@@ -79,6 +79,6 @@ func (d *childDispatcher) stopDispatcher() {
 	}
 	d.stop.Do(func() {
 		close(d.closed)
-		// Do not close inbox: enqueue may race with stop and panic on send-to-closed.
+		// 不要关闭 inbox：enqueue 可能与 stop 并发竞争，进而触发 send-to-closed panic。
 	})
 }

@@ -57,8 +57,8 @@ func NormalActive(userOptions *Options, topo *topology.Topology, proxy share.Pro
 	}
 	handshakeSecret := handshake.HandshakeSecret(baseSecret, userOptions.TlsEnable)
 
-	// NormalActive is the *client* side of the handshake; the peer expects the
-	// "client greeting" set (RoleAgent) even if we're Kelpie.
+	// NormalActive 是握手中的“客户端”一侧；即使我们是 Kelpie，
+	// 对端仍然期望收到“客户端问候”（RoleAgent）。
 	greet := handshake.RandomGreeting(handshake.RoleAgent)
 	hiMess := &protocol.HIMess{
 		GreetingLen:  uint16(len(greet)),
@@ -154,8 +154,8 @@ func NormalActive(userOptions *Options, topo *topology.Topology, proxy share.Pro
 	if fHeader.MessageType == protocol.HI {
 		mmess := fMessage.(*protocol.HIMess)
 		negotiation = protocol.Negotiate(localVersion, localFlags, mmess.ProtoVersion, mmess.ProtoFlags)
-		// NormalActive is the *client* side of the handshake; the peer replies
-		// with the "server greeting" set (RoleAdmin).
+		// NormalActive 是握手中的“客户端”一侧；对端会返回
+		// “服务端问候”（RoleAdmin）。
 		if handshake.ValidGreeting(handshake.RoleAdmin, mmess.Greeting) && mmess.IsAdmin == 0 {
 			if !negotiation.IsV1() {
 				conn.Close()

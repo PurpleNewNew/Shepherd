@@ -200,9 +200,9 @@ func (core *routerCore) dispatchDTNAck() bus.Handler {
 			printer.Success("\r\n[*] DTN ack bundle=%s status=%s\r\n", shorten(ack.BundleID), status)
 		}
 
-		// Trace helper: for successful DTN "log:" payloads we echo the log message via
-		// DTN_ACK.Error (on OK=1) so it inherits ACK retry semantics. When present,
-		// render it as a normal RuntimeLog for regression visibility.
+		// Trace 辅助：对于成功的 DTN "log:" 载荷，
+		// 我们通过 DTN_ACK.Error（OK=1 时）回显日志消息，使其继承 ACK 的重试语义。
+		// 如果存在这类回显，就把它当作普通 RuntimeLog 渲染，便于回归观察。
 		if ack.OK != 0 && ack.Error != "" {
 			sender := ""
 			if header != nil {

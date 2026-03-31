@@ -22,9 +22,8 @@ func (agent *Agent) shouldStartRepairListener() bool {
 	if agent == nil || agent.options == nil {
 		return false
 	}
-	// If a repair port is explicitly configured, start the repair listener even
-	// in active modes. This is required for supplemental self-heal to be able to
-	// dial back into nodes that normally initiate outbound sessions.
+	// 如果显式配置了 repair 端口，那么即使在主动模式下也要启动 repair listener。
+	// 这能让 supplemental 自愈流程反向拨入那些平时只主动发起外连的节点。
 	if agent.options.RepairPort != 0 {
 		return true
 	}
@@ -223,14 +222,14 @@ func (agent *Agent) handleRepairConn(conn net.Conn) {
 
 	agent.watchConn(agent.context(), conn)
 	agent.setActiveConnection(conn)
-	// Treat an inbound rescue/repair connection as a critical section, otherwise the sleep
-	// manager can immediately close the freshly-established upstream session if lastActivity
-	// is stale. This is especially important for short-connection nodes (sleep/work) where
-	// rescue is used as a control-plane lifeline during topology repair.
+	// 将入站的 rescue/repair 连接视为一个关键区。否则一旦 lastActivity 过旧，
+	// 睡眠管理器可能立刻关闭刚建立好的上游会话。
+	// 这对短连接节点（sleep/work）尤其重要，因为 rescue 在拓扑修复期间
+	// 本身就是一条控制面生命线。
 	cfg := agent.loadSleepConfig()
 	grace := time.Duration(cfg.workSeconds) * time.Second
-	// For very small work windows, we still need enough time to receive follow-up
-	// control-plane traffic (gossip/route updates) and flush DTN bursts.
+	// 即便 work 窗口非常短，也要预留足够时间接收后续控制面流量
+	// （如 gossip、路由更新），并刷出一批 DTN 消息。
 	if grace < 10*time.Second {
 		grace = 10 * time.Second
 	}

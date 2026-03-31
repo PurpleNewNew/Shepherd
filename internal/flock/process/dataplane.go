@@ -173,9 +173,9 @@ func (agent *Agent) sendChildMessage(msg *ChildrenMess) error {
 	return nil
 }
 
-// forwardToParent routes a transit message to the current parent hop. It prefers
-// an explicit supplemental parent path when requested and falls back to the
-// upstream session + up-carry buffering.
+// forwardToParent 将一个中转消息路由到当前父跳点。
+// 如果调用方显式要求 supplemental 父路径，则优先使用它；
+// 否则回退到上游会话加 up-carry 缓冲的方式。
 func (agent *Agent) forwardToParent(header *protocol.Header, payload []byte, parentUUID string, preferSupp bool) bool {
 	if agent == nil || header == nil || len(payload) == 0 || strings.TrimSpace(parentUUID) == "" {
 		return false
@@ -217,10 +217,10 @@ func (agent *Agent) handleDataFromUpstream() {
 			if ctx.Err() != nil {
 				return
 			}
-			// If another goroutine has already replaced the active upstream session
-			// (repair/rescue/failover), avoid running the full offline handler. The
-			// offline path can block on sleep/reconnect timers and strand the freshly
-			// established session; instead, just rebind the read loop to the new conn.
+			// 如果其他 goroutine 已经替换了当前活跃的上游会话
+			// （repair/rescue/failover），就不要再走完整的 offline 处理流程。
+			// offline 路径可能会阻塞在 sleep/reconnect 定时器上，反而把新建立的
+			// 会话卡住；这里直接让读循环重新绑定到新的连接即可。
 			if newConn, newSecret, newUUID := agent.connectionTriple(); newConn != nil && newConn != conn {
 				conn, secret, uuid = newConn, newSecret, newUUID
 				agent.watchConn(ctx, conn)
@@ -253,10 +253,10 @@ func (agent *Agent) handleDataFromUpstream() {
 
 		if header.Accepter == agent.UUID {
 			if header.RouteLen == 0 {
-				// Sender=ADMIN_UUID is used for end-to-end control messages from Kelpie,
-				// which may traverse multiple hops and should not overwrite the local
-				// upstream parent relationship. Only allow ADMIN_UUID as parent when
-				// we do not yet have a parent (root/bootstrapping case).
+				// Sender=ADMIN_UUID 用于 Kelpie 发出的端到端控制消息，
+				// 这类消息可能跨越多跳，不应覆盖本地记录的上游父关系。
+				// 只有在当前还没有父节点时（根节点或 bootstrap 阶段），
+				// 才允许把 ADMIN_UUID 视作父节点。
 				if header.Sender != protocol.ADMIN_UUID || agent.ParentUUID() == "" {
 					agent.setParentUUID(header.Sender)
 				}
@@ -339,8 +339,8 @@ func routeDisplay(route string) string {
 	return route
 }
 
-// TEMP_UUID + empty route means route traversal has reached final hop.
-// At that point the message must be delivered locally instead of dropped.
+// TEMP_UUID 且 route 为空，表示路由遍历已经到达最后一跳。
+// 此时消息必须本地交付，而不能直接丢弃。
 func shouldDispatchTerminalRoute(header *protocol.Header, nextUUID string) bool {
 	if header == nil || nextUUID != "" {
 		return false
@@ -466,13 +466,13 @@ func (agent *Agent) handleDataFromDownstream(conn net.Conn, uuid string, dispatc
 			continue
 		}
 
-		// Admin-bound messages travel upstream; when possible forward them as pass-through
-		// bytes so intermediate hops don't need to decrypt/re-encrypt.
+		// 发往 Admin 的消息会沿上游回传；如果条件允许，
+		// 优先按透传字节转发，避免中间跳点重复解密和加密。
 		if header != nil && header.Accepter == protocol.ADMIN_UUID {
 			if msgBytes, ok := message.([]byte); ok {
 				if err := agent.sendUpCarryItem(header, msgBytes, true); err != nil {
-					// Upstream is temporarily unavailable or the write failed (link flaps). Buffer small
-					// admin-bound pass-through messages so DTN_ACK/RuntimeLog aren't lost.
+					// 上游暂时不可用，或写入失败（链路抖动）。这里缓存较小的
+					// admin 定向透传消息，避免 DTN_ACK/RuntimeLog 被直接丢掉。
 					if agent.maybeEnqueueUpCarry(header, msgBytes) {
 						agent.noteActivity()
 						continue
@@ -484,8 +484,8 @@ func (agent *Agent) handleDataFromDownstream(conn net.Conn, uuid string, dispatc
 				continue
 			}
 
-			// Rare fallback: if we received a decoded payload for an ADMIN_UUID-bound message,
-			// forward it as a local payload (will re-marshal+encrypt).
+			// 少见的兜底路径：如果收到的是一个已经解码好的、发往 ADMIN_UUID 的消息，
+			// 就按本地载荷转发（会重新编组并加密）。
 			if err := agent.sendUpCarryItem(header, message, false); err != nil {
 				if agent.maybeEnqueueUpCarryLocal(header, message) {
 					agent.noteActivity()
@@ -498,14 +498,14 @@ func (agent *Agent) handleDataFromDownstream(conn net.Conn, uuid string, dispatc
 			continue
 		}
 
-		// Local delivery.
+		// 本地交付。
 		if header.Accepter == agent.UUID {
 			agent.dispatchLocalMessage(header, message, uuid, conn)
 			agent.noteActivity()
 			continue
 		}
 
-		// Route-based forwarding for non-admin traffic.
+		// 对非 admin 流量按 Route 转发。
 		nextUUID, preferSupp := nextHopFromRoute(agent.UUID, header)
 		if nextUUID == agent.UUID {
 			agent.dispatchLocalMessage(header, message, uuid, conn)
@@ -587,12 +587,12 @@ func (agent *Agent) handleDataFromSupplemental(conn net.Conn, linkUUID, peerUUID
 
 		noteSupplementalActivity(peerUUID)
 
-		// Messages destined for ADMIN_UUID travel upstream and do not use route-based forwarding.
-		// When they arrive over a supplemental link, forward them upstream directly (pass-through).
+		// 发往 ADMIN_UUID 的消息走上游，不使用基于 route 的转发。
+		// 当它们经 supplemental 链路到达时，应直接向上游透传。
 		if header != nil && header.Accepter == protocol.ADMIN_UUID {
 			if err := agent.sendUpCarryItem(header, message, true); err != nil {
-				// Upstream is temporarily unavailable or the write failed; buffer small pass-through messages
-				// (DTN_ACK/RuntimeLog, etc) rather than dropping them.
+				// 上游暂时不可用或写入失败时，缓存较小的透传消息
+				// （如 DTN_ACK/RuntimeLog），而不是直接丢弃。
 				if agent.maybeEnqueueUpCarry(header, message) {
 					agent.noteActivity()
 					continue
@@ -655,11 +655,11 @@ func (agent *Agent) noteActivity() {
 	agent.sleepMu.Unlock()
 }
 
-// holdAwakeFor extends a short grace window during which the sleep manager must not
-// tear down the upstream session even if the node appears idle.
+// holdAwakeFor 会延长一个短暂的宽限窗口，在此期间即使节点看起来空闲，
+// 睡眠管理器也不能拆掉上游会话。
 //
-// This is used for control-plane "critical sections" like rescue/reparent and sleep updates,
-// where closing the upstream session immediately can strand follow-up commands/ACKs.
+// 这用于 rescue/reparent、sleep 更新等控制面“关键区”，
+// 因为如果立刻关闭上游会话，后续命令或 ACK 很容易被卡住。
 func (agent *Agent) holdAwakeFor(d time.Duration) {
 	if agent == nil || d <= 0 {
 		return

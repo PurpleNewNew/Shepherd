@@ -28,7 +28,7 @@ func (agent *Agent) proxyOnOpen(streamID uint32, opts map[string]string) {
 	}
 	agent.fwdByID[streamID] = conn
 	agent.fwdMu.Unlock()
-	// pump target -> stream
+	// 转发方向：target -> stream
 	go func(id uint32, c net.Conn) {
 		buf := make([]byte, 32*1024)
 		for {

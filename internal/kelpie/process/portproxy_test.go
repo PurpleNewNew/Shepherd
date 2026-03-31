@@ -35,7 +35,7 @@ func TestPortProxyStartForwardBridgesConnections(t *testing.T) {
 		t.Fatalf("dial forward listener failed: %v", err)
 	}
 	remoteConn := <-streamCh
-	// client side cleanup
+	// 客户端侧清理
 	t.Cleanup(func() {
 		conn.Close()
 		remoteConn.Close()
@@ -185,7 +185,7 @@ func TestPortProxyList(t *testing.T) {
 	if found["node-a"] != kindBackwardProxy || found["node-b"] != kindForwardProxy {
 		t.Fatalf("unexpected proxy kinds: %+v", found)
 	}
-	// ensure list reflects current view after shutdown
+	// 确保关闭后列表能反映当前视图
 	mgr.StopForward(fwd.Target(), fwd.ID())
 	mgr.StopBackward("node-a", "")
 	if len(mgr.List()) != 0 {

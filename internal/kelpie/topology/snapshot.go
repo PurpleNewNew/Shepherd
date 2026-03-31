@@ -8,14 +8,14 @@ import (
 	"codeberg.org/agnoie/shepherd/protocol"
 )
 
-// UISnapshot captures a read-only view of nodes and edges for UI consumption.
+// UISnapshot 为 UI 提供节点与边的只读视图。
 type UISnapshot struct {
 	Nodes       []UINodeSnapshot
 	Edges       []UIEdgeSnapshot
 	LastUpdated time.Time
 }
 
-// UINodeSnapshot describes a node with metadata useful for rendering.
+// UINodeSnapshot 描述一个适合渲染展示的节点快照。
 type UINodeSnapshot struct {
 	UUID        string
 	ParentUUID  string
@@ -33,14 +33,14 @@ type UINodeSnapshot struct {
 	NextWake    time.Time
 }
 
-// UIEdgeSnapshot describes a relationship between two nodes.
+// UIEdgeSnapshot 描述两个节点之间的一条关系边。
 type UIEdgeSnapshot struct {
 	ParentUUID   string
 	ChildUUID    string
 	Supplemental bool
 }
 
-// UISnapshot returns a view of the topology filtered by entry/network if provided.
+// UISnapshot 会在提供 entry/network 条件时返回经过过滤的拓扑视图。
 func (topology *Topology) UISnapshot(filterEntry, network string) UISnapshot {
 	snapshot := UISnapshot{}
 	if topology == nil {

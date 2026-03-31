@@ -98,8 +98,8 @@ func run() error {
 	}
 
 	outDir := "protocol"
-	// `go generate` runs this tool with CWD=protocol/, while manual runs often use CWD=repo root.
-	// Support both layouts by detecting the presence of protocol.go in the current directory.
+	// `go generate` 运行本工具时的 CWD 是 protocol/，而手工运行通常位于仓库根目录。
+	// 这里通过检测当前目录中是否存在 protocol.go 来兼容这两种布局。
 	if _, statErr := os.Stat("protocol.go"); statErr == nil {
 		outDir = "."
 	}
@@ -114,8 +114,8 @@ func run() error {
 }
 
 func parseStructs() (map[string]structInfo, error) {
-	// Prefer paths relative to the current directory (go generate runs from protocol/),
-	// fall back to repo-root relative paths.
+	// 优先使用相对于当前目录的路径（go generate 会从 protocol/ 运行），
+	// 若找不到再回退到相对于仓库根目录的路径。
 	candidateSets := [][]string{
 		{"protocol.go", "gossip.go"},
 		{filepath.Join("protocol", "protocol.go"), filepath.Join("protocol", "gossip.go")},

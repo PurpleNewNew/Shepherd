@@ -80,7 +80,7 @@ func (agent *Agent) gossipLoop() {
 			return
 		case <-ticker.C:
 			agent.emitGossipUpdate()
-			// Opportunistic DTN pull (small batch)
+			// 机会式拉取一次 DTN（小批量）
 			agent.requestDTNPull(2)
 		case <-agent.gossipTrigger:
 			agent.emitGossipUpdate()
@@ -859,16 +859,15 @@ func (agent *Agent) handleIncomingGossip(update *protocol.GossipUpdate, sender s
 		return
 	}
 
-	// Root nodes may not have ParentUUID populated (they receive admin commands via routed TEMP messages).
-	// In that case, child-originated gossip would never reach Kelpie unless we explicitly uplink it.
+	// 根节点可能没有填充 ParentUUID（它们通过带路由的 TEMP 消息接收 admin 命令）。
+	// 这种情况下，如果不显式上行转发，来自子节点的 gossip 永远到不了 Kelpie。
 	if agent.ParentUUID() == "" && sender != protocol.ADMIN_UUID {
 		agent.sendUpdateDirectToAdmin(update)
 	}
 
-	// TTL should limit fanout and redundant flooding, but it must not prevent gossip
-	// updates from reaching the upstream parent/admin in deep topologies (e.g. long
-	// chains). If TTL is exhausted, forward *only* to the parent to guarantee
-	// eventual convergence at the root without creating cycles.
+	// TTL 应该限制扇出与冗余泛洪，但不能阻止 gossip 更新在深拓扑中
+	// （例如长链）继续到达上游父节点或 admin。若 TTL 已耗尽，
+	// 则只向父节点转发，以保证根部最终收敛，同时避免形成环路。
 	if update.TTL <= 1 {
 		parent := agent.ParentUUID()
 		if parent != "" && parent != sender {

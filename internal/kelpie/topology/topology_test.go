@@ -142,7 +142,7 @@ func TestNetworkForBreaksOnParentCycle(t *testing.T) {
 		t.Fatalf("unexpected ids: aid=%d bid=%d", aid, bid)
 	}
 
-	// Simulate a corrupted parent chain cycle.
+	// 模拟一个损坏的父链环。
 	topology.setParentRelationLocked(a.uuid, b.uuid)
 	topology.setParentRelationLocked(b.uuid, a.uuid)
 
@@ -172,7 +172,7 @@ func TestReparentNodeGuardsAgainstCycle(t *testing.T) {
 	waitForTask(t, topology, &TopoTask{Mode: ADDNODE, Target: a, ParentUUID: protocol.ADMIN_UUID})
 	waitForTask(t, topology, &TopoTask{Mode: ADDNODE, Target: b, ParentUUID: a.uuid})
 
-	// Reparent A under its own descendant B should be rejected and keep existing parent.
+	// 把 A 重新挂到自己的后代 B 之下应当被拒绝，并保留原有父节点。
 	waitForTask(t, topology, &TopoTask{Mode: REPARENTNODE, UUID: a.uuid, ParentUUID: b.uuid})
 
 	metaA := waitForTask(t, topology, &TopoTask{Mode: GETNODEMETA, UUID: a.uuid})
@@ -216,8 +216,8 @@ func TestReonlinePreservesSleepMetadata(t *testing.T) {
 		t.Fatalf("unexpected child runtime before reonline: sleep=%d work=%d nextWake=%v", before.SleepSeconds, before.WorkSeconds, before.NextWake)
 	}
 
-	// Reonline should update connectivity and parent pointers without clobbering
-	// duty-cycled sleep metadata.
+	// Reonline 应更新连通性与父指针，但不能覆盖
+	// duty-cycled 的 sleep 元数据。
 	reonline := NewNode(child.uuid, "10.0.0.99")
 	topology.reonlineNode(&TopoTask{
 		Target:     reonline,
@@ -286,7 +286,7 @@ func TestTopologyConcurrentReadersDoNotPanic(t *testing.T) {
 	var wg sync.WaitGroup
 	wg.Add(2)
 
-	// Writer: mutate topology (including deletes) while readers hammer public APIs.
+	// Writer：在读侧持续调用公开 API 的同时修改拓扑（包括删除）。
 	go func() {
 		defer wg.Done()
 		for i := 0; i < 128; i++ {
@@ -296,7 +296,7 @@ func TestTopologyConcurrentReadersDoNotPanic(t *testing.T) {
 			waitForTask(t, topology, &TopoTask{Mode: ADDEDGE, UUID: protocol.ADMIN_UUID, NeighborUUID: uuid})
 			waitForTask(t, topology, &TopoTask{Mode: UPDATEDETAIL, UUID: uuid, SleepSeconds: i % 3, WorkSeconds: 2})
 			if i%7 == 0 && i > 0 {
-				// Deletes used to trigger a concurrent map read/write panic via id2IDNum.
+				// 删除操作曾通过 id2IDNum 触发并发 map 读写 panic。
 				duuid := fmt.Sprintf("NODE-%04d", i-1)
 				waitForTask(t, topology, &TopoTask{Mode: DELNODE, UUID: duuid})
 			}
@@ -316,7 +316,7 @@ func TestTopologyConcurrentReadersDoNotPanic(t *testing.T) {
 			default:
 			}
 
-			// These calls should be safe while the topology task loop is mutating maps.
+			// 在拓扑任务循环修改 map 时，这些调用也应该保持安全。
 			_, _ = topology.NodeRuntime("NODE-0001")
 			_ = topology.UISnapshot("", "")
 			_ = topology.RootTargets()

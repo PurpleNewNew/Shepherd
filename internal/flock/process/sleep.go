@@ -22,8 +22,8 @@ const (
 	criticalNeighborFloor = 3
 )
 
-// startSleepManager launches a goroutine that keeps track of the current sleep
-// configuration and enters/leaves sleep windows accordingly.
+// startSleepManager 会启动一个 goroutine，跟踪当前 sleep 配置，
+// 并据此进入或离开睡眠窗口。
 func (agent *Agent) startSleepManager() {
 	if agent == nil {
 		return
@@ -48,9 +48,9 @@ func (agent *Agent) sleepLoop() {
 			time.Sleep(time.Second)
 			continue
 		}
-		// Wait until we've been idle for at least workSeconds.
-		// Note: lastActivity can move forward while we're waiting; re-check before sleeping
-		// to avoid closing the upstream connection during active traffic.
+		// 等到节点至少空闲满 workSeconds。
+		// 注意：等待期间 lastActivity 可能继续前进；睡眠前要再次检查，
+		// 以免在有活跃流量时误关上游连接。
 		for {
 			agent.sleepMu.Lock()
 			last := agent.lastActivity
@@ -76,8 +76,8 @@ func (agent *Agent) sleepLoop() {
 		if cfg := agent.loadSleepConfig(); cfg.sleepSeconds <= 0 {
 			continue
 		}
-		// If a critical control-plane operation recently occurred (sleep update, rescue, etc),
-		// keep the upstream session alive for a short grace window even if we're otherwise idle.
+		// 如果最近刚发生关键控制面操作（如 sleep update、rescue 等），
+		// 即使此刻其余部分都空闲，也要在短暂宽限期内保持上游会话存活。
 		agent.sleepMu.Lock()
 		graceUntil := agent.sleepGraceUntil
 		agent.sleepMu.Unlock()
@@ -94,7 +94,7 @@ func (agent *Agent) sleepLoop() {
 		}
 		factor := 1.0
 		if jitter > 0 {
-			// [-jitter, +jitter]
+			// 抖动范围：[-jitter, +jitter]
 			factor += (rand.Float64()*2 - 1) * jitter
 		}
 		sleepDur := time.Duration(sleepSeconds) * time.Second

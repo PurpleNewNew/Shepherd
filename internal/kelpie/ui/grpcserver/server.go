@@ -36,13 +36,13 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-// Server wraps a gRPC server that exposes Kelpie state to GUI clients.
+// Server 封装了一个向 GUI 客户端暴露 Kelpie 状态的 gRPC 服务端。
 type Server struct {
 	grpcServer *grpc.Server
 	service    *service
 }
 
-// New creates a UI gRPC server using the provided admin instance.
+// New 使用给定的 admin 实例创建一个 UI gRPC 服务端。
 func New(admin *process.Admin, auditor *audit.Recorder, chatSvc *chat.Service, dpManager *dataplane.Manager, bootstrapToken string, opts ...grpc.ServerOption) *Server {
 	svc := &service{
 		admin:          admin,
@@ -72,7 +72,7 @@ func New(admin *process.Admin, auditor *audit.Recorder, chatSvc *chat.Service, d
 	return &Server{grpcServer: grpcSrv, service: svc}
 }
 
-// Serve starts serving on the given listener.
+// Serve 在给定 listener 上开始提供服务。
 func (s *Server) Serve(lis net.Listener) error {
 	if s == nil || s.grpcServer == nil {
 		return fmt.Errorf("grpc server not initialized")
@@ -80,7 +80,7 @@ func (s *Server) Serve(lis net.Listener) error {
 	return s.grpcServer.Serve(lis)
 }
 
-// Stop gracefully stops the gRPC server.
+// Stop 会优雅地停止 gRPC 服务端。
 func (s *Server) Stop() {
 	if s == nil {
 		return
@@ -114,7 +114,7 @@ type service struct {
 	chatService    *chat.Service
 	dataplane      *dataplane.Manager
 	bootstrapToken string
-	// test hooks
+	// 测试钩子
 	startForwardProxyOverride  func(context.Context, string, string, string) (*process.ProxyDescriptor, error)
 	stopForwardProxyOverride   func(string, string) ([]*process.ProxyDescriptor, error)
 	startBackwardProxyOverride func(context.Context, string, string, string) (*process.ProxyDescriptor, error)
@@ -444,7 +444,7 @@ func (s *service) WatchEvents(_ *uipb.WatchEventsRequest, srv uipb.KelpieUIServi
 		return srv.Send(event)
 	}
 
-	// Initial snapshot as ADDED events.
+	// 以 ADDED 事件的形式发送初始快照。
 	initialSnap := s.admin.TopologySnapshot("", "")
 	for _, node := range initialSnap.Nodes {
 		prevNodes[node.UUID] = node
@@ -1221,8 +1221,8 @@ func (s *service) CancelDial(ctx context.Context, req *uipb.CancelDialRequest) (
 	if dialID == "" {
 		return nil, status.Error(codes.InvalidArgument, "missing dial id")
 	}
-	// dialMu protects both the dials map and the tracker fields; take a snapshot of
-	// state/cancel under the lock to avoid races with executeDial/updateDialState.
+	// dialMu 同时保护 dials 映射与 tracker 字段；这里在锁内拍下
+	// state/cancel 快照，避免与 executeDial/updateDialState 竞争。
 	s.dialMu.Lock()
 	tracker := s.dials[dialID]
 	state := uipb.DialState_DIAL_STATE_UNSPECIFIED

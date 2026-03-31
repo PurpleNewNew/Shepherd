@@ -75,10 +75,10 @@ func (agent *Agent) promoteSupplementalAsChild(linkUUID, parentUUID string, conn
 	}
 	agent.queueFailoverConn(conn, parentUUID, linkUUID)
 
-	// Trigger adoption promptly: if we stay on the old upstream session, the agent
-	// may keep sending (and ACKing) through a parent that is currently blind/offline.
-	// Closing the old upstream forces handleDataFromUpstream() into upstreamOffline(),
-	// which will adopt the queued failover candidate.
+	// 尽快触发接管：如果还停留在旧的上游会话上，agent 可能会继续经由一个
+	// 当前已经失明或离线的父节点发送数据并回 ACK。
+	// 关闭旧上游会强制 handleDataFromUpstream() 进入 upstreamOffline()，
+	// 从而接管已经排队的 failover 候选。
 	if sess := agent.currentSession(); sess != nil {
 		if up := sess.Conn(); up != nil && up != conn {
 			_ = up.Close()
@@ -136,14 +136,14 @@ func (agent *Agent) tryAdoptFailoverParent(ctx context.Context) bool {
 		ctx = agent.context()
 	}
 
-	// If a failover candidate is already queued, adopt it immediately.
+	// 如果已经有排队中的 failover 候选，就立即接管。
 	select {
 	case candidate := <-agent.failoverConnChan:
 		return agent.adoptFailoverCandidate(candidate)
 	default:
 	}
 
-	// Do not block normal reconnection unless a failover plan is pending.
+	// 只有在存在待处理 failover 方案时，才阻塞正常重连流程。
 	agent.failoverMu.Lock()
 	hasPending := len(agent.pendingFailovers) > 0
 	agent.failoverMu.Unlock()
@@ -303,9 +303,9 @@ func changeRoute(header *protocol.Header) (string, bool) {
 	return nextUUID, isSupp
 }
 
-// nextHopFromRoute pops Route segments until it finds a next hop that is not
-// the current node, or until the route becomes empty. This prevents accidental
-// self-truncation of multi-hop routes like "SELF:child:...".
+// nextHopFromRoute 会不断弹出 Route 段，直到找到一个不等于当前节点的下一跳，
+// 或者 route 为空为止。这样可以避免像 "SELF:child:..." 这样的多跳路由
+// 被错误地自我截断。
 func nextHopFromRoute(self string, header *protocol.Header) (string, bool) {
 	nextUUID, preferSupp := changeRoute(header)
 	for nextUUID == self && header.RouteLen != 0 {

@@ -67,7 +67,7 @@ func main() {
 func ensureControllerListener(ctx context.Context, conn *grpc.ClientConn, bind string) error {
 	client := uipb.NewControllerListenerAdminServiceClient(conn)
 
-	// Best-effort: if a listener already exists on this bind and is not stopped, keep it.
+	// 尽力而为：如果该 bind 上已经存在且未停止的 listener，就直接复用。
 	current, err := client.ListControllerListeners(ctx, &uipb.ListControllerListenersRequest{})
 	if err != nil {
 		return err
@@ -103,8 +103,8 @@ func waitForRootNode(ctx context.Context, conn *grpc.ClientConn, baseDelay, maxD
 				if strings.TrimSpace(node.GetUuid()) == "" {
 					continue
 				}
-				// When Kelpie uses a persistent SQLite store, old root nodes remain in the snapshot
-				// as offline records. Only treat an ONLINE root as a valid bootstrap target.
+				// 当 Kelpie 使用持久化 SQLite 存储时，旧的根节点会以离线记录的形式保留在快照中。
+				// 只有 ONLINE 的根节点才应被视为有效的 bootstrap 目标。
 				if strings.TrimSpace(node.GetParentUuid()) == protocol.ADMIN_UUID &&
 					strings.EqualFold(strings.TrimSpace(node.GetStatus()), "online") {
 					return node.GetUuid(), nil
@@ -131,7 +131,7 @@ func ensurePivotListener(ctx context.Context, conn *grpc.ClientConn, targetUUID,
 	}
 	for _, lis := range existing.GetListeners() {
 		if strings.TrimSpace(lis.GetBind()) == strings.TrimSpace(bind) && strings.TrimSpace(lis.GetTargetUuid()) == strings.TrimSpace(targetUUID) {
-			// If it already exists, try to ensure it's running (best-effort).
+			// 如果它已经存在，则尽力确保它处于运行状态。
 			if strings.EqualFold(strings.TrimSpace(lis.GetStatus()), "running") {
 				return nil
 			}
@@ -223,7 +223,7 @@ func envDuration(key string, def time.Duration) time.Duration {
 	if val == "" {
 		return def
 	}
-	// Accept both "300s" and bare seconds for convenience in compose.
+	// 为了方便 compose 配置，同时接受 "300s" 和纯秒数写法。
 	if d, err := time.ParseDuration(val); err == nil && d > 0 {
 		return d
 	}

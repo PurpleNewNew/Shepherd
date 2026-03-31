@@ -86,7 +86,7 @@ func (manager *shellManager) Close() {
 	}
 }
 
-// SetStreamForSession 记录 sessionID 对应的 streamID
+// SetStreamForSession 记录 sessionID 对应的 streamID。
 func (manager *shellManager) SetStreamForSession(sessionID string, streamID uint32) {
 	if manager == nil || sessionID == "" || streamID == 0 {
 		return
@@ -99,7 +99,7 @@ func (manager *shellManager) SetStreamForSession(sessionID string, streamID uint
 	manager.sessionMu.Unlock()
 }
 
-// StreamForSession 返回 sessionID 绑定的 streamID（0 表示无绑定）
+// StreamForSession 返回 sessionID 绑定的 streamID（0 表示无绑定）。
 func (manager *shellManager) StreamForSession(sessionID string) uint32 {
 	if manager == nil || sessionID == "" {
 		return 0
@@ -112,7 +112,7 @@ func (manager *shellManager) StreamForSession(sessionID string) uint32 {
 	return 0
 }
 
-// ClearStreamForSession 清理 sessionID 绑定的 streamID
+// ClearStreamForSession 清理 sessionID 绑定的 streamID。
 func (manager *shellManager) ClearStreamForSession(sessionID string) {
 	if manager == nil || sessionID == "" {
 		return
@@ -127,7 +127,7 @@ func (manager *shellManager) ClearStreamForSession(sessionID string) {
 	manager.sessionMu.Unlock()
 }
 
-// NextSeqForSession 返回自增序号（从 1 开始）
+// NextSeqForSession 返回自增序号（从 1 开始）。
 func (manager *shellManager) NextSeqForSession(sessionID string) uint32 {
 	if manager == nil || sessionID == "" {
 		return 0
@@ -163,7 +163,7 @@ type ShellSession struct {
 	Done         chan struct{}
 }
 
-// SetLastActivity records the provided timestamp as the latest activity moment.
+// SetLastActivity 将给定时间戳记录为最近一次活跃时间。
 func (session *ShellSession) SetLastActivity(ts time.Time) {
 	if session == nil {
 		return
@@ -173,12 +173,12 @@ func (session *ShellSession) SetLastActivity(ts time.Time) {
 	session.activityMu.Unlock()
 }
 
-// TouchActivity updates the activity timestamp to now.
+// TouchActivity 将活跃时间更新时间推进到当前时刻。
 func (session *ShellSession) TouchActivity() {
 	session.SetLastActivity(time.Now())
 }
 
-// LastActivity returns the most recently recorded activity time.
+// LastActivity 返回最近一次记录到的活跃时间。
 func (session *ShellSession) LastActivity() time.Time {
 	if session == nil {
 		return time.Time{}

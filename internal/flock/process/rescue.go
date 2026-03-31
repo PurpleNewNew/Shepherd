@@ -146,8 +146,8 @@ func (agent *Agent) performRescue(req *protocol.RescueRequest) (string, error) {
 		handshakeSecret = sessionSecret
 	}
 	if sessionSecret == "" && baseSecret != "" {
-		// After a successful HI exchange, the connection switches to the derived
-		// session secret (same rule as normal admin/agent handshake).
+		// HI 交换成功后，连接会切换到派生出的会话密钥，
+		// 这与普通 admin/agent 握手的规则一致。
 		tlsEnabled := req.Flags&protocol.RescueFlagRequireTLS != 0
 		sessionSecret = share.DeriveSessionSecret(baseSecret, tlsEnabled)
 	}
@@ -317,13 +317,13 @@ func (agent *Agent) performRescue(req *protocol.RescueRequest) (string, error) {
 	agent.mgr.ChildrenManager.AddChild(childUUID, conn)
 	agent.mgr.ChildrenManager.NotifyChild(&manager.ChildInfo{UUID: childUUID, Conn: conn})
 
-	// Proactively "touch" the child with a direct (no-route) message from the rescuer's UUID.
-	// This lets the child update its ParentUUID immediately, so subsequent sleep-triggered
-	// reconnects can prefer the new parent rather than a stale options.Connect target.
+	// 主动用 rescuer 的 UUID 给子节点发一个直达消息（不走 route）做一次“触碰”。
+	// 这样子节点可以立刻更新自己的 ParentUUID，使后续由睡眠触发的重连
+	// 优先选择新父节点，而不是继续使用过期的 options.Connect 目标。
 	//
-	// Without this, a rescued short-connection node may keep reconnecting to its old parent
-	// after waking up, while Kelpie already routes DTN bundles via the new parent, causing
-	// avoidable ACK timeouts and flakes in trace replay.
+	// 否则，被救援的短连接节点在唤醒后可能仍然不断重连旧父节点，
+	// 而 Kelpie 已经开始通过新父节点路由 DTN bundle，
+	// 这会造成本可避免的 ACK 超时与 trace replay 抖动。
 	secret := sessionSecret
 	if secret == "" {
 		secret = handshakeSecret

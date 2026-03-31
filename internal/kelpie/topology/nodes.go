@@ -339,8 +339,7 @@ func (topology *Topology) reonlineNode(task *TopoTask) {
 	}
 	now := time.Now()
 
-	// REONLINENODE must not clobber existing runtime metadata (sleep/work/next_wake,
-	// memo, connection info, etc.). The NodeReonline message only carries UUID+IP+parent.
+	// NodeReonline 仅携带 UUID、IP 和 parent，现有的运行时元数据需继续保留。
 	var (
 		idNum int
 		n     *node
@@ -348,7 +347,7 @@ func (topology *Topology) reonlineNode(task *TopoTask) {
 	if existingID, ok := topology.history[task.Target.uuid]; ok {
 		idNum = existingID
 		if existing := topology.nodes[idNum]; existing != nil && existing.uuid != "" {
-			// Update only connectivity/parent pointers; preserve other fields.
+			// 只更新连通性和父指针；其余字段保持不变。
 			if task.Target.currentIP != "" {
 				existing.currentIP = task.Target.currentIP
 			}
@@ -471,7 +470,7 @@ func (topology *Topology) getAllNodes(task *TopoTask) {
 		if node == nil || node.uuid == "" || node.uuid == protocol.ADMIN_UUID {
 			continue
 		}
-		// 仅返回在线节点，避免调度器等组件将离线/历史节点视为可用
+		// 仅返回在线节点，避免调度器等组件将离线节点视为可用。
 		if !node.isAlive {
 			continue
 		}
@@ -484,7 +483,7 @@ func (topology *Topology) getAllNodes(task *TopoTask) {
 }
 
 // MarkAllOffline 将当前已知的所有节点标记为离线（不含 ADMIN）。
-// 主要用于 Kelpie 重启后，防止使用持久化快照中的旧在线状态误判为“在线”。
+// 用于 Kelpie 重启后清除快照中的在线标记，等待新的上线消息重新置位。
 func (topology *Topology) MarkAllOffline() {
 	if topology == nil {
 		return
@@ -578,8 +577,8 @@ func (topology *Topology) pruneOffline(task *TopoTask) {
 	topology.ResultChan <- &topoResult{AllNodes: pruned}
 }
 
-// markNodeOffline marks the given node (and its descendant subtree) as offline.
-// Unlike DELNODE, this preserves topology nodes/edges so DTN can still compute routes and carry-forward bundles.
+// markNodeOffline 会把给定节点（及其后代子树）标记为离线。
+// 与 DELNODE 不同，它会保留拓扑中的节点和边，使 DTN 仍能计算路由并 carry-forward bundle。
 func (topology *Topology) markNodeOffline(task *TopoTask) {
 	if topology == nil || task == nil {
 		return
@@ -705,8 +704,7 @@ func (topology *Topology) pathSleepBudget(uuid string) time.Duration {
 	return total
 }
 
-// PathSleepBudget is an exported helper that reports the aggregated sleep budget
-// for the given node's current route.
+// PathSleepBudget 是一个导出辅助函数，用于返回给定节点当前路由上的累计 sleep 预算。
 func (topology *Topology) PathSleepBudget(uuid string) time.Duration {
 	if topology == nil || uuid == "" {
 		return 0

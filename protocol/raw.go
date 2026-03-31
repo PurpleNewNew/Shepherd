@@ -53,7 +53,7 @@ func routeSingleHopTo(uuid, route string) bool {
 	if uuid == "" || route == "" {
 		return false
 	}
-	// multi-hop route: not a local delivery signal.
+	// 多跳 route：这并不表示需要本地交付。
 	if strings.Contains(route, ":") {
 		return false
 	}
@@ -246,11 +246,11 @@ func (message *RawMessage) DeconstructData() (*Header, interface{}, error) {
 		return header, nil, err
 	}
 
-	// Decide whether the current node should decrypt+unmarshal the payload.
+	// 判断当前节点是否应该解密并反序列化该载荷。
 	//
-	// Legacy route-based messages use TEMP_UUID in the Accepter field.
-	// Only the final hop should decrypt them; intermediate hops should forward
-	// the encrypted bytes (so multi-hop routing works without re-encryption).
+	// 旧式的基于 route 的消息会在 Accepter 字段中使用 TEMP_UUID。
+	// 只有最后一跳才应该解密它们；中间跳点应直接转发加密后的字节，
+	// 这样多跳路由才能在不重复加密的情况下工作。
 	shouldDecrypt := message.UUID == ADMIN_UUID ||
 		message.UUID == header.Accepter ||
 		(header.Accepter == TEMP_UUID && (header.RouteLen == 0 || routeSingleHopTo(message.UUID, header.Route)))

@@ -185,12 +185,12 @@ func (topology *Topology) expectedWaitAtNodeMs(uuid string, arrival time.Time) u
 	return uint32(waitMs)
 }
 
-// expectedWaitAtNodeMsWithMode returns the wait time like expectedWaitAtNodeMs,
-// plus a boolean that indicates whether the estimate is based on an explicit
-// nextWake timestamp (true) or a duty-cycle average (false).
+// expectedWaitAtNodeMsWithMode 与 expectedWaitAtNodeMs 一样返回等待时间，
+// 但会额外返回一个布尔值，用来表示该估计是基于显式的 nextWake 时间戳
+// （true），还是基于 duty-cycle 平均值（false）。
 //
-// This is used by RecommendSendDelay: without an explicit nextWake, iteratively
-// "aligning" against a constant average wait will diverge and over-delay sends.
+// RecommendSendDelay 会用到这个信息：如果没有显式 nextWake，
+// 持续对一个恒定的平均等待值做“对齐”会发散，并把发送时间越推越迟。
 func (topology *Topology) expectedWaitAtNodeMsWithMode(uuid string, arrival time.Time) (uint32, bool) {
 	if uuid == "" || uuid == protocol.ADMIN_UUID {
 		return 0, false
@@ -263,9 +263,9 @@ func (topology *Topology) RecommendSendDelay(target string, base time.Time) time
 		for i := 1; i < len(path); i++ {
 			prev := path[i-1]
 			next := path[i]
-			// Sleep affects the ability of the next hop to receive messages (the agent
-			// closes its upstream session while sleeping). To avoid repeated "no route"
-			// carry-forward churn, align delivery to the *next* node's wake window.
+			// Sleep 会影响下一跳接收消息的能力（agent 在睡眠时会关闭自己的上游会话）。
+			// 为避免反复触发“no route”的 carry-forward 抖动，
+			// 应把投递时间对齐到“下一跳”节点的唤醒窗口。
 			lat := int64(topology.baseEdgeLatencyMs(prev, next))
 			if lat <= 0 {
 				lat = int64(defaultLatencyWeight)
@@ -275,8 +275,8 @@ func (topology *Topology) RecommendSendDelay(target string, base time.Time) time
 			if wait := int64(waitMs); wait > 0 {
 				delayMs += wait
 				arrival = arrival.Add(time.Duration(wait) * time.Millisecond)
-				// Only an explicit next_wake can be "aligned" by shifting the send time.
-				// A duty-cycle average is a constant and would cause divergence if we keep iterating.
+				// 只有显式的 next_wake 才能通过平移发送时间来“对齐”。
+				// duty-cycle 平均值是一个常量，继续迭代只会导致发散。
 				if exact {
 					adjusted = true
 				}
@@ -343,7 +343,7 @@ func (topology *Topology) earliestArrivalFrom(base time.Time, source string) (ma
 		// 松弛所有邻居
 		neighbors := topology.edges[u]
 		if len(neighbors) == 0 {
-			// 兼容某些仅有父关系但无边的情况：考虑父与子
+			// 若当前只恢复了父关系信息，则将父节点也纳入邻居候选。
 			if p := topology.getParent(u); p != "" {
 				neighbors = append(neighbors, p)
 			}

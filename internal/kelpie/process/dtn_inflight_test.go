@@ -58,7 +58,7 @@ func TestDTNInflightTimeoutRequeuesAndLateAckCancelsRetry(t *testing.T) {
 		}
 	}
 
-	// Duplicate ACK should not double count delivery.
+	// 重复 ACK 不应导致投递计数被重复累加。
 	admin.onDTNAck(ack)
 	if admin.dtnDelivered != 1 {
 		t.Fatalf("expected duplicate ACK ignored, got dtnDelivered=%d", admin.dtnDelivered)

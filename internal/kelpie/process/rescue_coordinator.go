@@ -99,7 +99,7 @@ func (c *RescueCoordinator) Schedule(uuid string, meta *topology.Result) bool {
 		result: make(chan bool, 1),
 	}
 	if c.ctx == nil {
-		// 协调器尚未启动时，直接同步处理，避免回退到旧逻辑。
+		// 协调器尚未启动时，直接同步处理当前任务。
 		return c.processTask(task)
 	}
 	select {
@@ -290,9 +290,9 @@ func (c *RescueCoordinator) pickCandidates(target string, meta *topology.Result)
 		}
 	}
 
-	// Prefer stable (always-on) candidates first to reduce flakes in sleep/DTN traces:
-	// a sleepy parent may have a live session but still be in a narrow work window and
-	// fail to complete a rescue before timing out.
+	// 优先选择稳定的（常在线）候选节点，以减少 sleep/DTN trace 中的抖动：
+	// 一个“爱睡觉”的父节点即便会话仍活着，也可能正处在很窄的 work 窗口里，
+	// 从而在超时前来不及完成 rescue。
 	sort.SliceStable(candidates, func(i, j int) bool {
 		a := candidates[i]
 		b := candidates[j]
@@ -397,7 +397,7 @@ func (c *RescueCoordinator) applyRescueResult(resp *protocol.RescueResponse) err
 	if err != nil {
 		return err
 	}
-	// Rescue reparent must be routable immediately for follow-up control traffic.
+	// Rescue reparent 必须能够立刻路由成功，后续控制流量才能跟上。
 	_, err = c.service.Request(ctx, &topology.TopoTask{Mode: topology.CALCULATE})
 	return err
 }

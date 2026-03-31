@@ -7,7 +7,7 @@ import (
 	"codeberg.org/agnoie/shepherd/protocol"
 )
 
-// DispatchConnectMess consumes connect-related mailbox messages and notifies waiting callers.
+// DispatchConnectMess 负责消费 connect 相关邮箱消息，并通知正在等待的调用方。
 func DispatchConnectMess(ctx context.Context, mgr *manager.Manager) {
 	if mgr == nil || mgr.ConnectManager == nil {
 		return

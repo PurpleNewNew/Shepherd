@@ -8,7 +8,7 @@ import (
 	"codeberg.org/agnoie/shepherd/protocol"
 )
 
-// DispatchInfoMess consumes upstream info messages and updates the topology cache.
+// DispatchInfoMess 负责消费上游 info 消息并更新拓扑缓存。
 func DispatchInfoMess(ctx context.Context, mgr *manager.Manager, topo *topology.Topology) {
 	for {
 		var message interface{}

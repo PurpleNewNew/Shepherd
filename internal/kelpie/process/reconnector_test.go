@@ -69,7 +69,7 @@ func TestReconnectorAttemptFailure(t *testing.T) {
 	rec.WithDialer(func(*initial.Options) (net.Conn, *protocol.Negotiation, error) {
 		return nil, nil, errors.New("dial failed")
 	}).WithConnUpdater(func(net.Conn) {
-		// no-op for failure path
+		// 失败路径下无需额外动作
 	})
 
 	restoreFail := printer.TestOnlyReplaceFailPrinter(func(string, ...interface{}) {})

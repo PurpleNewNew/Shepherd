@@ -82,7 +82,7 @@ func TestNodeOfflineMarksSubtreeOffline(t *testing.T) {
 
 	nodeOffline(mgr, topo, "NODE-PARENT")
 
-	// Nodes should remain in topology (DTN carry-forward), but be excluded from "online node" queries.
+	// 节点应继续保留在拓扑中（供 DTN carry-forward 使用），但不能再出现在“在线节点”查询结果里。
 	checkPresent := func(uuid string) {
 		result := requestTopo(t, topo, &topology.TopoTask{Mode: topology.GETNODEINFO, UUID: uuid})
 		if result == nil || result.UUID != uuid {
@@ -99,7 +99,7 @@ func TestNodeOfflineMarksSubtreeOffline(t *testing.T) {
 		t.Fatalf("expected no online nodes after offline, got %+v", online.AllNodes)
 	}
 
-	// Route display should remain available even when offline.
+	// 即使节点离线，也应仍然能够展示路由。
 	route := requestTopo(t, topo, &topology.TopoTask{Mode: topology.GETROUTE, UUID: "NODE-GRAND"})
 	if route == nil || route.Route == "" {
 		t.Fatalf("expected route to remain available for offline node, got %+v", route)

@@ -181,9 +181,9 @@ func (s *Stream) Write(p []byte) (int, error) {
 	return s.sendW.Write(p)
 }
 
-// CloseWrite signals end-of-input to the remote side while keeping the receive side open.
-// This is useful for protocols that need a remote "finalize + close" acknowledgement
-// (e.g. file-put validation) before the caller considers the operation complete.
+// CloseWrite 会向远端发出“输入结束”的信号，同时保持接收侧继续打开。
+// 这对那些需要远端先完成“finalize + close”确认后，
+// 调用方才算操作完成的协议很有用（例如 file-put 校验）。
 func (s *Stream) CloseWrite() error {
 	if s == nil || s.sendW == nil {
 		return nil
@@ -676,8 +676,8 @@ func (s *streamSession) run() {
 	}
 }
 
-// Accept creates an inbound stream that was opened by the remote peer.
-// The caller should use the returned stream for bi-directional I/O.
+// Accept 创建一个由远端打开的入站 stream。
+// 调用方应使用返回的 stream 进行双向 I/O。
 func (e *Engine) Accept(id uint32, opt Options) *Stream {
 	if e == nil {
 		return nil
@@ -766,10 +766,9 @@ func (s *streamSession) onTimeout(seq uint32, attempt int) {
 		return
 	}
 	if frm.attempts >= s.engine.cfg.RetransLimit {
-		// A reliable stream cannot make progress once any in-flight frame exceeds
-		// the retransmission budget. Abort immediately so callers (e.g. dataplane)
-		// observe the failure promptly instead of draining the remaining pending
-		// buffer for minutes under DTN churn/offline targets.
+		// 只要任意一个 in-flight 帧超出重传预算，可靠流就无法继续推进。
+		// 此时应立即中止，让调用方（如 dataplane）尽快感知失败，
+		// 而不是在 DTN 抖动或目标离线时继续耗上几分钟去排空剩余缓冲。
 		s.mu.Unlock()
 		s.Abort(fmt.Sprintf("stream timeout seq=%d", seq))
 		return
@@ -787,12 +786,12 @@ func (s *streamSession) sendClose() {
 	raw, _ := protocol.EncodePayload(closeMsg)
 	s.engine.sendProto(s.target, protocol.STREAM_CLOSE, raw)
 
-	// STREAM_CLOSE is not explicitly ACKed at the stream layer. Under DTN churn (repair, sleep),
-	// a single delayed/misdirected close can strand the session and wedge callers (e.g. dataplane
-	// uploads waiting for remote finalization). Re-send a few duplicates while the session is
-	// still active to increase the chance at least one close reaches the peer after routes heal.
+	// STREAM_CLOSE 在 stream 层没有显式 ACK。遇到 DTN 抖动（repair、sleep）时，
+	// 只要有一个 close 被延迟或发错路，就可能让会话悬空，并把调用方
+	// （如等待远端收尾的 dataplane 上传）卡住。因此在会话仍存活时，
+	// 这里额外重发几次，增加至少有一个 close 在路由恢复后送达对端的概率。
 	//
-	// We guard by pointer equality so a recycled stream_id can't receive a stale close.
+	// 这里通过指针相等性做保护，避免被复用的 stream_id 收到过期 close。
 	id := s.streamID
 	for _, delay := range []time.Duration{2 * time.Second, 8 * time.Second, 20 * time.Second} {
 		time.AfterFunc(delay, func() {
@@ -865,8 +864,8 @@ func (e *Engine) HandleData(data *protocol.StreamData) {
 		return
 	}
 	if sess := e.getSession(data.StreamID); sess != nil {
-		// Buffer out-of-order frames; only ACK the "contiguous applied" rxAck.
-		// This prevents data loss/corruption when DTN retransmissions or routing churn reorders frames.
+		// 缓存乱序帧；只对“连续已应用”的 rxAck 做确认。
+		// 这样能避免在 DTN 重传或路由抖动导致重排时出现数据丢失或损坏。
 		var (
 			ackVal   uint32
 			deliver  [][]byte
@@ -879,9 +878,9 @@ func (e *Engine) HandleData(data *protocol.StreamData) {
 		seq := data.Seq
 		switch {
 		case seq == 0:
-			// ignore
+			// 忽略。
 		case seq <= sess.rxAck:
-			// duplicate / old frame; ACK current rxAck
+			// 重复帧或旧帧；确认当前 rxAck。
 		default:
 			if len(data.Payload) > 0 {
 				if _, ok := sess.rxBuf[seq]; !ok {
@@ -927,7 +926,7 @@ func (e *Engine) HandleClose(msg *protocol.StreamClose) {
 	}
 	if sess := e.getSession(msg.StreamID); sess != nil {
 		if msg.Code == 0 {
-			// Normal remote closure: propagate EOF to readers.
+			// 远端正常关闭：向读侧传播 EOF。
 			sess.mu.Lock()
 			sess.closeCode = 0
 			sess.closeReason = msg.Reason

@@ -1,17 +1,16 @@
 package dtn
 
-// Persistor provides optional DTN bundle persistence for Kelpie.
+// Persistor 为 Kelpie 提供可选的 DTN bundle 持久化能力。
 //
-// Semantics:
-// - Bundles should be persisted on enqueue and kept until a final success ACK.
-// - This enables "at least once" delivery across Kelpie restarts (inflight bundles are restored).
+// 语义约定：
+// - bundle 应在入队时持久化，并一直保留到最终成功 ACK 到达。
+// - 这使得 Kelpie 重启前后仍能实现“至少一次”投递（inflight bundle 会被恢复）。
 //
-// NOTE: The persistor is intentionally defined in the dtn package to avoid coupling the
-// queue implementation to a specific database/backend.
+// 注意：Persistor 被有意定义在 dtn 包内，
+// 以避免队列实现与某个具体数据库或后端耦合。
 type Persistor interface {
 	UpsertDTNBundle(bundle *Bundle) error
 	DeleteDTNBundle(id string) error
 	DeleteDTNBundles(ids []string) error
 	LoadDTNBundles() ([]*Bundle, error)
 }
-

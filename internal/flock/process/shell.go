@@ -28,11 +28,11 @@ type shellCandidate struct {
 	Args []string
 }
 
-// shellSessionFactory allows tests to override session creation.
+// shellSessionFactory 允许测试覆盖会话创建逻辑。
 var shellSessionFactory = launchShellSession
 
-// TestOnlySetShellSessionFactory allows tests to override how shell sessions are created.
-// Passing nil restores the default launcher.
+// TestOnlySetShellSessionFactory 允许测试覆盖 shell 会话的创建方式。
+// 传入 nil 会恢复默认启动器。
 func TestOnlySetShellSessionFactory(factory func(*initial.Options, string, uint16) (*manager.ShellSession, error)) {
 	if factory == nil {
 		shellSessionFactory = launchShellSession
@@ -376,7 +376,7 @@ func streamShellOutput(mgr *manager.Manager, session *manager.ShellSession) {
 			updateShellActivity(session)
 		}
 		if err != nil {
-			// Treat PTY EOF (EIO on Linux /dev/ptmx) as normal closure
+			// 将 PTY EOF（Linux /dev/ptmx 上的 EIO）视为正常关闭。
 			if errors.Is(err, io.EOF) || isPTYEOF(err) {
 				if session.CloseReason == "" {
 					session.CloseReason = shellReasonEOF
@@ -395,17 +395,17 @@ func streamShellOutput(mgr *manager.Manager, session *manager.ShellSession) {
 	}
 }
 
-// isPTYEOF returns true when the error represents a normal PTY end-of-file
-// condition (for instance, EIO from /dev/ptmx after the slave is closed).
+// isPTYEOF 会在错误表示 PTY 的正常 EOF 场景时返回 true，
+// 例如 slave 关闭后 /dev/ptmx 返回的 EIO。
 func isPTYEOF(err error) bool {
 	if err == nil {
 		return false
 	}
-	// Direct EIO
+	// 直接的 EIO
 	if errors.Is(err, syscall.EIO) {
 		return true
 	}
-	// Unwrap os.PathError -> errno
+	// 解开 os.PathError -> errno
 	var perr *os.PathError
 	if errors.As(err, &perr) {
 		if errors.Is(perr.Err, syscall.EIO) {

@@ -10,9 +10,9 @@ import (
 const (
 	carryQueueCapacityPerTarget = 64
 	carryDefaultTTL             = 30 * time.Minute
-	// carrySuppLinkReqTTL bounds how long we keep a supplemental-link request that couldn't
-	// be forwarded to a child due to transient topology/connection state (e.g. child not
-	// registered yet). Keeping this non-zero avoids race-driven drops during self-heal.
+	// carrySuppLinkReqTTL 限制那些因临时拓扑或连接状态
+	// （例如子节点尚未注册）而无法转发给子节点的 supplemental-link 请求
+	// 在本地最多保留多久。把它设为非零，可以避免自愈期间因竞态导致的丢弃。
 	carrySuppLinkReqTTL = 10 * time.Minute
 	carryRetryBase      = 2 * time.Second
 	carryRetryMax       = 1 * time.Minute
@@ -85,9 +85,10 @@ func (agent *Agent) flushCarryQueue(target string) {
 	agent.flushCarryQueueMode(target, false)
 }
 
-// flushCarryQueueForce flushes pending DTN carry-forward items for a target,
-// ignoring holdUntil. This is used when a child connection becomes available,
-// because "holdUntil" mainly exists to avoid hammering offline links.
+// flushCarryQueueForce 会忽略 holdUntil，强制刷新某个目标待发送的
+// DTN carry-forward 项。
+// 它主要用于子节点连接刚恢复可用时，因为 holdUntil 的目的本来就是
+// 避免反复敲打离线链路。
 func (agent *Agent) flushCarryQueueForce(target string) {
 	agent.flushCarryQueueMode(target, true)
 }

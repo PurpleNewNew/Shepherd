@@ -52,7 +52,7 @@ const calcDebounceInterval = 250 * time.Millisecond
 
 const topoRequestTimeout = 5 * time.Second
 
-// RoutingStrategy 表示路由算法策略
+// RoutingStrategy 表示路由算法的策略。
 type RoutingStrategy int
 
 const (
@@ -61,7 +61,7 @@ const (
 	RoutingByLatency                        // 基于延迟测量
 )
 
-// Topology 表示基于图的网络拓扑
+// Topology 表示基于图的网络拓扑。
 type Topology struct {
 	mu               sync.RWMutex
 	currentIDNum     int
@@ -174,7 +174,7 @@ type node struct {
 	nextWake     time.Time // 预计下次唤醒时间（可选）
 }
 
-// NodeRuntime captures lightweight runtime metadata for a node/session.
+// NodeRuntime 记录节点或会话的轻量级运行时元数据。
 type NodeRuntime struct {
 	UUID         string
 	Memo         string
@@ -217,8 +217,8 @@ type TopoTask struct {
 	SleepSeconds int
 	WorkSeconds  int
 	NextWakeUnix int64
-	// SkipLiveness prevents update tasks (e.g. configuration changes) from
-	// touching node liveness fields (LastSeen/IsAlive).
+	// SkipLiveness 用于阻止更新任务（例如配置变更）
+	// 改动节点活性字段（LastSeen/IsAlive）。
 	SkipLiveness bool
 }
 
@@ -233,7 +233,7 @@ type NodeConnectionMeta struct {
 	TLSEnabled     bool
 }
 
-// topoResult 表示拓扑操作的结果
+// topoResult 表示拓扑操作的结果。
 type topoResult struct {
 	IsExist        bool
 	UUID           string
@@ -260,7 +260,7 @@ type topoResult struct {
 // Result 是 topoResult 的导出别名，供更高层的服务使用。
 type Result = topoResult
 
-// NewTopology 创建一个新的基于图的拓扑
+// NewTopology 创建一个新的基于图的拓扑。
 func NewTopology() *Topology {
 	topology := new(Topology)
 	topology.nodes = make(map[int]*node)
@@ -280,7 +280,7 @@ func NewTopology() *Topology {
 	topology.depthCache = make(map[string]int)
 	topology.nodeLatency = make(map[string]uint32)
 
-	// 初始化gossip协议字段
+	// 初始化 gossip 协议字段
 	topology.gossipConfig = &protocol.GossipConfig{
 		GossipInterval:    30 * time.Second,
 		HeartbeatInterval: 10 * time.Second,
@@ -308,7 +308,7 @@ func (topology *Topology) Service() *Service {
 	return topology.service
 }
 
-// RoutingStrategy reports the current routing strategy.
+// RoutingStrategy 返回当前的路由策略。
 func (topology *Topology) RoutingStrategy() RoutingStrategy {
 	if topology == nil {
 		return RoutingByHops
@@ -316,7 +316,7 @@ func (topology *Topology) RoutingStrategy() RoutingStrategy {
 	return RoutingStrategy(topology.routingStrategy.Load())
 }
 
-// ScheduleCalculate coalesces route recalculation requests within a short window.
+// ScheduleCalculate 会在一个短窗口内合并路由重算请求。
 func (topology *Topology) ScheduleCalculate() {
 	if topology == nil {
 		return
@@ -354,7 +354,7 @@ func (topology *Topology) Request(ctx context.Context, task *TopoTask) (*Result,
 	return svc.Request(ctx, task)
 }
 
-// Submit 异步入队任务并返回可等待的 future。
+// Submit 异步入队任务并返回一个可等待的 future。
 func (topology *Topology) Submit(ctx context.Context, task *TopoTask) (*Future, error) {
 	svc := topology.Service()
 	if svc == nil {
@@ -368,7 +368,7 @@ func (topology *Topology) Execute(task *TopoTask) (*Result, error) {
 	return topology.Request(context.Background(), task)
 }
 
-// NewNode 创建一个新节点
+// NewNode 创建一个新节点。
 func NewNode(uuid string, ip string) *node {
 	node := new(node)
 	node.uuid = uuid
@@ -456,7 +456,7 @@ func (topology *Topology) EnqueueContext(ctx context.Context, task *TopoTask) er
 	}
 }
 
-// Run 启动拓扑管理器
+// Run 启动拓扑管理器。
 func (topology *Topology) Run() {
 	for {
 		select {

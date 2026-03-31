@@ -44,9 +44,9 @@ func dispatchChildUUID(mgr *manager.Manager, topo *topology.Topology, parentUUID
 		printer.Warning("\r\n[*] failed to add tree edge between parent %s and child %s\r\n", parentUUID, uuid)
 		return
 	}
-	// Route calculation must be available immediately after a new node joins.
-	// A debounced recalculation can race with follow-up actions (supplemental planning,
-	// DTN scheduling, listener creation) and cause "route unavailable"/"no candidates".
+	// 新节点加入后，路由计算必须立即可用。
+	// 如果重算请求被去抖，可能会与后续动作（supplemental 规划、DTN 调度、
+	// listener 创建）发生竞争，进而出现 "route unavailable" 或 "no candidates"。
 	if topo != nil {
 		if _, err := topo.Execute(&topology.TopoTask{Mode: topology.CALCULATE}); err != nil {
 			printer.Warning("\r\n[*] failed to calculate routes after adding child %s: %v\r\n", uuid, err)

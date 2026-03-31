@@ -36,7 +36,7 @@ func TestShellStreamSessionMaintainsState(t *testing.T) {
 	store := global.NewStoreWithTransports(nil)
 	mgr := manager.NewManager(store)
 
-	// Use in-memory fake session so the test does not spawn a real shell.
+	// 使用内存内的假会话，避免测试真正拉起一个 shell。
 	agentProcess.TestOnlySetShellSessionFactory(func(opts *agentInitial.Options, id string, mode uint16) (*manager.ShellSession, error) {
 		pr, pw := io.Pipe()
 		session := &manager.ShellSession{

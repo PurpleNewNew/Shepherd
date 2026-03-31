@@ -14,7 +14,7 @@ func TestEstimateUploadCloseWait_Base(t *testing.T) {
 }
 
 func TestEstimateUploadCloseWait_ScalesWithPayload(t *testing.T) {
-	// 8 MiB at 32 KiB/s + 45s margin => 301s
+	// 8 MiB 按 32 KiB/s 传输，再加 45 秒余量，得到 301 秒
 	got := estimateUploadCloseWait(TokenMeta{}, 8*1024*1024)
 	want := 301 * time.Second
 	if got != want {
@@ -39,4 +39,3 @@ func TestEstimateUploadCloseWait_CappedByMaxWait(t *testing.T) {
 		t.Fatalf("estimateUploadCloseWait(cap)=%s, want=%s", got, want)
 	}
 }
-

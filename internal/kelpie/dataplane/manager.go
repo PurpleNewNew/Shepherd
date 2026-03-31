@@ -23,7 +23,7 @@ func NewManager(cfg Config, store *TokenStore, defaultTTL time.Duration) *Manage
 }
 
 // PrepareTransfer 为单次文件/流量传输生成令牌和入口。
-// direction: upload / download
+// 方向：upload / download
 func (m *Manager) PrepareTransfer(tenant, operator, target, direction string, maxSize int64, maxRate float64, sizeHint int64, hash string, offset int64, ttl time.Duration, extra map[string]string) (token string, endpoint string, meta TokenMeta) {
 	if m == nil || m.tokens == nil {
 		return "", "", TokenMeta{}

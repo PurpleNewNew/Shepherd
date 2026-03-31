@@ -104,7 +104,7 @@ func (topology *Topology) ApplySnapshot(snapshot *Snapshot) {
 	}
 
 	// 基于复原后的拓扑重新计算路由。此时拓扑调度器尚未启动，
-	// 因此临时替换 ResultChan，避免 calculate 中的通知写阻塞。
+	// 因此将 ResultChan 切换到静默通道，避免 calculate 中的通知写阻塞。
 	originalResultChan := topology.ResultChan
 	silentResultChan := make(chan *topoResult, 1)
 	topology.ResultChan = silentResultChan

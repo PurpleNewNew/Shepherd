@@ -10,27 +10,26 @@ type streamState struct {
 	sessionID string
 	kind      string
 	meta      map[string]string
-	// replyConn is the preferred uplink connection for this stream (when available).
-	// If a stream was opened via a supplemental link, using that origin connection
-	// for agent->admin frames keeps the flow alive even if the primary upstream is
-	// sleeping/reconnecting.
+	// replyConn 是这个 stream 优先使用的上行连接（如果存在）。
+	// 如果某个 stream 是通过 supplemental 链路打开的，那么 agent->admin 帧
+	// 沿原始连接返回，就能在主上游处于睡眠或重连时继续维持这条流。
 	replyConn net.Conn
-	// replyIsSupplemental marks that replyConn came from a supplemental edge (i.e. it
-	// differs from the current upstream session conn at STREAM_OPEN time). In that
-	// case we must not clear replyConn just because the upstream session reconnects;
-	// the supplemental path is the whole point of the pin.
+	// replyIsSupplemental 表示 replyConn 来自一条 supplemental 边
+	// （也就是它与 STREAM_OPEN 时的当前上游会话连接不同）。
+	// 这种情况下，不能仅仅因为上游会话重连就清掉 replyConn；
+	// 固定这条 supplemental 路径本身就是这里的目的。
 	replyIsSupplemental bool
-	// lastAck tracks the last acknowledged outbound seq (agent -> admin).
+	// lastAck 记录最近一次已确认的出站序号（agent -> admin）。
 	lastAck uint32
-	// rxAck tracks the highest contiguous inbound seq we have applied (admin -> agent).
-	// We buffer out-of-order frames in rxBuf and only advance rxAck when gaps are filled.
+	// rxAck 记录我们已经连续应用到的最高入站序号（admin -> agent）。
+	// 乱序帧会先缓存在 rxBuf 中，只有补齐空洞后才推进 rxAck。
 	rxAck    uint32
 	rxBuf    map[uint32][]byte
 	txSeq    uint32
 	txWindow int
 	pending  map[uint32]*pendingFrame
 	closing  bool
-	// ephemeral flags for certain kinds (e.g., ssh-tunnel)
+	// 某些 kind 使用的临时标记（例如 ssh-tunnel）
 	started bool
 }
 

@@ -804,7 +804,7 @@ func (p *SupplementalPlanner) scheduleOfflineProbeAfter(uuid string, delay time.
 	if delay <= 0 {
 		delay = 2 * time.Second
 	}
-	// Avoid tight loops on pathological timestamps; this is a best-effort probe path.
+	// 避免在异常时间戳下陷入紧循环；这里只是一条尽力而为的探测路径。
 	if delay < 2*time.Second {
 		delay = 2 * time.Second
 	}
@@ -825,9 +825,9 @@ func (p *SupplementalPlanner) scheduleOfflineProbeAfter(uuid string, delay time.
 }
 
 func (p *SupplementalPlanner) offlineProbeDelay(uuid string) time.Duration {
-	// For sleep/work nodes, delay repair attempts until we've missed several expected
-	// duty-cycle refreshes. This avoids thrashing during normal sleep windows, but
-	// still detects "killed while sleeping" cases.
+	// 对于 sleep/work 节点，要等错过若干次预期的 duty-cycle 刷新后，
+	// 才延后发起 repair 尝试。这样既能避免在正常睡眠窗口内抖动，
+	// 也仍能识别“在睡眠期间被 kill”这类情况。
 	if p == nil || p.topo == nil || uuid == "" {
 		return defaults.NodeStaleTimeout
 	}
@@ -836,7 +836,7 @@ func (p *SupplementalPlanner) offlineProbeDelay(uuid string) time.Duration {
 		return defaults.NodeStaleTimeout
 	}
 	if rt.SleepSeconds <= 0 {
-		// Always-on nodes: a NodeOffline usually means hard failure; probe quickly.
+		// 常在线节点：NodeOffline 通常意味着硬故障，应尽快探测。
 		return 2 * time.Second
 	}
 	work := rt.WorkSeconds
@@ -850,7 +850,7 @@ func (p *SupplementalPlanner) offlineProbeDelay(uuid string) time.Duration {
 	delay := cycle*3 + 5*time.Second
 	if !rt.NextWake.IsZero() {
 		if until := time.Until(rt.NextWake); until > 0 {
-			// Ensure we wait until after the reported wake time + a small slack window.
+			// 确保至少等到上报的唤醒时刻之后，再额外留一小段余量。
 			slack := time.Duration(work)*time.Second + 5*time.Second
 			if d := until + slack; d > delay {
 				delay = d
@@ -900,7 +900,7 @@ func (p *SupplementalPlanner) fireOfflineProbe(uuid string) {
 		return
 	}
 
-	// Drop the timer handle first so subsequent offline transitions can schedule again.
+	// 先移除 timer 句柄，后续新的 offline 变化才能再次调度。
 	p.offlineMu.Lock()
 	if p.offlineProbe != nil {
 		delete(p.offlineProbe, uuid)
@@ -918,7 +918,7 @@ func (p *SupplementalPlanner) fireOfflineProbe(uuid string) {
 		}
 	}
 
-	// If the node is currently online again, do nothing.
+	// 如果节点当前已经重新在线，就不再处理。
 	if nodes, err := p.allNodeUUIDs(); err == nil {
 		for _, id := range nodes {
 			if id == uuid {
@@ -933,9 +933,9 @@ func (p *SupplementalPlanner) fireOfflineProbe(uuid string) {
 			if !rt.LastSeen.IsZero() {
 				staleness := time.Since(rt.LastSeen)
 				if staleness < threshold {
-					// The node has been seen recently enough that this is likely a normal
-					// duty-cycled sleep window. Reschedule a follow-up probe so we still
-					// converge to rescue when the node remains stale (killed while sleeping).
+					// 节点最近仍被观测到，说明这更可能只是一次正常的 duty-cycled
+					// 睡眠窗口。这里重新安排后续探测，以便当节点持续陈旧
+					// （例如在睡眠中被 kill）时，系统仍能最终收敛到 rescue。
 					wait := threshold - staleness + 2*time.Second
 					if wait < 5*time.Second {
 						wait = 5 * time.Second
@@ -950,8 +950,8 @@ func (p *SupplementalPlanner) fireOfflineProbe(uuid string) {
 		}
 	}
 
-	// Enqueue a repair-capable action. planForNode() will route it into tryRepair()
-	// only when the node is actually offline (per GETALLNODES).
+	// 入队一个具备 repair 能力的动作。只有在节点经 GETALLNODES
+	// 确认确实离线时，planForNode() 才会把它路由到 tryRepair()。
 	p.Enqueue(PlanAction{
 		Reason:      reasonLinkFailed,
 		TargetUUID:  uuid,
@@ -966,7 +966,7 @@ func (p *SupplementalPlanner) OnNodeAdded(uuid string) {
 		return
 	}
 	p.cancelOfflineProbe(uuid)
-	// Skip planning on trivial topologies (no peers available yet)
+	// 在过于简单的拓扑上跳过规划（此时还没有可用的对等节点）。
 	if nodes, err := p.allNodeUUIDs(); err == nil {
 		if len(nodes) < 2 {
 			return
@@ -1072,9 +1072,9 @@ func (p *SupplementalPlanner) OnNodeRemoved(uuid string) {
 		return
 	}
 	p.recordPlannerEvent("node", "removed", eventSourceSystem, uuid, "")
-	// For always-on nodes (sleepSeconds=0), "offline" is usually a hard failure (kill/crash).
-	// Proactively fail their supplemental links so routing stops using stale "#supp" edges and the
-	// planner can immediately create replacements, instead of waiting for heartbeat timeouts.
+	// 对常在线节点（sleepSeconds=0）而言，“offline”通常意味着硬故障（kill/crash）。
+	// 因此这里主动将其 supplemental 链路判为失效，让路由尽快停止使用过期的
+	// "#supp" 边，也让 planner 能立即创建替代链路，而不是继续等待心跳超时。
 	if p.topo != nil {
 		if rt, ok := p.topo.NodeRuntime(uuid); ok && rt.SleepSeconds <= 0 {
 			supp.FailLinksForEndpoint(p.topo, p.mgr, uuid, fmt.Sprintf("%s offline", short(uuid)))
@@ -1088,9 +1088,9 @@ func (p *SupplementalPlanner) OnNodeRemoved(uuid string) {
 	delete(p.nodeQuality, uuid)
 	p.qualityMu.Unlock()
 
-	// Sleep/work nodes intentionally drop their upstream; treat "offline" as expected unless
-	// the node stops refreshing LastSeen for multiple duty-cycle windows. This probe is what
-	// turns "killed while sleeping" into an eventual rescue attempt.
+	// Sleep/work 节点会主动断开上游；除非它在多个 duty-cycle 窗口内都不再刷新 LastSeen，
+	// 否则应把“offline”视为预期行为。也正是这条探测路径，
+	// 会把“在睡眠期间被 kill”最终转化为一次 rescue 尝试。
 	p.scheduleOfflineProbe(uuid)
 
 	// 在后台触发一次快速巡检。
@@ -1260,12 +1260,12 @@ func (p *SupplementalPlanner) planForNode(action PlanAction) {
 		return
 	}
 
-	// Only attempt "repair dial" when the target is actually offline/unreachable.
-	// Otherwise, generic retries (e.g. "no candidates" during early bootstrap) can
-	// get stuck in repair backoff loops and starve normal supplemental planning.
+	// 只有当目标确实离线或不可达时，才尝试“repair dial”。
+	// 否则一些通用重试（例如 bootstrap 早期的“no candidates”）
+	// 可能会陷入 repair 退避循环，反而饿死正常的 supplemental 规划。
 	if p.shouldAttemptRepair(action.Reason) {
-		// Manual repairs are an explicit operator action: always attempt the repair
-		// path regardless of current online/offline marking.
+		// 手动 repair 属于操作者的显式动作：无论当前 online/offline 标记如何，
+		// 都应尝试进入 repair 路径。
 		if action.Reason == reasonManual {
 			if p.tryRepair(action) {
 				return
@@ -2562,7 +2562,7 @@ func (p *SupplementalPlanner) noteQueueLength(length int) {
 	p.metricsMu.Unlock()
 }
 
-// RepairStatuses returns a snapshot of nodes currently scheduled for repair.
+// RepairStatuses 返回当前已排入 repair 计划的节点快照。
 func (p *SupplementalPlanner) RepairStatuses() []RepairStatusSnapshot {
 	if p == nil {
 		return nil

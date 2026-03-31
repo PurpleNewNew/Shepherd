@@ -22,14 +22,14 @@ import (
 	"codeberg.org/agnoie/shepherd/protocol"
 )
 
-// ControllerListenerProtocol describes the bind protocol for Kelpie controller listeners.
+// ControllerListenerProtocol 描述 Kelpie controller listener 的绑定协议。
 type ControllerListenerProtocol string
 
 const (
 	ControllerListenerProtocolTCP ControllerListenerProtocol = "tcp"
 )
 
-// ControllerListenerStatus captures lifecycle state.
+// ControllerListenerStatus 表示生命周期状态。
 type ControllerListenerStatus string
 
 const (
@@ -39,13 +39,13 @@ const (
 	ControllerListenerStopped ControllerListenerStatus = "stopped"
 )
 
-// ControllerListenerSpec captures user provided creation/update parameters.
+// ControllerListenerSpec 表示用户提供的创建或更新参数。
 type ControllerListenerSpec struct {
 	Bind     string
 	Protocol ControllerListenerProtocol
 }
 
-// ControllerListenerRecord stores runtime state of a controller listener.
+// ControllerListenerRecord 存储 controller listener 的运行时状态。
 type ControllerListenerRecord struct {
 	ID        string
 	Bind      string
@@ -56,7 +56,7 @@ type ControllerListenerRecord struct {
 	UpdatedAt time.Time
 }
 
-// ControllerListenerPersistence persists controller listener records.
+// ControllerListenerPersistence 负责持久化 controller listener 记录。
 type ControllerListenerPersistence interface {
 	SaveControllerListener(rec ControllerListenerRecord) error
 	DeleteControllerListener(id string) error
@@ -173,7 +173,7 @@ func validateControllerListenerSpec(spec ControllerListenerSpec) error {
 	return nil
 }
 
-// ListControllerListeners returns all controller listeners.
+// ListControllerListeners 返回所有 controller listener。
 func (admin *Admin) ListControllerListeners() []ControllerListenerRecord {
 	if admin == nil || admin.controllerListeners == nil {
 		return nil
@@ -181,7 +181,7 @@ func (admin *Admin) ListControllerListeners() []ControllerListenerRecord {
 	return admin.controllerListeners.list()
 }
 
-// CreateControllerListener registers a new Kelpie controller listener.
+// CreateControllerListener 注册一个新的 Kelpie controller listener。
 func (admin *Admin) CreateControllerListener(spec ControllerListenerSpec) (ControllerListenerRecord, error) {
 	var empty ControllerListenerRecord
 	if admin == nil {
@@ -206,7 +206,7 @@ func (admin *Admin) CreateControllerListener(spec ControllerListenerSpec) (Contr
 	return rec, nil
 }
 
-// UpdateControllerListener updates bind/protocol or desired status.
+// UpdateControllerListener 更新 bind/protocol 或期望状态。
 func (admin *Admin) UpdateControllerListener(id string, spec *ControllerListenerSpec, desired ControllerListenerStatus) (ControllerListenerRecord, error) {
 	var empty ControllerListenerRecord
 	if admin == nil || admin.controllerListeners == nil {
@@ -239,7 +239,7 @@ func (admin *Admin) UpdateControllerListener(id string, spec *ControllerListener
 	return current, nil
 }
 
-// DeleteControllerListener removes an entry.
+// DeleteControllerListener 删除一条记录。
 func (admin *Admin) DeleteControllerListener(id string) (ControllerListenerRecord, error) {
 	var empty ControllerListenerRecord
 	if admin == nil || admin.controllerListeners == nil {
@@ -255,7 +255,7 @@ func (admin *Admin) DeleteControllerListener(id string) (ControllerListenerRecor
 	return current, nil
 }
 
-// StopControllerListener cancels a pending/running listener (if any) and marks status stopped.
+// StopControllerListener 取消一个待启动或运行中的 listener（如果存在），并将状态标记为 stopped。
 func (admin *Admin) StopControllerListener(id string) (ControllerListenerRecord, error) {
 	if _, ok := admin.controllerListeners.get(id); !ok {
 		return ControllerListenerRecord{}, fmt.Errorf("controller listener %s not found", id)
@@ -264,7 +264,7 @@ func (admin *Admin) StopControllerListener(id string) (ControllerListenerRecord,
 	return admin.UpdateControllerListener(id, nil, ControllerListenerStopped)
 }
 
-// startPendingControllerListeners kicks off any pending/running controller listeners at boot.
+// startPendingControllerListeners 会在启动时拉起所有 pending/running 的 controller listener。
 func (admin *Admin) startPendingControllerListeners() {
 	if admin == nil || admin.controllerListeners == nil {
 		return
@@ -276,7 +276,7 @@ func (admin *Admin) startPendingControllerListeners() {
 	}
 }
 
-// markControllerListener updates status/lastError and persists.
+// markControllerListener 更新 status/lastError 并持久化。
 func (admin *Admin) markControllerListener(id string, status ControllerListenerStatus, lastErr string) ControllerListenerRecord {
 	if admin == nil || admin.controllerListeners == nil {
 		return ControllerListenerRecord{}
@@ -292,9 +292,9 @@ func (admin *Admin) markControllerListener(id string, status ControllerListenerS
 	return rec
 }
 
-// StartControllerListenerAsync launches a passive controller listener immediately.
-// Only used when Kelpie was started without an upstream connection and the user
-// later creates/activates a ControllerListener via gRPC UI.
+// StartControllerListenerAsync 会立即启动一个被动 controller listener。
+// 它只用于 Kelpie 在没有上游连接的情况下启动后，
+// 用户再通过 gRPC UI 创建或激活 ControllerListener 的场景。
 func (admin *Admin) StartControllerListenerAsync(id string) {
 	if admin == nil {
 		return
@@ -313,7 +313,7 @@ func (admin *Admin) StartControllerListenerAsync(id string) {
 	ctx, cancel := context.WithCancel(admin.context())
 	admin.registerControllerListenerCancel(rec.ID, cancel)
 	go func(rec ControllerListenerRecord, ctx context.Context) {
-		// If already connected upstream, just mark running.
+		// 如果已经连上上游，就只更新为 running。
 		if admin.store != nil && admin.store.ActiveConn() != nil {
 			admin.markControllerListener(rec.ID, ControllerListenerRunning, "")
 			admin.unregisterControllerListenerCancel(rec.ID)
@@ -323,7 +323,7 @@ func (admin *Admin) StartControllerListenerAsync(id string) {
 		// Move to running before binding to avoid重复触发。
 		admin.markControllerListener(rec.ID, ControllerListenerRunning, "")
 
-		// Clone options to avoid racing on shared pointer.
+		// 复制一份 options，避免共享指针上的竞态。
 		opts := *admin.options
 		opts.Listen = rec.Bind
 		opts.Mode = initial.NORMAL_PASSIVE
@@ -336,7 +336,7 @@ func (admin *Admin) StartControllerListenerAsync(id string) {
 			return
 		}
 
-		// Update live options for future reconnect.
+		// 更新当前生效的 options，供后续重连使用。
 		if admin.options != nil {
 			admin.options.Listen = opts.Listen
 			admin.options.Mode = opts.Mode
@@ -351,7 +351,7 @@ func (admin *Admin) StartControllerListenerAsync(id string) {
 	}(rec, ctx)
 }
 
-// runControllerListener binds on rec.Bind and handles a single passive handshake, honoring ctx cancel.
+// runControllerListener 会在 rec.Bind 上绑定监听，并处理一次被动握手，同时遵守 ctx 取消信号。
 func (admin *Admin) runControllerListener(ctx context.Context, opts *initial.Options, rec ControllerListenerRecord) (net.Conn, *protocol.Negotiation, error) {
 	if opts == nil {
 		return nil, nil, fmt.Errorf("options unavailable")
@@ -514,10 +514,10 @@ func (admin *Admin) runControllerListener(ctx context.Context, opts *initial.Opt
 						printer.Fail("[*] Failed to register node: %v\r\n", err)
 						return nil, nil, runtimeerr.Wrap(err, "ADMIN_REGISTER_NODE", runtimeerr.SeverityError, true, "failed to register node")
 					}
-					// Root nodes join via controller listeners (gRPC path). Ensure the
-					// admin-root tree edge exists so routing can find a path, and calculate
-					// routes immediately so follow-up actions (pivot listeners, DTN, etc.)
-					// don't fail with "route unavailable".
+					// 根节点通过 controller listener 加入（gRPC 路径）。
+					// 这里要确保 admin-root 树边存在，让路由能够找到路径，
+					// 并立刻重新计算路由，避免后续动作（pivot listener、DTN 等）
+					// 因为“route unavailable”而失败。
 					if _, err := admin.topology.Execute(&topology.TopoTask{
 						Mode:         topology.ADDEDGE,
 						UUID:         protocol.ADMIN_UUID,

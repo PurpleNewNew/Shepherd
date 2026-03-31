@@ -37,28 +37,28 @@ type traceEvent struct {
 	AtMS int64  `json:"at_ms"`
 	Type string `json:"type"`
 
-	// sleep
+	// sleep 事件
 	Node          string   `json:"node,omitempty"`
 	SleepSeconds  *int32   `json:"sleep_seconds,omitempty"`
 	WorkSeconds   *int32   `json:"work_seconds,omitempty"`
 	JitterPercent *float64 `json:"jitter_percent,omitempty"`
 
-	// dtn_enqueue
+	// dtn_enqueue 事件
 	Target     string `json:"target,omitempty"`
 	Payload    string `json:"payload,omitempty"`
 	Priority   string `json:"priority,omitempty"`    // low|normal|high
 	TTLSeconds int64  `json:"ttl_seconds,omitempty"` // <=0 uses server defaults
 
-	// dtn_policy
+	// dtn_policy 事件
 	Key   string `json:"key,omitempty"`
 	Value string `json:"value,omitempty"`
 
-	// dataplane_roundtrip (also reused by stream_proxy)
+	// dataplane_roundtrip（stream_proxy 也会复用）
 	Path      string `json:"path,omitempty"`
 	Expect    string `json:"expect,omitempty"`
 	TimeoutMS int64  `json:"timeout_ms,omitempty"`
 
-	// io_burst / dataplane_upload_interrupt
+	// io_burst / dataplane_upload_interrupt 事件
 	StreamCount    int    `json:"stream_count,omitempty"`
 	DataplaneCount int    `json:"dataplane_count,omitempty"`
 	PayloadBytes   int    `json:"payload_bytes,omitempty"`
@@ -67,7 +67,7 @@ type traceEvent struct {
 	ChunkDelayMS   int64  `json:"chunk_delay_ms,omitempty"`
 	DelayMS        int64  `json:"delay_ms,omitempty"`
 
-	// metrics
+	// metrics 事件
 	Note string `json:"note,omitempty"`
 }
 
@@ -260,12 +260,12 @@ func main() {
 	dpClient := dataplanepb.NewDataplaneAdminClient(conn)
 
 	startedAt := time.Now().UTC()
-	// startMono defines the zero point for trace scheduling and metrics timestamps.
-	// It is intentionally set after bootstrap so trace at_ms values are stable even when
-	// node bring-up time varies.
+	// startMono 定义 trace 调度与指标时间戳的零点。
+	// 它被有意放在 bootstrap 完成之后设置，这样即使节点启动耗时不同，
+	// trace 中的 at_ms 值也能保持稳定。
 	var startMono time.Time
 
-	// Record run parameters for reproducibility and post-processing.
+	// 记录运行参数，便于复现与后处理。
 	writeJSON(filepath.Join(runDir, "config.json"), map[string]any{
 		"started_at":    startedAt.Format(time.RFC3339Nano),
 		"nodes":         *nodes,
@@ -285,7 +285,7 @@ func main() {
 		writeJSON(filepath.Join(runDir, "labels.json"), out)
 	}
 
-	// Create a controller listener for the root agent to connect to.
+	// 创建一个 controller listener，供根节点 agent 接入。
 	{
 		req := &uipb.CreateControllerListenerRequest{
 			Spec: &uipb.ControllerListenerSpec{
@@ -301,7 +301,7 @@ func main() {
 	agentCmds := map[string]*exec.Cmd{}
 	agentConnect := map[string]string{}
 
-	// Start root agent.
+	// 启动根节点 agent。
 	rootRepairPort := 0
 	if *agentRepair {
 		rootRepairPort = mustPickFreePort(*agentRepairBind)
@@ -311,7 +311,7 @@ func main() {
 	agentConnect["root"] = controllerBind
 	defer func() { _ = rootCmd.Process.Kill() }()
 
-	// Wait for first node.
+	// 等待第一个节点上线。
 	rootUUID, err := waitForNewNode(ctx, uiClient, *uiToken, nil, 30*time.Second)
 	if err != nil {
 		fatalf("wait for root node: %v", err)
@@ -319,13 +319,13 @@ func main() {
 	labels["root"] = rootUUID
 	writeLabels()
 
-	// Start child agents sequentially, and map labels to UUIDs in join order.
+	// 按顺序启动子节点 agent，并按加入顺序把 label 映射到 UUID。
 	known := map[string]struct{}{rootUUID: {}}
 	switch shape {
 	case "star":
-		// Pivot listeners are "one-shot" in the current implementation: they accept a
-		// child connection, perform the handshake, then exit. For a star topology we
-		// therefore create one pivot listener per child.
+		// 当前实现中的 pivot listener 是“一次性”的：接受一个子节点连接、
+		// 完成握手后就退出。因此在 star 拓扑里，
+		// 我们需要为每个子节点各建一个 pivot listener。
 		for i := 1; i < *nodes; i++ {
 			label := fmt.Sprintf("n%d", i)
 			bind := ""
@@ -433,7 +433,7 @@ func main() {
 		return nil
 	}
 
-	// Trace and metrics begin after bootstrap to make at_ms semantics consistent.
+	// 为了让 at_ms 语义保持一致，trace 与 metrics 都从 bootstrap 之后开始。
 	startMono = time.Now()
 
 	metricsFile := mustCreate(filepath.Join(runDir, "metrics.jsonl"))
@@ -448,7 +448,7 @@ func main() {
 		go watchUIEvents(ctx, uiClient, *uiToken, startMono, eventsW)
 	}
 
-	// Load trace (optional).
+	// 加载 trace（可选）。
 	var trace []traceEvent
 	if strings.TrimSpace(*tracePath) != "" {
 		trace, err = loadTrace(*tracePath)
@@ -457,7 +457,7 @@ func main() {
 		}
 	}
 
-	// Start periodic metrics snapshot.
+	// 启动周期性 metrics 快照。
 	go func() {
 		t := time.NewTicker(*metricsEvery)
 		defer t.Stop()
@@ -471,7 +471,7 @@ func main() {
 		}
 	}()
 
-	// Apply trace events.
+	// 执行 trace 事件。
 	traceDone := make(chan struct{})
 	go func() {
 		defer close(traceDone)
@@ -602,8 +602,8 @@ func main() {
 				}
 				_ = metricsW.Write(rec)
 			case "dtn_expect_order":
-				// No-op in the runner: ordering is asserted by run_regress.py by inspecting Kelpie logs.
-				// Keep this case to avoid noisy trace_error records.
+				// 在 runner 中这里不做额外动作：顺序性由 run_regress.py 通过检查 Kelpie 日志来断言。
+				// 保留这个分支，是为了避免生成过多无意义的 trace_error 记录。
 				_ = metricsW.Write(map[string]any{
 					"kind":           "trace_action",
 					"since_start_ms": time.Since(startMono).Milliseconds(),
@@ -1138,10 +1138,10 @@ func main() {
 		}
 	}()
 
-	// Write an initial snapshot after bootstrap is complete.
+	// bootstrap 完成后先写出一份初始快照。
 	_ = snapshotAll(ctx, uiClient, suppClient, *uiToken, startMono, metricsW, "metrics", "bootstrapped")
 
-	// Block until duration elapses or interrupted.
+	// 阻塞直到运行时长结束或收到中断。
 	timer := time.NewTimer(*duration)
 	if *finishWhenDone {
 		doneByTrace := false
@@ -1169,7 +1169,7 @@ func main() {
 	}
 	timer.Stop()
 
-	// Final snapshot.
+	// 最终快照。
 	_ = snapshotAll(context.Background(), uiClient, suppClient, *uiToken, startMono, metricsW, "metrics", "final")
 	writeLabels()
 }
@@ -1249,7 +1249,7 @@ func snapshotAll(ctx context.Context, ui uipb.KelpieUIServiceClient, supp uipb.S
 	)
 	marshal := protojson.MarshalOptions{UseProtoNames: true}
 
-	// Topology
+	// 拓扑指标
 	if ui != nil {
 		if topo, err := ui.GetTopology(withToken(ctx, token), &uipb.GetTopologyRequest{}); err == nil && topo != nil {
 			topologyResp = topo
@@ -1275,7 +1275,7 @@ func snapshotAll(ctx context.Context, ui uipb.KelpieUIServiceClient, supp uipb.S
 		}
 	}
 
-	// Supplemental
+	// 补链指标
 	if supp != nil {
 		if status, err := supp.GetSupplementalStatus(withToken(ctx, token), &uipb.SupplementalEmpty{}); err == nil && status != nil {
 			if raw, err := marshal.Marshal(status); err == nil {
@@ -1354,8 +1354,8 @@ func diagEdgeKey(parentUUID, childUUID string, supplemental bool) string {
 	kind := "tree"
 	if supplemental {
 		kind = "supp"
-		// Supplemental edges are effectively undirected; normalize endpoint order so
-		// representation flips don't look like real topology churn.
+		// Supplemental 边在语义上近似无向；这里规范化端点顺序，
+		// 避免仅仅是表示顺序翻转就被误判成真实的拓扑抖动。
 		if parentUUID > childUUID {
 			parentUUID, childUUID = childUUID, parentUUID
 		}
@@ -1931,7 +1931,7 @@ func createPivotWithRetry(ctx context.Context, pivot uipb.PivotListenerAdminServ
 			l := resp.Listener
 			if strings.EqualFold(strings.TrimSpace(l.GetStatus()), "failed") {
 				lastErr = errors.New(strings.TrimSpace(l.GetLastError()))
-				// Best-effort cleanup to avoid piling up failed listeners.
+				// 尽力清理，避免失败的 listener 持续堆积。
 				if id := strings.TrimSpace(l.GetListenerId()); id != "" {
 					_, _ = pivot.DeletePivotListener(withToken(ctx, token), &uipb.DeletePivotListenerRequest{ListenerId: id})
 				}
@@ -1947,7 +1947,7 @@ func createPivotWithRetry(ctx context.Context, pivot uipb.PivotListenerAdminServ
 			return l, nil
 		}
 		lastErr = err
-		// Route calculation is debounced; retry briefly to avoid a bootstrap race.
+		// 路由计算带有去抖；这里短暂重试一次，避免与 bootstrap 竞争。
 		lower := strings.ToLower(err.Error())
 		if strings.Contains(lower, "route unavailable") ||
 			strings.Contains(lower, "session unavailable") ||
@@ -2250,7 +2250,7 @@ func waitNodeMemo(ctx context.Context, ui uipb.KelpieUIServiceClient, token, uui
 	}
 }
 
-// --- dataplane (TCP) trace helpers ---
+// --- dataplane（TCP）trace 辅助函数 ---
 
 const (
 	dpFrameTypeOpen  = 1
@@ -2350,9 +2350,9 @@ func runDataplaneUploadOnly(ctx context.Context, dp dataplanepb.DataplaneAdminCl
 	hash := sha256Hex(payload)
 	size := int64(len(payload))
 	ttlSeconds := int64(120)
-	// For "upload-only" (used by dataplane_upload_interrupt), bound the token TTL based on the
-	// caller timeout so Kelpie can cap its upstream-close wait and fail before the client hits
-	// its own deadline.
+	// 对于“仅上传”场景（dataplane_upload_interrupt 会用到），
+	// 这里根据调用方超时来限制 token TTL，
+	// 这样 Kelpie 就能缩短等待上游关闭的时间，并在客户端自身超时前先失败返回。
 	if timeout > 0 {
 		sec := int64(timeout.Seconds())
 		if sec > 0 {
@@ -2390,8 +2390,8 @@ func runDataplaneUploadOnly(ctx context.Context, dp dataplanepb.DataplaneAdminCl
 	return nil
 }
 
-// runDataplaneUploadInterrupt starts an upload and expects it to fail quickly after killing killCmd.
-// It returns nil only if the expected interruption semantics are observed.
+// runDataplaneUploadInterrupt 会启动一次上传，并期望在 kill 掉 killCmd 后尽快失败。
+// 只有当中断语义符合预期时，它才返回 nil。
 func runDataplaneUploadInterrupt(
 	ctx context.Context,
 	dp dataplanepb.DataplaneAdminClient,
@@ -2419,7 +2419,7 @@ func runDataplaneUploadInterrupt(
 	if killAfter <= 0 {
 		killAfter = 400 * time.Millisecond
 	}
-	// Deterministic-ish payload: embed a unique prefix and then pad.
+	// 近似确定性的载荷：先写入唯一前缀，再补齐填充。
 	payload := make([]byte, payloadBytes)
 	prefix := fmt.Sprintf("DP_INTERRUPT target=%s ts=%d\n", strings.TrimSpace(targetUUID), time.Now().UnixNano())
 	copy(payload, []byte(prefix))
@@ -2448,9 +2448,9 @@ func runDataplaneUploadInterrupt(
 	var err error
 	select {
 	case <-cctx.Done():
-		// When the context deadline and dataplane socket deadline expire around the same time,
-		// the goroutine may publish its terminal error slightly after cctx.Done() fires.
-		// Give it a short grace window so we don't misclassify an expected interrupt as a hang.
+		// 当 context deadline 与 dataplane socket deadline 几乎同时到期时，
+		// goroutine 可能会在 cctx.Done() 触发之后稍晚一点才写出最终错误。
+		// 这里给一个很短的宽限窗口，避免把预期中的中断误判成卡死。
 		grace := 1500 * time.Millisecond
 		select {
 		case err = <-errCh:
@@ -2469,8 +2469,8 @@ func runDataplaneUploadInterrupt(
 	return nil
 }
 
-// runDataplaneTokenReplay performs a successful upload using a one-time token, then
-// attempts to reuse the same token and expects the server to reject it.
+// runDataplaneTokenReplay 先用一次性 token 成功上传一次，
+// 然后尝试复用同一个 token，并期望服务端拒绝该请求。
 func runDataplaneTokenReplay(
 	ctx context.Context,
 	dp dataplanepb.DataplaneAdminClient,
@@ -2497,7 +2497,7 @@ func runDataplaneTokenReplay(
 	if timeout <= 0 {
 		timeout = 30 * time.Second
 	}
-	// Deterministic-ish payload.
+	// 近似确定性的载荷。
 	payload := make([]byte, payloadBytes)
 	prefix := fmt.Sprintf("DP_TOKEN_REPLAY target=%s ts=%d\n", targetUUID, time.Now().UnixNano())
 	copy(payload, []byte(prefix))
@@ -2526,19 +2526,19 @@ func runDataplaneTokenReplay(
 	if uploadResp == nil || strings.TrimSpace(uploadResp.GetToken()) == "" || strings.TrimSpace(uploadResp.GetEndpoint()) == "" {
 		return fmt.Errorf("PrepareTransfer(upload) returned empty token/endpoint")
 	}
-	// First attempt must succeed.
+	// 第一次尝试必须成功。
 	if err := dataplaneUpload(ctx, uploadResp.GetEndpoint(), uploadResp.GetToken(), path, hash, size, payload, timeout); err != nil {
 		return fmt.Errorf("initial upload failed: %v", err)
 	}
-	// Second attempt with same token must be rejected.
+	// 第二次复用同一 token 必须被拒绝。
 	if err := dataplaneOpenExpectInvalidToken(ctx, uploadResp.GetEndpoint(), uploadResp.GetToken(), "upload", path, 0, size, hash, timeout); err != nil {
 		return fmt.Errorf("token replay check failed: %v", err)
 	}
 	return nil
 }
 
-// runDataplaneTokenExpire issues a short-lived token, waits past expiry, then expects the token
-// to be rejected by the dataplane server.
+// runDataplaneTokenExpire 会签发一个短生命周期 token，等待其过期后，
+// 再确认 dataplane 服务端会拒绝它。
 func runDataplaneTokenExpire(
 	ctx context.Context,
 	dp dataplanepb.DataplaneAdminClient,
@@ -2981,7 +2981,7 @@ func runIOBurst(
 	return nil
 }
 
-// --- stream_proxy trace helpers ---
+// --- stream_proxy trace 辅助函数 ---
 
 func runStreamProxyRoundtrip(ctx context.Context, ui uipb.KelpieUIServiceClient, token, targetUUID string, payload, expect []byte, timeout time.Duration) error {
 	if ui == nil {
@@ -3130,8 +3130,8 @@ func makeRunDir(base string) (string, error) {
 	if base == "" {
 		return "", fmt.Errorf("empty out dir")
 	}
-	// Use a higher-resolution timestamp to avoid collisions when runs are started
-	// within the same second (common in scripted experiments).
+	// 使用更高分辨率的时间戳，避免多个 run 在同一秒内启动时发生命名冲突
+	// （这种情况在脚本化实验里很常见）。
 	ts := time.Now().UTC().Format("20060102T150405.000000000Z")
 	ts = strings.ReplaceAll(ts, ".", "")
 	runDir := filepath.Join(base, "run-"+ts)

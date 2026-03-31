@@ -85,40 +85,39 @@ type Agent struct {
 
 	repairConnHook func(net.Conn)
 
-	// DTN inbox (simple in-memory for diagnostics)
+	// DTN inbox（简单的内存诊断队列）
 	dtnInboxMu sync.Mutex
 	dtnInbox   []*protocol.DTNData
-	// DTN carry-forward queue (local store-carry-forward)
+	// DTN carry-forward 队列（本地 store-carry-forward）
 	carryMu    sync.Mutex
 	carryQueue map[string][]*carryItem
-	// Upstream carry-forward queue: ADMIN_UUID-bound pass-through messages received
-	// while the upstream session is temporarily unavailable (sleep/failover/reconnect).
+	// 上游 carry-forward 队列：当上游会话暂时不可用时
+	// （sleep/failover/reconnect），缓存收到的、发往 ADMIN_UUID 的透传消息。
 	//
-	// This avoids losing DTN_ACK / RuntimeLog and other small control-plane messages
-	// during churn in duty-cycled/self-heal traces.
+	// 这样可以避免在 duty-cycled/self-heal trace 的抖动期间，
+	// 丢失 DTN_ACK、RuntimeLog 等小型控制面消息。
 	upCarryMu    sync.Mutex
 	upCarryQueue []*upCarryItem
-	// Stream sessions
+	// Stream 会话
 	streamMu sync.Mutex
 	streams  map[uint32]*streamState
-	// File streams
+	// 文件流
 	fileMu   sync.Mutex
 	fileByID map[uint32]*fileStream
-	// Proxy streams (CONNECT bridge)
+	// 代理流（CONNECT bridge）
 	fwdMu   sync.Mutex
 	fwdByID map[uint32]net.Conn
-	// SOCKS streams (SOCKS5 CONNECT over DTN-Stream)
+	// SOCKS 流（在 DTN-Stream 之上承载 SOCKS5 CONNECT）
 	socksByID map[uint32]*socksStream
-	// Sleep controller
+	// Sleep 控制器
 	sleepMu          sync.Mutex
 	lastActivity     time.Time
 	sleepingUntil    time.Time
 	sleepGraceUntil  time.Time
 	sleepManagerOnce sync.Once
 	sleepCfg         atomic.Value
-	// connChanged is a best-effort notification channel used to interrupt long-running
-	// reconnect/sleep waits when a repair/rescue connection has already replaced the
-	// active upstream session.
+	// connChanged 是一个尽力而为的通知通道，用于在 repair/rescue 连接已经替换
+	// 当前活跃上游会话时，打断长时间阻塞的 reconnect/sleep 等待。
 	connChanged chan struct{}
 	workDir     string
 }
@@ -294,8 +293,8 @@ func (agent *Agent) updateSessionConn(conn net.Conn) {
 	if sess != nil {
 		sess.UpdateConn(conn)
 	}
-	// If upstream connectivity was restored, try to flush any buffered admin-bound
-	// pass-through messages (DTN_ACK / RuntimeLog, etc).
+	// 如果上游连通性已经恢复，尝试把缓存中的 admin 定向透传消息
+	// （如 DTN_ACK、RuntimeLog）刷出去。
 	if conn != nil {
 		agent.flushUpCarryQueueForce()
 	}

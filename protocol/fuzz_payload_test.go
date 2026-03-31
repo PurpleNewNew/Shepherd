@@ -2,10 +2,10 @@ package protocol
 
 import "testing"
 
-// FuzzDecodePayload exercises the generated payload codecs for robustness.
+// FuzzDecodePayload 用来验证生成出来的 payload codec 在健壮性上的表现。
 //
-// Goal: decoding arbitrary bytes must never panic, and successful decodes should be re-encodable.
-// This is a lightweight fuzz harness (not executed by default unless `go test -fuzz=...` is used).
+// 目标是：对任意字节做解码都绝不能 panic，而成功解码的结果应当还能再次编码。
+// 这是一个轻量级 fuzz harness（默认不会执行，除非使用 `go test -fuzz=...`）。
 func FuzzDecodePayload(f *testing.F) {
 	f.Add(uint16(HI), []byte{})
 	f.Add(uint16(UUID), []byte{0x00})
@@ -13,7 +13,7 @@ func FuzzDecodePayload(f *testing.F) {
 	f.Add(uint16(STREAM_DATA), []byte{0x00, 0x00, 0x00, 0x00})
 
 	f.Fuzz(func(t *testing.T, messageType uint16, data []byte) {
-		// Keep fuzz inputs reasonably bounded for local runs.
+		// 为本地运行控制一个相对合理的 fuzz 输入上界。
 		if len(data) > 1<<16 {
 			return
 		}
@@ -28,4 +28,3 @@ func FuzzDecodePayload(f *testing.F) {
 		_, _ = DecodePayload(messageType, enc)
 	})
 }
-

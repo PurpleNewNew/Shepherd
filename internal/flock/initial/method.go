@@ -86,7 +86,7 @@ func NormalActive(ctx context.Context, userOptions *Options, proxy share.Proxy) 
 		}
 		conn, err = dialer.DialContext(ctx, "tcp", userOptions.Connect)
 	} else {
-		// Proxy dial is not context-aware; keep it but bound downstream reads with deadlines.
+		// Proxy 拨号本身不感知 context；这里保留该行为，但用 deadline 限制下游读取。
 		conn, err = proxy.Dial()
 	}
 
@@ -151,7 +151,7 @@ func NormalActive(ctx context.Context, userOptions *Options, proxy share.Proxy) 
 	sMessage.SendMessage()
 	_ = conn.SetWriteDeadline(time.Time{})
 
-	// Apply a short handshake deadline to avoid indefinite blocking
+	// 设置一个较短的握手 deadline，避免无限阻塞。
 	_ = conn.SetReadDeadline(time.Now().Add(defaults.HandshakeReadTimeout))
 	rMessage = protocol.NewUpMsgWithTransport(conn, handshakeSecret, protocol.TEMP_UUID, userOptions.Upstream)
 	fHeader, fMessage, err := protocol.DestructMessage(rMessage)
@@ -477,7 +477,7 @@ func SoReusePassive(userOptions *Options) (net.Conn, string, *protocol.Negotiati
 			continue
 		}
 		if !ok {
-			// Non-Shepherd traffic was proxied.
+			// 非 Shepherd 流量已经被代理转发。
 			continue
 		}
 
