@@ -191,13 +191,13 @@ namespace StockmanNamespace::UserInterface
         });
 
         connect(topologyFilterInput_, &QLineEdit::textChanged, this, [this](const QString&) {
-            refreshTopologyView();
+            scheduleTopologyViewRefresh();
         });
         connect(topologyLayoutBox_, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int) {
-            refreshTopologyView();
+            scheduleTopologyViewRefresh();
         });
         connect(topologyShowSupplementalCheck_, &QCheckBox::toggled, this, [this](bool) {
-            refreshTopologyView();
+            scheduleTopologyViewRefresh();
         });
         connect(topologyLocateButton_, &QPushButton::clicked, this, &KelpiePanel::locateTopologyNode);
         connect(topologyLocateInput_, &QLineEdit::returnPressed, this, &KelpiePanel::locateTopologyNode);

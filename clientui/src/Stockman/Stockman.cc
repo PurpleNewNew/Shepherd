@@ -10,7 +10,6 @@
 #include <QFont>
 #include <QDir>
 #include <QFileInfo>
-#include <QTimer>
 #include <QStandardPaths>
 #include <Util/Base.hpp>
 #include <Stockman/KelpieController.hpp>
@@ -65,10 +64,8 @@ StockmanSpace::Stockman::Stockman( std::shared_ptr<StockmanNamespace::AppContext
 
 void StockmanSpace::Stockman::Init( int argc, char** argv )
 {
-    auto List      = std::vector<Util::ConnectionInfo>();
     StockmanNamespace::UserInterface::Dialogs::Connect connectDialog;
     auto Arguments = cmdline::parser();
-    auto Path      = std::string();
 
     Arguments.add( "debug",  '\0', "debug mode" );
     Arguments.add( "config", '\0', "toml config path" );
@@ -83,7 +80,7 @@ void StockmanSpace::Stockman::Init( int argc, char** argv )
     std::string fontFamily = "Cantarell";
     int fontSize = 11;
 
-    // Config is optional: it currently controls only UI niceties (fonts, scripts list).
+    // Config is optional and currently only adjusts UI presentation, such as fonts.
     QString foundConfig;
     QStringList candidates;
     if ( Arguments.exist( "config" ) )
@@ -136,9 +133,6 @@ void StockmanSpace::Stockman::Init( int argc, char** argv )
     }
 
     QApplication::setFont( QFont( fontFamily.c_str(), fontSize ) );
-    QTimer::singleShot( 10, [&]() {
-        QApplication::setFont( QFont( fontFamily.c_str(), fontSize ) );
-    } );
 
     if (auto* win = window()) {
         win->setVisible(false);
@@ -154,7 +148,6 @@ void StockmanSpace::Stockman::Init( int argc, char** argv )
     {
         this->context_->kelpieConfig = connectDialog.StartDialog( false );
     }
-    PendingKelpieBinding = connectDialog.LastConnectionWasGrpc();
 
     // 启动阶段：连接对话框连接成功后，直接显示主窗口。
     // 否则会出现“连接成功但没有任何窗口显示”的假死体验。
@@ -166,15 +159,9 @@ void StockmanSpace::Stockman::Init( int argc, char** argv )
 
 void StockmanSpace::Stockman::Start()
 {
-    this->ClientInitConnect = false;
     if ( this->StockmanAppUI.centralwidget == nullptr )
     {
         this->StockmanAppUI.setupUi( window() );
-    }
-    if ( PendingKelpieBinding )
-    {
-        this->StockmanAppUI.BindKelpieController();
-        PendingKelpieBinding = false;
     }
     if (auto* win = window()) {
         win->setVisible(true);

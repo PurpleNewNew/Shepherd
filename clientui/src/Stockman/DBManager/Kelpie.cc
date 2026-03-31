@@ -1,6 +1,8 @@
 #include <Stockman/DBManager/DBManager.hpp>
+
 #include <QSqlError>
 #include <QVariant>
+#include <spdlog/spdlog.h>
 #include <vector>
 
 using namespace StockmanNamespace;

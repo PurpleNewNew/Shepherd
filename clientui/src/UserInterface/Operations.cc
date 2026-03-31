@@ -749,6 +749,16 @@ namespace StockmanNamespace::UserInterface
 	        {
 	            return;
 	        }
+	        if ( streamRefreshDebounce_ != nullptr && streamRefreshDebounce_->isActive() )
+	        {
+	            streamRefreshDebounce_->stop();
+	        }
+	        if ( streamDiagnosticsRefreshInFlight_ )
+	        {
+	            streamDiagnosticsRefreshPending_ = true;
+	            return;
+	        }
+	        streamDiagnosticsRefreshInFlight_ = true;
 	        streamDiagTable_->setEnabled(false);
 	        streamDiagTable_->setRowCount(0);
 	        const uint64_t epoch = ctrl->ConnectionEpoch();
@@ -773,17 +783,35 @@ namespace StockmanNamespace::UserInterface
 	                return res;
 	            },
 	            [this](const Result& res) {
+	                auto finishRefresh = [this]() {
+	                    streamDiagnosticsRefreshInFlight_ = false;
+	                    if ( streamDiagnosticsRefreshPending_ )
+	                    {
+	                        streamDiagnosticsRefreshPending_ = false;
+	                        if ( streamRefreshDebounce_ != nullptr )
+	                        {
+	                            streamRefreshDebounce_->start();
+	                        }
+	                        else
+	                        {
+	                            refreshStreamDiagnostics();
+	                        }
+	                    }
+	                };
+
 	                if ( streamDiagTable_ ) { streamDiagTable_->setEnabled(true);
 }
 
 	                auto* ctrl = controller();
 	                if ( ctrl == nullptr || ctrl->ConnectionEpoch() != res.epoch )
 	                {
+	                    finishRefresh();
 	                    return;
 	                }
 		                if ( !res.ok )
 		                {
 		                    toastError(tr("Stream diagnostics failed: %1").arg(res.error));
+		                    finishRefresh();
 		                    return;
 		                }
 
@@ -802,6 +830,7 @@ namespace StockmanNamespace::UserInterface
 	                                                                       .arg(QString::fromStdString(s.rto()),
 	                                                                            QString::fromStdString(s.last_activity()))));
 	                }
+	                finishRefresh();
 	            });
 	    }
 

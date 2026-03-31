@@ -1,6 +1,8 @@
 #include <Stockman/DBManager/DBManager.hpp>
+
 #include <QFileInfo>
 #include <QSet>
+#include <spdlog/spdlog.h>
 
 using namespace StockmanNamespace::StockmanSpace;
 

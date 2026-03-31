@@ -16,8 +16,6 @@ public:
     UserInterface::StockmanUi StockmanAppUI;
     std::shared_ptr<DBManager> dbManager;
     std::shared_ptr<StockmanNamespace::AppContext> context_;
-    bool ClientInitConnect = true;
-    bool PendingKelpieBinding = false;
 
     explicit Stockman( QMainWindow* );
     Stockman( std::shared_ptr<StockmanNamespace::AppContext> context, QMainWindow* );

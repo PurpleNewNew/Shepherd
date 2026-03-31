@@ -2,6 +2,7 @@
 #define STOCKMAN_DBMANAGER_HPP
 
 #include <QString>
+#include <string>
 #include <vector>
 #include <Stockman/KelpieTypes.hpp>
 

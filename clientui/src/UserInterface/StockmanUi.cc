@@ -26,6 +26,8 @@ using namespace StockmanNamespace::StockmanSpace;
 
 namespace
 {
+    constexpr std::size_t kUiEventDrainBatchSize = 32;
+
     QString displayNode(const kelpieui::v1::NodeInfo& node)
     {
         const QString uuid = QString::fromStdString(node.uuid());
@@ -549,12 +551,19 @@ void StockmanNamespace::UserInterface::StockmanUi::HandleKelpieUiEvent(const kel
 
 void StockmanNamespace::UserInterface::StockmanUi::drainUiEventQueue()
 {
-    while ( !uiEventQueue_.empty() )
+    std::size_t processed = 0;
+    while ( !uiEventQueue_.empty() && processed < kUiEventDrainBatchSize )
     {
         const auto evt = uiEventQueue_.front();
         uiEventQueue_.pop_front();
         handleAuditEvent(evt);
         appendKelpieLog(evt);
+        ++processed;
+    }
+    if ( !uiEventQueue_.empty() && uiEventDebounce_ != nullptr )
+    {
+        // Yield to the event loop between batches so bursty streams do not pin the UI thread.
+        uiEventDebounce_->start(0);
     }
 }
 

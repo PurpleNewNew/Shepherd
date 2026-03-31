@@ -539,6 +539,10 @@ namespace StockmanNamespace::UserInterface
 
     void KelpiePanel::refreshTopologyView()
     {
+        if ( topologyViewDebounce_ != nullptr && topologyViewDebounce_->isActive() )
+        {
+            topologyViewDebounce_->stop();
+        }
         if ( topologySnapshot_.nodes_size() == 0 )
         {
             if ( topologyEdgesTable_ != nullptr )
@@ -558,6 +562,16 @@ namespace StockmanNamespace::UserInterface
         renderTopologyGraph(topologySnapshot_);
         populateTopologyEdges(topologySnapshot_);
         applyTopologyHighlights();
+    }
+
+    void KelpiePanel::scheduleTopologyViewRefresh()
+    {
+        if ( topologyViewDebounce_ == nullptr )
+        {
+            refreshTopologyView();
+            return;
+        }
+        topologyViewDebounce_->start();
     }
 
     void KelpiePanel::setTopologyHighlightNode(const QString& uuid)
@@ -740,10 +754,7 @@ namespace StockmanNamespace::UserInterface
         {
             topologyFilterInput_->setText(foundUuid);
         }
-        else
-        {
-            refreshTopologyView();
-        }
+        refreshTopologyView();
 
         setTopologyHighlightNode(foundUuid);
         selectNodeByUuid(foundUuid);

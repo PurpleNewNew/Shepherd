@@ -16,8 +16,6 @@
 
 #include <Stockman/AppContext.hpp>
 
-using namespace std;
-
 class StockmanNamespace::UserInterface::Dialogs::Connect : public QDialog
 {
 private:
@@ -52,7 +50,7 @@ private:
     std::shared_ptr<StockmanNamespace::AppContext> context_;
 
 public:
-    vector<Util::ConnectionInfo> KelpieList;
+    std::vector<Util::ConnectionInfo> KelpieList;
     QDialog*                     ConnectDialog  = nullptr;
     bool                         tryConnect     = false;
     bool                         isNewProfile   = false;
@@ -63,7 +61,6 @@ public:
     void passDB( const std::shared_ptr<StockmanNamespace::StockmanSpace::DBManager>& dbm );
     void setContext( std::shared_ptr<StockmanNamespace::AppContext> ctx ) { context_ = std::move(ctx); }
     bool connectGrpcBackend();
-    static bool LastConnectionWasGrpc()  { return true; }
 
 private slots:
             void onButton_Connect();

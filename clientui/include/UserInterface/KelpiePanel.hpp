@@ -30,6 +30,7 @@ class QTcpServer;
 class QTcpSocket;
 class QGraphicsView;
 class QGraphicsScene;
+class QTimer;
 
 namespace StockmanNamespace::UserInterface
 {
@@ -262,6 +263,11 @@ namespace StockmanNamespace::UserInterface
         QString           topologyHighlightNodeUuid_;
         QString           topologyHighlightParentUuid_;
         QString           topologyHighlightChildUuid_;
+        QTimer*           streamRefreshDebounce_ = nullptr;
+        QTimer*           dialRefreshCooldown_ = nullptr;
+        QTimer*           topologyViewDebounce_ = nullptr;
+        bool              streamDiagnosticsRefreshInFlight_{false};
+        bool              streamDiagnosticsRefreshPending_{false};
         std::shared_ptr<StockmanNamespace::AppContext> context_ = nullptr;
 
         void setupUi();
@@ -349,12 +355,15 @@ namespace StockmanNamespace::UserInterface
         void updateProxyRow(const kelpieui::v1::ProxyEvent& event);
         void setNodeScopedActionsEnabled(bool enabled);
         void refreshNodeScopedData();
+        void scheduleDialRefresh();
+        void scheduleStreamRefresh();
         void refreshStatePage(QWidget* page);
         void refreshWorkspacePage(QWidget* page);
         void streamPing();
         void toastInfo(const QString& message, int timeoutMs = 3500);
         void toastWarn(const QString& message, int timeoutMs = 5000);
         void toastError(const QString& message, int timeoutMs = 8000);
+        void scheduleTopologyViewRefresh();
         void refreshTopologyView();
         void setTopologyHighlightNode(const QString& uuid);
         void setTopologyHighlightEdge(const QString& parentUuid, const QString& childUuid);

@@ -2,12 +2,19 @@
 #include <UserInterface/StockmanUI.hpp>
 #include "Internal.hpp"
 
-#include <QDateTime>
+#include <QSignalBlocker>
+#include <QTimer>
 
 #include <Stockman/AppContext.hpp>
 #include <Stockman/KelpieController.hpp>
 #include <Stockman/KelpieState.hpp>
 
+namespace
+{
+    constexpr int kStreamRefreshDebounceMs = 250;
+    constexpr int kDialRefreshCooldownMs = 1500;
+    constexpr int kTopologyViewDebounceMs = 120;
+}
 
 namespace StockmanNamespace::UserInterface
 {
@@ -15,6 +22,32 @@ namespace StockmanNamespace::UserInterface
         : QWidget(parent), context_(std::move(ctx))
     {
         setupUi();
+        streamRefreshDebounce_ = new QTimer(this);
+        streamRefreshDebounce_->setSingleShot(true);
+        streamRefreshDebounce_->setInterval(kStreamRefreshDebounceMs);
+        connect(streamRefreshDebounce_, &QTimer::timeout, this, [this]() {
+            const bool taskingVisible = (stateTabs_ != nullptr) && (stateTabs_->currentWidget() == taskingPage_);
+            const bool streamDiagnosticsVisible =
+                ((workspaceTabs_ != nullptr) && (workspaceTabs_->currentWidget() == streamsPage_)) ||
+                ((stateTabs_ != nullptr) && (stateTabs_->currentWidget() == hostIntelPage_));
+            if ( taskingVisible )
+            {
+                refreshSsh();
+            }
+            if ( streamDiagnosticsVisible )
+            {
+                refreshStreamDiagnostics();
+            }
+        });
+
+        dialRefreshCooldown_ = new QTimer(this);
+        dialRefreshCooldown_->setSingleShot(true);
+        dialRefreshCooldown_->setInterval(kDialRefreshCooldownMs);
+
+        topologyViewDebounce_ = new QTimer(this);
+        topologyViewDebounce_->setSingleShot(true);
+        topologyViewDebounce_->setInterval(kTopologyViewDebounceMs);
+        connect(topologyViewDebounce_, &QTimer::timeout, this, &KelpiePanel::refreshTopologyView);
     }
 
     KelpiePanel::~KelpiePanel()
@@ -75,6 +108,8 @@ namespace StockmanNamespace::UserInterface
     void KelpiePanel::populateNodes(const kelpieui::v1::Snapshot& snapshot)
     {
         QString previousSelection = currentNodeUuid_;
+        const QSignalBlocker blocker(nodesTree_);
+        nodesTree_->setUpdatesEnabled(false);
         nodesTree_->clear();
         QHash<QString, QTreeWidgetItem*> itemMap;
 
@@ -177,11 +212,14 @@ namespace StockmanNamespace::UserInterface
             nodesTree_->takeTopLevelItem(nodesTree_->indexOfTopLevelItem(item));
         }
         nodesTree_->expandAll();
-        if (!previousSelection.isEmpty()) {
-            if (auto it = itemMap.find(previousSelection); it != itemMap.end()) {
+        if ( !previousSelection.isEmpty() )
+        {
+            if ( auto it = itemMap.find(previousSelection); it != itemMap.end() )
+            {
                 nodesTree_->setCurrentItem(it.value());
             }
         }
+        nodesTree_->setUpdatesEnabled(true);
         updateSelectedNode();
     }
 
@@ -535,6 +573,46 @@ namespace StockmanNamespace::UserInterface
         refreshSsh();
     }
 
+    void KelpiePanel::scheduleDialRefresh()
+    {
+        if ( dialRefreshCooldown_ == nullptr )
+        {
+            refreshDials();
+            return;
+        }
+        if ( dialRefreshCooldown_->isActive() )
+        {
+            return;
+        }
+        refreshDials();
+        dialRefreshCooldown_->start();
+    }
+
+    void KelpiePanel::scheduleStreamRefresh()
+    {
+        const bool taskingVisible = (stateTabs_ != nullptr) && (stateTabs_->currentWidget() == taskingPage_);
+        const bool streamDiagnosticsVisible =
+            ((workspaceTabs_ != nullptr) && (workspaceTabs_->currentWidget() == streamsPage_)) ||
+            ((stateTabs_ != nullptr) && (stateTabs_->currentWidget() == hostIntelPage_));
+        if ( !taskingVisible && !streamDiagnosticsVisible )
+        {
+            return;
+        }
+        if ( streamRefreshDebounce_ == nullptr )
+        {
+            if ( taskingVisible )
+            {
+                refreshSsh();
+            }
+            if ( streamDiagnosticsVisible )
+            {
+                refreshStreamDiagnostics();
+            }
+            return;
+        }
+        streamRefreshDebounce_->start();
+    }
+
     void KelpiePanel::updateSelectedNode()
     {
         QString previous = currentNodeUuid_;
@@ -786,20 +864,13 @@ namespace StockmanNamespace::UserInterface
         }
         if ( event.has_dial_event() )
         {
-            // Dial 事件可能高频，做轻量节流避免频繁 RPC。
-            static qint64 lastDialRefreshMs = 0;
-            const qint64 nowMs = QDateTime::currentMSecsSinceEpoch();
-            if ( nowMs - lastDialRefreshMs >= 1500 )
-            {
-                lastDialRefreshMs = nowMs;
-                refreshDials();
-            }
+            scheduleDialRefresh();
         }
         if ( event.has_stream_event() )
         {
-            // Stream events can affect both traffic diagnostics and SSH view.
-            refreshStreamDiagnostics();
-            refreshSsh();
+            // Stream events can arrive in bursts; coalesce UI refreshes to avoid
+            // rebuilding diagnostics tables on every single event.
+            scheduleStreamRefresh();
         }
         if ( event.has_chat_event() )
         {

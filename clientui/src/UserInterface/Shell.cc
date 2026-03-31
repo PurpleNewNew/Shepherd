@@ -142,6 +142,11 @@ namespace StockmanNamespace::UserInterface
 
     void KelpiePanel::handleShellData(const QByteArray& data)
     {
+        auto* senderHandle = qobject_cast<ProxyStreamHandle*>(sender());
+        if ( (senderHandle != nullptr) && (senderHandle != shellStream_.get()) )
+        {
+            return;
+        }
         if ( data.isEmpty() )
         {
             return;
@@ -153,6 +158,11 @@ namespace StockmanNamespace::UserInterface
 
     void KelpiePanel::handleShellClosed(const QString& reason)
     {
+        auto* senderHandle = qobject_cast<ProxyStreamHandle*>(sender());
+        if ( (senderHandle != nullptr) && (senderHandle != shellStream_.get()) )
+        {
+            return;
+        }
         if ( !reason.isEmpty() )
         {
             shellView_->appendPlainText(QStringLiteral("\n[Shell closed: %1]").arg(reason));
