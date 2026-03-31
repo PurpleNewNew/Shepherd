@@ -80,13 +80,96 @@ namespace StockmanNamespace::UserInterface
             QString highlightChildUuid;
         };
 
+        struct StreamsUiState {
+            QWidget* page = nullptr;
+            QTableWidget* table = nullptr;
+            QLineEdit* closeReasonInput = nullptr;
+            QPushButton* closeButton = nullptr;
+            QTableWidget* diagnosticsTable = nullptr;
+            QPushButton* refreshDiagnosticsButton = nullptr;
+            QPushButton* pingButton = nullptr;
+            QLineEdit* pingCountInput = nullptr;
+            QLineEdit* pingSizeInput = nullptr;
+        };
+
+        struct TaskingUiState {
+            QWidget* page = nullptr;
+            QPushButton* refreshSleepButton = nullptr;
+            QPushButton* updateSleepButton = nullptr;
+            QLineEdit* sleepSecondsInput = nullptr;
+            QLineEdit* workSecondsInput = nullptr;
+            QLineEdit* jitterInput = nullptr;
+            QLineEdit* dialAddressInput = nullptr;
+            QLineEdit* dialReasonInput = nullptr;
+            QPushButton* startDialButton = nullptr;
+            QPushButton* cancelDialButton = nullptr;
+            QTableWidget* dialTable = nullptr;
+            QLineEdit* sshServerInput = nullptr;
+            QLineEdit* sshUserInput = nullptr;
+            QLineEdit* sshPassInput = nullptr;
+            QComboBox* sshAuthCombo = nullptr;
+            QPushButton* startSshSessionButton = nullptr;
+            QPushButton* startSshTunnelButton = nullptr;
+            QLineEdit* sshTunnelPortInput = nullptr;
+            QTableWidget* sshTable = nullptr;
+            std::vector<std::shared_ptr<StockmanNamespace::ProxyStreamHandle>> sshStreams;
+        };
+
+        struct ShellUiState {
+            QWidget* page = nullptr;
+            QPlainTextEdit* view = nullptr;
+            QLineEdit* input = nullptr;
+            QPushButton* openButton = nullptr;
+            QPushButton* closeButton = nullptr;
+            QLabel* statusLabel = nullptr;
+            QLabel* opsStatusLabel = nullptr;
+            QString pendingTarget;
+            QString pendingLine;
+            std::shared_ptr<StockmanNamespace::ProxyStreamHandle> stream;
+            QLineEdit* downloadRemotePathInput = nullptr;
+            QLineEdit* downloadLocalPathInput = nullptr;
+            QPushButton* browseDownloadButton = nullptr;
+            QPushButton* startDownloadButton = nullptr;
+            QLabel* downloadStatusLabel = nullptr;
+            QLineEdit* uploadLocalPathInput = nullptr;
+            QLineEdit* uploadRemotePathInput = nullptr;
+            QCheckBox* uploadOverwriteCheck = nullptr;
+            QPushButton* browseUploadButton = nullptr;
+            QPushButton* startUploadButton = nullptr;
+            QLabel* uploadStatusLabel = nullptr;
+            QLineEdit* socksPortInput = nullptr;
+            QCheckBox* socksAuthCheck = nullptr;
+            QLineEdit* socksUserInput = nullptr;
+            QLineEdit* socksPasswordInput = nullptr;
+            QPushButton* startSocksButton = nullptr;
+            QPushButton* stopSocksButton = nullptr;
+            QLabel* socksStatusLabel = nullptr;
+        };
+
+        struct WorkspaceUiState {
+            QWidget* consolePage = nullptr;
+            QPlainTextEdit* logView = nullptr;
+            QPushButton* refreshProxiesButton = nullptr;
+            QWidget* chatPage = nullptr;
+            QTableWidget* chatTable = nullptr;
+            QLineEdit* chatInput = nullptr;
+            QPushButton* sendChatButton = nullptr;
+            QPushButton* refreshChatButton = nullptr;
+            QSet<QString> chatIds;
+            QWidget* lootPage = nullptr;
+            QTableWidget* lootTable = nullptr;
+            QLineEdit* lootTargetInput = nullptr;
+            QLineEdit* lootTagInput = nullptr;
+            QComboBox* lootCategoryBox = nullptr;
+            QSpinBox* lootLimitSpin = nullptr;
+            QPushButton* refreshLootButton = nullptr;
+            QPushButton* submitLootButton = nullptr;
+            QPushButton* downloadLootButton = nullptr;
+            QSet<QString> lootIds;
+        };
+
         QTabWidget*       workspaceTabs_;
         QWidget*          overviewPage_;
-        QWidget*          streamsPage_;
-        QWidget*          consolePage_;
-        QWidget*          chatPage_;
-        QWidget*          lootPage_;
-        QWidget*          shellPage_;
         QWidget*          sessionsPage_;
         QWidget*          sessionListPage_;
         QWidget*          pivotingPage_;
@@ -98,7 +181,6 @@ namespace StockmanNamespace::UserInterface
         QWidget*          auditTrailPage_;
         QWidget*          hostIntelPage_;
         QWidget*          recoveryPage_;
-        QWidget*          taskingPage_;
         QTabWidget*       stateTabs_;
         QTreeWidget*      nodesTree_;
         QLineEdit*        nodeMemoInput_;
@@ -116,11 +198,7 @@ namespace StockmanNamespace::UserInterface
         QTableWidget*     supplementalTable_;
         QTableWidget*     supplementalQualityTable_;
         QTableWidget*     auditTable_;
-        QTableWidget*     streamsTable_;
-        QLineEdit*        closeStreamReasonInput_;
-        QPushButton*      closeStreamButton_;
-        QTableWidget*     chatTable_;
-        QTableWidget*     lootTable_;
+        StreamsUiState    streams_;
         QTableWidget*     pivotListenersTable_;
         QTableWidget*     controllerListenersTable_;
         QTableWidget*     networkTable_;
@@ -128,11 +206,6 @@ namespace StockmanNamespace::UserInterface
         QComboBox*        routingStrategyBox_;
         QPushButton*      applyRoutingButton_;
         QTableWidget*     diagnosticsTable_;
-        QTableWidget*     streamDiagTable_;
-        QPushButton*      refreshDiagnosticsButton_;
-        QPushButton*      streamPingButton_;
-        QLineEdit*        streamPingCount_;
-        QLineEdit*        streamPingSize_;
         QTableWidget*     dtnBundleTable_;
         QTableWidget*     dtnPolicyTable_;
         QLabel*           dtnStatsLabel_;
@@ -144,20 +217,9 @@ namespace StockmanNamespace::UserInterface
         QSpinBox*         dtnLimitSpin_;
         QPushButton*      refreshDtnPolicyButton_;
         QPushButton*      applyDtnPolicyButton_;
-        QPlainTextEdit*   logView_;
-        QLineEdit*        chatInput_;
-        QLineEdit*        lootTargetInput_;
-        QLineEdit*        lootTagInput_;
-        QComboBox*        lootCategoryBox_;
         QLabel*           selectedNodeLabel_;
         QLineEdit*        nodeCommandInput_;
         QPushButton*      nodeCommandButton_;
-        QPushButton*      refreshProxiesButton_;
-        QPushButton*      refreshChatButton_;
-        QPushButton*      sendChatButton_;
-        QPushButton*      refreshLootButton_;
-        QPushButton*      submitLootButton_;
-        QPushButton*      downloadLootButton_;
         QPushButton*      refreshListenersButton_;
         QPushButton*      createPivotListenerButton_;
         QPushButton*      updatePivotListenerButton_;
@@ -168,6 +230,7 @@ namespace StockmanNamespace::UserInterface
         QPushButton*      refreshSupplementalButton_;
         QPushButton*      refreshAuditButton_;
         TopologyUiState   topology_;
+        WorkspaceUiState  workspace_;
 
         // Sessions list (RPC) page
         QLineEdit*        sessionListTargetsInput_;
@@ -181,34 +244,12 @@ namespace StockmanNamespace::UserInterface
         QLineEdit*        auditFromInput_;
         QLineEdit*        auditToInput_;
         QSpinBox*         auditLimitSpin_;
-        QSpinBox*         lootLimitSpin_;
         QPushButton*      pruneOfflineButton_;
         QPushButton*      refreshNetworksButton_;
         QPushButton*      useNetworkButton_;
         QPushButton*      resetNetworkButton_;
         QPushButton*      setNodeNetworkButton_;
-        // Sleep / Dial / SSH controls
-        QPushButton*      refreshSleepButton_;
-        QPushButton*      updateSleepButton_;
-        QLineEdit*        sleepSecondsInput_;
-        QLineEdit*        workSecondsInput_;
-        QLineEdit*        jitterInput_;
-
-        QLineEdit*        dialAddressInput_;
-        QLineEdit*        dialReasonInput_;
-        QPushButton*      startDialButton_;
-        QPushButton*      cancelDialButton_;
-        QTableWidget*     dialTable_;
-
-        QLineEdit*        sshServerInput_;
-        QLineEdit*        sshUserInput_;
-        QLineEdit*        sshPassInput_;
-        QComboBox*        sshAuthCombo_;
-        QPushButton*      startSshSessionButton_;
-        QPushButton*      startSshTunnelButton_;
-        QLineEdit*        sshTunnelPortInput_;
-        QTableWidget*     sshTable_;
-        QLabel*           opsStatusLabel_;
+        TaskingUiState    tasking_;
         QLabel*           supplementalSummary_;
         // Repairs
         QPushButton*      refreshRepairsButton_;
@@ -223,37 +264,9 @@ namespace StockmanNamespace::UserInterface
         QLineEdit*        backwardLocalPortInput_;
         QPushButton*      startBackwardButton_;
         QPushButton*      stopProxyButton_;
-        QPlainTextEdit*   shellView_;
-        QLineEdit*        shellInput_;
-        QPushButton*      openShellButton_;
-        QPushButton*      closeShellButton_;
-        QLabel*           shellStatusLabel_;
-        QLineEdit*        downloadRemotePathInput_;
-        QLineEdit*        downloadLocalPathInput_;
-        QPushButton*      browseDownloadButton_;
-        QPushButton*      startDownloadButton_;
-        QLabel*           downloadStatusLabel_;
-        QLineEdit*        uploadLocalPathInput_;
-        QLineEdit*        uploadRemotePathInput_;
-        QCheckBox*        uploadOverwriteCheck_;
-        QPushButton*      browseUploadButton_;
-        QPushButton*      startUploadButton_;
-        QLabel*           uploadStatusLabel_;
-        QLineEdit*        socksPortInput_;
-        QCheckBox*        socksAuthCheck_;
-        QLineEdit*        socksUserInput_;
-        QLineEdit*        socksPasswordInput_;
-        QPushButton*      startSocksButton_;
-        QPushButton*      stopSocksButton_;
-        QLabel*           socksStatusLabel_;
+        ShellUiState      shell_;
         QString           currentNodeUuid_;
         QHash<QString, int> proxyRowIndex_;
-        QSet<QString>     chatIds_;
-        QSet<QString>     lootIds_;
-        QString           pendingShellTarget_;
-        QString           pendingShellLine_;
-        std::shared_ptr<StockmanNamespace::ProxyStreamHandle> shellStream_;
-        std::vector<std::shared_ptr<StockmanNamespace::ProxyStreamHandle>> sshStreams_;
         QTcpServer*       socksServer_ = nullptr;
         struct SocksBridge {
             QPointer<QTcpSocket> socket;

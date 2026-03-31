@@ -24,9 +24,9 @@ namespace StockmanNamespace::UserInterface
 
         // Node-specific actions stay disabled until a target is selected.
         setNodeScopedActionsEnabled(false);
-        if ( startSshSessionButton_ != nullptr )
+        if ( tasking_.startSshSessionButton != nullptr )
         {
-            startSshSessionButton_->setToolTip(tr("Legacy SSH session RPC may be disabled on current server build."));
+            tasking_.startSshSessionButton->setToolTip(tr("Legacy SSH session RPC may be disabled on current server build."));
         }
 
         wireStateActions();

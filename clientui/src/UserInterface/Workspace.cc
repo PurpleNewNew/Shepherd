@@ -6,210 +6,210 @@ namespace StockmanNamespace::UserInterface
 {
     void KelpiePanel::buildStreamsWorkspaceTab()
     {
-        streamsPage_ = new QWidget(this);
-        auto* streamsLayout = new QVBoxLayout(streamsPage_);
+        streams_.page = new QWidget(this);
+        auto* streamsLayout = new QVBoxLayout(streams_.page);
         streamsLayout->setContentsMargins(0, 0, 0, 0);
 
-        streamsTable_ = new QTableWidget(streamsPage_);
-        streamsTable_->setColumnCount(6);
-        streamsTable_->setHorizontalHeaderLabels({tr("ID"), tr("Target"), tr("Kind"), tr("Pending"), tr("Inflight"), tr("Window")});
-        streamsTable_->horizontalHeader()->setStretchLastSection(true);
-        streamsTable_->setEditTriggers(QAbstractItemView::NoEditTriggers);
-        streamsLayout->addWidget(streamsTable_, 1);
+        streams_.table = new QTableWidget(streams_.page);
+        streams_.table->setColumnCount(6);
+        streams_.table->setHorizontalHeaderLabels({tr("ID"), tr("Target"), tr("Kind"), tr("Pending"), tr("Inflight"), tr("Window")});
+        streams_.table->horizontalHeader()->setStretchLastSection(true);
+        streams_.table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        streamsLayout->addWidget(streams_.table, 1);
 
         auto* streamActionLayout = new QHBoxLayout();
         streamActionLayout->setContentsMargins(0, 0, 0, 0);
-        closeStreamReasonInput_ = new QLineEdit(streamsPage_);
-        closeStreamReasonInput_->setPlaceholderText(tr("Close reason (optional)"));
-        closeStreamButton_ = new QPushButton(tr("Close Selected"), streamsPage_);
-        closeStreamButton_->setEnabled(false);
-        streamActionLayout->addWidget(closeStreamReasonInput_, 1);
-        streamActionLayout->addWidget(closeStreamButton_);
+        streams_.closeReasonInput = new QLineEdit(streams_.page);
+        streams_.closeReasonInput->setPlaceholderText(tr("Close reason (optional)"));
+        streams_.closeButton = new QPushButton(tr("Close Selected"), streams_.page);
+        streams_.closeButton->setEnabled(false);
+        streamActionLayout->addWidget(streams_.closeReasonInput, 1);
+        streamActionLayout->addWidget(streams_.closeButton);
         streamsLayout->addLayout(streamActionLayout);
 
-        workspaceTabs_->addTab(streamsPage_, tr("Traffic"));
+        workspaceTabs_->addTab(streams_.page, tr("Traffic"));
     }
 
     void KelpiePanel::buildConsoleWorkspaceTab()
     {
-        consolePage_ = new QWidget(this);
-        auto* consoleLayout = new QVBoxLayout(consolePage_);
+        workspace_.consolePage = new QWidget(this);
+        auto* consoleLayout = new QVBoxLayout(workspace_.consolePage);
         consoleLayout->setContentsMargins(0, 0, 0, 0);
 
-        logView_ = new QPlainTextEdit(consolePage_);
-        logView_->setReadOnly(true);
-        logView_->document()->setMaximumBlockCount(5000);
-        consoleLayout->addWidget(logView_, 1);
+        workspace_.logView = new QPlainTextEdit(workspace_.consolePage);
+        workspace_.logView->setReadOnly(true);
+        workspace_.logView->document()->setMaximumBlockCount(5000);
+        consoleLayout->addWidget(workspace_.logView, 1);
 
-        refreshProxiesButton_ = new QPushButton(tr("Refresh Pivoting"), consolePage_);
+        workspace_.refreshProxiesButton = new QPushButton(tr("Refresh Pivoting"), workspace_.consolePage);
         auto* adminButtonLayout = new QHBoxLayout();
-        adminButtonLayout->addWidget(refreshProxiesButton_);
+        adminButtonLayout->addWidget(workspace_.refreshProxiesButton);
         adminButtonLayout->addStretch();
         consoleLayout->addLayout(adminButtonLayout);
 
-        workspaceTabs_->addTab(consolePage_, tr("Ops Console"));
+        workspaceTabs_->addTab(workspace_.consolePage, tr("Ops Console"));
     }
 
     void KelpiePanel::buildChatWorkspaceTab()
     {
-        chatPage_ = new QWidget(this);
-        auto* chatLayout = new QVBoxLayout(chatPage_);
+        workspace_.chatPage = new QWidget(this);
+        auto* chatLayout = new QVBoxLayout(workspace_.chatPage);
         chatLayout->setContentsMargins(0, 0, 0, 0);
 
-        chatTable_ = new QTableWidget(chatPage_);
-        chatTable_->setColumnCount(4);
-        chatTable_->setHorizontalHeaderLabels({tr("Time"), tr("User"), tr("Role"), tr("Message")});
-        chatTable_->horizontalHeader()->setStretchLastSection(true);
-        chatTable_->setEditTriggers(QAbstractItemView::NoEditTriggers);
-        chatLayout->addWidget(chatTable_, 1);
+        workspace_.chatTable = new QTableWidget(workspace_.chatPage);
+        workspace_.chatTable->setColumnCount(4);
+        workspace_.chatTable->setHorizontalHeaderLabels({tr("Time"), tr("User"), tr("Role"), tr("Message")});
+        workspace_.chatTable->horizontalHeader()->setStretchLastSection(true);
+        workspace_.chatTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        chatLayout->addWidget(workspace_.chatTable, 1);
 
         auto* chatControlLayout = new QHBoxLayout();
-        chatInput_ = new QLineEdit(chatPage_);
-        chatInput_->setPlaceholderText(tr("Message to operators"));
-        sendChatButton_ = new QPushButton(tr("Send"), chatPage_);
-        refreshChatButton_ = new QPushButton(tr("Refresh"), chatPage_);
-        chatControlLayout->addWidget(chatInput_, 1);
-        chatControlLayout->addWidget(sendChatButton_);
-        chatControlLayout->addWidget(refreshChatButton_);
+        workspace_.chatInput = new QLineEdit(workspace_.chatPage);
+        workspace_.chatInput->setPlaceholderText(tr("Message to operators"));
+        workspace_.sendChatButton = new QPushButton(tr("Send"), workspace_.chatPage);
+        workspace_.refreshChatButton = new QPushButton(tr("Refresh"), workspace_.chatPage);
+        chatControlLayout->addWidget(workspace_.chatInput, 1);
+        chatControlLayout->addWidget(workspace_.sendChatButton);
+        chatControlLayout->addWidget(workspace_.refreshChatButton);
         chatLayout->addLayout(chatControlLayout);
 
-        workspaceTabs_->addTab(chatPage_, tr("Collab"));
+        workspaceTabs_->addTab(workspace_.chatPage, tr("Collab"));
     }
 
     void KelpiePanel::buildLootWorkspaceTab()
     {
-        lootPage_ = new QWidget(this);
-        auto* lootLayout = new QVBoxLayout(lootPage_);
+        workspace_.lootPage = new QWidget(this);
+        auto* lootLayout = new QVBoxLayout(workspace_.lootPage);
         lootLayout->setContentsMargins(0, 0, 0, 0);
 
         auto* lootControlLayout = new QHBoxLayout();
-        lootTargetInput_ = new QLineEdit(lootPage_);
-        lootTargetInput_->setPlaceholderText(tr("Target UUID (optional)"));
-        lootTagInput_ = new QLineEdit(lootPage_);
-        lootTagInput_->setPlaceholderText(tr("Tags (comma separated)"));
-        lootCategoryBox_ = new QComboBox(lootPage_);
-        lootCategoryBox_->addItem(tr("All"), kelpieui::v1::LOOT_CATEGORY_UNSPECIFIED);
-        lootCategoryBox_->addItem(tr("File"), kelpieui::v1::LOOT_CATEGORY_FILE);
-        lootCategoryBox_->addItem(tr("Screenshot"), kelpieui::v1::LOOT_CATEGORY_SCREENSHOT);
-        lootCategoryBox_->addItem(tr("Ticket"), kelpieui::v1::LOOT_CATEGORY_TICKET);
-        lootLimitSpin_ = new QSpinBox(lootPage_);
-        lootLimitSpin_->setRange(1, 500);
-        lootLimitSpin_->setValue(100);
-        refreshLootButton_ = new QPushButton(tr("Refresh"), lootPage_);
-        submitLootButton_ = new QPushButton(tr("Submit File"), lootPage_);
-        downloadLootButton_ = new QPushButton(tr("Download Selected"), lootPage_);
-        lootControlLayout->addWidget(new QLabel(tr("Target:"), lootPage_));
-        lootControlLayout->addWidget(lootTargetInput_);
-        lootControlLayout->addWidget(new QLabel(tr("Tags:"), lootPage_));
-        lootControlLayout->addWidget(lootTagInput_);
-        lootControlLayout->addWidget(new QLabel(tr("Category:"), lootPage_));
-        lootControlLayout->addWidget(lootCategoryBox_);
-        lootControlLayout->addWidget(new QLabel(tr("Limit:"), lootPage_));
-        lootControlLayout->addWidget(lootLimitSpin_);
-        lootControlLayout->addWidget(refreshLootButton_);
-        lootControlLayout->addWidget(submitLootButton_);
-        lootControlLayout->addWidget(downloadLootButton_);
+        workspace_.lootTargetInput = new QLineEdit(workspace_.lootPage);
+        workspace_.lootTargetInput->setPlaceholderText(tr("Target UUID (optional)"));
+        workspace_.lootTagInput = new QLineEdit(workspace_.lootPage);
+        workspace_.lootTagInput->setPlaceholderText(tr("Tags (comma separated)"));
+        workspace_.lootCategoryBox = new QComboBox(workspace_.lootPage);
+        workspace_.lootCategoryBox->addItem(tr("All"), kelpieui::v1::LOOT_CATEGORY_UNSPECIFIED);
+        workspace_.lootCategoryBox->addItem(tr("File"), kelpieui::v1::LOOT_CATEGORY_FILE);
+        workspace_.lootCategoryBox->addItem(tr("Screenshot"), kelpieui::v1::LOOT_CATEGORY_SCREENSHOT);
+        workspace_.lootCategoryBox->addItem(tr("Ticket"), kelpieui::v1::LOOT_CATEGORY_TICKET);
+        workspace_.lootLimitSpin = new QSpinBox(workspace_.lootPage);
+        workspace_.lootLimitSpin->setRange(1, 500);
+        workspace_.lootLimitSpin->setValue(100);
+        workspace_.refreshLootButton = new QPushButton(tr("Refresh"), workspace_.lootPage);
+        workspace_.submitLootButton = new QPushButton(tr("Submit File"), workspace_.lootPage);
+        workspace_.downloadLootButton = new QPushButton(tr("Download Selected"), workspace_.lootPage);
+        lootControlLayout->addWidget(new QLabel(tr("Target:"), workspace_.lootPage));
+        lootControlLayout->addWidget(workspace_.lootTargetInput);
+        lootControlLayout->addWidget(new QLabel(tr("Tags:"), workspace_.lootPage));
+        lootControlLayout->addWidget(workspace_.lootTagInput);
+        lootControlLayout->addWidget(new QLabel(tr("Category:"), workspace_.lootPage));
+        lootControlLayout->addWidget(workspace_.lootCategoryBox);
+        lootControlLayout->addWidget(new QLabel(tr("Limit:"), workspace_.lootPage));
+        lootControlLayout->addWidget(workspace_.lootLimitSpin);
+        lootControlLayout->addWidget(workspace_.refreshLootButton);
+        lootControlLayout->addWidget(workspace_.submitLootButton);
+        lootControlLayout->addWidget(workspace_.downloadLootButton);
         lootLayout->addLayout(lootControlLayout);
 
-        lootTable_ = new QTableWidget(lootPage_);
-        lootTable_->setColumnCount(6);
-        lootTable_->setHorizontalHeaderLabels({tr("Created"), tr("Name"), tr("Category"), tr("Target"), tr("Size"), tr("Tags")});
-        lootTable_->horizontalHeader()->setStretchLastSection(true);
-        lootTable_->setEditTriggers(QAbstractItemView::NoEditTriggers);
-        lootLayout->addWidget(lootTable_, 1);
+        workspace_.lootTable = new QTableWidget(workspace_.lootPage);
+        workspace_.lootTable->setColumnCount(6);
+        workspace_.lootTable->setHorizontalHeaderLabels({tr("Created"), tr("Name"), tr("Category"), tr("Target"), tr("Size"), tr("Tags")});
+        workspace_.lootTable->horizontalHeader()->setStretchLastSection(true);
+        workspace_.lootTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        lootLayout->addWidget(workspace_.lootTable, 1);
 
-        workspaceTabs_->addTab(lootPage_, tr("Loot"));
+        workspaceTabs_->addTab(workspace_.lootPage, tr("Loot"));
     }
 
     void KelpiePanel::buildShellWorkspaceTab()
     {
-        shellPage_ = new QWidget(this);
-        auto* shellLayout = new QVBoxLayout(shellPage_);
+        shell_.page = new QWidget(this);
+        auto* shellLayout = new QVBoxLayout(shell_.page);
         shellLayout->setContentsMargins(0, 0, 0, 0);
 
-        shellStatusLabel_ = new QLabel(tr("Shell: disconnected"), shellPage_);
-        openShellButton_ = new QPushButton(tr("Open Shell"), shellPage_);
-        closeShellButton_ = new QPushButton(tr("Close Shell"), shellPage_);
-        closeShellButton_->setEnabled(false);
-        shellView_ = new QPlainTextEdit(shellPage_);
-        shellView_->setReadOnly(true);
-        shellView_->document()->setMaximumBlockCount(5000);
-        shellView_->setMinimumHeight(120);
-        shellInput_ = new QLineEdit(shellPage_);
-        shellInput_->setPlaceholderText(tr("Type shell command and press Enter"));
-        shellInput_->setEnabled(false);
+        shell_.statusLabel = new QLabel(tr("Shell: disconnected"), shell_.page);
+        shell_.openButton = new QPushButton(tr("Open Shell"), shell_.page);
+        shell_.closeButton = new QPushButton(tr("Close Shell"), shell_.page);
+        shell_.closeButton->setEnabled(false);
+        shell_.view = new QPlainTextEdit(shell_.page);
+        shell_.view->setReadOnly(true);
+        shell_.view->document()->setMaximumBlockCount(5000);
+        shell_.view->setMinimumHeight(120);
+        shell_.input = new QLineEdit(shell_.page);
+        shell_.input->setPlaceholderText(tr("Type shell command and press Enter"));
+        shell_.input->setEnabled(false);
 
         auto* shellControlLayout = new QHBoxLayout();
-        shellControlLayout->addWidget(shellStatusLabel_);
+        shellControlLayout->addWidget(shell_.statusLabel);
         shellControlLayout->addStretch();
-        shellControlLayout->addWidget(openShellButton_);
-        shellControlLayout->addWidget(closeShellButton_);
+        shellControlLayout->addWidget(shell_.openButton);
+        shellControlLayout->addWidget(shell_.closeButton);
         shellLayout->addLayout(shellControlLayout);
 
-        opsStatusLabel_ = new QLabel(shellPage_);
-        shellLayout->addWidget(opsStatusLabel_);
-        shellLayout->addWidget(shellView_, 1);
-        shellLayout->addWidget(shellInput_);
+        shell_.opsStatusLabel = new QLabel(shell_.page);
+        shellLayout->addWidget(shell_.opsStatusLabel);
+        shellLayout->addWidget(shell_.view, 1);
+        shellLayout->addWidget(shell_.input);
 
         auto* downloadRow = new QHBoxLayout();
-        downloadRemotePathInput_ = new QLineEdit(shellPage_);
-        downloadRemotePathInput_->setPlaceholderText(tr("Download remote path"));
-        downloadLocalPathInput_ = new QLineEdit(shellPage_);
-        downloadLocalPathInput_->setPlaceholderText(tr("Download local path"));
-        browseDownloadButton_ = new QPushButton(tr("Browse"), shellPage_);
-        startDownloadButton_ = new QPushButton(tr("Start Download"), shellPage_);
-        downloadStatusLabel_ = new QLabel(tr("Download: idle"), shellPage_);
-        downloadRow->addWidget(new QLabel(tr("Download:"), shellPage_));
-        downloadRow->addWidget(downloadRemotePathInput_, 1);
-        downloadRow->addWidget(downloadLocalPathInput_, 1);
-        downloadRow->addWidget(browseDownloadButton_);
-        downloadRow->addWidget(startDownloadButton_);
+        shell_.downloadRemotePathInput = new QLineEdit(shell_.page);
+        shell_.downloadRemotePathInput->setPlaceholderText(tr("Download remote path"));
+        shell_.downloadLocalPathInput = new QLineEdit(shell_.page);
+        shell_.downloadLocalPathInput->setPlaceholderText(tr("Download local path"));
+        shell_.browseDownloadButton = new QPushButton(tr("Browse"), shell_.page);
+        shell_.startDownloadButton = new QPushButton(tr("Start Download"), shell_.page);
+        shell_.downloadStatusLabel = new QLabel(tr("Download: idle"), shell_.page);
+        downloadRow->addWidget(new QLabel(tr("Download:"), shell_.page));
+        downloadRow->addWidget(shell_.downloadRemotePathInput, 1);
+        downloadRow->addWidget(shell_.downloadLocalPathInput, 1);
+        downloadRow->addWidget(shell_.browseDownloadButton);
+        downloadRow->addWidget(shell_.startDownloadButton);
         shellLayout->addLayout(downloadRow);
-        shellLayout->addWidget(downloadStatusLabel_);
+        shellLayout->addWidget(shell_.downloadStatusLabel);
 
         auto* uploadRow = new QHBoxLayout();
-        uploadLocalPathInput_ = new QLineEdit(shellPage_);
-        uploadLocalPathInput_->setPlaceholderText(tr("Upload local file"));
-        uploadRemotePathInput_ = new QLineEdit(shellPage_);
-        uploadRemotePathInput_->setPlaceholderText(tr("Upload remote path"));
-        browseUploadButton_ = new QPushButton(tr("Browse"), shellPage_);
-        uploadOverwriteCheck_ = new QCheckBox(tr("Overwrite"), shellPage_);
-        startUploadButton_ = new QPushButton(tr("Start Upload"), shellPage_);
-        uploadStatusLabel_ = new QLabel(tr("Upload: idle"), shellPage_);
-        uploadRow->addWidget(new QLabel(tr("Upload:"), shellPage_));
-        uploadRow->addWidget(uploadLocalPathInput_, 1);
-        uploadRow->addWidget(uploadRemotePathInput_, 1);
-        uploadRow->addWidget(browseUploadButton_);
-        uploadRow->addWidget(uploadOverwriteCheck_);
-        uploadRow->addWidget(startUploadButton_);
+        shell_.uploadLocalPathInput = new QLineEdit(shell_.page);
+        shell_.uploadLocalPathInput->setPlaceholderText(tr("Upload local file"));
+        shell_.uploadRemotePathInput = new QLineEdit(shell_.page);
+        shell_.uploadRemotePathInput->setPlaceholderText(tr("Upload remote path"));
+        shell_.browseUploadButton = new QPushButton(tr("Browse"), shell_.page);
+        shell_.uploadOverwriteCheck = new QCheckBox(tr("Overwrite"), shell_.page);
+        shell_.startUploadButton = new QPushButton(tr("Start Upload"), shell_.page);
+        shell_.uploadStatusLabel = new QLabel(tr("Upload: idle"), shell_.page);
+        uploadRow->addWidget(new QLabel(tr("Upload:"), shell_.page));
+        uploadRow->addWidget(shell_.uploadLocalPathInput, 1);
+        uploadRow->addWidget(shell_.uploadRemotePathInput, 1);
+        uploadRow->addWidget(shell_.browseUploadButton);
+        uploadRow->addWidget(shell_.uploadOverwriteCheck);
+        uploadRow->addWidget(shell_.startUploadButton);
         shellLayout->addLayout(uploadRow);
-        shellLayout->addWidget(uploadStatusLabel_);
+        shellLayout->addWidget(shell_.uploadStatusLabel);
 
         auto* socksRow = new QHBoxLayout();
-        socksPortInput_ = new QLineEdit(shellPage_);
-        socksPortInput_->setPlaceholderText(tr("SOCKS local port"));
-        socksPortInput_->setText(QStringLiteral("1080"));
-        socksAuthCheck_ = new QCheckBox(tr("Auth"), shellPage_);
-        socksUserInput_ = new QLineEdit(shellPage_);
-        socksUserInput_->setPlaceholderText(tr("Username"));
-        socksPasswordInput_ = new QLineEdit(shellPage_);
-        socksPasswordInput_->setPlaceholderText(tr("Password"));
-        socksPasswordInput_->setEchoMode(QLineEdit::Password);
-        startSocksButton_ = new QPushButton(tr("Start SOCKS"), shellPage_);
-        stopSocksButton_ = new QPushButton(tr("Stop SOCKS"), shellPage_);
-        stopSocksButton_->setEnabled(false);
-        socksStatusLabel_ = new QLabel(tr("SOCKS: stopped"), shellPage_);
-        socksRow->addWidget(new QLabel(tr("SOCKS:"), shellPage_));
-        socksRow->addWidget(socksPortInput_);
-        socksRow->addWidget(socksAuthCheck_);
-        socksRow->addWidget(socksUserInput_);
-        socksRow->addWidget(socksPasswordInput_);
-        socksRow->addWidget(startSocksButton_);
-        socksRow->addWidget(stopSocksButton_);
-        socksRow->addWidget(socksStatusLabel_, 1);
+        shell_.socksPortInput = new QLineEdit(shell_.page);
+        shell_.socksPortInput->setPlaceholderText(tr("SOCKS local port"));
+        shell_.socksPortInput->setText(QStringLiteral("1080"));
+        shell_.socksAuthCheck = new QCheckBox(tr("Auth"), shell_.page);
+        shell_.socksUserInput = new QLineEdit(shell_.page);
+        shell_.socksUserInput->setPlaceholderText(tr("Username"));
+        shell_.socksPasswordInput = new QLineEdit(shell_.page);
+        shell_.socksPasswordInput->setPlaceholderText(tr("Password"));
+        shell_.socksPasswordInput->setEchoMode(QLineEdit::Password);
+        shell_.startSocksButton = new QPushButton(tr("Start SOCKS"), shell_.page);
+        shell_.stopSocksButton = new QPushButton(tr("Stop SOCKS"), shell_.page);
+        shell_.stopSocksButton->setEnabled(false);
+        shell_.socksStatusLabel = new QLabel(tr("SOCKS: stopped"), shell_.page);
+        socksRow->addWidget(new QLabel(tr("SOCKS:"), shell_.page));
+        socksRow->addWidget(shell_.socksPortInput);
+        socksRow->addWidget(shell_.socksAuthCheck);
+        socksRow->addWidget(shell_.socksUserInput);
+        socksRow->addWidget(shell_.socksPasswordInput);
+        socksRow->addWidget(shell_.startSocksButton);
+        socksRow->addWidget(shell_.stopSocksButton);
+        socksRow->addWidget(shell_.socksStatusLabel, 1);
         shellLayout->addLayout(socksRow);
 
-        workspaceTabs_->addTab(shellPage_, tr("Beacon Shell"));
+        workspaceTabs_->addTab(shell_.page, tr("Beacon Shell"));
     }
 
 }

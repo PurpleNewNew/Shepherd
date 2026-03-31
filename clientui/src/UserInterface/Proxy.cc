@@ -15,7 +15,7 @@ namespace StockmanNamespace::UserInterface
         {
             return;
         }
-        if ( refreshProxiesButton_ != nullptr ) { refreshProxiesButton_->setEnabled(false);
+        if ( workspace_.refreshProxiesButton != nullptr ) { workspace_.refreshProxiesButton->setEnabled(false);
 }
         if ( proxyTable_ != nullptr ) { proxyTable_->setEnabled(false);
 }
@@ -41,7 +41,7 @@ namespace StockmanNamespace::UserInterface
                 return res;
             },
             [this](const Result& res) {
-                if ( refreshProxiesButton_ ) { refreshProxiesButton_->setEnabled(true);
+                if ( workspace_.refreshProxiesButton ) { workspace_.refreshProxiesButton->setEnabled(true);
 }
                 if ( proxyTable_ ) { proxyTable_->setEnabled(true);
 }

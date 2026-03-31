@@ -8,7 +8,7 @@ namespace StockmanNamespace::UserInterface
 {
     void KelpiePanel::setShellStatus(const QString& status)
     {
-        shellStatusLabel_->setText(tr("Shell: %1").arg(status));
+        shell_.statusLabel->setText(tr("Shell: %1").arg(status));
     }
 
     void KelpiePanel::startShell()
@@ -27,7 +27,7 @@ namespace StockmanNamespace::UserInterface
         const QString targetUuid = currentNodeUuid_;
         stopShell();
         setShellStatus(tr("connecting (%1)").arg(targetUuid));
-        setWidgetsEnabled({openShellButton_, closeShellButton_, shellInput_}, false);
+        setWidgetsEnabled({shell_.openButton, shell_.closeButton, shell_.input}, false);
         toastInfo(tr("Opening shell for %1...").arg(targetUuid));
 
         const uint64_t epoch = ctrl->ConnectionEpoch();
@@ -52,7 +52,7 @@ namespace StockmanNamespace::UserInterface
                 return res;
             },
             [this](const Result& res) {
-                setWidgetsEnabled({openShellButton_}, true);
+                setWidgetsEnabled({shell_.openButton}, true);
                 auto* ctrl = controller();
                 if ( ctrl == nullptr || ctrl->ConnectionEpoch() != res.epoch )
                 {
@@ -60,7 +60,7 @@ namespace StockmanNamespace::UserInterface
                     {
                         closeHandleAsync(res.handle);
                     }
-                    setWidgetsEnabled({closeShellButton_, shellInput_}, false);
+                    setWidgetsEnabled({shell_.closeButton, shell_.input}, false);
                     setShellStatus(tr("disconnected"));
                     return;
                 }
@@ -70,40 +70,40 @@ namespace StockmanNamespace::UserInterface
                     {
                         closeHandleAsync(res.handle);
                     }
-                    setWidgetsEnabled({closeShellButton_, shellInput_}, false);
+                    setWidgetsEnabled({shell_.closeButton, shell_.input}, false);
                     setShellStatus(tr("disconnected"));
                     return;
                 }
                 if ( !res.ok || !res.handle )
                 {
-                    setWidgetsEnabled({closeShellButton_, shellInput_}, false);
+                    setWidgetsEnabled({shell_.closeButton, shell_.input}, false);
                     setShellStatus(tr("disconnected"));
                     toastError(tr("Failed to open shell: %1").arg(res.error));
                     return;
                 }
 
-                shellStream_ = res.handle;
-                connect(shellStream_.get(), &ProxyStreamHandle::DataReceived, this, &KelpiePanel::handleShellData);
-                connect(shellStream_.get(), &ProxyStreamHandle::Closed, this, &KelpiePanel::handleShellClosed);
+                shell_.stream = res.handle;
+                connect(shell_.stream.get(), &ProxyStreamHandle::DataReceived, this, &KelpiePanel::handleShellData);
+                connect(shell_.stream.get(), &ProxyStreamHandle::Closed, this, &KelpiePanel::handleShellClosed);
 
-                if ( shellInput_ )
+                if ( shell_.input )
                 {
-                    shellInput_->setEnabled(true);
-                    shellInput_->setFocus();
+                    shell_.input->setEnabled(true);
+                    shell_.input->setFocus();
                 }
-                if ( closeShellButton_ ) { closeShellButton_->setEnabled(true);
+                if ( shell_.closeButton ) { shell_.closeButton->setEnabled(true);
 }
                 setShellStatus(tr("connected (%1)").arg(res.targetUuid));
-                if ( shellView_ ) { shellView_->clear();
+                if ( shell_.view ) { shell_.view->clear();
 }
 
-                if ( !pendingShellLine_.isEmpty() && pendingShellTarget_ == res.targetUuid )
+                if ( !shell_.pendingLine.isEmpty() && shell_.pendingTarget == res.targetUuid )
                 {
-                    const QString queued = pendingShellLine_.trimmed();
-                    const QByteArray bytes = pendingShellLine_.toUtf8();
-                    pendingShellTarget_.clear();
-                    pendingShellLine_.clear();
-                    shellStream_->SendData(bytes);
+                    const QString queued = shell_.pendingLine.trimmed();
+                    const QByteArray bytes = shell_.pendingLine.toUtf8();
+                    shell_.pendingTarget.clear();
+                    shell_.pendingLine.clear();
+                    shell_.stream->SendData(bytes);
                     AppendLog(tr("[%1] >> %2").arg(res.targetUuid, queued));
                 }
             });
@@ -111,23 +111,29 @@ namespace StockmanNamespace::UserInterface
 
     void KelpiePanel::stopShell()
     {
-        if ( shellStream_ )
+        if ( shell_.stream )
         {
-            closeHandleAsync(shellStream_);
-            shellStream_.reset();
+            closeHandleAsync(shell_.stream);
+            shell_.stream.reset();
         }
-        shellInput_->setEnabled(false);
-        closeShellButton_->setEnabled(false);
+        if ( shell_.input != nullptr )
+        {
+            shell_.input->setEnabled(false);
+        }
+        if ( shell_.closeButton != nullptr )
+        {
+            shell_.closeButton->setEnabled(false);
+        }
         setShellStatus(tr("disconnected"));
     }
 
     void KelpiePanel::sendShellInput()
     {
-        if ( !shellStream_ )
+        if ( !shell_.stream )
         {
             return;
         }
-        QString line = shellInput_->text();
+        QString line = shell_.input->text();
         if ( line.isEmpty() )
         {
             return;
@@ -136,14 +142,14 @@ namespace StockmanNamespace::UserInterface
         {
             line.append('\n');
         }
-        shellStream_->SendData(line.toUtf8());
-        shellInput_->clear();
+        shell_.stream->SendData(line.toUtf8());
+        shell_.input->clear();
     }
 
     void KelpiePanel::handleShellData(const QByteArray& data)
     {
         auto* senderHandle = qobject_cast<ProxyStreamHandle*>(sender());
-        if ( (senderHandle != nullptr) && (senderHandle != shellStream_.get()) )
+        if ( (senderHandle != nullptr) && (senderHandle != shell_.stream.get()) )
         {
             return;
         }
@@ -151,21 +157,21 @@ namespace StockmanNamespace::UserInterface
         {
             return;
         }
-        shellView_->moveCursor(QTextCursor::End);
-        shellView_->insertPlainText(QString::fromUtf8(data));
-        shellView_->moveCursor(QTextCursor::End);
+        shell_.view->moveCursor(QTextCursor::End);
+        shell_.view->insertPlainText(QString::fromUtf8(data));
+        shell_.view->moveCursor(QTextCursor::End);
     }
 
     void KelpiePanel::handleShellClosed(const QString& reason)
     {
         auto* senderHandle = qobject_cast<ProxyStreamHandle*>(sender());
-        if ( (senderHandle != nullptr) && (senderHandle != shellStream_.get()) )
+        if ( (senderHandle != nullptr) && (senderHandle != shell_.stream.get()) )
         {
             return;
         }
         if ( !reason.isEmpty() )
         {
-            shellView_->appendPlainText(QStringLiteral("\n[Shell closed: %1]").arg(reason));
+            shell_.view->appendPlainText(QStringLiteral("\n[Shell closed: %1]").arg(reason));
         }
         stopShell();
     }

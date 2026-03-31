@@ -8,19 +8,19 @@ namespace StockmanNamespace::UserInterface
 {
     void KelpiePanel::refreshChat()
     {
-        if ( chatTable_ == nullptr )
+        if ( workspace_.chatTable == nullptr )
         {
             return;
         }
-        chatTable_->setRowCount(0);
-        chatIds_.clear();
+        workspace_.chatTable->setRowCount(0);
+        workspace_.chatIds.clear();
 
         auto* ctrl = controller();
         if ( ctrl == nullptr )
         {
             return;
         }
-        if ( refreshChatButton_ != nullptr ) { refreshChatButton_->setEnabled(false);
+        if ( workspace_.refreshChatButton != nullptr ) { workspace_.refreshChatButton->setEnabled(false);
 }
         const uint64_t epoch = ctrl->ConnectionEpoch();
 
@@ -44,7 +44,7 @@ namespace StockmanNamespace::UserInterface
                 return res;
             },
             [this](const Result& res) {
-                if ( refreshChatButton_ ) { refreshChatButton_->setEnabled(true);
+                if ( workspace_.refreshChatButton ) { workspace_.refreshChatButton->setEnabled(true);
 }
 
                 auto* ctrl = controller();
@@ -61,7 +61,7 @@ namespace StockmanNamespace::UserInterface
                 {
                     appendChatMessage(message);
                 }
-                chatTable_->scrollToBottom();
+                workspace_.chatTable->scrollToBottom();
             });
     }
 
@@ -73,12 +73,12 @@ namespace StockmanNamespace::UserInterface
             toastWarn(tr("gRPC client not connected"));
             return;
         }
-        const QString message = (chatInput_ != nullptr) ? chatInput_->text().trimmed() : QString();
+        const QString message = (workspace_.chatInput != nullptr) ? workspace_.chatInput->text().trimmed() : QString();
         if ( message.isEmpty() )
         {
             return;
         }
-        setWidgetsEnabled({sendChatButton_, chatInput_}, false);
+        setWidgetsEnabled({workspace_.sendChatButton, workspace_.chatInput}, false);
         toastInfo(tr("Sending chat message..."));
         const uint64_t epoch = ctrl->ConnectionEpoch();
         struct Result {
@@ -97,7 +97,7 @@ namespace StockmanNamespace::UserInterface
                 return res;
             },
             [this](const Result& res) {
-                setWidgetsEnabled({sendChatButton_, chatInput_}, true);
+                setWidgetsEnabled({workspace_.sendChatButton, workspace_.chatInput}, true);
                 auto* ctrl = controller();
                 if ( ctrl == nullptr || ctrl->ConnectionEpoch() != res.epoch )
                 {
@@ -108,9 +108,9 @@ namespace StockmanNamespace::UserInterface
                     toastError(tr("Send chat failed: %1").arg(res.error));
                     return;
                 }
-                if ( chatInput_ )
+                if ( workspace_.chatInput )
                 {
-                    chatInput_->clear();
+                    workspace_.chatInput->clear();
                 }
                 toastInfo(tr("Chat message sent"));
                 refreshChat();
@@ -119,25 +119,25 @@ namespace StockmanNamespace::UserInterface
 
     void KelpiePanel::appendChatMessage(const kelpieui::v1::ChatMessage& message)
     {
-        if ( chatTable_ == nullptr )
+        if ( workspace_.chatTable == nullptr )
         {
             return;
         }
         const QString id = QString::fromStdString(message.id());
         if ( !id.isEmpty() )
         {
-            if ( chatIds_.contains(id) )
+            if ( workspace_.chatIds.contains(id) )
             {
                 return;
             }
-            chatIds_.insert(id);
+            workspace_.chatIds.insert(id);
         }
 
-        const int row = chatTable_->rowCount();
-        chatTable_->insertRow(row);
-        chatTable_->setItem(row, 0, new QTableWidgetItem(QString::fromStdString(message.timestamp())));
-        chatTable_->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(message.username())));
-        chatTable_->setItem(row, 2, new QTableWidgetItem(QString::fromStdString(message.role())));
-        chatTable_->setItem(row, 3, new QTableWidgetItem(QString::fromStdString(message.message())));
+        const int row = workspace_.chatTable->rowCount();
+        workspace_.chatTable->insertRow(row);
+        workspace_.chatTable->setItem(row, 0, new QTableWidgetItem(QString::fromStdString(message.timestamp())));
+        workspace_.chatTable->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(message.username())));
+        workspace_.chatTable->setItem(row, 2, new QTableWidgetItem(QString::fromStdString(message.role())));
+        workspace_.chatTable->setItem(row, 3, new QTableWidgetItem(QString::fromStdString(message.message())));
     }
 }

@@ -11,26 +11,26 @@ namespace StockmanNamespace::UserInterface
 {
     void KelpiePanel::refreshLoot()
     {
-        if ( lootTable_ == nullptr )
+        if ( workspace_.lootTable == nullptr )
         {
             return;
         }
-        lootTable_->setRowCount(0);
-        lootIds_.clear();
+        workspace_.lootTable->setRowCount(0);
+        workspace_.lootIds.clear();
 
         auto* ctrl = controller();
         if ( ctrl == nullptr )
         {
             return;
         }
-        if ( refreshLootButton_ != nullptr ) { refreshLootButton_->setEnabled(false);
+        if ( workspace_.refreshLootButton != nullptr ) { workspace_.refreshLootButton->setEnabled(false);
 }
         const uint64_t epoch = ctrl->ConnectionEpoch();
-        const QString target = (lootTargetInput_ != nullptr) ? lootTargetInput_->text().trimmed() : QString();
+        const QString target = (workspace_.lootTargetInput != nullptr) ? workspace_.lootTargetInput->text().trimmed() : QString();
         QStringList tags;
-        if ( (lootTagInput_ != nullptr) && !lootTagInput_->text().trimmed().isEmpty() )
+        if ( (workspace_.lootTagInput != nullptr) && !workspace_.lootTagInput->text().trimmed().isEmpty() )
         {
-            const auto parts = lootTagInput_->text().split(',', Qt::SkipEmptyParts);
+            const auto parts = workspace_.lootTagInput->text().split(',', Qt::SkipEmptyParts);
             for ( const auto& part : parts )
             {
                 const QString trimmed = part.trimmed();
@@ -40,9 +40,9 @@ namespace StockmanNamespace::UserInterface
                 }
             }
         }
-        const int limit = (lootLimitSpin_ != nullptr) ? lootLimitSpin_->value() : 100;
-        const auto category = (lootCategoryBox_ != nullptr)
-                                  ? static_cast<kelpieui::v1::LootCategory>(lootCategoryBox_->currentData().toInt())
+        const int limit = (workspace_.lootLimitSpin != nullptr) ? workspace_.lootLimitSpin->value() : 100;
+        const auto category = (workspace_.lootCategoryBox != nullptr)
+                                  ? static_cast<kelpieui::v1::LootCategory>(workspace_.lootCategoryBox->currentData().toInt())
                                   : kelpieui::v1::LOOT_CATEGORY_UNSPECIFIED;
 
         struct Result {
@@ -65,7 +65,7 @@ namespace StockmanNamespace::UserInterface
                 return res;
             },
             [this](const Result& res) {
-                if ( refreshLootButton_ ) { refreshLootButton_->setEnabled(true);
+                if ( workspace_.refreshLootButton ) { workspace_.refreshLootButton->setEnabled(true);
 }
                 auto* ctrl = controller();
                 if ( ctrl == nullptr || ctrl->ConnectionEpoch() != res.epoch )
@@ -86,48 +86,48 @@ namespace StockmanNamespace::UserInterface
 
     void KelpiePanel::appendLootItem(const kelpieui::v1::LootItem& item)
     {
-        if ( lootTable_ == nullptr )
+        if ( workspace_.lootTable == nullptr )
         {
             return;
         }
         const QString id = QString::fromStdString(item.loot_id());
         if ( !id.isEmpty() )
         {
-            if ( lootIds_.contains(id) )
+            if ( workspace_.lootIds.contains(id) )
             {
                 return;
             }
-            lootIds_.insert(id);
+            workspace_.lootIds.insert(id);
         }
 
-        const int row = lootTable_->rowCount();
-        lootTable_->insertRow(row);
+        const int row = workspace_.lootTable->rowCount();
+        workspace_.lootTable->insertRow(row);
         auto* createdItem = new QTableWidgetItem(QString::fromStdString(item.created_at()));
         createdItem->setData(Qt::UserRole, id);
         createdItem->setData(Qt::UserRole + 1, QString::fromStdString(item.storage_ref()));
         createdItem->setData(Qt::UserRole + 2, QString::fromStdString(item.name()));
-        lootTable_->setItem(row, 0, createdItem);
-        lootTable_->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(item.name())));
-        lootTable_->setItem(row, 2, new QTableWidgetItem(lootCategoryText(item.category())));
-        lootTable_->setItem(row, 3, new QTableWidgetItem(QString::fromStdString(item.target_uuid())));
-        lootTable_->setItem(row, 4, new QTableWidgetItem(QString::number(item.size())));
-        lootTable_->setItem(row, 5, new QTableWidgetItem(joinTags(item.tags())));
+        workspace_.lootTable->setItem(row, 0, createdItem);
+        workspace_.lootTable->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(item.name())));
+        workspace_.lootTable->setItem(row, 2, new QTableWidgetItem(lootCategoryText(item.category())));
+        workspace_.lootTable->setItem(row, 3, new QTableWidgetItem(QString::fromStdString(item.target_uuid())));
+        workspace_.lootTable->setItem(row, 4, new QTableWidgetItem(QString::number(item.size())));
+        workspace_.lootTable->setItem(row, 5, new QTableWidgetItem(joinTags(item.tags())));
     }
 
     QString KelpiePanel::selectedLootId() const
     {
-        if ( lootTable_ == nullptr )
+        if ( workspace_.lootTable == nullptr )
         {
             return {};
         }
-        const int row = lootTable_->currentRow();
+        const int row = workspace_.lootTable->currentRow();
         if ( row < 0 )
         {
             return {};
         }
-        for ( int col = 0; col < lootTable_->columnCount(); ++col )
+        for ( int col = 0; col < workspace_.lootTable->columnCount(); ++col )
         {
-            auto* item = lootTable_->item(row, col);
+            auto* item = workspace_.lootTable->item(row, col);
             if ( item == nullptr )
             {
                 continue;
@@ -149,7 +149,7 @@ namespace StockmanNamespace::UserInterface
             toastWarn(tr("gRPC client not connected"));
             return;
         }
-        QString target = (lootTargetInput_ != nullptr) ? lootTargetInput_->text().trimmed() : QString();
+        QString target = (workspace_.lootTargetInput != nullptr) ? workspace_.lootTargetInput->text().trimmed() : QString();
         if ( target.isEmpty() )
         {
             target = currentNodeUuid_;
@@ -172,17 +172,17 @@ namespace StockmanNamespace::UserInterface
             return;
         }
 
-        const auto selectedCategory = (lootCategoryBox_ != nullptr)
-                                          ? static_cast<kelpieui::v1::LootCategory>(lootCategoryBox_->currentData().toInt())
+        const auto selectedCategory = (workspace_.lootCategoryBox != nullptr)
+                                          ? static_cast<kelpieui::v1::LootCategory>(workspace_.lootCategoryBox->currentData().toInt())
                                           : kelpieui::v1::LOOT_CATEGORY_UNSPECIFIED;
         const auto category = selectedCategory == kelpieui::v1::LOOT_CATEGORY_UNSPECIFIED
                                   ? kelpieui::v1::LOOT_CATEGORY_FILE
                                   : selectedCategory;
 
         QStringList tags;
-        if ( (lootTagInput_ != nullptr) && !lootTagInput_->text().trimmed().isEmpty() )
+        if ( (workspace_.lootTagInput != nullptr) && !workspace_.lootTagInput->text().trimmed().isEmpty() )
         {
-            const auto rawTags = lootTagInput_->text().split(',', Qt::SkipEmptyParts);
+            const auto rawTags = workspace_.lootTagInput->text().split(',', Qt::SkipEmptyParts);
             for ( const auto& raw : rawTags )
             {
                 const QString t = raw.trimmed();
@@ -192,7 +192,7 @@ namespace StockmanNamespace::UserInterface
                 }
             }
         }
-        setWidgetsEnabled({submitLootButton_, refreshLootButton_, lootTable_}, false);
+        setWidgetsEnabled({workspace_.submitLootButton, workspace_.refreshLootButton, workspace_.lootTable}, false);
         toastInfo(tr("Submitting loot %1...").arg(info.fileName()));
         const uint64_t epoch = ctrl->ConnectionEpoch();
 
@@ -226,7 +226,7 @@ namespace StockmanNamespace::UserInterface
                 return res;
             },
             [this](const Result& res) {
-                setWidgetsEnabled({submitLootButton_, refreshLootButton_, lootTable_}, true);
+                setWidgetsEnabled({workspace_.submitLootButton, workspace_.refreshLootButton, workspace_.lootTable}, true);
                 auto* ctrl = controller();
                 if ( ctrl == nullptr || ctrl->ConnectionEpoch() != res.epoch )
                 {
@@ -258,10 +258,10 @@ namespace StockmanNamespace::UserInterface
             return;
         }
         QString defaultName = lootId;
-        if ( lootTable_ != nullptr )
+        if ( workspace_.lootTable != nullptr )
         {
-            const int row = lootTable_->currentRow();
-            auto* nameItem = row >= 0 ? lootTable_->item(row, 1) : nullptr;
+            const int row = workspace_.lootTable->currentRow();
+            auto* nameItem = row >= 0 ? workspace_.lootTable->item(row, 1) : nullptr;
             if ( (nameItem != nullptr) && !nameItem->text().trimmed().isEmpty() )
             {
                 defaultName = nameItem->text().trimmed();
@@ -273,7 +273,7 @@ namespace StockmanNamespace::UserInterface
             return;
         }
 
-        setWidgetsEnabled({downloadLootButton_, refreshLootButton_, lootTable_}, false);
+        setWidgetsEnabled({workspace_.downloadLootButton, workspace_.refreshLootButton, workspace_.lootTable}, false);
         toastInfo(tr("Downloading loot %1...").arg(lootId));
         const uint64_t epoch = ctrl->ConnectionEpoch();
 
@@ -333,7 +333,7 @@ namespace StockmanNamespace::UserInterface
                 return res;
             },
             [this](const Result& res) {
-                setWidgetsEnabled({downloadLootButton_, refreshLootButton_, lootTable_}, true);
+                setWidgetsEnabled({workspace_.downloadLootButton, workspace_.refreshLootButton, workspace_.lootTable}, true);
                 auto* ctrl = controller();
                 if ( ctrl == nullptr || ctrl->ConnectionEpoch() != res.epoch )
                 {

@@ -19,7 +19,7 @@ namespace StockmanNamespace::UserInterface
             return;
         }
         bool ok = false;
-        const int port = (socksPortInput_ != nullptr) ? socksPortInput_->text().toInt(&ok) : 0;
+        const int port = (shell_.socksPortInput != nullptr) ? shell_.socksPortInput->text().toInt(&ok) : 0;
         if ( !ok || port <= 0 || port > 65535 )
         {
             toastWarn(tr("Invalid SOCKS local port"));
@@ -39,13 +39,13 @@ namespace StockmanNamespace::UserInterface
             socksServer_ = nullptr;
             return;
         }
-        if ( startSocksButton_ != nullptr ) { startSocksButton_->setEnabled(false);
+        if ( shell_.startSocksButton != nullptr ) { shell_.startSocksButton->setEnabled(false);
 }
-        if ( stopSocksButton_ != nullptr ) { stopSocksButton_->setEnabled(true);
+        if ( shell_.stopSocksButton != nullptr ) { shell_.stopSocksButton->setEnabled(true);
 }
-        if ( socksStatusLabel_ != nullptr )
+        if ( shell_.socksStatusLabel != nullptr )
         {
-            socksStatusLabel_->setText(tr("SOCKS: listening on 127.0.0.1:%1").arg(port));
+            shell_.socksStatusLabel->setText(tr("SOCKS: listening on 127.0.0.1:%1").arg(port));
         }
         toastInfo(tr("SOCKS bridge started on 127.0.0.1:%1").arg(port));
     }
@@ -79,11 +79,11 @@ namespace StockmanNamespace::UserInterface
             {
                 continue;
             }
-            const bool withAuth = (socksAuthCheck_ != nullptr) ? socksAuthCheck_->isChecked() : false;
+            const bool withAuth = (shell_.socksAuthCheck != nullptr) ? shell_.socksAuthCheck->isChecked() : false;
             const auto auth = withAuth ? kelpieui::v1::SOCKS_PROXY_AUTH_USERPASS
                                        : kelpieui::v1::SOCKS_PROXY_AUTH_NONE;
-            const QString user = (withAuth && (socksUserInput_ != nullptr)) ? socksUserInput_->text() : QString();
-            const QString pass = (withAuth && (socksPasswordInput_ != nullptr)) ? socksPasswordInput_->text() : QString();
+            const QString user = (withAuth && (shell_.socksUserInput != nullptr)) ? shell_.socksUserInput->text() : QString();
+            const QString pass = (withAuth && (shell_.socksPasswordInput != nullptr)) ? shell_.socksPasswordInput->text() : QString();
 
             QPointer<QTcpSocket> rawSocket = socket;
             struct Result {
@@ -241,11 +241,11 @@ namespace StockmanNamespace::UserInterface
             socksServer_->deleteLater();
             socksServer_ = nullptr;
         }
-        if ( startSocksButton_ != nullptr ) { startSocksButton_->setEnabled(!currentNodeUuid_.isEmpty());
+        if ( shell_.startSocksButton != nullptr ) { shell_.startSocksButton->setEnabled(!currentNodeUuid_.isEmpty());
 }
-        if ( stopSocksButton_ != nullptr ) { stopSocksButton_->setEnabled(false);
+        if ( shell_.stopSocksButton != nullptr ) { shell_.stopSocksButton->setEnabled(false);
 }
-        if ( socksStatusLabel_ != nullptr ) { socksStatusLabel_->setText(tr("SOCKS: stopped"));
+        if ( shell_.socksStatusLabel != nullptr ) { shell_.socksStatusLabel->setText(tr("SOCKS: stopped"));
 }
     }
 }

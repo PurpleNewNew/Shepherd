@@ -26,9 +26,9 @@ namespace StockmanNamespace::UserInterface
         streamRefreshDebounce_->setSingleShot(true);
         streamRefreshDebounce_->setInterval(kStreamRefreshDebounceMs);
         connect(streamRefreshDebounce_, &QTimer::timeout, this, [this]() {
-            const bool taskingVisible = (stateTabs_ != nullptr) && (stateTabs_->currentWidget() == taskingPage_);
+            const bool taskingVisible = (stateTabs_ != nullptr) && (stateTabs_->currentWidget() == tasking_.page);
             const bool streamDiagnosticsVisible =
-                ((workspaceTabs_ != nullptr) && (workspaceTabs_->currentWidget() == streamsPage_)) ||
+                ((workspaceTabs_ != nullptr) && (workspaceTabs_->currentWidget() == streams_.page)) ||
                 ((stateTabs_ != nullptr) && (stateTabs_->currentWidget() == hostIntelPage_));
             if ( taskingVisible )
             {
@@ -225,22 +225,22 @@ namespace StockmanNamespace::UserInterface
 
     void KelpiePanel::populateStreams(const kelpieui::v1::Snapshot& snapshot)
     {
-        streamsTable_->setRowCount(snapshot.streams_size());
+        streams_.table->setRowCount(snapshot.streams_size());
         for (int i = 0; i < snapshot.streams_size(); ++i)
         {
             const auto& stream = snapshot.streams(i);
-            streamsTable_->setItem(i, 0, new QTableWidgetItem(QString::number(stream.stream_id())));
-            streamsTable_->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(stream.target_uuid())));
-            streamsTable_->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(stream.kind())));
-            streamsTable_->setItem(i, 3, new QTableWidgetItem(QString::number(stream.pending())));
-            streamsTable_->setItem(i, 4, new QTableWidgetItem(QString::number(stream.inflight())));
-            streamsTable_->setItem(i, 5, new QTableWidgetItem(QString::number(stream.window())));
+            streams_.table->setItem(i, 0, new QTableWidgetItem(QString::number(stream.stream_id())));
+            streams_.table->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(stream.target_uuid())));
+            streams_.table->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(stream.kind())));
+            streams_.table->setItem(i, 3, new QTableWidgetItem(QString::number(stream.pending())));
+            streams_.table->setItem(i, 4, new QTableWidgetItem(QString::number(stream.inflight())));
+            streams_.table->setItem(i, 5, new QTableWidgetItem(QString::number(stream.window())));
         }
     }
 
     void KelpiePanel::AppendLog(const QString& message)
     {
-        logView_->appendPlainText(message);
+        workspace_.logView->appendPlainText(message);
     }
 
     void KelpiePanel::FocusNodes()
@@ -258,43 +258,43 @@ namespace StockmanNamespace::UserInterface
 
     void KelpiePanel::FocusStreams()
     {
-        if ( (workspaceTabs_ != nullptr) && (streamsPage_ != nullptr) )
+        if ( (workspaceTabs_ != nullptr) && (streams_.page != nullptr) )
         {
-            workspaceTabs_->setCurrentWidget(streamsPage_);
+            workspaceTabs_->setCurrentWidget(streams_.page);
         }
-        streamsTable_->setFocus();
+        streams_.table->setFocus();
     }
 
     void KelpiePanel::FocusLog()
     {
-        if ( (workspaceTabs_ != nullptr) && (consolePage_ != nullptr) )
+        if ( (workspaceTabs_ != nullptr) && (workspace_.consolePage != nullptr) )
         {
-            workspaceTabs_->setCurrentWidget(consolePage_);
+            workspaceTabs_->setCurrentWidget(workspace_.consolePage);
         }
-        logView_->setFocus();
+        workspace_.logView->setFocus();
     }
 
     void KelpiePanel::FocusChat()
     {
-        if ( (workspaceTabs_ != nullptr) && (chatPage_ != nullptr) )
+        if ( (workspaceTabs_ != nullptr) && (workspace_.chatPage != nullptr) )
         {
-            workspaceTabs_->setCurrentWidget(chatPage_);
+            workspaceTabs_->setCurrentWidget(workspace_.chatPage);
         }
-        if ( chatInput_ != nullptr )
+        if ( workspace_.chatInput != nullptr )
         {
-            chatInput_->setFocus();
+            workspace_.chatInput->setFocus();
         }
     }
 
     void KelpiePanel::FocusLoot()
     {
-        if ( (workspaceTabs_ != nullptr) && (lootPage_ != nullptr) )
+        if ( (workspaceTabs_ != nullptr) && (workspace_.lootPage != nullptr) )
         {
-            workspaceTabs_->setCurrentWidget(lootPage_);
+            workspaceTabs_->setCurrentWidget(workspace_.lootPage);
         }
-        if ( lootTable_ != nullptr )
+        if ( workspace_.lootTable != nullptr )
         {
-            lootTable_->setFocus();
+            workspace_.lootTable->setFocus();
         }
     }
 
@@ -364,7 +364,7 @@ namespace StockmanNamespace::UserInterface
 }
         if ( setNodeNetworkButton_ != nullptr ) { setNodeNetworkButton_->setEnabled(enabled);
 }
-        if ( openShellButton_ != nullptr ) { openShellButton_->setEnabled(enabled);
+        if ( shell_.openButton != nullptr ) { shell_.openButton->setEnabled(enabled);
 }
         if ( enqueueDtnButton_ != nullptr ) { enqueueDtnButton_->setEnabled(enabled);
 }
@@ -372,15 +372,15 @@ namespace StockmanNamespace::UserInterface
 }
         if ( startBackwardButton_ != nullptr ) { startBackwardButton_->setEnabled(enabled);
 }
-        if ( refreshSleepButton_ != nullptr ) { refreshSleepButton_->setEnabled(enabled);
+        if ( tasking_.refreshSleepButton != nullptr ) { tasking_.refreshSleepButton->setEnabled(enabled);
 }
-        if ( updateSleepButton_ != nullptr ) { updateSleepButton_->setEnabled(enabled);
+        if ( tasking_.updateSleepButton != nullptr ) { tasking_.updateSleepButton->setEnabled(enabled);
 }
-        if ( startDialButton_ != nullptr ) { startDialButton_->setEnabled(enabled);
+        if ( tasking_.startDialButton != nullptr ) { tasking_.startDialButton->setEnabled(enabled);
 }
-        if ( startSshSessionButton_ != nullptr ) { startSshSessionButton_->setEnabled(enabled);
+        if ( tasking_.startSshSessionButton != nullptr ) { tasking_.startSshSessionButton->setEnabled(enabled);
 }
-        if ( startSshTunnelButton_ != nullptr ) { startSshTunnelButton_->setEnabled(enabled);
+        if ( tasking_.startSshTunnelButton != nullptr ) { tasking_.startSshTunnelButton->setEnabled(enabled);
 }
         if ( markAliveButton_ != nullptr ) { markAliveButton_->setEnabled(enabled);
 }
@@ -396,11 +396,11 @@ namespace StockmanNamespace::UserInterface
 }
         if ( shutdownNodeButton_ != nullptr ) { shutdownNodeButton_->setEnabled(enabled);
 }
-        if ( startDownloadButton_ != nullptr ) { startDownloadButton_->setEnabled(enabled && !downloadActive_.load());
+        if ( shell_.startDownloadButton != nullptr ) { shell_.startDownloadButton->setEnabled(enabled && !downloadActive_.load());
 }
-        if ( startUploadButton_ != nullptr ) { startUploadButton_->setEnabled(enabled && !uploadActive_.load());
+        if ( shell_.startUploadButton != nullptr ) { shell_.startUploadButton->setEnabled(enabled && !uploadActive_.load());
 }
-        if ( startSocksButton_ != nullptr ) { startSocksButton_->setEnabled(enabled && socksServer_ == nullptr);
+        if ( shell_.startSocksButton != nullptr ) { shell_.startSocksButton->setEnabled(enabled && socksServer_ == nullptr);
 }
     }
 
@@ -467,7 +467,7 @@ namespace StockmanNamespace::UserInterface
             refreshRepairs();
             return;
         }
-        if ( page == taskingPage_ )
+        if ( page == tasking_.page )
         {
             refreshSleep();
             refreshDials();
@@ -486,24 +486,24 @@ namespace StockmanNamespace::UserInterface
         {
             return;
         }
-        if ( page == streamsPage_ )
+        if ( page == streams_.page )
         {
             refreshStreamDiagnostics();
             return;
         }
-        if ( page == chatPage_ )
+        if ( page == workspace_.chatPage )
         {
             refreshChat();
             return;
         }
-        if ( page == lootPage_ )
+        if ( page == workspace_.lootPage )
         {
             refreshLoot();
             return;
         }
-        if ( page == shellPage_ && (shellInput_ != nullptr) && shellInput_->isEnabled() )
+        if ( page == shell_.page && (shell_.input != nullptr) && shell_.input->isEnabled() )
         {
-            shellInput_->setFocus();
+            shell_.input->setFocus();
         }
     }
 
@@ -520,9 +520,9 @@ namespace StockmanNamespace::UserInterface
             toastWarn(tr("Select a node first"));
             return;
         }
-        const int count = (streamPingCount_ != nullptr) ? streamPingCount_->text().toInt() : 0;
-        const int size = (streamPingSize_ != nullptr) ? streamPingSize_->text().toInt() : 0;
-        setWidgetsEnabled({streamPingButton_, streamPingCount_, streamPingSize_}, false);
+        const int count = (streams_.pingCountInput != nullptr) ? streams_.pingCountInput->text().toInt() : 0;
+        const int size = (streams_.pingSizeInput != nullptr) ? streams_.pingSizeInput->text().toInt() : 0;
+        setWidgetsEnabled({streams_.pingButton, streams_.pingCountInput, streams_.pingSizeInput}, false);
         toastInfo(tr("Pinging streams..."));
 
         const QString targetUuid = currentNodeUuid_;
@@ -545,7 +545,7 @@ namespace StockmanNamespace::UserInterface
                 return res;
             },
             [this](const Result& res) {
-                setWidgetsEnabled({streamPingButton_, streamPingCount_, streamPingSize_}, true);
+                setWidgetsEnabled({streams_.pingButton, streams_.pingCountInput, streams_.pingSizeInput}, true);
                 auto* ctrl = controller();
                 if ( ctrl == nullptr || ctrl->ConnectionEpoch() != res.epoch )
                 {
@@ -590,9 +590,9 @@ namespace StockmanNamespace::UserInterface
 
     void KelpiePanel::scheduleStreamRefresh()
     {
-        const bool taskingVisible = (stateTabs_ != nullptr) && (stateTabs_->currentWidget() == taskingPage_);
+        const bool taskingVisible = (stateTabs_ != nullptr) && (stateTabs_->currentWidget() == tasking_.page);
         const bool streamDiagnosticsVisible =
-            ((workspaceTabs_ != nullptr) && (workspaceTabs_->currentWidget() == streamsPage_)) ||
+            ((workspaceTabs_ != nullptr) && (workspaceTabs_->currentWidget() == streams_.page)) ||
             ((stateTabs_ != nullptr) && (stateTabs_->currentWidget() == hostIntelPage_));
         if ( !taskingVisible && !streamDiagnosticsVisible )
         {
@@ -624,8 +624,8 @@ namespace StockmanNamespace::UserInterface
             setTopologyHighlightNode(QString());
             setNodeScopedActionsEnabled(false);
             stopSocksServer();
-            pendingShellTarget_.clear();
-            pendingShellLine_.clear();
+            shell_.pendingTarget.clear();
+            shell_.pendingLine.clear();
             if ( nodeMemoInput_ != nullptr ) { nodeMemoInput_->setEnabled(false);
 }
             if ( updateNodeMemoButton_ != nullptr ) { updateNodeMemoButton_->setEnabled(false);
@@ -655,8 +655,8 @@ namespace StockmanNamespace::UserInterface
         {
             stopSocksServer();
             stopShell();
-            pendingShellTarget_.clear();
-            pendingShellLine_.clear();
+            shell_.pendingTarget.clear();
+            shell_.pendingLine.clear();
             refreshNodeScopedData();
         }
     }
@@ -737,17 +737,17 @@ namespace StockmanNamespace::UserInterface
 	        {
 	            return;
 	        }
-	        if ( (workspaceTabs_ != nullptr) && (shellPage_ != nullptr) )
+	        if ( (workspaceTabs_ != nullptr) && (shell_.page != nullptr) )
 	        {
-	            workspaceTabs_->setCurrentWidget(shellPage_);
+	            workspaceTabs_->setCurrentWidget(shell_.page);
 	        }
-	        if ( !shellStream_ )
+	        if ( !shell_.stream )
 	        {
-	            pendingShellTarget_ = currentNodeUuid_;
-	            pendingShellLine_ = cmd;
-	            if ( !pendingShellLine_.endsWith('\n') )
+	            shell_.pendingTarget = currentNodeUuid_;
+	            shell_.pendingLine = cmd;
+	            if ( !shell_.pendingLine.endsWith('\n') )
 	            {
-	                pendingShellLine_.append('\n');
+	                shell_.pendingLine.append('\n');
 	            }
 	            startShell(); // async; will send pending line when connected
 	            if ( nodeCommandInput_ != nullptr ) { nodeCommandInput_->clear();
@@ -759,7 +759,7 @@ namespace StockmanNamespace::UserInterface
 	        {
 	            line.append('\n');
 	        }
-	        shellStream_->SendData(line.toUtf8());
+	        shell_.stream->SendData(line.toUtf8());
 	        AppendLog(tr("[%1] >> %2").arg(currentNodeUuid_, cmd));
 	        nodeCommandInput_->clear();
 	    }
@@ -772,17 +772,17 @@ namespace StockmanNamespace::UserInterface
             toastWarn(tr("gRPC client not connected"));
             return;
         }
-        if ( streamsTable_ == nullptr )
+        if ( streams_.table == nullptr )
         {
             return;
         }
-        const int row = streamsTable_->currentRow();
+        const int row = streams_.table->currentRow();
         if ( row < 0 )
         {
             toastWarn(tr("Select a stream row first"));
             return;
         }
-        auto* idItem = streamsTable_->item(row, 0);
+        auto* idItem = streams_.table->item(row, 0);
         if ( idItem == nullptr )
         {
             return;
@@ -794,8 +794,8 @@ namespace StockmanNamespace::UserInterface
             toastWarn(tr("Invalid stream id"));
             return;
         }
-        const QString reason = (closeStreamReasonInput_ != nullptr) ? closeStreamReasonInput_->text().trimmed() : QString();
-        setWidgetsEnabled({closeStreamButton_, streamsTable_, closeStreamReasonInput_}, false);
+        const QString reason = (streams_.closeReasonInput != nullptr) ? streams_.closeReasonInput->text().trimmed() : QString();
+        setWidgetsEnabled({streams_.closeButton, streams_.table, streams_.closeReasonInput}, false);
         toastInfo(tr("Closing stream %1...").arg(streamId));
 
         const uint64_t epoch = ctrl->ConnectionEpoch();
@@ -818,7 +818,7 @@ namespace StockmanNamespace::UserInterface
                 return res;
             },
             [this](const Result& res) {
-                setWidgetsEnabled({closeStreamButton_, streamsTable_, closeStreamReasonInput_}, true);
+                setWidgetsEnabled({streams_.closeButton, streams_.table, streams_.closeReasonInput}, true);
                 auto* ctrl = controller();
                 if ( ctrl == nullptr || ctrl->ConnectionEpoch() != res.epoch )
                 {

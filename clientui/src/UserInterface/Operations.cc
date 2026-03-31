@@ -158,7 +158,7 @@ namespace StockmanNamespace::UserInterface
 		                    if ( !res.eventsErr.isEmpty() )
 		                    {
 		                        toastError(tr("Supplemental refresh failed: %1").arg(res.eventsErr));
-		                        if ( opsStatusLabel_ ) { opsStatusLabel_->setText(tr("Supplemental error: %1").arg(res.eventsErr));
+		                        if ( shell_.opsStatusLabel ) { shell_.opsStatusLabel->setText(tr("Supplemental error: %1").arg(res.eventsErr));
 }
 		                    }
 	                    if ( supplementalTable_ ) { supplementalTable_->setRowCount(0);
@@ -364,7 +364,7 @@ namespace StockmanNamespace::UserInterface
 		                if ( !res.ok )
 		                {
 		                    toastError(tr("Audit refresh failed: %1").arg(res.error));
-		                    if ( opsStatusLabel_ ) { opsStatusLabel_->setText(tr("Audit error: %1").arg(res.error));
+		                    if ( shell_.opsStatusLabel ) { shell_.opsStatusLabel->setText(tr("Audit error: %1").arg(res.error));
 }
 		                    if ( auditTable_ ) { auditTable_->setRowCount(0);
 }
@@ -740,7 +740,7 @@ namespace StockmanNamespace::UserInterface
 
 	    void KelpiePanel::refreshStreamDiagnostics()
 	    {
-	        if ( streamDiagTable_ == nullptr )
+	        if ( streams_.diagnosticsTable == nullptr )
 	        {
 	            return;
 	        }
@@ -759,8 +759,8 @@ namespace StockmanNamespace::UserInterface
 	            return;
 	        }
 	        streamDiagnosticsRefreshInFlight_ = true;
-	        streamDiagTable_->setEnabled(false);
-	        streamDiagTable_->setRowCount(0);
+	        streams_.diagnosticsTable->setEnabled(false);
+	        streams_.diagnosticsTable->setRowCount(0);
 	        const uint64_t epoch = ctrl->ConnectionEpoch();
 
 	        struct Result {
@@ -799,7 +799,7 @@ namespace StockmanNamespace::UserInterface
 	                    }
 	                };
 
-	                if ( streamDiagTable_ ) { streamDiagTable_->setEnabled(true);
+	                if ( streams_.diagnosticsTable ) { streams_.diagnosticsTable->setEnabled(true);
 }
 
 	                auto* ctrl = controller();
@@ -815,16 +815,16 @@ namespace StockmanNamespace::UserInterface
 		                    return;
 		                }
 
-	                streamDiagTable_->setRowCount(static_cast<int>(res.streams.size()));
+	                streams_.diagnosticsTable->setRowCount(static_cast<int>(res.streams.size()));
 	                for (size_t i = 0; i < res.streams.size(); ++i)
 	                {
 	                    const auto& s = res.streams[i];
-	                    streamDiagTable_->setItem(static_cast<int>(i), 0, new QTableWidgetItem(QString::number(s.stream_id())));
-	                    streamDiagTable_->setItem(static_cast<int>(i), 1, new QTableWidgetItem(QString::fromStdString(s.target_uuid())));
-	                    streamDiagTable_->setItem(static_cast<int>(i), 2, new QTableWidgetItem(QString::fromStdString(s.kind())));
-	                    streamDiagTable_->setItem(static_cast<int>(i), 3, new QTableWidgetItem(QString::number(s.pending())));
-	                    streamDiagTable_->setItem(static_cast<int>(i), 4, new QTableWidgetItem(QString::number(s.inflight())));
-	                    streamDiagTable_->setItem(static_cast<int>(i),
+	                    streams_.diagnosticsTable->setItem(static_cast<int>(i), 0, new QTableWidgetItem(QString::number(s.stream_id())));
+	                    streams_.diagnosticsTable->setItem(static_cast<int>(i), 1, new QTableWidgetItem(QString::fromStdString(s.target_uuid())));
+	                    streams_.diagnosticsTable->setItem(static_cast<int>(i), 2, new QTableWidgetItem(QString::fromStdString(s.kind())));
+	                    streams_.diagnosticsTable->setItem(static_cast<int>(i), 3, new QTableWidgetItem(QString::number(s.pending())));
+	                    streams_.diagnosticsTable->setItem(static_cast<int>(i), 4, new QTableWidgetItem(QString::number(s.inflight())));
+	                    streams_.diagnosticsTable->setItem(static_cast<int>(i),
 	                                              5,
 	                                              new QTableWidgetItem(tr("%1 / %2")
 	                                                                       .arg(QString::fromStdString(s.rto()),
