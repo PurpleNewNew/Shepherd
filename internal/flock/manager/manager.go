@@ -4,7 +4,7 @@ import (
 	"context"
 	"net"
 
-    "codeberg.org/agnoie/shepherd/pkg/global"
+	"codeberg.org/agnoie/shepherd/pkg/global"
 	"codeberg.org/agnoie/shepherd/pkg/session"
 )
 

@@ -10,9 +10,9 @@ import (
 	"codeberg.org/agnoie/shepherd/internal/kelpie/initial"
 	"codeberg.org/agnoie/shepherd/internal/kelpie/printer"
 	"codeberg.org/agnoie/shepherd/internal/kelpie/topology"
-	"codeberg.org/agnoie/shepherd/protocol"
 	"codeberg.org/agnoie/shepherd/pkg/share"
 	reconn "codeberg.org/agnoie/shepherd/pkg/share/reconnect"
+	"codeberg.org/agnoie/shepherd/protocol"
 )
 
 const reconnectMaxAttempts = 5

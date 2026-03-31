@@ -29,6 +29,8 @@ type WSProto struct {
 	*RawProto
 }
 
+const maxWSHeaderSize = 16 * 1024
+
 func (proto *WSProto) CNegotiate() error {
 	if proto == nil || proto.param == nil || proto.param.Conn == nil {
 		return fmt.Errorf("websocket negotiate: nil connection")
@@ -36,6 +38,7 @@ func (proto *WSProto) CNegotiate() error {
 	conn := proto.param.Conn
 	defer conn.SetReadDeadline(time.Time{})
 	conn.SetReadDeadline(time.Now().Add(10 * time.Second))
+	reader := bufio.NewReader(conn)
 
 	nonce := generateNonce()
 	expectedAccept, err := getNonceAccept(nonce)
@@ -67,38 +70,18 @@ Sec-WebSocket-Version: 13
 		return err
 	}
 
-	var ptr int
-	result := bytes.Buffer{}
-	buf := make([]byte, 1024)
-
-	for {
-		count, err := conn.Read(buf)
-		if err != nil {
-			if err == io.EOF && count > 0 {
-				result.Write(buf[:count])
-			} else if timeoutErr, ok := err.(net.Error); ok && timeoutErr.Timeout() {
-				return err
-			}
-			break
-		}
-
-		if count > 0 {
-			result.Write(buf[ptr : ptr+count])
-			ptr += count
-			if bytes.HasSuffix(buf[:ptr], []byte("\r\n\r\n")) {
-				break
-			}
-		}
+	respHeader, err := readWSHeader(reader)
+	if err != nil {
+		return err
 	}
-
-	resp := result.String()
+	resp := string(respHeader)
 	if !strings.Contains(resp, "Upgrade: websocket") ||
 		!strings.Contains(resp, "Connection: Upgrade") ||
 		!strings.Contains(resp, "Sec-WebSocket-Accept: "+string(expectedAccept)) {
 		return errors.New("not websocket protocol")
 	}
 
-	proto.param.Conn = newWSConn(conn, true)
+	proto.param.Conn = newWSConnWithReader(conn, reader, true)
 	return nil
 }
 
@@ -109,33 +92,14 @@ func (proto *WSProto) SNegotiate() error {
 	conn := proto.param.Conn
 	defer conn.SetReadDeadline(time.Time{})
 	conn.SetReadDeadline(time.Now().Add(10 * time.Second))
-
-	var ptr int
-	result := bytes.Buffer{}
-	buf := make([]byte, 1024)
-
-	for {
-		count, err := conn.Read(buf)
-		if err != nil {
-			if err == io.EOF && count > 0 {
-				result.Write(buf[:count])
-			} else if timeoutErr, ok := err.(net.Error); ok && timeoutErr.Timeout() {
-				return err
-			}
-			break
-		}
-
-		if count > 0 {
-			result.Write(buf[ptr : ptr+count])
-			ptr += count
-			if bytes.HasSuffix(buf[:ptr], []byte("\r\n\r\n")) {
-				break
-			}
-		}
+	reader := bufio.NewReader(conn)
+	reqHeader, err := readWSHeader(reader)
+	if err != nil {
+		return err
 	}
 
 	re := regexp.MustCompile(`Sec-WebSocket-Key: (.*)`)
-	tkey := re.FindStringSubmatch(strings.ReplaceAll(result.String(), "\r\n", "\n"))
+	tkey := re.FindStringSubmatch(strings.ReplaceAll(string(reqHeader), "\r\n", "\n"))
 	if len(tkey) < 2 {
 		return errors.New("Sec-Websocket-Key is not in header")
 	}
@@ -158,7 +122,7 @@ Sec-WebSocket-Accept: %s
 		return err
 	}
 
-	proto.param.Conn = newWSConn(conn, false)
+	proto.param.Conn = newWSConnWithReader(conn, reader, false)
 	return nil
 }
 
@@ -189,10 +153,47 @@ func getNonceAccept(nonce []byte) (expected []byte, err error) {
 	return
 }
 
+func readWSHeader(reader *bufio.Reader) ([]byte, error) {
+	if reader == nil {
+		return nil, fmt.Errorf("websocket negotiate: nil reader")
+	}
+	result := bytes.Buffer{}
+	for result.Len() < maxWSHeaderSize {
+		b, err := reader.ReadByte()
+		if err != nil {
+			if timeoutErr, ok := err.(net.Error); ok && timeoutErr.Timeout() {
+				return nil, err
+			}
+			if err == io.EOF && bytes.HasSuffix(result.Bytes(), []byte("\r\n\r\n")) {
+				break
+			}
+			if err == io.EOF {
+				return nil, io.ErrUnexpectedEOF
+			}
+			return nil, err
+		}
+		result.WriteByte(b)
+		if bytes.HasSuffix(result.Bytes(), []byte("\r\n\r\n")) {
+			return result.Bytes(), nil
+		}
+	}
+	if result.Len() >= maxWSHeaderSize {
+		return nil, fmt.Errorf("websocket negotiate: header too large")
+	}
+	return result.Bytes(), nil
+}
+
 func newWSConn(base net.Conn, isClient bool) net.Conn {
+	return newWSConnWithReader(base, nil, isClient)
+}
+
+func newWSConnWithReader(base net.Conn, reader *bufio.Reader, isClient bool) net.Conn {
+	if reader == nil {
+		reader = bufio.NewReader(base)
+	}
 	return &wsConn{
 		base:     base,
-		reader:   bufio.NewReader(base),
+		reader:   reader,
 		isClient: isClient,
 	}
 }

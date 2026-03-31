@@ -108,4 +108,3 @@ func (s *Store) LoadControllerListeners() ([]process.ControllerListenerRecord, e
 	}
 	return result, rows.Err()
 }
-

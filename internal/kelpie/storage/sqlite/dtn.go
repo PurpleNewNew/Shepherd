@@ -184,4 +184,3 @@ func (s *Store) LoadDTNBundles() ([]*dtn.Bundle, error) {
 	})
 	return out, nil
 }
-

@@ -173,4 +173,3 @@ func TestManager_Enqueue_CapacityDropDeletesPersisted(t *testing.T) {
 		t.Fatalf("expected DroppedTotal=1, got %d", stats.DroppedTotal)
 	}
 }
-
