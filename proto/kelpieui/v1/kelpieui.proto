@@ -333,13 +333,51 @@ message SubmitLootResponse {
   LootItem item = 1;
 }
 
-message GetLootRequest {
+message CollectLootFileRequest {
+  string target_uuid = 1;
+  string remote_path = 2;
+  repeated string tags = 3;
+}
+
+message CollectLootFileResponse {
+  LootItem item = 1;
+}
+
+message SyncLootRequest {
   string loot_id = 1;
 }
 
-message GetLootResponse {
+message SyncLootChunk {
   LootItem item = 1;
-  bytes content = 2;
+  bytes data = 2;
+}
+
+message RemoteFileEntry {
+  string name = 1;
+  string path = 2;
+  bool is_dir = 3;
+  bool is_symlink = 4;
+  uint64 size = 5;
+  string mode = 6;
+  string modified_at = 7;
+  bool hidden = 8;
+  bool is_drive = 9;
+}
+
+message ListRemoteFilesRequest {
+  string target_uuid = 1;
+  string path = 2;
+}
+
+message ListRemoteFilesResponse {
+  string requested_path = 1;
+  string resolved_path = 2;
+  string root_path = 3;
+  string parent_path = 4;
+  bool can_go_up = 5;
+  repeated RemoteFileEntry entries = 6;
+  bool virtual_root = 7;
+  string display_path = 8;
 }
 
 message CreatePivotListenerRequest {
@@ -1101,8 +1139,10 @@ service KelpieUIService {
   rpc GetTopology(GetTopologyRequest) returns (GetTopologyResponse);
   rpc WatchEvents(WatchEventsRequest) returns (stream UiEvent);
   rpc ListLoot(ListLootRequest) returns (ListLootResponse);
-   rpc SubmitLoot(SubmitLootRequest) returns (SubmitLootResponse);
-  rpc GetLoot(GetLootRequest) returns (GetLootResponse);
+  rpc SubmitLoot(SubmitLootRequest) returns (SubmitLootResponse);
+  rpc CollectLootFile(CollectLootFileRequest) returns (CollectLootFileResponse);
+  rpc SyncLoot(SyncLootRequest) returns (stream SyncLootChunk);
+  rpc ListRemoteFiles(ListRemoteFilesRequest) returns (ListRemoteFilesResponse);
   rpc ProxyStream(stream StreamRequest) returns (stream StreamResponse);
   rpc StartShell(StartShellRequest) returns (StartShellResponse);
   rpc StartSocksProxy(StartSocksProxyRequest) returns (StartSocksProxyResponse);

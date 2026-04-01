@@ -57,7 +57,6 @@ namespace StockmanNamespace::UserInterface
     KelpiePanel::~KelpiePanel()
     {
         stopShell();
-        stopDownload(true);
         stopUpload(true);
         stopSocksServer();
     }
@@ -400,7 +399,15 @@ namespace StockmanNamespace::UserInterface
 }
         if ( shutdownNodeButton_ != nullptr ) { shutdownNodeButton_->setEnabled(enabled);
 }
-        if ( shellPage_ != nullptr && shellPage_->startDownloadButton != nullptr ) { shellPage_->startDownloadButton->setEnabled(enabled && !downloadActive_.load());
+        if ( shellPage_ != nullptr && shellPage_->browsePathInput != nullptr ) { shellPage_->browsePathInput->setEnabled(enabled);
+}
+        if ( shellPage_ != nullptr && shellPage_->browseGoButton != nullptr ) { shellPage_->browseGoButton->setEnabled(enabled);
+}
+        if ( shellPage_ != nullptr && shellPage_->browseRefreshButton != nullptr ) { shellPage_->browseRefreshButton->setEnabled(enabled);
+}
+        if ( shellPage_ != nullptr && shellPage_->browseTable != nullptr ) { shellPage_->browseTable->setEnabled(enabled);
+}
+        if ( shellPage_ != nullptr && shellPage_->downloadButton != nullptr ) { shellPage_->downloadButton->setEnabled(enabled);
 }
         if ( shellPage_ != nullptr && shellPage_->startUploadButton != nullptr ) { shellPage_->startUploadButton->setEnabled(enabled && !uploadActive_.load());
 }
@@ -504,9 +511,17 @@ namespace StockmanNamespace::UserInterface
             refreshLoot();
             return;
         }
-        if ( page == shellPage_ && (shellPage_ != nullptr) && (shellPage_->input != nullptr) && shellPage_->input->isEnabled() )
+        if ( page == shellPage_ )
         {
-            shellPage_->input->setFocus();
+            if ( !currentNodeUuid_.isEmpty() )
+            {
+                const QString browsePath = remoteBrowsePathByNode_.value(currentNodeUuid_);
+                refreshRemoteFiles(browsePath);
+            }
+            if ( (shellPage_ != nullptr) && (shellPage_->input != nullptr) && shellPage_->input->isEnabled() )
+            {
+                shellPage_->input->setFocus();
+            }
         }
     }
 
@@ -574,6 +589,7 @@ namespace StockmanNamespace::UserInterface
         refreshDials();
         refreshDiagnosticsForNode(currentNodeUuid_);
         refreshSsh();
+        refreshRemoteFiles(remoteBrowsePathByNode_.value(currentNodeUuid_));
     }
 
     void KelpiePanel::scheduleDialRefresh()
@@ -631,6 +647,25 @@ namespace StockmanNamespace::UserInterface
             {
                 shellPage_->pendingTarget.clear();
                 shellPage_->pendingLine.clear();
+                shellPage_->remoteRootPath.clear();
+                shellPage_->remoteResolvedPath.clear();
+                shellPage_->remoteParentPath.clear();
+                if ( shellPage_->browsePathInput != nullptr )
+                {
+                    shellPage_->browsePathInput->clear();
+                }
+                if ( shellPage_->browseStatusLabel != nullptr )
+                {
+                    shellPage_->browseStatusLabel->setText(tr("Files: idle"));
+                }
+                if ( shellPage_->downloadStatusLabel != nullptr )
+                {
+                    shellPage_->downloadStatusLabel->setText(tr("Download: idle"));
+                }
+                if ( shellPage_->browseTable != nullptr )
+                {
+                    shellPage_->browseTable->setRowCount(0);
+                }
             }
             if ( nodeMemoInput_ != nullptr ) { nodeMemoInput_->setEnabled(false);
 }
@@ -665,9 +700,21 @@ namespace StockmanNamespace::UserInterface
             {
                 shellPage_->pendingTarget.clear();
                 shellPage_->pendingLine.clear();
+                shellPage_->remoteRootPath.clear();
+                shellPage_->remoteResolvedPath.clear();
+                shellPage_->remoteParentPath.clear();
+                if ( shellPage_->browsePathInput != nullptr )
+                {
+                    shellPage_->browsePathInput->setText(remoteBrowsePathByNode_.value(currentNodeUuid_));
+                }
+                if ( shellPage_->browseTable != nullptr )
+                {
+                    shellPage_->browseTable->setRowCount(0);
+                }
             }
             refreshNodeScopedData();
         }
+        updateRemoteFileSelection();
     }
 
     void KelpiePanel::updateNodeMemo()

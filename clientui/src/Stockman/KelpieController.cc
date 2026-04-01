@@ -22,6 +22,7 @@
 #include <QUrl>
 #include <QProcessEnvironment>
 #include <QFileInfo>
+#include <QSaveFile>
 #include <QMimeDatabase>
 #include <QCryptographicHash>
 #include <QFutureWatcher>
@@ -152,7 +153,8 @@ void appendMetadata(const QMap<QString, QString>& metadata, kelpieui::v1::Submit
     }
 }
 
-void appendTags(const QStringList& tags, kelpieui::v1::SubmitLootRequest& req)
+template <typename Request>
+void appendTags(const QStringList& tags, Request& req)
 {
     for (const auto& tag : tags)
     {
@@ -1381,16 +1383,19 @@ bool KelpieController::invokeUnary(QString& errorMessage,
         return true;
     }
 
-    bool KelpieController::GetLootContent(const QString& lootId,
-                                          kelpieui::v1::LootItem* item,
-                                          QByteArray* content,
-                                          QString& errorMessage)
+    bool KelpieController::CollectLootFile(const QString& targetUuid,
+                                           const QString& remotePath,
+                                           const QStringList& tags,
+                                           kelpieui::v1::LootItem* item,
+                                           QString& errorMessage)
     {
-        kelpieui::v1::GetLootRequest req;
-        req.set_loot_id(lootId.trimmed().toStdString());
-        kelpieui::v1::GetLootResponse resp;
+        kelpieui::v1::CollectLootFileRequest req;
+        req.set_target_uuid(targetUuid.trimmed().toStdString());
+        req.set_remote_path(remotePath.trimmed().toStdString());
+        appendTags(tags, req);
+        kelpieui::v1::CollectLootFileResponse resp;
         if ( !invokeUnary<kelpieui::v1::KelpieUIService>(
-                 errorMessage, req, &resp, &kelpieui::v1::KelpieUIService::Stub::GetLoot) )
+                 errorMessage, req, &resp, &kelpieui::v1::KelpieUIService::Stub::CollectLootFile) )
         {
             return false;
         }
@@ -1398,10 +1403,126 @@ bool KelpieController::invokeUnary(QString& errorMessage,
         {
             *item = resp.item();
         }
-        if ( content )
+        return true;
+    }
+
+    bool KelpieController::ListRemoteFiles(const QString& targetUuid,
+                                           const QString& path,
+                                           kelpieui::v1::ListRemoteFilesResponse* listing,
+                                           QString& errorMessage)
+    {
+        kelpieui::v1::ListRemoteFilesRequest req;
+        req.set_target_uuid(targetUuid.trimmed().toStdString());
+        req.set_path(path.trimmed().toStdString());
+        kelpieui::v1::ListRemoteFilesResponse resp;
+        if ( !invokeUnary<kelpieui::v1::KelpieUIService>(
+                 errorMessage, req, &resp, &kelpieui::v1::KelpieUIService::Stub::ListRemoteFiles) )
         {
-            content->clear();
-            content->append(resp.content().data(), static_cast<int>(resp.content().size()));
+            return false;
+        }
+        if ( listing )
+        {
+            *listing = resp;
+        }
+        return true;
+    }
+
+    bool KelpieController::SyncLootToFile(const QString& lootId,
+                                          const QString& localPath,
+                                          kelpieui::v1::LootItem* item,
+                                          qint64* bytesWritten,
+                                          const std::function<void(qint64, qint64)>& onProgress,
+                                          QString& errorMessage)
+    {
+        auto rpc = rpcConfig(errorMessage);
+        if ( !rpc )
+        {
+            return false;
+        }
+        auto stub = makeStub<kelpieui::v1::KelpieUIService>(rpc->channel, errorMessage);
+        if ( !stub )
+        {
+            return false;
+        }
+        auto ctx = makeContextFromOptions(rpc->options);
+        kelpieui::v1::SyncLootRequest req;
+        req.set_loot_id(lootId.trimmed().toStdString());
+        auto reader = stub->SyncLoot(ctx.get(), req);
+        if ( !reader )
+        {
+            errorMessage = QStringLiteral("failed to open loot sync");
+            return false;
+        }
+
+        QSaveFile out(localPath);
+        if ( !out.open(QIODevice::WriteOnly) )
+        {
+            errorMessage = QStringLiteral("Cannot open file for writing: %1").arg(localPath);
+            return false;
+        }
+
+        kelpieui::v1::SyncLootChunk chunk;
+        qint64 total = -1;
+        qint64 written = 0;
+        bool sawItem = false;
+        while ( reader->Read(&chunk) )
+        {
+            if ( chunk.has_item() )
+            {
+                sawItem = true;
+                if ( item )
+                {
+                    *item = chunk.item();
+                }
+                if ( chunk.item().size() > 0 )
+                {
+                    total = static_cast<qint64>(chunk.item().size());
+                }
+            }
+            if ( !chunk.data().empty() )
+            {
+                const QByteArray data(chunk.data().data(), static_cast<int>(chunk.data().size()));
+                const qint64 n = out.write(data);
+                if ( n != data.size() )
+                {
+                    out.cancelWriting();
+                    errorMessage = QStringLiteral("Loot sync write failed: %1").arg(localPath);
+                    return false;
+                }
+                written += n;
+                if ( onProgress )
+                {
+                    onProgress(written, total);
+                }
+            }
+        }
+        grpc::Status status = reader->Finish();
+        if ( !status.ok() )
+        {
+            out.cancelWriting();
+            errorMessage = QString::fromStdString(status.error_message());
+            return false;
+        }
+        if ( !sawItem )
+        {
+            out.cancelWriting();
+            errorMessage = QStringLiteral("loot sync returned no metadata");
+            return false;
+        }
+        if ( total >= 0 && written != total )
+        {
+            out.cancelWriting();
+            errorMessage = QStringLiteral("loot sync incomplete: wrote %1 / %2").arg(written).arg(total);
+            return false;
+        }
+        if ( !out.commit() )
+        {
+            errorMessage = out.errorString();
+            return false;
+        }
+        if ( bytesWritten )
+        {
+            *bytesWritten = written;
         }
         return true;
     }
@@ -1977,118 +2098,6 @@ bool KelpieController::invokeUnary(QString& errorMessage,
         return OpenProxyStream(resp.handle(), errorMessage);
     }
 
-bool KelpieController::DownloadFileDataplane(const QString& targetUuid,
-                                             const FileDownloadSpec& spec,
-                                             QString& errorMessage,
-                                             const std::function<void(qint64, qint64)>& onProgress,
-                                             std::stop_token stopToken)
-{
-    const auto start = std::chrono::steady_clock::now();
-    auto rpc = rpcConfig(errorMessage);
-    if ( !rpc )
-    {
-        return false;
-    }
-
-    QFileInfo existing(spec.localPath);
-    if ( spec.offset > 0 && !existing.exists() )
-    {
-        errorMessage = QStringLiteral("Cannot resume download: %1 does not exist").arg(spec.localPath);
-        return false;
-    }
-    const qint64 originalSize = existing.exists() ? existing.size() : 0;
-    QFile file(spec.localPath);
-    const QIODevice::OpenMode mode = spec.offset > 0 ? QIODevice::ReadWrite : (QIODevice::WriteOnly | QIODevice::Truncate);
-    if ( !file.open(mode) )
-    {
-        errorMessage = QStringLiteral("Cannot open %1").arg(spec.localPath);
-        return false;
-    }
-
-    auto rollback = [&]() {
-        if ( !file.isOpen() ) { return; }
-        if ( spec.offset == 0 )
-        {
-            file.close();
-            QFile::remove(spec.localPath);
-        }
-        else
-        {
-            file.resize(originalSize);
-            file.close();
-        }
-    };
-
-    if ( spec.offset > 0 && !file.seek(spec.offset) )
-    {
-        errorMessage = QStringLiteral("Failed to seek to offset %1").arg(spec.offset);
-        rollback();
-        return false;
-    }
-
-    auto ctx = makeContextFromOptions(rpc->options);
-    dataplane::v1::PrepareTransferRequest req;
-    req.set_target_uuid(targetUuid.toStdString());
-    req.set_direction(dataplane::v1::DIRECTION_DOWNLOAD);
-    req.set_path(spec.remotePath.toStdString());
-    req.set_offset(spec.offset);
-    dataplane::v1::PrepareTransferResponse resp;
-
-    auto dpStub = dataplane::v1::DataplaneAdmin::NewStub(rpc->channel);
-    grpc::Status status = dpStub->PrepareTransfer(ctx.get(), req, &resp);
-    if ( !status.ok() )
-    {
-        errorMessage = QString::fromStdString(status.error_message());
-        rollback();
-        return false;
-    }
-    spdlog::info("[dataplane][download][prepare] target={} path={} offset={} endpoint={}",
-                 targetUuid.toStdString(),
-                 spec.remotePath.toStdString(),
-                 spec.offset,
-                 resp.endpoint());
-
-    TransferEndpoint endpoint;
-    if ( !parseDataplaneEndpoint(resp.endpoint(), endpoint.host, endpoint.port, endpoint.useTls) )
-    {
-        errorMessage = QStringLiteral("invalid dataplane endpoint");
-        rollback();
-        return false;
-    }
-    endpoint.token = QString::fromStdString(resp.token());
-
-    auto isCancelled = [&]() {
-        return stopToken.stop_possible() && stopToken.stop_requested();
-    };
-    if ( isCancelled() )
-    {
-        errorMessage = QStringLiteral("download canceled");
-        rollback();
-        return false;
-    }
-
-    if ( !doDownload(endpoint, rpc->options, spec.remotePath, spec.offset, file, errorMessage, onProgress, stopToken) )
-    {
-        rollback();
-        return false;
-    }
-
-    dataplane::v1::CompleteTransferRequest completeReq;
-    completeReq.set_token(resp.token());
-    completeReq.set_target_uuid(targetUuid.toStdString());
-    completeReq.set_bytes(file.size());
-    completeReq.set_status("OK");
-    dataplane::v1::CompleteTransferResponse completeResp;
-    (void)dpStub->CompleteTransfer(makeContextFromOptions(rpc->options).get(), completeReq, &completeResp);
-    auto transferMs = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count();
-    spdlog::info("[dataplane][download][complete] target={} path={} bytes={} elapsed_ms={}",
-                 targetUuid.toStdString(),
-                 spec.remotePath.toStdString(),
-                 file.size(),
-                 transferMs);
-    return true;
-}
-
 bool KelpieController::UploadFileDataplane(const QString& targetUuid,
                                            const FileUploadSpec& spec,
                                            QString& errorMessage,
@@ -2471,152 +2480,6 @@ bool KelpieController::UploadFileDataplane(const QString& targetUuid,
             }
         }
         return true;
-    }
-
-    bool KelpieController::doDownload(const TransferEndpoint& endpoint,
-                                      const Grpc::ConnectionOptions& grpcOptions,
-                                      const QString& remotePath,
-                                      qint64 offset,
-                                      QFile& file,
-                                      QString& errorMessage,
-                                      const std::function<void(qint64, qint64)>& onProgress,
-                                      std::stop_token stopToken)
-    {
-        auto makeSocket = [&]() -> std::unique_ptr<QIODevice> {
-            if (endpoint.useTls)
-            {
-                auto ssl = std::make_unique<QSslSocket>();
-                ssl->setPeerVerifyMode(QSslSocket::VerifyPeer);
-                QSslConfiguration conf = ssl->sslConfiguration();
-                conf.setProtocol(QSsl::TlsV1_2OrLater);
-
-                QList<QSslCertificate> cas;
-                if ( !grpcOptions.CACertPath.empty() )
-                {
-                    QFile caFile(QString::fromStdString(grpcOptions.CACertPath));
-                    if ( !caFile.open(QIODevice::ReadOnly) )
-                    {
-                        errorMessage = QStringLiteral("Unable to read TLS CA file: %1").arg(QString::fromStdString(grpcOptions.CACertPath));
-                        return nullptr;
-                    }
-                    cas = QSslCertificate::fromData(caFile.readAll(), QSsl::Pem);
-                }
-                else if ( !grpcOptions.Token.empty() )
-                {
-                    const QByteArray der = StockmanNamespace::Grpc::Client::DeriveTofuRootCertDer(grpcOptions.Token, grpcOptions.ServerName);
-                    cas = QSslCertificate::fromData(der, QSsl::Der);
-                }
-                if ( !cas.isEmpty() )
-                {
-                    conf.setCaCertificates(cas);
-                }
-                ssl->setSslConfiguration(conf);
-
-                QString peerName;
-                if ( !grpcOptions.ServerName.empty() )
-                {
-                    peerName = QString::fromStdString(grpcOptions.ServerName);
-                }
-                else if ( !grpcOptions.Token.empty() )
-                {
-                    peerName = QString::fromStdString(StockmanNamespace::Grpc::Client::ComputeTofuCommonName(grpcOptions.Token));
-                }
-                if ( peerName.isEmpty() )
-                {
-                    peerName = endpoint.host;
-                }
-
-                ssl->connectToHostEncrypted(endpoint.host, endpoint.port, peerName);
-                if ( !ssl->waitForEncrypted(kDefaultWaitStartedMs) )
-                {
-                    errorMessage = ssl->errorString();
-                    return nullptr;
-                }
-                return ssl;
-            }
-            auto tcp = std::make_unique<QTcpSocket>();
-            tcp->connectToHost(endpoint.host, endpoint.port);
-            if ( !tcp->waitForConnected(kDefaultWaitStartedMs) )
-            {
-                errorMessage = tcp->errorString();
-                return nullptr;
-            }
-            return tcp;
-        };
-
-        auto socket = makeSocket();
-        if ( !socket )
-        {
-            return false;
-        }
-
-        QByteArray openPayload = encodeOpenFrame(endpoint.token,
-                                                 QStringLiteral("download"),
-                                                 remotePath,
-                                                 offset,
-                                                 0,
-                                                 QString());
-        if ( !writeFrame(*socket, kFrameOpen, 1, openPayload, errorMessage) )
-        {
-            return false;
-        }
-
-        QElapsedTimer throttle;
-        throttle.start();
-        while ( true )
-        {
-            if ( stopToken.stop_possible() && stopToken.stop_requested() )
-            {
-                errorMessage = QStringLiteral("canceled");
-                (void)writeFrame(*socket, kFrameClose, 1, QByteArray(), errorMessage);
-                return false;
-            }
-
-            Frame frame;
-            if ( !readFrame(*socket, frame, errorMessage) )
-            {
-                return false;
-            }
-            if ( frame.type == kFrameData )
-            {
-                if ( file.write(frame.payload) != frame.payload.size() )
-                {
-                    errorMessage = QStringLiteral("file write failed");
-                    return false;
-                }
-                if ( onProgress && throttle.elapsed() >= kProgressThrottleMs )
-                {
-                    onProgress(file.pos(), 0);
-                    throttle.restart();
-                }
-            }
-            else if ( frame.type == kFrameClose )
-            {
-                quint16 code = 0;
-                QString reason;
-                if ( frame.payload.size() >= 2 )
-                {
-                    QDataStream ds(frame.payload);
-                    ds.setByteOrder(QDataStream::BigEndian);
-                    ds >> code;
-                    if ( frame.payload.size() > 2 )
-                    {
-                        reason = QString::fromUtf8(frame.payload.constData() + 2, frame.payload.size() - 2);
-                    }
-                }
-                if ( code != 0 )
-                {
-                    errorMessage = reason.isEmpty() ? QStringLiteral("download failed") : reason;
-                    return false;
-                }
-                return true;
-            }
-            else
-            {
-                errorMessage = QStringLiteral("unexpected frame type");
-                return false;
-            }
-        }
     }
 
     bool KelpieController::GetSessionDiagnostics(const QString& targetUuid,

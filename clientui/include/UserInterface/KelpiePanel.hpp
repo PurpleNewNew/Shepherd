@@ -196,6 +196,7 @@ namespace StockmanNamespace::UserInterface
         LootPage*         lootPage_ = nullptr;
         ShellPage*        shellPage_ = nullptr;
         QString           currentNodeUuid_;
+        QHash<QString, QString> remoteBrowsePathByNode_;
         QHash<QString, int> proxyRowIndex_;
         QTcpServer*       socksServer_ = nullptr;
         struct SocksBridge {
@@ -203,12 +204,10 @@ namespace StockmanNamespace::UserInterface
             std::shared_ptr<StockmanNamespace::ProxyStreamHandle> handle;
         };
         std::vector<std::unique_ptr<SocksBridge>> socksBridges_;
-        std::jthread       downloadThread_;
         std::jthread       uploadThread_;
-        std::atomic<bool>  downloadActive_{false};
         std::atomic<bool>  uploadActive_{false};
-        std::atomic<uint64_t> downloadGeneration_{0};
         std::atomic<uint64_t> uploadGeneration_{0};
+        std::atomic<uint64_t> remoteBrowseGeneration_{0};
         QTimer*           streamRefreshDebounce_ = nullptr;
         QTimer*           dialRefreshCooldown_ = nullptr;
         bool              streamDiagnosticsRefreshInFlight_{false};
@@ -268,7 +267,7 @@ namespace StockmanNamespace::UserInterface
         void refreshLoot();
         void appendLootItem(const kelpieui::v1::LootItem& item);
         void submitLootFromFile();
-        void downloadSelectedLoot();
+        void syncSelectedLootToLocal();
         void refreshRepairs();
         void refreshAudit();
         void appendAuditEntry(const kelpieui::v1::AuditLogEntry& entry);
@@ -321,13 +320,16 @@ namespace StockmanNamespace::UserInterface
         void handleShellData(const QByteArray& data);
         void handleShellClosed(const QString& reason);
         void setShellStatus(const QString& status);
-        void browseDownloadPath();
-        void startDownloadFile();
+        void refreshRemoteFiles(const QString& path = QString());
+        void browseRemoteFilesUp();
+        void openSelectedRemoteEntry();
+        void updateRemoteFileSelection();
+        QString selectedRemoteFilePath() const;
+        void collectRemoteFileToLoot();
+        void collectRemoteFileToLootPath(const QString& remotePath);
         void browseUploadPath();
         void startUploadFile();
-        void finishDownload(bool success, const QString& errorMessage);
         void finishUpload(bool success, const QString& errorMessage);
-        void stopDownload(bool waitForJoin = false);
         void stopUpload(bool waitForJoin = false);
         void startSocksBridge();
         void stopSocksBridge();

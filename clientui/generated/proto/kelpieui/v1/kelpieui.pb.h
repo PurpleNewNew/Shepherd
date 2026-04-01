@@ -135,6 +135,14 @@ class CloseStreamResponse;
 struct CloseStreamResponseDefaultTypeInternal;
 extern CloseStreamResponseDefaultTypeInternal _CloseStreamResponse_default_instance_;
 extern const ::google::protobuf::internal::ClassDataFull CloseStreamResponse_class_data_;
+class CollectLootFileRequest;
+struct CollectLootFileRequestDefaultTypeInternal;
+extern CollectLootFileRequestDefaultTypeInternal _CollectLootFileRequest_default_instance_;
+extern const ::google::protobuf::internal::ClassDataFull CollectLootFileRequest_class_data_;
+class CollectLootFileResponse;
+struct CollectLootFileResponseDefaultTypeInternal;
+extern CollectLootFileResponseDefaultTypeInternal _CollectLootFileResponse_default_instance_;
+extern const ::google::protobuf::internal::ClassDataFull CollectLootFileResponse_class_data_;
 class ControllerListener;
 struct ControllerListenerDefaultTypeInternal;
 extern ControllerListenerDefaultTypeInternal _ControllerListener_default_instance_;
@@ -219,14 +227,6 @@ class GetDtnQueueStatsResponse;
 struct GetDtnQueueStatsResponseDefaultTypeInternal;
 extern GetDtnQueueStatsResponseDefaultTypeInternal _GetDtnQueueStatsResponse_default_instance_;
 extern const ::google::protobuf::internal::ClassDataFull GetDtnQueueStatsResponse_class_data_;
-class GetLootRequest;
-struct GetLootRequestDefaultTypeInternal;
-extern GetLootRequestDefaultTypeInternal _GetLootRequest_default_instance_;
-extern const ::google::protobuf::internal::ClassDataFull GetLootRequest_class_data_;
-class GetLootResponse;
-struct GetLootResponseDefaultTypeInternal;
-extern GetLootResponseDefaultTypeInternal _GetLootResponse_default_instance_;
-extern const ::google::protobuf::internal::ClassDataFull GetLootResponse_class_data_;
 class GetMetricsRequest;
 struct GetMetricsRequestDefaultTypeInternal;
 extern GetMetricsRequestDefaultTypeInternal _GetMetricsRequest_default_instance_;
@@ -323,6 +323,14 @@ class ListProxiesResponse;
 struct ListProxiesResponseDefaultTypeInternal;
 extern ListProxiesResponseDefaultTypeInternal _ListProxiesResponse_default_instance_;
 extern const ::google::protobuf::internal::ClassDataFull ListProxiesResponse_class_data_;
+class ListRemoteFilesRequest;
+struct ListRemoteFilesRequestDefaultTypeInternal;
+extern ListRemoteFilesRequestDefaultTypeInternal _ListRemoteFilesRequest_default_instance_;
+extern const ::google::protobuf::internal::ClassDataFull ListRemoteFilesRequest_class_data_;
+class ListRemoteFilesResponse;
+struct ListRemoteFilesResponseDefaultTypeInternal;
+extern ListRemoteFilesResponseDefaultTypeInternal _ListRemoteFilesResponse_default_instance_;
+extern const ::google::protobuf::internal::ClassDataFull ListRemoteFilesResponse_class_data_;
 class ListRepairsRequest;
 struct ListRepairsRequestDefaultTypeInternal;
 extern ListRepairsRequestDefaultTypeInternal _ListRepairsRequest_default_instance_;
@@ -467,6 +475,10 @@ class ReconnectSessionResponse;
 struct ReconnectSessionResponseDefaultTypeInternal;
 extern ReconnectSessionResponseDefaultTypeInternal _ReconnectSessionResponse_default_instance_;
 extern const ::google::protobuf::internal::ClassDataFull ReconnectSessionResponse_class_data_;
+class RemoteFileEntry;
+struct RemoteFileEntryDefaultTypeInternal;
+extern RemoteFileEntryDefaultTypeInternal _RemoteFileEntry_default_instance_;
+extern const ::google::protobuf::internal::ClassDataFull RemoteFileEntry_class_data_;
 class RepairSessionRequest;
 struct RepairSessionRequestDefaultTypeInternal;
 extern RepairSessionRequestDefaultTypeInternal _RepairSessionRequest_default_instance_;
@@ -727,6 +739,14 @@ class SupplementalStatus;
 struct SupplementalStatusDefaultTypeInternal;
 extern SupplementalStatusDefaultTypeInternal _SupplementalStatus_default_instance_;
 extern const ::google::protobuf::internal::ClassDataFull SupplementalStatus_class_data_;
+class SyncLootChunk;
+struct SyncLootChunkDefaultTypeInternal;
+extern SyncLootChunkDefaultTypeInternal _SyncLootChunk_default_instance_;
+extern const ::google::protobuf::internal::ClassDataFull SyncLootChunk_class_data_;
+class SyncLootRequest;
+struct SyncLootRequestDefaultTypeInternal;
+extern SyncLootRequestDefaultTypeInternal _SyncLootRequest_default_instance_;
+extern const ::google::protobuf::internal::ClassDataFull SyncLootRequest_class_data_;
 class TerminateSessionRequest;
 struct TerminateSessionRequestDefaultTypeInternal;
 extern TerminateSessionRequestDefaultTypeInternal _TerminateSessionRequest_default_instance_;
@@ -1804,7 +1824,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED WatchEventsRequest final : public :
     return *reinterpret_cast<const WatchEventsRequest*>(
         &_WatchEventsRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 57;
+  static constexpr int kIndexInFileMessages = 62;
   friend void swap(WatchEventsRequest& a, WatchEventsRequest& b) { a.Swap(&b); }
   inline void Swap(WatchEventsRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -2015,7 +2035,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED UseNetworkResponse final : public :
     return *reinterpret_cast<const UseNetworkResponse*>(
         &_UseNetworkResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 152;
+  static constexpr int kIndexInFileMessages = 157;
   friend void swap(UseNetworkResponse& a, UseNetworkResponse& b) { a.Swap(&b); }
   inline void Swap(UseNetworkResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -2216,7 +2236,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED UseNetworkRequest final : public ::
     return *reinterpret_cast<const UseNetworkRequest*>(
         &_UseNetworkRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 151;
+  static constexpr int kIndexInFileMessages = 156;
   friend void swap(UseNetworkRequest& a, UseNetworkRequest& b) { a.Swap(&b); }
   inline void Swap(UseNetworkRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -2416,7 +2436,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED UpdateSleepResponse final : public 
     return *reinterpret_cast<const UpdateSleepResponse*>(
         &_UpdateSleepResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 136;
+  static constexpr int kIndexInFileMessages = 141;
   friend void swap(UpdateSleepResponse& a, UpdateSleepResponse& b) { a.Swap(&b); }
   inline void Swap(UpdateSleepResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -2554,7 +2574,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED UpdateSleepRequest final : public :
     return *reinterpret_cast<const UpdateSleepRequest*>(
         &_UpdateSleepRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 135;
+  static constexpr int kIndexInFileMessages = 140;
   friend void swap(UpdateSleepRequest& a, UpdateSleepRequest& b) { a.Swap(&b); }
   inline void Swap(UpdateSleepRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -2796,7 +2816,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED UpdateNodeMemoResponse final : publ
     return *reinterpret_cast<const UpdateNodeMemoResponse*>(
         &_UpdateNodeMemoResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 109;
+  static constexpr int kIndexInFileMessages = 114;
   friend void swap(UpdateNodeMemoResponse& a, UpdateNodeMemoResponse& b) { a.Swap(&b); }
   inline void Swap(UpdateNodeMemoResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -2934,7 +2954,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED UpdateNodeMemoRequest final : publi
     return *reinterpret_cast<const UpdateNodeMemoRequest*>(
         &_UpdateNodeMemoRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 108;
+  static constexpr int kIndexInFileMessages = 113;
   friend void swap(UpdateNodeMemoRequest& a, UpdateNodeMemoRequest& b) { a.Swap(&b); }
   inline void Swap(UpdateNodeMemoRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -3152,7 +3172,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED TerminateSessionResponse final : pu
     return *reinterpret_cast<const TerminateSessionResponse*>(
         &_TerminateSessionResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 129;
+  static constexpr int kIndexInFileMessages = 134;
   friend void swap(TerminateSessionResponse& a, TerminateSessionResponse& b) { a.Swap(&b); }
   inline void Swap(TerminateSessionResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -3348,7 +3368,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED TerminateSessionRequest final : pub
     return *reinterpret_cast<const TerminateSessionRequest*>(
         &_TerminateSessionRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 128;
+  static constexpr int kIndexInFileMessages = 133;
   friend void swap(TerminateSessionRequest& a, TerminateSessionRequest& b) { a.Swap(&b); }
   inline void Swap(TerminateSessionRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -3510,6 +3530,207 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED TerminateSessionRequest final : pub
 extern const ::google::protobuf::internal::ClassDataFull TerminateSessionRequest_class_data_;
 // -------------------------------------------------------------------
 
+class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SyncLootRequest final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:kelpieui.v1.SyncLootRequest) */ {
+ public:
+  inline SyncLootRequest() : SyncLootRequest(nullptr) {}
+  ~SyncLootRequest() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(SyncLootRequest* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(SyncLootRequest));
+  }
+#endif
+
+  template <typename = void>
+  explicit constexpr SyncLootRequest(::google::protobuf::internal::ConstantInitialized);
+
+  inline SyncLootRequest(const SyncLootRequest& from) : SyncLootRequest(nullptr, from) {}
+  inline SyncLootRequest(SyncLootRequest&& from) noexcept
+      : SyncLootRequest(nullptr, ::std::move(from)) {}
+  inline SyncLootRequest& operator=(const SyncLootRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline SyncLootRequest& operator=(SyncLootRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  [[nodiscard]] inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  [[nodiscard]] inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL
+  mutable_unknown_fields() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  [[nodiscard]] static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
+    return GetDescriptor();
+  }
+  [[nodiscard]] static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL
+  GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  [[nodiscard]] static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  [[nodiscard]] static const SyncLootRequest& default_instance() {
+    return *reinterpret_cast<const SyncLootRequest*>(
+        &_SyncLootRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 51;
+  friend void swap(SyncLootRequest& a, SyncLootRequest& b) { a.Swap(&b); }
+  inline void Swap(SyncLootRequest* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(SyncLootRequest* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  [[nodiscard]] SyncLootRequest* PROTOBUF_NONNULL
+  New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<SyncLootRequest>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const SyncLootRequest& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const SyncLootRequest& from) { SyncLootRequest::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
+                        const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  [[nodiscard]] bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  [[nodiscard]] static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  [[nodiscard]] static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
+
+  public:
+  [[nodiscard]] ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  [[nodiscard]] ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  [[nodiscard]] ::size_t ByteSizeLong() const final;
+  [[nodiscard]] ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  [[nodiscard]] int GetCachedSize() const {
+    return _impl_._cached_size_.Get();
+  }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(SyncLootRequest* PROTOBUF_NONNULL other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "kelpieui.v1.SyncLootRequest"; }
+
+  explicit SyncLootRequest(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  SyncLootRequest(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const SyncLootRequest& from);
+  SyncLootRequest(
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, SyncLootRequest&& from) noexcept
+      : SyncLootRequest(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
+  static void* PROTOBUF_NONNULL PlacementNew_(
+      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static constexpr auto InternalNewImpl_();
+
+ public:
+  static constexpr auto InternalGenerateClassData_();
+
+  [[nodiscard]] ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kLootIdFieldNumber = 1,
+  };
+  // string loot_id = 1;
+  void clear_loot_id() ;
+  [[nodiscard]] const ::std::string& loot_id() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_loot_id(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_loot_id();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_loot_id();
+  void set_allocated_loot_id(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_loot_id() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_loot_id(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_loot_id();
+
+  public:
+  // @@protoc_insertion_point(class_scope:kelpieui.v1.SyncLootRequest)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<0, 1,
+                                   0, 43,
+                                   2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  friend ::google::protobuf::internal::PrivateAccess;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                                    ::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+        const SyncLootRequest& from_msg);
+    ::google::protobuf::internal::HasBits<1> _has_bits_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    ::google::protobuf::internal::ArenaStringPtr loot_id_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_kelpieui_2fv1_2fkelpieui_2eproto;
+};
+
+extern const ::google::protobuf::internal::ClassDataFull SyncLootRequest_class_data_;
+// -------------------------------------------------------------------
+
 class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SupplementalStatus final : public ::google::protobuf::Message
 /* @@protoc_insertion_point(class_definition:kelpieui.v1.SupplementalStatus) */ {
  public:
@@ -3566,7 +3787,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SupplementalStatus final : public :
     return *reinterpret_cast<const SupplementalStatus*>(
         &_SupplementalStatus_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 159;
+  static constexpr int kIndexInFileMessages = 164;
   friend void swap(SupplementalStatus& a, SupplementalStatus& b) { a.Swap(&b); }
   inline void Swap(SupplementalStatus* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -3798,7 +4019,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SupplementalQuality final : public 
     return *reinterpret_cast<const SupplementalQuality*>(
         &_SupplementalQuality_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 165;
+  static constexpr int kIndexInFileMessages = 170;
   friend void swap(SupplementalQuality& a, SupplementalQuality& b) { a.Swap(&b); }
   inline void Swap(SupplementalQuality* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -4100,7 +4321,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SupplementalMetrics final : public 
     return *reinterpret_cast<const SupplementalMetrics*>(
         &_SupplementalMetrics_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 160;
+  static constexpr int kIndexInFileMessages = 165;
   friend void swap(SupplementalMetrics& a, SupplementalMetrics& b) { a.Swap(&b); }
   inline void Swap(SupplementalMetrics* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -4448,7 +4669,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SupplementalEvent final : public ::
     return *reinterpret_cast<const SupplementalEvent*>(
         &_SupplementalEvent_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 162;
+  static constexpr int kIndexInFileMessages = 167;
   friend void swap(SupplementalEvent& a, SupplementalEvent& b) { a.Swap(&b); }
   inline void Swap(SupplementalEvent* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -4745,7 +4966,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SupplementalEmpty final : public ::
     return *reinterpret_cast<const SupplementalEmpty*>(
         &_SupplementalEmpty_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 167;
+  static constexpr int kIndexInFileMessages = 172;
   friend void swap(SupplementalEmpty& a, SupplementalEmpty& b) { a.Swap(&b); }
   inline void Swap(SupplementalEmpty* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -4921,7 +5142,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StreamStatsRequest final : public :
     return *reinterpret_cast<const StreamStatsRequest*>(
         &_StreamStatsRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 140;
+  static constexpr int kIndexInFileMessages = 145;
   friend void swap(StreamStatsRequest& a, StreamStatsRequest& b) { a.Swap(&b); }
   inline void Swap(StreamStatsRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -5059,7 +5280,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StreamStatInfo final : public ::goo
     return *reinterpret_cast<const StreamStatInfo*>(
         &_StreamStatInfo_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 139;
+  static constexpr int kIndexInFileMessages = 144;
   friend void swap(StreamStatInfo& a, StreamStatInfo& b) { a.Swap(&b); }
   inline void Swap(StreamStatInfo* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -5368,7 +5589,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StreamPingResponse final : public :
     return *reinterpret_cast<const StreamPingResponse*>(
         &_StreamPingResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 145;
+  static constexpr int kIndexInFileMessages = 150;
   friend void swap(StreamPingResponse& a, StreamPingResponse& b) { a.Swap(&b); }
   inline void Swap(StreamPingResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -5506,7 +5727,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StreamPingRequest final : public ::
     return *reinterpret_cast<const StreamPingRequest*>(
         &_StreamPingRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 144;
+  static constexpr int kIndexInFileMessages = 149;
   friend void swap(StreamPingRequest& a, StreamPingRequest& b) { a.Swap(&b); }
   inline void Swap(StreamPingRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -5730,7 +5951,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StreamDiagnosticsRequest final : pu
     return *reinterpret_cast<const StreamDiagnosticsRequest*>(
         &_StreamDiagnosticsRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 142;
+  static constexpr int kIndexInFileMessages = 147;
   friend void swap(StreamDiagnosticsRequest& a, StreamDiagnosticsRequest& b) { a.Swap(&b); }
   inline void Swap(StreamDiagnosticsRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -5907,7 +6128,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StreamControl final : public ::goog
     return *reinterpret_cast<const StreamControl*>(
         &_StreamControl_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 71;
+  static constexpr int kIndexInFileMessages = 76;
   friend void swap(StreamControl& a, StreamControl& b) { a.Swap(&b); }
   inline void Swap(StreamControl* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -6208,7 +6429,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StopForwardProxyResponse final : pu
     return *reinterpret_cast<const StopForwardProxyResponse*>(
         &_StopForwardProxyResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 113;
+  static constexpr int kIndexInFileMessages = 118;
   friend void swap(StopForwardProxyResponse& a, StopForwardProxyResponse& b) { a.Swap(&b); }
   inline void Swap(StopForwardProxyResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -6404,7 +6625,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StopForwardProxyRequest final : pub
     return *reinterpret_cast<const StopForwardProxyRequest*>(
         &_StopForwardProxyRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 112;
+  static constexpr int kIndexInFileMessages = 117;
   friend void swap(StopForwardProxyRequest& a, StopForwardProxyRequest& b) { a.Swap(&b); }
   inline void Swap(StopForwardProxyRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -6622,7 +6843,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StopBackwardProxyResponse final : p
     return *reinterpret_cast<const StopBackwardProxyResponse*>(
         &_StopBackwardProxyResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 117;
+  static constexpr int kIndexInFileMessages = 122;
   friend void swap(StopBackwardProxyResponse& a, StopBackwardProxyResponse& b) { a.Swap(&b); }
   inline void Swap(StopBackwardProxyResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -6818,7 +7039,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StopBackwardProxyRequest final : pu
     return *reinterpret_cast<const StopBackwardProxyRequest*>(
         &_StopBackwardProxyRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 116;
+  static constexpr int kIndexInFileMessages = 121;
   friend void swap(StopBackwardProxyRequest& a, StopBackwardProxyRequest& b) { a.Swap(&b); }
   inline void Swap(StopBackwardProxyRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -7035,7 +7256,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StartSshTunnelResponse final : publ
     return *reinterpret_cast<const StartSshTunnelResponse*>(
         &_StartSshTunnelResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 169;
+  static constexpr int kIndexInFileMessages = 174;
   friend void swap(StartSshTunnelResponse& a, StartSshTunnelResponse& b) { a.Swap(&b); }
   inline void Swap(StartSshTunnelResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -7173,7 +7394,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StartSshTunnelRequest final : publi
     return *reinterpret_cast<const StartSshTunnelRequest*>(
         &_StartSshTunnelRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 168;
+  static constexpr int kIndexInFileMessages = 173;
   friend void swap(StartSshTunnelRequest& a, StartSshTunnelRequest& b) { a.Swap(&b); }
   inline void Swap(StartSshTunnelRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -7471,7 +7692,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StartSshSessionRequest final : publ
     return *reinterpret_cast<const StartSshSessionRequest*>(
         &_StartSshSessionRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 78;
+  static constexpr int kIndexInFileMessages = 83;
   friend void swap(StartSshSessionRequest& a, StartSshSessionRequest& b) { a.Swap(&b); }
   inline void Swap(StartSshSessionRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -7735,7 +7956,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StartSocksProxyRequest final : publ
     return *reinterpret_cast<const StartSocksProxyRequest*>(
         &_StartSocksProxyRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 76;
+  static constexpr int kIndexInFileMessages = 81;
   friend void swap(StartSocksProxyRequest& a, StartSocksProxyRequest& b) { a.Swap(&b); }
   inline void Swap(StartSocksProxyRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -7982,7 +8203,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StartShellRequest final : public ::
     return *reinterpret_cast<const StartShellRequest*>(
         &_StartShellRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 74;
+  static constexpr int kIndexInFileMessages = 79;
   friend void swap(StartShellRequest& a, StartShellRequest& b) { a.Swap(&b); }
   inline void Swap(StartShellRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -8212,7 +8433,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StartForwardProxyRequest final : pu
     return *reinterpret_cast<const StartForwardProxyRequest*>(
         &_StartForwardProxyRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 110;
+  static constexpr int kIndexInFileMessages = 115;
   friend void swap(StartForwardProxyRequest& a, StartForwardProxyRequest& b) { a.Swap(&b); }
   inline void Swap(StartForwardProxyRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -8447,7 +8668,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StartDialResponse final : public ::
     return *reinterpret_cast<const StartDialResponse*>(
         &_StartDialResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 98;
+  static constexpr int kIndexInFileMessages = 103;
   friend void swap(StartDialResponse& a, StartDialResponse& b) { a.Swap(&b); }
   inline void Swap(StartDialResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -8694,7 +8915,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StartDialRequest final : public ::g
     return *reinterpret_cast<const StartDialRequest*>(
         &_StartDialRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 97;
+  static constexpr int kIndexInFileMessages = 102;
   friend void swap(StartDialRequest& a, StartDialRequest& b) { a.Swap(&b); }
   inline void Swap(StartDialRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -8929,7 +9150,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StartBackwardProxyRequest final : p
     return *reinterpret_cast<const StartBackwardProxyRequest*>(
         &_StartBackwardProxyRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 114;
+  static constexpr int kIndexInFileMessages = 119;
   friend void swap(StartBackwardProxyRequest& a, StartBackwardProxyRequest& b) { a.Swap(&b); }
   inline void Swap(StartBackwardProxyRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -9301,7 +9522,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SleepProfile final : public ::googl
     return *reinterpret_cast<const SleepProfile*>(
         &_SleepProfile_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 89;
+  static constexpr int kIndexInFileMessages = 94;
   friend void swap(SleepProfile& a, SleepProfile& b) { a.Swap(&b); }
   inline void Swap(SleepProfile* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -9663,7 +9884,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SleepEvent final : public ::google:
     return *reinterpret_cast<const SleepEvent*>(
         &_SleepEvent_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 88;
+  static constexpr int kIndexInFileMessages = 93;
   friend void swap(SleepEvent& a, SleepEvent& b) { a.Swap(&b); }
   inline void Swap(SleepEvent* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -9971,7 +10192,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ShutdownNodeResponse final : public
     return *reinterpret_cast<const ShutdownNodeResponse*>(
         &_ShutdownNodeResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 138;
+  static constexpr int kIndexInFileMessages = 143;
   friend void swap(ShutdownNodeResponse& a, ShutdownNodeResponse& b) { a.Swap(&b); }
   inline void Swap(ShutdownNodeResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -10109,7 +10330,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ShutdownNodeRequest final : public 
     return *reinterpret_cast<const ShutdownNodeRequest*>(
         &_ShutdownNodeRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 137;
+  static constexpr int kIndexInFileMessages = 142;
   friend void swap(ShutdownNodeRequest& a, ShutdownNodeRequest& b) { a.Swap(&b); }
   inline void Swap(ShutdownNodeRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -10309,7 +10530,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SetNodeNetworkResponse final : publ
     return *reinterpret_cast<const SetNodeNetworkResponse*>(
         &_SetNodeNetworkResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 156;
+  static constexpr int kIndexInFileMessages = 161;
   friend void swap(SetNodeNetworkResponse& a, SetNodeNetworkResponse& b) { a.Swap(&b); }
   inline void Swap(SetNodeNetworkResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -10447,7 +10668,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SetNodeNetworkRequest final : publi
     return *reinterpret_cast<const SetNodeNetworkRequest*>(
         &_SetNodeNetworkRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 155;
+  static constexpr int kIndexInFileMessages = 160;
   friend void swap(SetNodeNetworkRequest& a, SetNodeNetworkRequest& b) { a.Swap(&b); }
   inline void Swap(SetNodeNetworkRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -10665,7 +10886,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SessionProcess final : public ::goo
     return *reinterpret_cast<const SessionProcess*>(
         &_SessionProcess_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 132;
+  static constexpr int kIndexInFileMessages = 137;
   friend void swap(SessionProcess& a, SessionProcess& b) { a.Swap(&b); }
   inline void Swap(SessionProcess* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -10951,7 +11172,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SessionMetric final : public ::goog
     return *reinterpret_cast<const SessionMetric*>(
         &_SessionMetric_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 131;
+  static constexpr int kIndexInFileMessages = 136;
   friend void swap(SessionMetric& a, SessionMetric& b) { a.Swap(&b); }
   inline void Swap(SessionMetric* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -11169,7 +11390,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SessionIssue final : public ::googl
     return *reinterpret_cast<const SessionIssue*>(
         &_SessionIssue_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 133;
+  static constexpr int kIndexInFileMessages = 138;
   friend void swap(SessionIssue& a, SessionIssue& b) { a.Swap(&b); }
   inline void Swap(SessionIssue* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -11443,7 +11664,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SessionDiagnosticsRequest final : p
     return *reinterpret_cast<const SessionDiagnosticsRequest*>(
         &_SessionDiagnosticsRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 130;
+  static constexpr int kIndexInFileMessages = 135;
   friend void swap(SessionDiagnosticsRequest& a, SessionDiagnosticsRequest& b) { a.Swap(&b); }
   inline void Swap(SessionDiagnosticsRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -11668,7 +11889,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SendChatMessageRequest final : publ
     return *reinterpret_cast<const SendChatMessageRequest*>(
         &_SendChatMessageRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 62;
+  static constexpr int kIndexInFileMessages = 67;
   friend void swap(SendChatMessageRequest& a, SendChatMessageRequest& b) { a.Swap(&b); }
   inline void Swap(SendChatMessageRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -12101,7 +12322,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ResetNetworkResponse final : public
     return *reinterpret_cast<const ResetNetworkResponse*>(
         &_ResetNetworkResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 154;
+  static constexpr int kIndexInFileMessages = 159;
   friend void swap(ResetNetworkResponse& a, ResetNetworkResponse& b) { a.Swap(&b); }
   inline void Swap(ResetNetworkResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -12301,7 +12522,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ResetNetworkRequest final : public 
     return *reinterpret_cast<const ResetNetworkRequest*>(
         &_ResetNetworkRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 153;
+  static constexpr int kIndexInFileMessages = 158;
   friend void swap(ResetNetworkRequest& a, ResetNetworkRequest& b) { a.Swap(&b); }
   inline void Swap(ResetNetworkRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -12439,7 +12660,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED RepairStatus final : public ::googl
     return *reinterpret_cast<const RepairStatus*>(
         &_RepairStatus_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 92;
+  static constexpr int kIndexInFileMessages = 97;
   friend void swap(RepairStatus& a, RepairStatus& b) { a.Swap(&b); }
   inline void Swap(RepairStatus* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -12715,7 +12936,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED RepairSessionResponse final : publi
     return *reinterpret_cast<const RepairSessionResponse*>(
         &_RepairSessionResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 125;
+  static constexpr int kIndexInFileMessages = 130;
   friend void swap(RepairSessionResponse& a, RepairSessionResponse& b) { a.Swap(&b); }
   inline void Swap(RepairSessionResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -12928,7 +13149,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED RepairSessionRequest final : public
     return *reinterpret_cast<const RepairSessionRequest*>(
         &_RepairSessionRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 124;
+  static constexpr int kIndexInFileMessages = 129;
   friend void swap(RepairSessionRequest& a, RepairSessionRequest& b) { a.Swap(&b); }
   inline void Swap(RepairSessionRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -13102,6 +13323,318 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED RepairSessionRequest final : public
 extern const ::google::protobuf::internal::ClassDataFull RepairSessionRequest_class_data_;
 // -------------------------------------------------------------------
 
+class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED RemoteFileEntry final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:kelpieui.v1.RemoteFileEntry) */ {
+ public:
+  inline RemoteFileEntry() : RemoteFileEntry(nullptr) {}
+  ~RemoteFileEntry() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(RemoteFileEntry* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(RemoteFileEntry));
+  }
+#endif
+
+  template <typename = void>
+  explicit constexpr RemoteFileEntry(::google::protobuf::internal::ConstantInitialized);
+
+  inline RemoteFileEntry(const RemoteFileEntry& from) : RemoteFileEntry(nullptr, from) {}
+  inline RemoteFileEntry(RemoteFileEntry&& from) noexcept
+      : RemoteFileEntry(nullptr, ::std::move(from)) {}
+  inline RemoteFileEntry& operator=(const RemoteFileEntry& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline RemoteFileEntry& operator=(RemoteFileEntry&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  [[nodiscard]] inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  [[nodiscard]] inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL
+  mutable_unknown_fields() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  [[nodiscard]] static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
+    return GetDescriptor();
+  }
+  [[nodiscard]] static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL
+  GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  [[nodiscard]] static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  [[nodiscard]] static const RemoteFileEntry& default_instance() {
+    return *reinterpret_cast<const RemoteFileEntry*>(
+        &_RemoteFileEntry_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 53;
+  friend void swap(RemoteFileEntry& a, RemoteFileEntry& b) { a.Swap(&b); }
+  inline void Swap(RemoteFileEntry* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(RemoteFileEntry* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  [[nodiscard]] RemoteFileEntry* PROTOBUF_NONNULL
+  New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<RemoteFileEntry>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const RemoteFileEntry& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const RemoteFileEntry& from) { RemoteFileEntry::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
+                        const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  [[nodiscard]] bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  [[nodiscard]] static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  [[nodiscard]] static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
+
+  public:
+  [[nodiscard]] ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  [[nodiscard]] ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  [[nodiscard]] ::size_t ByteSizeLong() const final;
+  [[nodiscard]] ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  [[nodiscard]] int GetCachedSize() const {
+    return _impl_._cached_size_.Get();
+  }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(RemoteFileEntry* PROTOBUF_NONNULL other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "kelpieui.v1.RemoteFileEntry"; }
+
+  explicit RemoteFileEntry(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  RemoteFileEntry(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const RemoteFileEntry& from);
+  RemoteFileEntry(
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, RemoteFileEntry&& from) noexcept
+      : RemoteFileEntry(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
+  static void* PROTOBUF_NONNULL PlacementNew_(
+      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static constexpr auto InternalNewImpl_();
+
+ public:
+  static constexpr auto InternalGenerateClassData_();
+
+  [[nodiscard]] ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kNameFieldNumber = 1,
+    kPathFieldNumber = 2,
+    kModeFieldNumber = 6,
+    kModifiedAtFieldNumber = 7,
+    kSizeFieldNumber = 5,
+    kIsDirFieldNumber = 3,
+    kIsSymlinkFieldNumber = 4,
+    kHiddenFieldNumber = 8,
+    kIsDriveFieldNumber = 9,
+  };
+  // string name = 1;
+  void clear_name() ;
+  [[nodiscard]] const ::std::string& name() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_name(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_name();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_name();
+  void set_allocated_name(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_name() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_name(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_name();
+
+  public:
+  // string path = 2;
+  void clear_path() ;
+  [[nodiscard]] const ::std::string& path() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_path(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_path();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_path();
+  void set_allocated_path(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_path() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_path(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_path();
+
+  public:
+  // string mode = 6;
+  void clear_mode() ;
+  [[nodiscard]] const ::std::string& mode() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_mode(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_mode();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_mode();
+  void set_allocated_mode(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_mode() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_mode(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_mode();
+
+  public:
+  // string modified_at = 7;
+  void clear_modified_at() ;
+  [[nodiscard]] const ::std::string& modified_at() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_modified_at(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_modified_at();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_modified_at();
+  void set_allocated_modified_at(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_modified_at() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_modified_at(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_modified_at();
+
+  public:
+  // uint64 size = 5;
+  void clear_size() ;
+  [[nodiscard]] ::uint64_t size() const;
+  void set_size(::uint64_t value);
+
+  private:
+  ::uint64_t _internal_size() const;
+  void _internal_set_size(::uint64_t value);
+
+  public:
+  // bool is_dir = 3;
+  void clear_is_dir() ;
+  [[nodiscard]] bool is_dir() const;
+  void set_is_dir(bool value);
+
+  private:
+  bool _internal_is_dir() const;
+  void _internal_set_is_dir(bool value);
+
+  public:
+  // bool is_symlink = 4;
+  void clear_is_symlink() ;
+  [[nodiscard]] bool is_symlink() const;
+  void set_is_symlink(bool value);
+
+  private:
+  bool _internal_is_symlink() const;
+  void _internal_set_is_symlink(bool value);
+
+  public:
+  // bool hidden = 8;
+  void clear_hidden() ;
+  [[nodiscard]] bool hidden() const;
+  void set_hidden(bool value);
+
+  private:
+  bool _internal_hidden() const;
+  void _internal_set_hidden(bool value);
+
+  public:
+  // bool is_drive = 9;
+  void clear_is_drive() ;
+  [[nodiscard]] bool is_drive() const;
+  void set_is_drive(bool value);
+
+  private:
+  bool _internal_is_drive() const;
+  void _internal_set_is_drive(bool value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:kelpieui.v1.RemoteFileEntry)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<4, 9,
+                                   0, 67,
+                                   2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  friend ::google::protobuf::internal::PrivateAccess;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                                    ::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+        const RemoteFileEntry& from_msg);
+    ::google::protobuf::internal::HasBits<1> _has_bits_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    ::google::protobuf::internal::ArenaStringPtr name_;
+    ::google::protobuf::internal::ArenaStringPtr path_;
+    ::google::protobuf::internal::ArenaStringPtr mode_;
+    ::google::protobuf::internal::ArenaStringPtr modified_at_;
+    ::uint64_t size_;
+    bool is_dir_;
+    bool is_symlink_;
+    bool hidden_;
+    bool is_drive_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_kelpieui_2fv1_2fkelpieui_2eproto;
+};
+
+extern const ::google::protobuf::internal::ClassDataFull RemoteFileEntry_class_data_;
+// -------------------------------------------------------------------
+
 class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ReconnectSessionResponse final : public ::google::protobuf::Message
 /* @@protoc_insertion_point(class_definition:kelpieui.v1.ReconnectSessionResponse) */ {
  public:
@@ -13158,7 +13691,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ReconnectSessionResponse final : pu
     return *reinterpret_cast<const ReconnectSessionResponse*>(
         &_ReconnectSessionResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 127;
+  static constexpr int kIndexInFileMessages = 132;
   friend void swap(ReconnectSessionResponse& a, ReconnectSessionResponse& b) { a.Swap(&b); }
   inline void Swap(ReconnectSessionResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -13371,7 +13904,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ReconnectSessionRequest final : pub
     return *reinterpret_cast<const ReconnectSessionRequest*>(
         &_ReconnectSessionRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 126;
+  static constexpr int kIndexInFileMessages = 131;
   friend void swap(ReconnectSessionRequest& a, ReconnectSessionRequest& b) { a.Swap(&b); }
   inline void Swap(ReconnectSessionRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -13826,7 +14359,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED PruneOfflineResponse final : public
     return *reinterpret_cast<const PruneOfflineResponse*>(
         &_PruneOfflineResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 158;
+  static constexpr int kIndexInFileMessages = 163;
   friend void swap(PruneOfflineResponse& a, PruneOfflineResponse& b) { a.Swap(&b); }
   inline void Swap(PruneOfflineResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -14021,7 +14554,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED PruneOfflineRequest final : public 
     return *reinterpret_cast<const PruneOfflineRequest*>(
         &_PruneOfflineRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 157;
+  static constexpr int kIndexInFileMessages = 162;
   friend void swap(PruneOfflineRequest& a, PruneOfflineRequest& b) { a.Swap(&b); }
   inline void Swap(PruneOfflineRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -14315,7 +14848,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED NodeStatusRequest final : public ::
     return *reinterpret_cast<const NodeStatusRequest*>(
         &_NodeStatusRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 146;
+  static constexpr int kIndexInFileMessages = 151;
   friend void swap(NodeStatusRequest& a, NodeStatusRequest& b) { a.Swap(&b); }
   inline void Swap(NodeStatusRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -14887,7 +15420,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED NetworkInfo final : public ::google
     return *reinterpret_cast<const NetworkInfo*>(
         &_NetworkInfo_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 148;
+  static constexpr int kIndexInFileMessages = 153;
   friend void swap(NetworkInfo& a, NetworkInfo& b) { a.Swap(&b); }
   inline void Swap(NetworkInfo* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -15127,7 +15660,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED MarkSessionRequest final : public :
     return *reinterpret_cast<const MarkSessionRequest*>(
         &_MarkSessionRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 122;
+  static constexpr int kIndexInFileMessages = 127;
   friend void swap(MarkSessionRequest& a, MarkSessionRequest& b) { a.Swap(&b); }
   inline void Swap(MarkSessionRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -15665,7 +16198,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListSupplementalQualityRequest fina
     return *reinterpret_cast<const ListSupplementalQualityRequest*>(
         &_ListSupplementalQualityRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 164;
+  static constexpr int kIndexInFileMessages = 169;
   friend void swap(ListSupplementalQualityRequest& a, ListSupplementalQualityRequest& b) { a.Swap(&b); }
   inline void Swap(ListSupplementalQualityRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -15888,7 +16421,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListSupplementalEventsRequest final
     return *reinterpret_cast<const ListSupplementalEventsRequest*>(
         &_ListSupplementalEventsRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 161;
+  static constexpr int kIndexInFileMessages = 166;
   friend void swap(ListSupplementalEventsRequest& a, ListSupplementalEventsRequest& b) { a.Swap(&b); }
   inline void Swap(ListSupplementalEventsRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -16083,7 +16616,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListSleepProfilesRequest final : pu
     return *reinterpret_cast<const ListSleepProfilesRequest*>(
         &_ListSleepProfilesRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 90;
+  static constexpr int kIndexInFileMessages = 95;
   friend void swap(ListSleepProfilesRequest& a, ListSleepProfilesRequest& b) { a.Swap(&b); }
   inline void Swap(ListSleepProfilesRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -16221,7 +16754,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListSessionsRequest final : public 
     return *reinterpret_cast<const ListSessionsRequest*>(
         &_ListSessionsRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 120;
+  static constexpr int kIndexInFileMessages = 125;
   friend void swap(ListSessionsRequest& a, ListSessionsRequest& b) { a.Swap(&b); }
   inline void Swap(ListSessionsRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -16466,7 +16999,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListRepairsRequest final : public :
     return *reinterpret_cast<const ListRepairsRequest*>(
         &_ListRepairsRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 93;
+  static constexpr int kIndexInFileMessages = 98;
   friend void swap(ListRepairsRequest& a, ListRepairsRequest& b) { a.Swap(&b); }
   inline void Swap(ListRepairsRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -16548,6 +17081,224 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListRepairsRequest final : public :
 extern const ::google::protobuf::internal::ClassDataFull ListRepairsRequest_class_data_;
 // -------------------------------------------------------------------
 
+class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListRemoteFilesRequest final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:kelpieui.v1.ListRemoteFilesRequest) */ {
+ public:
+  inline ListRemoteFilesRequest() : ListRemoteFilesRequest(nullptr) {}
+  ~ListRemoteFilesRequest() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(ListRemoteFilesRequest* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(ListRemoteFilesRequest));
+  }
+#endif
+
+  template <typename = void>
+  explicit constexpr ListRemoteFilesRequest(::google::protobuf::internal::ConstantInitialized);
+
+  inline ListRemoteFilesRequest(const ListRemoteFilesRequest& from) : ListRemoteFilesRequest(nullptr, from) {}
+  inline ListRemoteFilesRequest(ListRemoteFilesRequest&& from) noexcept
+      : ListRemoteFilesRequest(nullptr, ::std::move(from)) {}
+  inline ListRemoteFilesRequest& operator=(const ListRemoteFilesRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ListRemoteFilesRequest& operator=(ListRemoteFilesRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  [[nodiscard]] inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  [[nodiscard]] inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL
+  mutable_unknown_fields() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  [[nodiscard]] static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
+    return GetDescriptor();
+  }
+  [[nodiscard]] static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL
+  GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  [[nodiscard]] static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  [[nodiscard]] static const ListRemoteFilesRequest& default_instance() {
+    return *reinterpret_cast<const ListRemoteFilesRequest*>(
+        &_ListRemoteFilesRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 54;
+  friend void swap(ListRemoteFilesRequest& a, ListRemoteFilesRequest& b) { a.Swap(&b); }
+  inline void Swap(ListRemoteFilesRequest* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ListRemoteFilesRequest* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  [[nodiscard]] ListRemoteFilesRequest* PROTOBUF_NONNULL
+  New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<ListRemoteFilesRequest>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const ListRemoteFilesRequest& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const ListRemoteFilesRequest& from) { ListRemoteFilesRequest::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
+                        const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  [[nodiscard]] bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  [[nodiscard]] static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  [[nodiscard]] static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
+
+  public:
+  [[nodiscard]] ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  [[nodiscard]] ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  [[nodiscard]] ::size_t ByteSizeLong() const final;
+  [[nodiscard]] ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  [[nodiscard]] int GetCachedSize() const {
+    return _impl_._cached_size_.Get();
+  }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(ListRemoteFilesRequest* PROTOBUF_NONNULL other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "kelpieui.v1.ListRemoteFilesRequest"; }
+
+  explicit ListRemoteFilesRequest(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  ListRemoteFilesRequest(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const ListRemoteFilesRequest& from);
+  ListRemoteFilesRequest(
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, ListRemoteFilesRequest&& from) noexcept
+      : ListRemoteFilesRequest(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
+  static void* PROTOBUF_NONNULL PlacementNew_(
+      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static constexpr auto InternalNewImpl_();
+
+ public:
+  static constexpr auto InternalGenerateClassData_();
+
+  [[nodiscard]] ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kTargetUuidFieldNumber = 1,
+    kPathFieldNumber = 2,
+  };
+  // string target_uuid = 1;
+  void clear_target_uuid() ;
+  [[nodiscard]] const ::std::string& target_uuid() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_target_uuid(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_target_uuid();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_target_uuid();
+  void set_allocated_target_uuid(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_target_uuid() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_target_uuid(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_target_uuid();
+
+  public:
+  // string path = 2;
+  void clear_path() ;
+  [[nodiscard]] const ::std::string& path() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_path(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_path();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_path();
+  void set_allocated_path(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_path() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_path(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_path();
+
+  public:
+  // @@protoc_insertion_point(class_scope:kelpieui.v1.ListRemoteFilesRequest)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<1, 2,
+                                   0, 58,
+                                   2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  friend ::google::protobuf::internal::PrivateAccess;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                                    ::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+        const ListRemoteFilesRequest& from_msg);
+    ::google::protobuf::internal::HasBits<1> _has_bits_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    ::google::protobuf::internal::ArenaStringPtr target_uuid_;
+    ::google::protobuf::internal::ArenaStringPtr path_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_kelpieui_2fv1_2fkelpieui_2eproto;
+};
+
+extern const ::google::protobuf::internal::ClassDataFull ListRemoteFilesRequest_class_data_;
+// -------------------------------------------------------------------
+
 class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListProxiesRequest final : public ::google::protobuf::internal::ZeroFieldsBase
 /* @@protoc_insertion_point(class_definition:kelpieui.v1.ListProxiesRequest) */ {
  public:
@@ -16603,7 +17354,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListProxiesRequest final : public :
     return *reinterpret_cast<const ListProxiesRequest*>(
         &_ListProxiesRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 85;
+  static constexpr int kIndexInFileMessages = 90;
   friend void swap(ListProxiesRequest& a, ListProxiesRequest& b) { a.Swap(&b); }
   inline void Swap(ListProxiesRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -17223,7 +17974,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListNetworksRequest final : public 
     return *reinterpret_cast<const ListNetworksRequest*>(
         &_ListNetworksRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 149;
+  static constexpr int kIndexInFileMessages = 154;
   friend void swap(ListNetworksRequest& a, ListNetworksRequest& b) { a.Swap(&b); }
   inline void Swap(ListNetworksRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -17842,7 +18593,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListDialRequest final : public ::go
     return *reinterpret_cast<const ListDialRequest*>(
         &_ListDialRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 101;
+  static constexpr int kIndexInFileMessages = 106;
   friend void swap(ListDialRequest& a, ListDialRequest& b) { a.Swap(&b); }
   inline void Swap(ListDialRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -18117,7 +18868,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListChatMessagesRequest final : pub
     return *reinterpret_cast<const ListChatMessagesRequest*>(
         &_ListChatMessagesRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 64;
+  static constexpr int kIndexInFileMessages = 69;
   friend void swap(ListChatMessagesRequest& a, ListChatMessagesRequest& b) { a.Swap(&b); }
   inline void Swap(ListChatMessagesRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -18330,7 +19081,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListAuditLogsRequest final : public
     return *reinterpret_cast<const ListAuditLogsRequest*>(
         &_ListAuditLogsRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 106;
+  static constexpr int kIndexInFileMessages = 111;
   friend void swap(ListAuditLogsRequest& a, ListAuditLogsRequest& b) { a.Swap(&b); }
   inline void Swap(ListAuditLogsRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -18962,207 +19713,6 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED GetMetricsRequest final : public ::
 };
 
 extern const ::google::protobuf::internal::ClassDataFull GetMetricsRequest_class_data_;
-// -------------------------------------------------------------------
-
-class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED GetLootRequest final : public ::google::protobuf::Message
-/* @@protoc_insertion_point(class_definition:kelpieui.v1.GetLootRequest) */ {
- public:
-  inline GetLootRequest() : GetLootRequest(nullptr) {}
-  ~GetLootRequest() PROTOBUF_FINAL;
-
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-  void operator delete(GetLootRequest* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
-    SharedDtor(*msg);
-    ::google::protobuf::internal::SizedDelete(msg, sizeof(GetLootRequest));
-  }
-#endif
-
-  template <typename = void>
-  explicit constexpr GetLootRequest(::google::protobuf::internal::ConstantInitialized);
-
-  inline GetLootRequest(const GetLootRequest& from) : GetLootRequest(nullptr, from) {}
-  inline GetLootRequest(GetLootRequest&& from) noexcept
-      : GetLootRequest(nullptr, ::std::move(from)) {}
-  inline GetLootRequest& operator=(const GetLootRequest& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline GetLootRequest& operator=(GetLootRequest&& from) noexcept {
-    if (this == &from) return *this;
-    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  [[nodiscard]] inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
-      ABSL_ATTRIBUTE_LIFETIME_BOUND {
-    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
-  }
-  [[nodiscard]] inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL
-  mutable_unknown_fields() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
-  }
-
-  [[nodiscard]] static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
-    return GetDescriptor();
-  }
-  [[nodiscard]] static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL
-  GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
-  }
-  [[nodiscard]] static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
-    return default_instance().GetMetadata().reflection;
-  }
-  [[nodiscard]] static const GetLootRequest& default_instance() {
-    return *reinterpret_cast<const GetLootRequest*>(
-        &_GetLootRequest_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages = 49;
-  friend void swap(GetLootRequest& a, GetLootRequest& b) { a.Swap(&b); }
-  inline void Swap(GetLootRequest* PROTOBUF_NONNULL other) {
-    if (other == this) return;
-    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
-      InternalSwap(other);
-    } else {
-      ::google::protobuf::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(GetLootRequest* PROTOBUF_NONNULL other) {
-    if (other == this) return;
-    ABSL_DCHECK(GetArena() == other->GetArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  [[nodiscard]] GetLootRequest* PROTOBUF_NONNULL
-  New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
-    return ::google::protobuf::Message::DefaultConstruct<GetLootRequest>(arena);
-  }
-  using ::google::protobuf::Message::CopyFrom;
-  void CopyFrom(const GetLootRequest& from);
-  using ::google::protobuf::Message::MergeFrom;
-  void MergeFrom(const GetLootRequest& from) { GetLootRequest::MergeImpl(*this, from); }
-
-  private:
-  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
-                        const ::google::protobuf::MessageLite& from_msg);
-
-  public:
-  [[nodiscard]] bool IsInitialized() const {
-    return true;
-  }
-  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
-  #if defined(PROTOBUF_CUSTOM_VTABLE)
-  private:
-  [[nodiscard]] static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
-  [[nodiscard]] static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
-      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
-      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
-
-  public:
-  [[nodiscard]] ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
-  [[nodiscard]] ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
-      ::uint8_t* PROTOBUF_NONNULL target,
-      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
-    return _InternalSerialize(*this, target, stream);
-  }
-  #else   // PROTOBUF_CUSTOM_VTABLE
-  [[nodiscard]] ::size_t ByteSizeLong() const final;
-  [[nodiscard]] ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
-      ::uint8_t* PROTOBUF_NONNULL target,
-      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
-  #endif  // PROTOBUF_CUSTOM_VTABLE
-  [[nodiscard]] int GetCachedSize() const {
-    return _impl_._cached_size_.Get();
-  }
-
-  private:
-  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-  static void SharedDtor(MessageLite& self);
-  void InternalSwap(GetLootRequest* PROTOBUF_NONNULL other);
- private:
-  template <typename T>
-  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
-  static ::absl::string_view FullMessageName() { return "kelpieui.v1.GetLootRequest"; }
-
-  explicit GetLootRequest(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-  GetLootRequest(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const GetLootRequest& from);
-  GetLootRequest(
-      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, GetLootRequest&& from) noexcept
-      : GetLootRequest(arena) {
-    *this = ::std::move(from);
-  }
-  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
-  static void* PROTOBUF_NONNULL PlacementNew_(
-      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
-      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-  static constexpr auto InternalNewImpl_();
-
- public:
-  static constexpr auto InternalGenerateClassData_();
-
-  [[nodiscard]] ::google::protobuf::Metadata GetMetadata() const;
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-  enum : int {
-    kLootIdFieldNumber = 1,
-  };
-  // string loot_id = 1;
-  void clear_loot_id() ;
-  [[nodiscard]] const ::std::string& loot_id() const;
-  template <typename Arg_ = const ::std::string&, typename... Args_>
-  void set_loot_id(Arg_&& arg, Args_... args);
-  ::std::string* PROTOBUF_NONNULL mutable_loot_id();
-  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_loot_id();
-  void set_allocated_loot_id(::std::string* PROTOBUF_NULLABLE value);
-
-  private:
-  const ::std::string& _internal_loot_id() const;
-  PROTOBUF_ALWAYS_INLINE void _internal_set_loot_id(const ::std::string& value);
-  ::std::string* PROTOBUF_NONNULL _internal_mutable_loot_id();
-
-  public:
-  // @@protoc_insertion_point(class_scope:kelpieui.v1.GetLootRequest)
- private:
-  class _Internal;
-  friend class ::google::protobuf::internal::TcParser;
-  static const ::google::protobuf::internal::TcParseTable<0, 1,
-                                   0, 42,
-                                   2>
-      _table_;
-
-  friend class ::google::protobuf::MessageLite;
-  friend class ::google::protobuf::Arena;
-  friend ::google::protobuf::internal::PrivateAccess;
-  template <typename T>
-  friend class ::google::protobuf::Arena::InternalHelper;
-  using InternalArenaConstructable_ = void;
-  using DestructorSkippable_ = void;
-  struct Impl_ {
-    inline explicit constexpr Impl_(::google::protobuf::internal::InternalVisibility visibility,
-                                    ::google::protobuf::internal::ConstantInitialized) noexcept;
-    inline explicit Impl_(
-        ::google::protobuf::internal::InternalVisibility visibility,
-        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-    inline explicit Impl_(
-        ::google::protobuf::internal::InternalVisibility visibility,
-        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
-        const GetLootRequest& from_msg);
-    ::google::protobuf::internal::HasBits<1> _has_bits_;
-    ::google::protobuf::internal::CachedSize _cached_size_;
-    ::google::protobuf::internal::ArenaStringPtr loot_id_;
-    PROTOBUF_TSAN_DECLARE_MEMBER
-  };
-  union { Impl_ _impl_; };
-  friend struct ::TableStruct_kelpieui_2fv1_2fkelpieui_2eproto;
-};
-
-extern const ::google::protobuf::internal::ClassDataFull GetLootRequest_class_data_;
 // -------------------------------------------------------------------
 
 class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED GetDtnQueueStatsRequest final : public ::google::protobuf::Message
@@ -20444,7 +20994,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED DialStatus final : public ::google:
     return *reinterpret_cast<const DialStatus*>(
         &_DialStatus_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 102;
+  static constexpr int kIndexInFileMessages = 107;
   friend void swap(DialStatus& a, DialStatus& b) { a.Swap(&b); }
   inline void Swap(DialStatus* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -20775,7 +21325,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED DeletePivotListenerResponse final :
     return *reinterpret_cast<const DeletePivotListenerResponse*>(
         &_DeletePivotListenerResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 56;
+  static constexpr int kIndexInFileMessages = 61;
   friend void swap(DeletePivotListenerResponse& a, DeletePivotListenerResponse& b) { a.Swap(&b); }
   inline void Swap(DeletePivotListenerResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -20913,7 +21463,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED DeletePivotListenerRequest final : 
     return *reinterpret_cast<const DeletePivotListenerRequest*>(
         &_DeletePivotListenerRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 55;
+  static constexpr int kIndexInFileMessages = 60;
   friend void swap(DeletePivotListenerRequest& a, DeletePivotListenerRequest& b) { a.Swap(&b); }
   inline void Swap(DeletePivotListenerRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -21775,6 +22325,251 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ControllerListener final : public :
 extern const ::google::protobuf::internal::ClassDataFull ControllerListener_class_data_;
 // -------------------------------------------------------------------
 
+class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED CollectLootFileRequest final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:kelpieui.v1.CollectLootFileRequest) */ {
+ public:
+  inline CollectLootFileRequest() : CollectLootFileRequest(nullptr) {}
+  ~CollectLootFileRequest() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(CollectLootFileRequest* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(CollectLootFileRequest));
+  }
+#endif
+
+  template <typename = void>
+  explicit constexpr CollectLootFileRequest(::google::protobuf::internal::ConstantInitialized);
+
+  inline CollectLootFileRequest(const CollectLootFileRequest& from) : CollectLootFileRequest(nullptr, from) {}
+  inline CollectLootFileRequest(CollectLootFileRequest&& from) noexcept
+      : CollectLootFileRequest(nullptr, ::std::move(from)) {}
+  inline CollectLootFileRequest& operator=(const CollectLootFileRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline CollectLootFileRequest& operator=(CollectLootFileRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  [[nodiscard]] inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  [[nodiscard]] inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL
+  mutable_unknown_fields() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  [[nodiscard]] static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
+    return GetDescriptor();
+  }
+  [[nodiscard]] static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL
+  GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  [[nodiscard]] static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  [[nodiscard]] static const CollectLootFileRequest& default_instance() {
+    return *reinterpret_cast<const CollectLootFileRequest*>(
+        &_CollectLootFileRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 49;
+  friend void swap(CollectLootFileRequest& a, CollectLootFileRequest& b) { a.Swap(&b); }
+  inline void Swap(CollectLootFileRequest* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(CollectLootFileRequest* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  [[nodiscard]] CollectLootFileRequest* PROTOBUF_NONNULL
+  New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<CollectLootFileRequest>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const CollectLootFileRequest& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const CollectLootFileRequest& from) { CollectLootFileRequest::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
+                        const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  [[nodiscard]] bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  [[nodiscard]] static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  [[nodiscard]] static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
+
+  public:
+  [[nodiscard]] ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  [[nodiscard]] ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  [[nodiscard]] ::size_t ByteSizeLong() const final;
+  [[nodiscard]] ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  [[nodiscard]] int GetCachedSize() const {
+    return _impl_._cached_size_.Get();
+  }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(CollectLootFileRequest* PROTOBUF_NONNULL other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "kelpieui.v1.CollectLootFileRequest"; }
+
+  explicit CollectLootFileRequest(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  CollectLootFileRequest(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const CollectLootFileRequest& from);
+  CollectLootFileRequest(
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, CollectLootFileRequest&& from) noexcept
+      : CollectLootFileRequest(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
+  static void* PROTOBUF_NONNULL PlacementNew_(
+      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static constexpr auto InternalNewImpl_();
+
+ public:
+  static constexpr auto InternalGenerateClassData_();
+
+  [[nodiscard]] ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kTagsFieldNumber = 3,
+    kTargetUuidFieldNumber = 1,
+    kRemotePathFieldNumber = 2,
+  };
+  // repeated string tags = 3;
+  [[nodiscard]] int tags_size()
+      const;
+  private:
+  int _internal_tags_size() const;
+
+  public:
+  void clear_tags() ;
+  [[nodiscard]] const ::std::string& tags(int index) const;
+  ::std::string* PROTOBUF_NONNULL mutable_tags(int index);
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_tags(int index, Arg_&& value, Args_... args);
+  ::std::string* PROTOBUF_NONNULL add_tags();
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void add_tags(Arg_&& value, Args_... args);
+  [[nodiscard]] const ::google::protobuf::RepeatedPtrField<::std::string>&
+  tags() const;
+  [[nodiscard]] ::google::protobuf::RepeatedPtrField<::std::string>* PROTOBUF_NONNULL
+  mutable_tags();
+
+  private:
+  const ::google::protobuf::RepeatedPtrField<::std::string>& _internal_tags() const;
+  ::google::protobuf::RepeatedPtrField<::std::string>* PROTOBUF_NONNULL _internal_mutable_tags();
+
+  public:
+  // string target_uuid = 1;
+  void clear_target_uuid() ;
+  [[nodiscard]] const ::std::string& target_uuid() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_target_uuid(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_target_uuid();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_target_uuid();
+  void set_allocated_target_uuid(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_target_uuid() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_target_uuid(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_target_uuid();
+
+  public:
+  // string remote_path = 2;
+  void clear_remote_path() ;
+  [[nodiscard]] const ::std::string& remote_path() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_remote_path(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_remote_path();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_remote_path();
+  void set_allocated_remote_path(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_remote_path() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_remote_path(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_remote_path();
+
+  public:
+  // @@protoc_insertion_point(class_scope:kelpieui.v1.CollectLootFileRequest)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<2, 3,
+                                   0, 69,
+                                   2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  friend ::google::protobuf::internal::PrivateAccess;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                                    ::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+        const CollectLootFileRequest& from_msg);
+    ::google::protobuf::internal::HasBits<1> _has_bits_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    ::google::protobuf::RepeatedPtrField<::std::string> tags_;
+    ::google::protobuf::internal::ArenaStringPtr target_uuid_;
+    ::google::protobuf::internal::ArenaStringPtr remote_path_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_kelpieui_2fv1_2fkelpieui_2eproto;
+};
+
+extern const ::google::protobuf::internal::ClassDataFull CollectLootFileRequest_class_data_;
+// -------------------------------------------------------------------
+
 class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED CloseStreamResponse final : public ::google::protobuf::internal::ZeroFieldsBase
 /* @@protoc_insertion_point(class_definition:kelpieui.v1.CloseStreamResponse) */ {
  public:
@@ -21830,7 +22625,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED CloseStreamResponse final : public 
     return *reinterpret_cast<const CloseStreamResponse*>(
         &_CloseStreamResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 96;
+  static constexpr int kIndexInFileMessages = 101;
   friend void swap(CloseStreamResponse& a, CloseStreamResponse& b) { a.Swap(&b); }
   inline void Swap(CloseStreamResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -21968,7 +22763,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED CloseStreamRequest final : public :
     return *reinterpret_cast<const CloseStreamRequest*>(
         &_CloseStreamRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 95;
+  static constexpr int kIndexInFileMessages = 100;
   friend void swap(CloseStreamRequest& a, CloseStreamRequest& b) { a.Swap(&b); }
   inline void Swap(CloseStreamRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -22181,7 +22976,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ChatMessage final : public ::google
     return *reinterpret_cast<const ChatMessage*>(
         &_ChatMessage_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 60;
+  static constexpr int kIndexInFileMessages = 65;
   friend void swap(ChatMessage& a, ChatMessage& b) { a.Swap(&b); }
   inline void Swap(ChatMessage* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -22450,7 +23245,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED CancelDialResponse final : public :
     return *reinterpret_cast<const CancelDialResponse*>(
         &_CancelDialResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 100;
+  static constexpr int kIndexInFileMessages = 105;
   friend void swap(CancelDialResponse& a, CancelDialResponse& b) { a.Swap(&b); }
   inline void Swap(CancelDialResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -22663,7 +23458,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED CancelDialRequest final : public ::
     return *reinterpret_cast<const CancelDialRequest*>(
         &_CancelDialRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 99;
+  static constexpr int kIndexInFileMessages = 104;
   friend void swap(CancelDialRequest& a, CancelDialRequest& b) { a.Swap(&b); }
   inline void Swap(CancelDialRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -22864,7 +23659,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED AuditLogEntry final : public ::goog
     return *reinterpret_cast<const AuditLogEntry*>(
         &_AuditLogEntry_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 104;
+  static constexpr int kIndexInFileMessages = 109;
   friend void swap(AuditLogEntry& a, AuditLogEntry& b) { a.Swap(&b); }
   inline void Swap(AuditLogEntry* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -24023,7 +24818,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StreamStatsResponse final : public 
     return *reinterpret_cast<const StreamStatsResponse*>(
         &_StreamStatsResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 141;
+  static constexpr int kIndexInFileMessages = 146;
   friend void swap(StreamStatsResponse& a, StreamStatsResponse& b) { a.Swap(&b); }
   inline void Swap(StreamStatsResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -24229,7 +25024,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StreamResponse final : public ::goo
     return *reinterpret_cast<const StreamResponse*>(
         &_StreamResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 82;
+  static constexpr int kIndexInFileMessages = 87;
   friend void swap(StreamResponse& a, StreamResponse& b) { a.Swap(&b); }
   inline void Swap(StreamResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -24482,7 +25277,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StreamRequest final : public ::goog
     return *reinterpret_cast<const StreamRequest*>(
         &_StreamRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 81;
+  static constexpr int kIndexInFileMessages = 86;
   friend void swap(StreamRequest& a, StreamRequest& b) { a.Swap(&b); }
   inline void Swap(StreamRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -25124,7 +25919,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SessionInfo final : public ::google
     return *reinterpret_cast<const SessionInfo*>(
         &_SessionInfo_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 119;
+  static constexpr int kIndexInFileMessages = 124;
   friend void swap(SessionInfo& a, SessionInfo& b) { a.Swap(&b); }
   inline void Swap(SessionInfo* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -25574,7 +26369,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SendChatMessageResponse final : pub
     return *reinterpret_cast<const SendChatMessageResponse*>(
         &_SendChatMessageResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 63;
+  static constexpr int kIndexInFileMessages = 68;
   friend void swap(SendChatMessageResponse& a, SendChatMessageResponse& b) { a.Swap(&b); }
   inline void Swap(SendChatMessageResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -25776,7 +26571,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ProxyStreamHandle final : public ::
     return *reinterpret_cast<const ProxyStreamHandle*>(
         &_ProxyStreamHandle_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 73;
+  static constexpr int kIndexInFileMessages = 78;
   friend void swap(ProxyStreamHandle& a, ProxyStreamHandle& b) { a.Swap(&b); }
   inline void Swap(ProxyStreamHandle* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -26029,7 +26824,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ProxyInfo final : public ::google::
     return *reinterpret_cast<const ProxyInfo*>(
         &_ProxyInfo_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 84;
+  static constexpr int kIndexInFileMessages = 89;
   friend void swap(ProxyInfo& a, ProxyInfo& b) { a.Swap(&b); }
   inline void Swap(ProxyInfo* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -26948,7 +27743,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED NodeEvent final : public ::google::
     return *reinterpret_cast<const NodeEvent*>(
         &_NodeEvent_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 67;
+  static constexpr int kIndexInFileMessages = 72;
   friend void swap(NodeEvent& a, NodeEvent& b) { a.Swap(&b); }
   inline void Swap(NodeEvent* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -27590,7 +28385,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListSupplementalQualityResponse fin
     return *reinterpret_cast<const ListSupplementalQualityResponse*>(
         &_ListSupplementalQualityResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 166;
+  static constexpr int kIndexInFileMessages = 171;
   friend void swap(ListSupplementalQualityResponse& a, ListSupplementalQualityResponse& b) { a.Swap(&b); }
   inline void Swap(ListSupplementalQualityResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -27796,7 +28591,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListSupplementalEventsResponse fina
     return *reinterpret_cast<const ListSupplementalEventsResponse*>(
         &_ListSupplementalEventsResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 163;
+  static constexpr int kIndexInFileMessages = 168;
   friend void swap(ListSupplementalEventsResponse& a, ListSupplementalEventsResponse& b) { a.Swap(&b); }
   inline void Swap(ListSupplementalEventsResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -28002,7 +28797,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListSleepProfilesResponse final : p
     return *reinterpret_cast<const ListSleepProfilesResponse*>(
         &_ListSleepProfilesResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 91;
+  static constexpr int kIndexInFileMessages = 96;
   friend void swap(ListSleepProfilesResponse& a, ListSleepProfilesResponse& b) { a.Swap(&b); }
   inline void Swap(ListSleepProfilesResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -28208,7 +29003,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListRepairsResponse final : public 
     return *reinterpret_cast<const ListRepairsResponse*>(
         &_ListRepairsResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 94;
+  static constexpr int kIndexInFileMessages = 99;
   friend void swap(ListRepairsResponse& a, ListRepairsResponse& b) { a.Swap(&b); }
   inline void Swap(ListRepairsResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -28356,6 +29151,321 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListRepairsResponse final : public 
 };
 
 extern const ::google::protobuf::internal::ClassDataFull ListRepairsResponse_class_data_;
+// -------------------------------------------------------------------
+
+class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListRemoteFilesResponse final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:kelpieui.v1.ListRemoteFilesResponse) */ {
+ public:
+  inline ListRemoteFilesResponse() : ListRemoteFilesResponse(nullptr) {}
+  ~ListRemoteFilesResponse() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(ListRemoteFilesResponse* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(ListRemoteFilesResponse));
+  }
+#endif
+
+  template <typename = void>
+  explicit constexpr ListRemoteFilesResponse(::google::protobuf::internal::ConstantInitialized);
+
+  inline ListRemoteFilesResponse(const ListRemoteFilesResponse& from) : ListRemoteFilesResponse(nullptr, from) {}
+  inline ListRemoteFilesResponse(ListRemoteFilesResponse&& from) noexcept
+      : ListRemoteFilesResponse(nullptr, ::std::move(from)) {}
+  inline ListRemoteFilesResponse& operator=(const ListRemoteFilesResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ListRemoteFilesResponse& operator=(ListRemoteFilesResponse&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  [[nodiscard]] inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  [[nodiscard]] inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL
+  mutable_unknown_fields() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  [[nodiscard]] static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
+    return GetDescriptor();
+  }
+  [[nodiscard]] static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL
+  GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  [[nodiscard]] static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  [[nodiscard]] static const ListRemoteFilesResponse& default_instance() {
+    return *reinterpret_cast<const ListRemoteFilesResponse*>(
+        &_ListRemoteFilesResponse_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 55;
+  friend void swap(ListRemoteFilesResponse& a, ListRemoteFilesResponse& b) { a.Swap(&b); }
+  inline void Swap(ListRemoteFilesResponse* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ListRemoteFilesResponse* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  [[nodiscard]] ListRemoteFilesResponse* PROTOBUF_NONNULL
+  New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<ListRemoteFilesResponse>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const ListRemoteFilesResponse& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const ListRemoteFilesResponse& from) { ListRemoteFilesResponse::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
+                        const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  [[nodiscard]] bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  [[nodiscard]] static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  [[nodiscard]] static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
+
+  public:
+  [[nodiscard]] ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  [[nodiscard]] ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  [[nodiscard]] ::size_t ByteSizeLong() const final;
+  [[nodiscard]] ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  [[nodiscard]] int GetCachedSize() const {
+    return _impl_._cached_size_.Get();
+  }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(ListRemoteFilesResponse* PROTOBUF_NONNULL other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "kelpieui.v1.ListRemoteFilesResponse"; }
+
+  explicit ListRemoteFilesResponse(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  ListRemoteFilesResponse(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const ListRemoteFilesResponse& from);
+  ListRemoteFilesResponse(
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, ListRemoteFilesResponse&& from) noexcept
+      : ListRemoteFilesResponse(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
+  static void* PROTOBUF_NONNULL PlacementNew_(
+      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static constexpr auto InternalNewImpl_();
+
+ public:
+  static constexpr auto InternalGenerateClassData_();
+
+  [[nodiscard]] ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kEntriesFieldNumber = 6,
+    kRequestedPathFieldNumber = 1,
+    kResolvedPathFieldNumber = 2,
+    kRootPathFieldNumber = 3,
+    kParentPathFieldNumber = 4,
+    kDisplayPathFieldNumber = 8,
+    kCanGoUpFieldNumber = 5,
+    kVirtualRootFieldNumber = 7,
+  };
+  // repeated .kelpieui.v1.RemoteFileEntry entries = 6;
+  [[nodiscard]] int entries_size()
+      const;
+  private:
+  int _internal_entries_size() const;
+
+  public:
+  void clear_entries() ;
+  [[nodiscard]] ::kelpieui::v1::RemoteFileEntry* PROTOBUF_NONNULL mutable_entries(int index);
+  [[nodiscard]] ::google::protobuf::RepeatedPtrField<::kelpieui::v1::RemoteFileEntry>* PROTOBUF_NONNULL
+  mutable_entries();
+
+  private:
+  const ::google::protobuf::RepeatedPtrField<::kelpieui::v1::RemoteFileEntry>& _internal_entries() const;
+  ::google::protobuf::RepeatedPtrField<::kelpieui::v1::RemoteFileEntry>* PROTOBUF_NONNULL _internal_mutable_entries();
+  public:
+  [[nodiscard]] const ::kelpieui::v1::RemoteFileEntry& entries(int index) const;
+  ::kelpieui::v1::RemoteFileEntry* PROTOBUF_NONNULL add_entries();
+  [[nodiscard]] const ::google::protobuf::RepeatedPtrField<::kelpieui::v1::RemoteFileEntry>& entries()
+      const;
+  // string requested_path = 1;
+  void clear_requested_path() ;
+  [[nodiscard]] const ::std::string& requested_path() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_requested_path(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_requested_path();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_requested_path();
+  void set_allocated_requested_path(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_requested_path() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_requested_path(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_requested_path();
+
+  public:
+  // string resolved_path = 2;
+  void clear_resolved_path() ;
+  [[nodiscard]] const ::std::string& resolved_path() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_resolved_path(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_resolved_path();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_resolved_path();
+  void set_allocated_resolved_path(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_resolved_path() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_resolved_path(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_resolved_path();
+
+  public:
+  // string root_path = 3;
+  void clear_root_path() ;
+  [[nodiscard]] const ::std::string& root_path() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_root_path(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_root_path();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_root_path();
+  void set_allocated_root_path(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_root_path() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_root_path(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_root_path();
+
+  public:
+  // string parent_path = 4;
+  void clear_parent_path() ;
+  [[nodiscard]] const ::std::string& parent_path() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_parent_path(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_parent_path();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_parent_path();
+  void set_allocated_parent_path(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_parent_path() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_parent_path(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_parent_path();
+
+  public:
+  // string display_path = 8;
+  void clear_display_path() ;
+  [[nodiscard]] const ::std::string& display_path() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_display_path(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_display_path();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_display_path();
+  void set_allocated_display_path(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_display_path() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_display_path(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_display_path();
+
+  public:
+  // bool can_go_up = 5;
+  void clear_can_go_up() ;
+  [[nodiscard]] bool can_go_up() const;
+  void set_can_go_up(bool value);
+
+  private:
+  bool _internal_can_go_up() const;
+  void _internal_set_can_go_up(bool value);
+
+  public:
+  // bool virtual_root = 7;
+  void clear_virtual_root() ;
+  [[nodiscard]] bool virtual_root() const;
+  void set_virtual_root(bool value);
+
+  private:
+  bool _internal_virtual_root() const;
+  void _internal_set_virtual_root(bool value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:kelpieui.v1.ListRemoteFilesResponse)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<3, 8,
+                                   1, 111,
+                                   2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  friend ::google::protobuf::internal::PrivateAccess;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                                    ::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+        const ListRemoteFilesResponse& from_msg);
+    ::google::protobuf::internal::HasBits<1> _has_bits_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    ::google::protobuf::RepeatedPtrField< ::kelpieui::v1::RemoteFileEntry > entries_;
+    ::google::protobuf::internal::ArenaStringPtr requested_path_;
+    ::google::protobuf::internal::ArenaStringPtr resolved_path_;
+    ::google::protobuf::internal::ArenaStringPtr root_path_;
+    ::google::protobuf::internal::ArenaStringPtr parent_path_;
+    ::google::protobuf::internal::ArenaStringPtr display_path_;
+    bool can_go_up_;
+    bool virtual_root_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_kelpieui_2fv1_2fkelpieui_2eproto;
+};
+
+extern const ::google::protobuf::internal::ClassDataFull ListRemoteFilesResponse_class_data_;
 // -------------------------------------------------------------------
 
 class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListNodesResponse final : public ::google::protobuf::Message
@@ -28620,7 +29730,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListNetworksResponse final : public
     return *reinterpret_cast<const ListNetworksResponse*>(
         &_ListNetworksResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 150;
+  static constexpr int kIndexInFileMessages = 155;
   friend void swap(ListNetworksResponse& a, ListNetworksResponse& b) { a.Swap(&b); }
   inline void Swap(ListNetworksResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -29049,7 +30159,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListDialResponse final : public ::g
     return *reinterpret_cast<const ListDialResponse*>(
         &_ListDialResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 103;
+  static constexpr int kIndexInFileMessages = 108;
   friend void swap(ListDialResponse& a, ListDialResponse& b) { a.Swap(&b); }
   inline void Swap(ListDialResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -29461,7 +30571,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListChatMessagesResponse final : pu
     return *reinterpret_cast<const ListChatMessagesResponse*>(
         &_ListChatMessagesResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 65;
+  static constexpr int kIndexInFileMessages = 70;
   friend void swap(ListChatMessagesResponse& a, ListChatMessagesResponse& b) { a.Swap(&b); }
   inline void Swap(ListChatMessagesResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -29667,7 +30777,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListAuditLogsResponse final : publi
     return *reinterpret_cast<const ListAuditLogsResponse*>(
         &_ListAuditLogsResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 107;
+  static constexpr int kIndexInFileMessages = 112;
   friend void swap(ListAuditLogsResponse& a, ListAuditLogsResponse& b) { a.Swap(&b); }
   inline void Swap(ListAuditLogsResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -30472,7 +31582,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED DialEvent final : public ::google::
     return *reinterpret_cast<const DialEvent*>(
         &_DialEvent_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 66;
+  static constexpr int kIndexInFileMessages = 71;
   friend void swap(DialEvent& a, DialEvent& b) { a.Swap(&b); }
   inline void Swap(DialEvent* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -31316,7 +32426,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ChatEvent final : public ::google::
     return *reinterpret_cast<const ChatEvent*>(
         &_ChatEvent_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 61;
+  static constexpr int kIndexInFileMessages = 66;
   friend void swap(ChatEvent& a, ChatEvent& b) { a.Swap(&b); }
   inline void Swap(ChatEvent* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -31518,7 +32628,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED AuditEvent final : public ::google:
     return *reinterpret_cast<const AuditEvent*>(
         &_AuditEvent_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 105;
+  static constexpr int kIndexInFileMessages = 110;
   friend void swap(AuditEvent& a, AuditEvent& b) { a.Swap(&b); }
   inline void Swap(AuditEvent* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -31720,7 +32830,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED UpdatePivotListenerResponse final :
     return *reinterpret_cast<const UpdatePivotListenerResponse*>(
         &_UpdatePivotListenerResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 54;
+  static constexpr int kIndexInFileMessages = 59;
   friend void swap(UpdatePivotListenerResponse& a, UpdatePivotListenerResponse& b) { a.Swap(&b); }
   inline void Swap(UpdatePivotListenerResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -31922,7 +33032,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED UpdatePivotListenerRequest final : 
     return *reinterpret_cast<const UpdatePivotListenerRequest*>(
         &_UpdatePivotListenerRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 53;
+  static constexpr int kIndexInFileMessages = 58;
   friend void swap(UpdatePivotListenerRequest& a, UpdatePivotListenerRequest& b) { a.Swap(&b); }
   inline void Swap(UpdatePivotListenerRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -32100,6 +33210,225 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED UpdatePivotListenerRequest final : 
 };
 
 extern const ::google::protobuf::internal::ClassDataFull UpdatePivotListenerRequest_class_data_;
+// -------------------------------------------------------------------
+
+class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SyncLootChunk final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:kelpieui.v1.SyncLootChunk) */ {
+ public:
+  inline SyncLootChunk() : SyncLootChunk(nullptr) {}
+  ~SyncLootChunk() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(SyncLootChunk* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(SyncLootChunk));
+  }
+#endif
+
+  template <typename = void>
+  explicit constexpr SyncLootChunk(::google::protobuf::internal::ConstantInitialized);
+
+  inline SyncLootChunk(const SyncLootChunk& from) : SyncLootChunk(nullptr, from) {}
+  inline SyncLootChunk(SyncLootChunk&& from) noexcept
+      : SyncLootChunk(nullptr, ::std::move(from)) {}
+  inline SyncLootChunk& operator=(const SyncLootChunk& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline SyncLootChunk& operator=(SyncLootChunk&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  [[nodiscard]] inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  [[nodiscard]] inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL
+  mutable_unknown_fields() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  [[nodiscard]] static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
+    return GetDescriptor();
+  }
+  [[nodiscard]] static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL
+  GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  [[nodiscard]] static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  [[nodiscard]] static const SyncLootChunk& default_instance() {
+    return *reinterpret_cast<const SyncLootChunk*>(
+        &_SyncLootChunk_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 52;
+  friend void swap(SyncLootChunk& a, SyncLootChunk& b) { a.Swap(&b); }
+  inline void Swap(SyncLootChunk* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(SyncLootChunk* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  [[nodiscard]] SyncLootChunk* PROTOBUF_NONNULL
+  New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<SyncLootChunk>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const SyncLootChunk& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const SyncLootChunk& from) { SyncLootChunk::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
+                        const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  [[nodiscard]] bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  [[nodiscard]] static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  [[nodiscard]] static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
+
+  public:
+  [[nodiscard]] ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  [[nodiscard]] ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  [[nodiscard]] ::size_t ByteSizeLong() const final;
+  [[nodiscard]] ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  [[nodiscard]] int GetCachedSize() const {
+    return _impl_._cached_size_.Get();
+  }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(SyncLootChunk* PROTOBUF_NONNULL other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "kelpieui.v1.SyncLootChunk"; }
+
+  explicit SyncLootChunk(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  SyncLootChunk(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const SyncLootChunk& from);
+  SyncLootChunk(
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, SyncLootChunk&& from) noexcept
+      : SyncLootChunk(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
+  static void* PROTOBUF_NONNULL PlacementNew_(
+      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static constexpr auto InternalNewImpl_();
+
+ public:
+  static constexpr auto InternalGenerateClassData_();
+
+  [[nodiscard]] ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kDataFieldNumber = 2,
+    kItemFieldNumber = 1,
+  };
+  // bytes data = 2;
+  void clear_data() ;
+  [[nodiscard]] const ::std::string& data() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_data(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_data();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_data();
+  void set_allocated_data(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_data() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_data(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_data();
+
+  public:
+  // .kelpieui.v1.LootItem item = 1;
+  [[nodiscard]] bool has_item()
+      const;
+  void clear_item() ;
+  [[nodiscard]] const ::kelpieui::v1::LootItem& item() const;
+  [[nodiscard]] ::kelpieui::v1::LootItem* PROTOBUF_NULLABLE release_item();
+  ::kelpieui::v1::LootItem* PROTOBUF_NONNULL mutable_item();
+  void set_allocated_item(::kelpieui::v1::LootItem* PROTOBUF_NULLABLE value);
+  void unsafe_arena_set_allocated_item(::kelpieui::v1::LootItem* PROTOBUF_NULLABLE value);
+  ::kelpieui::v1::LootItem* PROTOBUF_NULLABLE unsafe_arena_release_item();
+
+  private:
+  const ::kelpieui::v1::LootItem& _internal_item() const;
+  ::kelpieui::v1::LootItem* PROTOBUF_NONNULL _internal_mutable_item();
+
+  public:
+  // @@protoc_insertion_point(class_scope:kelpieui.v1.SyncLootChunk)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<1, 2,
+                                   1, 0,
+                                   2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  friend ::google::protobuf::internal::PrivateAccess;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                                    ::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+        const SyncLootChunk& from_msg);
+    ::google::protobuf::internal::HasBits<1> _has_bits_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    ::google::protobuf::internal::ArenaStringPtr data_;
+    ::kelpieui::v1::LootItem* PROTOBUF_NULLABLE item_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_kelpieui_2fv1_2fkelpieui_2eproto;
+};
+
+extern const ::google::protobuf::internal::ClassDataFull SyncLootChunk_class_data_;
 // -------------------------------------------------------------------
 
 class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SubmitLootResponse final : public ::google::protobuf::Message
@@ -32360,7 +33689,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StreamEvent final : public ::google
     return *reinterpret_cast<const StreamEvent*>(
         &_StreamEvent_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 68;
+  static constexpr int kIndexInFileMessages = 73;
   friend void swap(StreamEvent& a, StreamEvent& b) { a.Swap(&b); }
   inline void Swap(StreamEvent* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -32613,7 +33942,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StreamDiagnosticsResponse final : p
     return *reinterpret_cast<const StreamDiagnosticsResponse*>(
         &_StreamDiagnosticsResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 143;
+  static constexpr int kIndexInFileMessages = 148;
   friend void swap(StreamDiagnosticsResponse& a, StreamDiagnosticsResponse& b) { a.Swap(&b); }
   inline void Swap(StreamDiagnosticsResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -32819,7 +34148,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StartSshSessionResponse final : pub
     return *reinterpret_cast<const StartSshSessionResponse*>(
         &_StartSshSessionResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 79;
+  static constexpr int kIndexInFileMessages = 84;
   friend void swap(StartSshSessionResponse& a, StartSshSessionResponse& b) { a.Swap(&b); }
   inline void Swap(StartSshSessionResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -33021,7 +34350,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StartSocksProxyResponse final : pub
     return *reinterpret_cast<const StartSocksProxyResponse*>(
         &_StartSocksProxyResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 77;
+  static constexpr int kIndexInFileMessages = 82;
   friend void swap(StartSocksProxyResponse& a, StartSocksProxyResponse& b) { a.Swap(&b); }
   inline void Swap(StartSocksProxyResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -33223,7 +34552,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StartShellResponse final : public :
     return *reinterpret_cast<const StartShellResponse*>(
         &_StartShellResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 75;
+  static constexpr int kIndexInFileMessages = 80;
   friend void swap(StartShellResponse& a, StartShellResponse& b) { a.Swap(&b); }
   inline void Swap(StartShellResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -33425,7 +34754,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StartForwardProxyResponse final : p
     return *reinterpret_cast<const StartForwardProxyResponse*>(
         &_StartForwardProxyResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 111;
+  static constexpr int kIndexInFileMessages = 116;
   friend void swap(StartForwardProxyResponse& a, StartForwardProxyResponse& b) { a.Swap(&b); }
   inline void Swap(StartForwardProxyResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -33678,7 +35007,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED StartBackwardProxyResponse final : 
     return *reinterpret_cast<const StartBackwardProxyResponse*>(
         &_StartBackwardProxyResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 115;
+  static constexpr int kIndexInFileMessages = 120;
   friend void swap(StartBackwardProxyResponse& a, StartBackwardProxyResponse& b) { a.Swap(&b); }
   inline void Swap(StartBackwardProxyResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -34269,7 +35598,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SessionEvent final : public ::googl
     return *reinterpret_cast<const SessionEvent*>(
         &_SessionEvent_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 70;
+  static constexpr int kIndexInFileMessages = 75;
   friend void swap(SessionEvent& a, SessionEvent& b) { a.Swap(&b); }
   inline void Swap(SessionEvent* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -34543,7 +35872,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SessionDiagnosticsResponse final : 
     return *reinterpret_cast<const SessionDiagnosticsResponse*>(
         &_SessionDiagnosticsResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 134;
+  static constexpr int kIndexInFileMessages = 139;
   friend void swap(SessionDiagnosticsResponse& a, SessionDiagnosticsResponse& b) { a.Swap(&b); }
   inline void Swap(SessionDiagnosticsResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -34811,7 +36140,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ProxyEvent final : public ::google:
     return *reinterpret_cast<const ProxyEvent*>(
         &_ProxyEvent_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 87;
+  static constexpr int kIndexInFileMessages = 92;
   friend void swap(ProxyEvent& a, ProxyEvent& b) { a.Swap(&b); }
   inline void Swap(ProxyEvent* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -35064,7 +36393,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED PivotListenerEvent final : public :
     return *reinterpret_cast<const PivotListenerEvent*>(
         &_PivotListenerEvent_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 69;
+  static constexpr int kIndexInFileMessages = 74;
   friend void swap(PivotListenerEvent& a, PivotListenerEvent& b) { a.Swap(&b); }
   inline void Swap(PivotListenerEvent* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -35300,7 +36629,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED NodeStatusResponse final : public :
     return *reinterpret_cast<const NodeStatusResponse*>(
         &_NodeStatusResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 147;
+  static constexpr int kIndexInFileMessages = 152;
   friend void swap(NodeStatusResponse& a, NodeStatusResponse& b) { a.Swap(&b); }
   inline void Swap(NodeStatusResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -35546,7 +36875,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED MarkSessionResponse final : public 
     return *reinterpret_cast<const MarkSessionResponse*>(
         &_MarkSessionResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 123;
+  static constexpr int kIndexInFileMessages = 128;
   friend void swap(MarkSessionResponse& a, MarkSessionResponse& b) { a.Swap(&b); }
   inline void Swap(MarkSessionResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -35748,7 +37077,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED LootEvent final : public ::google::
     return *reinterpret_cast<const LootEvent*>(
         &_LootEvent_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 59;
+  static constexpr int kIndexInFileMessages = 64;
   friend void swap(LootEvent& a, LootEvent& b) { a.Swap(&b); }
   inline void Swap(LootEvent* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -35982,7 +37311,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListSessionsResponse final : public
     return *reinterpret_cast<const ListSessionsResponse*>(
         &_ListSessionsResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 121;
+  static constexpr int kIndexInFileMessages = 126;
   friend void swap(ListSessionsResponse& a, ListSessionsResponse& b) { a.Swap(&b); }
   inline void Swap(ListSessionsResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -36188,7 +37517,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListProxiesResponse final : public 
     return *reinterpret_cast<const ListProxiesResponse*>(
         &_ListProxiesResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 86;
+  static constexpr int kIndexInFileMessages = 91;
   friend void swap(ListProxiesResponse& a, ListProxiesResponse& b) { a.Swap(&b); }
   inline void Swap(ListProxiesResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -36750,225 +38079,6 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ListLootResponse final : public ::g
 extern const ::google::protobuf::internal::ClassDataFull ListLootResponse_class_data_;
 // -------------------------------------------------------------------
 
-class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED GetLootResponse final : public ::google::protobuf::Message
-/* @@protoc_insertion_point(class_definition:kelpieui.v1.GetLootResponse) */ {
- public:
-  inline GetLootResponse() : GetLootResponse(nullptr) {}
-  ~GetLootResponse() PROTOBUF_FINAL;
-
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-  void operator delete(GetLootResponse* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
-    SharedDtor(*msg);
-    ::google::protobuf::internal::SizedDelete(msg, sizeof(GetLootResponse));
-  }
-#endif
-
-  template <typename = void>
-  explicit constexpr GetLootResponse(::google::protobuf::internal::ConstantInitialized);
-
-  inline GetLootResponse(const GetLootResponse& from) : GetLootResponse(nullptr, from) {}
-  inline GetLootResponse(GetLootResponse&& from) noexcept
-      : GetLootResponse(nullptr, ::std::move(from)) {}
-  inline GetLootResponse& operator=(const GetLootResponse& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline GetLootResponse& operator=(GetLootResponse&& from) noexcept {
-    if (this == &from) return *this;
-    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  [[nodiscard]] inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
-      ABSL_ATTRIBUTE_LIFETIME_BOUND {
-    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
-  }
-  [[nodiscard]] inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL
-  mutable_unknown_fields() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
-  }
-
-  [[nodiscard]] static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
-    return GetDescriptor();
-  }
-  [[nodiscard]] static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL
-  GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
-  }
-  [[nodiscard]] static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
-    return default_instance().GetMetadata().reflection;
-  }
-  [[nodiscard]] static const GetLootResponse& default_instance() {
-    return *reinterpret_cast<const GetLootResponse*>(
-        &_GetLootResponse_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages = 50;
-  friend void swap(GetLootResponse& a, GetLootResponse& b) { a.Swap(&b); }
-  inline void Swap(GetLootResponse* PROTOBUF_NONNULL other) {
-    if (other == this) return;
-    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
-      InternalSwap(other);
-    } else {
-      ::google::protobuf::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(GetLootResponse* PROTOBUF_NONNULL other) {
-    if (other == this) return;
-    ABSL_DCHECK(GetArena() == other->GetArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  [[nodiscard]] GetLootResponse* PROTOBUF_NONNULL
-  New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
-    return ::google::protobuf::Message::DefaultConstruct<GetLootResponse>(arena);
-  }
-  using ::google::protobuf::Message::CopyFrom;
-  void CopyFrom(const GetLootResponse& from);
-  using ::google::protobuf::Message::MergeFrom;
-  void MergeFrom(const GetLootResponse& from) { GetLootResponse::MergeImpl(*this, from); }
-
-  private:
-  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
-                        const ::google::protobuf::MessageLite& from_msg);
-
-  public:
-  [[nodiscard]] bool IsInitialized() const {
-    return true;
-  }
-  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
-  #if defined(PROTOBUF_CUSTOM_VTABLE)
-  private:
-  [[nodiscard]] static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
-  [[nodiscard]] static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
-      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
-      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
-
-  public:
-  [[nodiscard]] ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
-  [[nodiscard]] ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
-      ::uint8_t* PROTOBUF_NONNULL target,
-      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
-    return _InternalSerialize(*this, target, stream);
-  }
-  #else   // PROTOBUF_CUSTOM_VTABLE
-  [[nodiscard]] ::size_t ByteSizeLong() const final;
-  [[nodiscard]] ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
-      ::uint8_t* PROTOBUF_NONNULL target,
-      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
-  #endif  // PROTOBUF_CUSTOM_VTABLE
-  [[nodiscard]] int GetCachedSize() const {
-    return _impl_._cached_size_.Get();
-  }
-
-  private:
-  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-  static void SharedDtor(MessageLite& self);
-  void InternalSwap(GetLootResponse* PROTOBUF_NONNULL other);
- private:
-  template <typename T>
-  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
-  static ::absl::string_view FullMessageName() { return "kelpieui.v1.GetLootResponse"; }
-
-  explicit GetLootResponse(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-  GetLootResponse(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const GetLootResponse& from);
-  GetLootResponse(
-      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, GetLootResponse&& from) noexcept
-      : GetLootResponse(arena) {
-    *this = ::std::move(from);
-  }
-  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
-  static void* PROTOBUF_NONNULL PlacementNew_(
-      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
-      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-  static constexpr auto InternalNewImpl_();
-
- public:
-  static constexpr auto InternalGenerateClassData_();
-
-  [[nodiscard]] ::google::protobuf::Metadata GetMetadata() const;
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-  enum : int {
-    kContentFieldNumber = 2,
-    kItemFieldNumber = 1,
-  };
-  // bytes content = 2;
-  void clear_content() ;
-  [[nodiscard]] const ::std::string& content() const;
-  template <typename Arg_ = const ::std::string&, typename... Args_>
-  void set_content(Arg_&& arg, Args_... args);
-  ::std::string* PROTOBUF_NONNULL mutable_content();
-  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_content();
-  void set_allocated_content(::std::string* PROTOBUF_NULLABLE value);
-
-  private:
-  const ::std::string& _internal_content() const;
-  PROTOBUF_ALWAYS_INLINE void _internal_set_content(const ::std::string& value);
-  ::std::string* PROTOBUF_NONNULL _internal_mutable_content();
-
-  public:
-  // .kelpieui.v1.LootItem item = 1;
-  [[nodiscard]] bool has_item()
-      const;
-  void clear_item() ;
-  [[nodiscard]] const ::kelpieui::v1::LootItem& item() const;
-  [[nodiscard]] ::kelpieui::v1::LootItem* PROTOBUF_NULLABLE release_item();
-  ::kelpieui::v1::LootItem* PROTOBUF_NONNULL mutable_item();
-  void set_allocated_item(::kelpieui::v1::LootItem* PROTOBUF_NULLABLE value);
-  void unsafe_arena_set_allocated_item(::kelpieui::v1::LootItem* PROTOBUF_NULLABLE value);
-  ::kelpieui::v1::LootItem* PROTOBUF_NULLABLE unsafe_arena_release_item();
-
-  private:
-  const ::kelpieui::v1::LootItem& _internal_item() const;
-  ::kelpieui::v1::LootItem* PROTOBUF_NONNULL _internal_mutable_item();
-
-  public:
-  // @@protoc_insertion_point(class_scope:kelpieui.v1.GetLootResponse)
- private:
-  class _Internal;
-  friend class ::google::protobuf::internal::TcParser;
-  static const ::google::protobuf::internal::TcParseTable<1, 2,
-                                   1, 0,
-                                   2>
-      _table_;
-
-  friend class ::google::protobuf::MessageLite;
-  friend class ::google::protobuf::Arena;
-  friend ::google::protobuf::internal::PrivateAccess;
-  template <typename T>
-  friend class ::google::protobuf::Arena::InternalHelper;
-  using InternalArenaConstructable_ = void;
-  using DestructorSkippable_ = void;
-  struct Impl_ {
-    inline explicit constexpr Impl_(::google::protobuf::internal::InternalVisibility visibility,
-                                    ::google::protobuf::internal::ConstantInitialized) noexcept;
-    inline explicit Impl_(
-        ::google::protobuf::internal::InternalVisibility visibility,
-        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-    inline explicit Impl_(
-        ::google::protobuf::internal::InternalVisibility visibility,
-        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
-        const GetLootResponse& from_msg);
-    ::google::protobuf::internal::HasBits<1> _has_bits_;
-    ::google::protobuf::internal::CachedSize _cached_size_;
-    ::google::protobuf::internal::ArenaStringPtr content_;
-    ::kelpieui::v1::LootItem* PROTOBUF_NULLABLE item_;
-    PROTOBUF_TSAN_DECLARE_MEMBER
-  };
-  union { Impl_ _impl_; };
-  friend struct ::TableStruct_kelpieui_2fv1_2fkelpieui_2eproto;
-};
-
-extern const ::google::protobuf::internal::ClassDataFull GetLootResponse_class_data_;
-// -------------------------------------------------------------------
-
 class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED GetDtnQueueStatsResponse final : public ::google::protobuf::Message
 /* @@protoc_insertion_point(class_definition:kelpieui.v1.GetDtnQueueStatsResponse) */ {
  public:
@@ -37494,7 +38604,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED CreatePivotListenerResponse final :
     return *reinterpret_cast<const CreatePivotListenerResponse*>(
         &_CreatePivotListenerResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 52;
+  static constexpr int kIndexInFileMessages = 57;
   friend void swap(CreatePivotListenerResponse& a, CreatePivotListenerResponse& b) { a.Swap(&b); }
   inline void Swap(CreatePivotListenerResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -37696,7 +38806,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED CreatePivotListenerRequest final : 
     return *reinterpret_cast<const CreatePivotListenerRequest*>(
         &_CreatePivotListenerRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 51;
+  static constexpr int kIndexInFileMessages = 56;
   friend void swap(CreatePivotListenerRequest& a, CreatePivotListenerRequest& b) { a.Swap(&b); }
   inline void Swap(CreatePivotListenerRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -37859,6 +38969,208 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED CreatePivotListenerRequest final : 
 extern const ::google::protobuf::internal::ClassDataFull CreatePivotListenerRequest_class_data_;
 // -------------------------------------------------------------------
 
+class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED CollectLootFileResponse final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:kelpieui.v1.CollectLootFileResponse) */ {
+ public:
+  inline CollectLootFileResponse() : CollectLootFileResponse(nullptr) {}
+  ~CollectLootFileResponse() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(CollectLootFileResponse* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(CollectLootFileResponse));
+  }
+#endif
+
+  template <typename = void>
+  explicit constexpr CollectLootFileResponse(::google::protobuf::internal::ConstantInitialized);
+
+  inline CollectLootFileResponse(const CollectLootFileResponse& from) : CollectLootFileResponse(nullptr, from) {}
+  inline CollectLootFileResponse(CollectLootFileResponse&& from) noexcept
+      : CollectLootFileResponse(nullptr, ::std::move(from)) {}
+  inline CollectLootFileResponse& operator=(const CollectLootFileResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline CollectLootFileResponse& operator=(CollectLootFileResponse&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  [[nodiscard]] inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  [[nodiscard]] inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL
+  mutable_unknown_fields() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  [[nodiscard]] static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
+    return GetDescriptor();
+  }
+  [[nodiscard]] static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL
+  GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  [[nodiscard]] static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  [[nodiscard]] static const CollectLootFileResponse& default_instance() {
+    return *reinterpret_cast<const CollectLootFileResponse*>(
+        &_CollectLootFileResponse_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 50;
+  friend void swap(CollectLootFileResponse& a, CollectLootFileResponse& b) { a.Swap(&b); }
+  inline void Swap(CollectLootFileResponse* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(CollectLootFileResponse* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  [[nodiscard]] CollectLootFileResponse* PROTOBUF_NONNULL
+  New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<CollectLootFileResponse>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const CollectLootFileResponse& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const CollectLootFileResponse& from) { CollectLootFileResponse::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
+                        const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  [[nodiscard]] bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  [[nodiscard]] static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  [[nodiscard]] static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
+
+  public:
+  [[nodiscard]] ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  [[nodiscard]] ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  [[nodiscard]] ::size_t ByteSizeLong() const final;
+  [[nodiscard]] ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  [[nodiscard]] int GetCachedSize() const {
+    return _impl_._cached_size_.Get();
+  }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(CollectLootFileResponse* PROTOBUF_NONNULL other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "kelpieui.v1.CollectLootFileResponse"; }
+
+  explicit CollectLootFileResponse(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  CollectLootFileResponse(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const CollectLootFileResponse& from);
+  CollectLootFileResponse(
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, CollectLootFileResponse&& from) noexcept
+      : CollectLootFileResponse(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
+  static void* PROTOBUF_NONNULL PlacementNew_(
+      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static constexpr auto InternalNewImpl_();
+
+ public:
+  static constexpr auto InternalGenerateClassData_();
+
+  [[nodiscard]] ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kItemFieldNumber = 1,
+  };
+  // .kelpieui.v1.LootItem item = 1;
+  [[nodiscard]] bool has_item()
+      const;
+  void clear_item() ;
+  [[nodiscard]] const ::kelpieui::v1::LootItem& item() const;
+  [[nodiscard]] ::kelpieui::v1::LootItem* PROTOBUF_NULLABLE release_item();
+  ::kelpieui::v1::LootItem* PROTOBUF_NONNULL mutable_item();
+  void set_allocated_item(::kelpieui::v1::LootItem* PROTOBUF_NULLABLE value);
+  void unsafe_arena_set_allocated_item(::kelpieui::v1::LootItem* PROTOBUF_NULLABLE value);
+  ::kelpieui::v1::LootItem* PROTOBUF_NULLABLE unsafe_arena_release_item();
+
+  private:
+  const ::kelpieui::v1::LootItem& _internal_item() const;
+  ::kelpieui::v1::LootItem* PROTOBUF_NONNULL _internal_mutable_item();
+
+  public:
+  // @@protoc_insertion_point(class_scope:kelpieui.v1.CollectLootFileResponse)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<0, 1,
+                                   1, 0,
+                                   2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  friend ::google::protobuf::internal::PrivateAccess;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                                    ::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+        const CollectLootFileResponse& from_msg);
+    ::google::protobuf::internal::HasBits<1> _has_bits_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    ::kelpieui::v1::LootItem* PROTOBUF_NULLABLE item_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_kelpieui_2fv1_2fkelpieui_2eproto;
+};
+
+extern const ::google::protobuf::internal::ClassDataFull CollectLootFileResponse_class_data_;
+// -------------------------------------------------------------------
+
 class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED UiEvent final : public ::google::protobuf::Message
 /* @@protoc_insertion_point(class_definition:kelpieui.v1.UiEvent) */ {
  public:
@@ -37930,7 +39242,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED UiEvent final : public ::google::pr
     kLootEvent = 13,
     PAYLOAD_NOT_SET = 0,
   };
-  static constexpr int kIndexInFileMessages = 58;
+  static constexpr int kIndexInFileMessages = 63;
   friend void swap(UiEvent& a, UiEvent& b) { a.Swap(&b); }
   inline void Swap(UiEvent* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -48063,49 +49375,358 @@ inline void SubmitLootResponse::set_allocated_item(::kelpieui::v1::LootItem* PRO
 
 // -------------------------------------------------------------------
 
-// GetLootRequest
+// CollectLootFileRequest
+
+// string target_uuid = 1;
+inline void CollectLootFileRequest::clear_target_uuid() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.target_uuid_.ClearToEmpty();
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000002U);
+}
+inline const ::std::string& CollectLootFileRequest::target_uuid() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:kelpieui.v1.CollectLootFileRequest.target_uuid)
+  return _internal_target_uuid();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void CollectLootFileRequest::set_target_uuid(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  _impl_.target_uuid_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:kelpieui.v1.CollectLootFileRequest.target_uuid)
+}
+inline ::std::string* PROTOBUF_NONNULL CollectLootFileRequest::mutable_target_uuid()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  ::std::string* _s = _internal_mutable_target_uuid();
+  // @@protoc_insertion_point(field_mutable:kelpieui.v1.CollectLootFileRequest.target_uuid)
+  return _s;
+}
+inline const ::std::string& CollectLootFileRequest::_internal_target_uuid() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.target_uuid_.Get();
+}
+inline void CollectLootFileRequest::_internal_set_target_uuid(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.target_uuid_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL CollectLootFileRequest::_internal_mutable_target_uuid() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.target_uuid_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE CollectLootFileRequest::release_target_uuid() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:kelpieui.v1.CollectLootFileRequest.target_uuid)
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000002U)) {
+    return nullptr;
+  }
+  ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
+  auto* released = _impl_.target_uuid_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.target_uuid_.Set("", GetArena());
+  }
+  return released;
+}
+inline void CollectLootFileRequest::set_allocated_target_uuid(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
+  }
+  _impl_.target_uuid_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.target_uuid_.IsDefault()) {
+    _impl_.target_uuid_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:kelpieui.v1.CollectLootFileRequest.target_uuid)
+}
+
+// string remote_path = 2;
+inline void CollectLootFileRequest::clear_remote_path() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.remote_path_.ClearToEmpty();
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000004U);
+}
+inline const ::std::string& CollectLootFileRequest::remote_path() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:kelpieui.v1.CollectLootFileRequest.remote_path)
+  return _internal_remote_path();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void CollectLootFileRequest::set_remote_path(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  SetHasBit(_impl_._has_bits_[0], 0x00000004U);
+  _impl_.remote_path_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:kelpieui.v1.CollectLootFileRequest.remote_path)
+}
+inline ::std::string* PROTOBUF_NONNULL CollectLootFileRequest::mutable_remote_path()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000004U);
+  ::std::string* _s = _internal_mutable_remote_path();
+  // @@protoc_insertion_point(field_mutable:kelpieui.v1.CollectLootFileRequest.remote_path)
+  return _s;
+}
+inline const ::std::string& CollectLootFileRequest::_internal_remote_path() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.remote_path_.Get();
+}
+inline void CollectLootFileRequest::_internal_set_remote_path(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.remote_path_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL CollectLootFileRequest::_internal_mutable_remote_path() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.remote_path_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE CollectLootFileRequest::release_remote_path() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:kelpieui.v1.CollectLootFileRequest.remote_path)
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000004U)) {
+    return nullptr;
+  }
+  ClearHasBit(_impl_._has_bits_[0], 0x00000004U);
+  auto* released = _impl_.remote_path_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.remote_path_.Set("", GetArena());
+  }
+  return released;
+}
+inline void CollectLootFileRequest::set_allocated_remote_path(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[0], 0x00000004U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000004U);
+  }
+  _impl_.remote_path_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.remote_path_.IsDefault()) {
+    _impl_.remote_path_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:kelpieui.v1.CollectLootFileRequest.remote_path)
+}
+
+// repeated string tags = 3;
+inline int CollectLootFileRequest::_internal_tags_size() const {
+  return _internal_tags().size();
+}
+inline int CollectLootFileRequest::tags_size() const {
+  return _internal_tags_size();
+}
+inline void CollectLootFileRequest::clear_tags() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.tags_.Clear();
+  ClearHasBitForRepeated(_impl_._has_bits_[0],
+                  0x00000001U);
+}
+inline ::std::string* PROTOBUF_NONNULL CollectLootFileRequest::add_tags()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::std::string* _s =
+      _internal_mutable_tags()->InternalAddWithArena(
+          ::google::protobuf::MessageLite::internal_visibility(), GetArena());
+  SetHasBitForRepeated(_impl_._has_bits_[0], 0x00000001U);
+  // @@protoc_insertion_point(field_add_mutable:kelpieui.v1.CollectLootFileRequest.tags)
+  return _s;
+}
+inline const ::std::string& CollectLootFileRequest::tags(int index) const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:kelpieui.v1.CollectLootFileRequest.tags)
+  return _internal_tags().Get(index);
+}
+inline ::std::string* PROTOBUF_NONNULL CollectLootFileRequest::mutable_tags(int index)
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_mutable:kelpieui.v1.CollectLootFileRequest.tags)
+  return _internal_mutable_tags()->Mutable(index);
+}
+template <typename Arg_, typename... Args_>
+inline void CollectLootFileRequest::set_tags(int index, Arg_&& value, Args_... args) {
+  ::google::protobuf::internal::AssignToString(*_internal_mutable_tags()->Mutable(index), ::std::forward<Arg_>(value),
+                        args... );
+  // @@protoc_insertion_point(field_set:kelpieui.v1.CollectLootFileRequest.tags)
+}
+template <typename Arg_, typename... Args_>
+inline void CollectLootFileRequest::add_tags(Arg_&& value, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::google::protobuf::internal::AddToRepeatedPtrField(
+      ::google::protobuf::MessageLite::internal_visibility(), GetArena(),
+      *_internal_mutable_tags(), ::std::forward<Arg_>(value),
+      args... );
+  SetHasBitForRepeated(_impl_._has_bits_[0], 0x00000001U);
+  // @@protoc_insertion_point(field_add:kelpieui.v1.CollectLootFileRequest.tags)
+}
+inline const ::google::protobuf::RepeatedPtrField<::std::string>& CollectLootFileRequest::tags()
+    const ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_list:kelpieui.v1.CollectLootFileRequest.tags)
+  return _internal_tags();
+}
+inline ::google::protobuf::RepeatedPtrField<::std::string>* PROTOBUF_NONNULL
+CollectLootFileRequest::mutable_tags() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBitForRepeated(_impl_._has_bits_[0], 0x00000001U);
+  // @@protoc_insertion_point(field_mutable_list:kelpieui.v1.CollectLootFileRequest.tags)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _internal_mutable_tags();
+}
+inline const ::google::protobuf::RepeatedPtrField<::std::string>&
+CollectLootFileRequest::_internal_tags() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.tags_;
+}
+inline ::google::protobuf::RepeatedPtrField<::std::string>* PROTOBUF_NONNULL
+CollectLootFileRequest::_internal_mutable_tags() {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return &_impl_.tags_;
+}
+
+// -------------------------------------------------------------------
+
+// CollectLootFileResponse
+
+// .kelpieui.v1.LootItem item = 1;
+inline bool CollectLootFileResponse::has_item() const {
+  bool value = CheckHasBit(_impl_._has_bits_[0], 0x00000001U);
+  PROTOBUF_ASSUME(!value || _impl_.item_ != nullptr);
+  return value;
+}
+inline void CollectLootFileResponse::clear_item() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (_impl_.item_ != nullptr) _impl_.item_->Clear();
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000001U);
+}
+inline const ::kelpieui::v1::LootItem& CollectLootFileResponse::_internal_item() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  const ::kelpieui::v1::LootItem* p = _impl_.item_;
+  return p != nullptr ? *p : reinterpret_cast<const ::kelpieui::v1::LootItem&>(::kelpieui::v1::_LootItem_default_instance_);
+}
+inline const ::kelpieui::v1::LootItem& CollectLootFileResponse::item() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:kelpieui.v1.CollectLootFileResponse.item)
+  return _internal_item();
+}
+inline void CollectLootFileResponse::unsafe_arena_set_allocated_item(
+    ::kelpieui::v1::LootItem* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (GetArena() == nullptr) {
+    delete reinterpret_cast<::google::protobuf::MessageLite*>(_impl_.item_);
+  }
+  _impl_.item_ = reinterpret_cast<::kelpieui::v1::LootItem*>(value);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:kelpieui.v1.CollectLootFileResponse.item)
+}
+inline ::kelpieui::v1::LootItem* PROTOBUF_NULLABLE CollectLootFileResponse::release_item() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+
+  ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  ::kelpieui::v1::LootItem* released = _impl_.item_;
+  _impl_.item_ = nullptr;
+  if (::google::protobuf::internal::DebugHardenForceCopyInRelease()) {
+    auto* old = reinterpret_cast<::google::protobuf::MessageLite*>(released);
+    released = ::google::protobuf::internal::DuplicateIfNonNull(released);
+    if (GetArena() == nullptr) {
+      delete old;
+    }
+  } else {
+    if (GetArena() != nullptr) {
+      released = ::google::protobuf::internal::DuplicateIfNonNull(released);
+    }
+  }
+  return released;
+}
+inline ::kelpieui::v1::LootItem* PROTOBUF_NULLABLE CollectLootFileResponse::unsafe_arena_release_item() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:kelpieui.v1.CollectLootFileResponse.item)
+
+  ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  ::kelpieui::v1::LootItem* temp = _impl_.item_;
+  _impl_.item_ = nullptr;
+  return temp;
+}
+inline ::kelpieui::v1::LootItem* PROTOBUF_NONNULL CollectLootFileResponse::_internal_mutable_item() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (_impl_.item_ == nullptr) {
+    auto* p = ::google::protobuf::Message::DefaultConstruct<::kelpieui::v1::LootItem>(GetArena());
+    _impl_.item_ = reinterpret_cast<::kelpieui::v1::LootItem*>(p);
+  }
+  return _impl_.item_;
+}
+inline ::kelpieui::v1::LootItem* PROTOBUF_NONNULL CollectLootFileResponse::mutable_item()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  ::kelpieui::v1::LootItem* _msg = _internal_mutable_item();
+  // @@protoc_insertion_point(field_mutable:kelpieui.v1.CollectLootFileResponse.item)
+  return _msg;
+}
+inline void CollectLootFileResponse::set_allocated_item(::kelpieui::v1::LootItem* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::Arena* message_arena = GetArena();
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (message_arena == nullptr) {
+    delete reinterpret_cast<::google::protobuf::MessageLite*>(_impl_.item_);
+  }
+
+  if (value != nullptr) {
+    ::google::protobuf::Arena* submessage_arena = value->GetArena();
+    if (message_arena != submessage_arena) {
+      value = ::google::protobuf::internal::GetOwnedMessage(message_arena, value, submessage_arena);
+    }
+    SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  }
+
+  _impl_.item_ = reinterpret_cast<::kelpieui::v1::LootItem*>(value);
+  // @@protoc_insertion_point(field_set_allocated:kelpieui.v1.CollectLootFileResponse.item)
+}
+
+// -------------------------------------------------------------------
+
+// SyncLootRequest
 
 // string loot_id = 1;
-inline void GetLootRequest::clear_loot_id() {
+inline void SyncLootRequest::clear_loot_id() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.loot_id_.ClearToEmpty();
   ClearHasBit(_impl_._has_bits_[0],
                   0x00000001U);
 }
-inline const ::std::string& GetLootRequest::loot_id() const
+inline const ::std::string& SyncLootRequest::loot_id() const
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_get:kelpieui.v1.GetLootRequest.loot_id)
+  // @@protoc_insertion_point(field_get:kelpieui.v1.SyncLootRequest.loot_id)
   return _internal_loot_id();
 }
 template <typename Arg_, typename... Args_>
-PROTOBUF_ALWAYS_INLINE void GetLootRequest::set_loot_id(Arg_&& arg, Args_... args) {
+PROTOBUF_ALWAYS_INLINE void SyncLootRequest::set_loot_id(Arg_&& arg, Args_... args) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   SetHasBit(_impl_._has_bits_[0], 0x00000001U);
   _impl_.loot_id_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
-  // @@protoc_insertion_point(field_set:kelpieui.v1.GetLootRequest.loot_id)
+  // @@protoc_insertion_point(field_set:kelpieui.v1.SyncLootRequest.loot_id)
 }
-inline ::std::string* PROTOBUF_NONNULL GetLootRequest::mutable_loot_id()
+inline ::std::string* PROTOBUF_NONNULL SyncLootRequest::mutable_loot_id()
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
   SetHasBit(_impl_._has_bits_[0], 0x00000001U);
   ::std::string* _s = _internal_mutable_loot_id();
-  // @@protoc_insertion_point(field_mutable:kelpieui.v1.GetLootRequest.loot_id)
+  // @@protoc_insertion_point(field_mutable:kelpieui.v1.SyncLootRequest.loot_id)
   return _s;
 }
-inline const ::std::string& GetLootRequest::_internal_loot_id() const {
+inline const ::std::string& SyncLootRequest::_internal_loot_id() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
   return _impl_.loot_id_.Get();
 }
-inline void GetLootRequest::_internal_set_loot_id(const ::std::string& value) {
+inline void SyncLootRequest::_internal_set_loot_id(const ::std::string& value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.loot_id_.Set(value, GetArena());
 }
-inline ::std::string* PROTOBUF_NONNULL GetLootRequest::_internal_mutable_loot_id() {
+inline ::std::string* PROTOBUF_NONNULL SyncLootRequest::_internal_mutable_loot_id() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   return _impl_.loot_id_.Mutable( GetArena());
 }
-inline ::std::string* PROTOBUF_NULLABLE GetLootRequest::release_loot_id() {
+inline ::std::string* PROTOBUF_NULLABLE SyncLootRequest::release_loot_id() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  // @@protoc_insertion_point(field_release:kelpieui.v1.GetLootRequest.loot_id)
+  // @@protoc_insertion_point(field_release:kelpieui.v1.SyncLootRequest.loot_id)
   if (!CheckHasBit(_impl_._has_bits_[0], 0x00000001U)) {
     return nullptr;
   }
@@ -48116,7 +49737,7 @@ inline ::std::string* PROTOBUF_NULLABLE GetLootRequest::release_loot_id() {
   }
   return released;
 }
-inline void GetLootRequest::set_allocated_loot_id(::std::string* PROTOBUF_NULLABLE value) {
+inline void SyncLootRequest::set_allocated_loot_id(::std::string* PROTOBUF_NULLABLE value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   if (value != nullptr) {
     SetHasBit(_impl_._has_bits_[0], 0x00000001U);
@@ -48127,35 +49748,35 @@ inline void GetLootRequest::set_allocated_loot_id(::std::string* PROTOBUF_NULLAB
   if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.loot_id_.IsDefault()) {
     _impl_.loot_id_.Set("", GetArena());
   }
-  // @@protoc_insertion_point(field_set_allocated:kelpieui.v1.GetLootRequest.loot_id)
+  // @@protoc_insertion_point(field_set_allocated:kelpieui.v1.SyncLootRequest.loot_id)
 }
 
 // -------------------------------------------------------------------
 
-// GetLootResponse
+// SyncLootChunk
 
 // .kelpieui.v1.LootItem item = 1;
-inline bool GetLootResponse::has_item() const {
+inline bool SyncLootChunk::has_item() const {
   bool value = CheckHasBit(_impl_._has_bits_[0], 0x00000002U);
   PROTOBUF_ASSUME(!value || _impl_.item_ != nullptr);
   return value;
 }
-inline void GetLootResponse::clear_item() {
+inline void SyncLootChunk::clear_item() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   if (_impl_.item_ != nullptr) _impl_.item_->Clear();
   ClearHasBit(_impl_._has_bits_[0],
                   0x00000002U);
 }
-inline const ::kelpieui::v1::LootItem& GetLootResponse::_internal_item() const {
+inline const ::kelpieui::v1::LootItem& SyncLootChunk::_internal_item() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
   const ::kelpieui::v1::LootItem* p = _impl_.item_;
   return p != nullptr ? *p : reinterpret_cast<const ::kelpieui::v1::LootItem&>(::kelpieui::v1::_LootItem_default_instance_);
 }
-inline const ::kelpieui::v1::LootItem& GetLootResponse::item() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_get:kelpieui.v1.GetLootResponse.item)
+inline const ::kelpieui::v1::LootItem& SyncLootChunk::item() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:kelpieui.v1.SyncLootChunk.item)
   return _internal_item();
 }
-inline void GetLootResponse::unsafe_arena_set_allocated_item(
+inline void SyncLootChunk::unsafe_arena_set_allocated_item(
     ::kelpieui::v1::LootItem* PROTOBUF_NULLABLE value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   if (GetArena() == nullptr) {
@@ -48167,9 +49788,9 @@ inline void GetLootResponse::unsafe_arena_set_allocated_item(
   } else {
     ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:kelpieui.v1.GetLootResponse.item)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:kelpieui.v1.SyncLootChunk.item)
 }
-inline ::kelpieui::v1::LootItem* PROTOBUF_NULLABLE GetLootResponse::release_item() {
+inline ::kelpieui::v1::LootItem* PROTOBUF_NULLABLE SyncLootChunk::release_item() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
 
   ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
@@ -48188,16 +49809,16 @@ inline ::kelpieui::v1::LootItem* PROTOBUF_NULLABLE GetLootResponse::release_item
   }
   return released;
 }
-inline ::kelpieui::v1::LootItem* PROTOBUF_NULLABLE GetLootResponse::unsafe_arena_release_item() {
+inline ::kelpieui::v1::LootItem* PROTOBUF_NULLABLE SyncLootChunk::unsafe_arena_release_item() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  // @@protoc_insertion_point(field_release:kelpieui.v1.GetLootResponse.item)
+  // @@protoc_insertion_point(field_release:kelpieui.v1.SyncLootChunk.item)
 
   ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
   ::kelpieui::v1::LootItem* temp = _impl_.item_;
   _impl_.item_ = nullptr;
   return temp;
 }
-inline ::kelpieui::v1::LootItem* PROTOBUF_NONNULL GetLootResponse::_internal_mutable_item() {
+inline ::kelpieui::v1::LootItem* PROTOBUF_NONNULL SyncLootChunk::_internal_mutable_item() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   if (_impl_.item_ == nullptr) {
     auto* p = ::google::protobuf::Message::DefaultConstruct<::kelpieui::v1::LootItem>(GetArena());
@@ -48205,14 +49826,14 @@ inline ::kelpieui::v1::LootItem* PROTOBUF_NONNULL GetLootResponse::_internal_mut
   }
   return _impl_.item_;
 }
-inline ::kelpieui::v1::LootItem* PROTOBUF_NONNULL GetLootResponse::mutable_item()
+inline ::kelpieui::v1::LootItem* PROTOBUF_NONNULL SyncLootChunk::mutable_item()
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
   SetHasBit(_impl_._has_bits_[0], 0x00000002U);
   ::kelpieui::v1::LootItem* _msg = _internal_mutable_item();
-  // @@protoc_insertion_point(field_mutable:kelpieui.v1.GetLootResponse.item)
+  // @@protoc_insertion_point(field_mutable:kelpieui.v1.SyncLootChunk.item)
   return _msg;
 }
-inline void GetLootResponse::set_allocated_item(::kelpieui::v1::LootItem* PROTOBUF_NULLABLE value) {
+inline void SyncLootChunk::set_allocated_item(::kelpieui::v1::LootItem* PROTOBUF_NULLABLE value) {
   ::google::protobuf::Arena* message_arena = GetArena();
   ::google::protobuf::internal::TSanWrite(&_impl_);
   if (message_arena == nullptr) {
@@ -48230,72 +49851,1030 @@ inline void GetLootResponse::set_allocated_item(::kelpieui::v1::LootItem* PROTOB
   }
 
   _impl_.item_ = reinterpret_cast<::kelpieui::v1::LootItem*>(value);
-  // @@protoc_insertion_point(field_set_allocated:kelpieui.v1.GetLootResponse.item)
+  // @@protoc_insertion_point(field_set_allocated:kelpieui.v1.SyncLootChunk.item)
 }
 
-// bytes content = 2;
-inline void GetLootResponse::clear_content() {
+// bytes data = 2;
+inline void SyncLootChunk::clear_data() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.content_.ClearToEmpty();
+  _impl_.data_.ClearToEmpty();
   ClearHasBit(_impl_._has_bits_[0],
                   0x00000001U);
 }
-inline const ::std::string& GetLootResponse::content() const
+inline const ::std::string& SyncLootChunk::data() const
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_get:kelpieui.v1.GetLootResponse.content)
-  return _internal_content();
+  // @@protoc_insertion_point(field_get:kelpieui.v1.SyncLootChunk.data)
+  return _internal_data();
 }
 template <typename Arg_, typename... Args_>
-PROTOBUF_ALWAYS_INLINE void GetLootResponse::set_content(Arg_&& arg, Args_... args) {
+PROTOBUF_ALWAYS_INLINE void SyncLootChunk::set_data(Arg_&& arg, Args_... args) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   SetHasBit(_impl_._has_bits_[0], 0x00000001U);
-  _impl_.content_.SetBytes(static_cast<Arg_&&>(arg), args..., GetArena());
-  // @@protoc_insertion_point(field_set:kelpieui.v1.GetLootResponse.content)
+  _impl_.data_.SetBytes(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:kelpieui.v1.SyncLootChunk.data)
 }
-inline ::std::string* PROTOBUF_NONNULL GetLootResponse::mutable_content()
+inline ::std::string* PROTOBUF_NONNULL SyncLootChunk::mutable_data()
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
   SetHasBit(_impl_._has_bits_[0], 0x00000001U);
-  ::std::string* _s = _internal_mutable_content();
-  // @@protoc_insertion_point(field_mutable:kelpieui.v1.GetLootResponse.content)
+  ::std::string* _s = _internal_mutable_data();
+  // @@protoc_insertion_point(field_mutable:kelpieui.v1.SyncLootChunk.data)
   return _s;
 }
-inline const ::std::string& GetLootResponse::_internal_content() const {
+inline const ::std::string& SyncLootChunk::_internal_data() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.content_.Get();
+  return _impl_.data_.Get();
 }
-inline void GetLootResponse::_internal_set_content(const ::std::string& value) {
+inline void SyncLootChunk::_internal_set_data(const ::std::string& value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.content_.Set(value, GetArena());
+  _impl_.data_.Set(value, GetArena());
 }
-inline ::std::string* PROTOBUF_NONNULL GetLootResponse::_internal_mutable_content() {
+inline ::std::string* PROTOBUF_NONNULL SyncLootChunk::_internal_mutable_data() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  return _impl_.content_.Mutable( GetArena());
+  return _impl_.data_.Mutable( GetArena());
 }
-inline ::std::string* PROTOBUF_NULLABLE GetLootResponse::release_content() {
+inline ::std::string* PROTOBUF_NULLABLE SyncLootChunk::release_data() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  // @@protoc_insertion_point(field_release:kelpieui.v1.GetLootResponse.content)
+  // @@protoc_insertion_point(field_release:kelpieui.v1.SyncLootChunk.data)
   if (!CheckHasBit(_impl_._has_bits_[0], 0x00000001U)) {
     return nullptr;
   }
   ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
-  auto* released = _impl_.content_.Release();
+  auto* released = _impl_.data_.Release();
   if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
-    _impl_.content_.Set("", GetArena());
+    _impl_.data_.Set("", GetArena());
   }
   return released;
 }
-inline void GetLootResponse::set_allocated_content(::std::string* PROTOBUF_NULLABLE value) {
+inline void SyncLootChunk::set_allocated_data(::std::string* PROTOBUF_NULLABLE value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   if (value != nullptr) {
     SetHasBit(_impl_._has_bits_[0], 0x00000001U);
   } else {
     ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
   }
-  _impl_.content_.SetAllocated(value, GetArena());
-  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.content_.IsDefault()) {
-    _impl_.content_.Set("", GetArena());
+  _impl_.data_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.data_.IsDefault()) {
+    _impl_.data_.Set("", GetArena());
   }
-  // @@protoc_insertion_point(field_set_allocated:kelpieui.v1.GetLootResponse.content)
+  // @@protoc_insertion_point(field_set_allocated:kelpieui.v1.SyncLootChunk.data)
+}
+
+// -------------------------------------------------------------------
+
+// RemoteFileEntry
+
+// string name = 1;
+inline void RemoteFileEntry::clear_name() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.name_.ClearToEmpty();
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000001U);
+}
+inline const ::std::string& RemoteFileEntry::name() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:kelpieui.v1.RemoteFileEntry.name)
+  return _internal_name();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void RemoteFileEntry::set_name(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  _impl_.name_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:kelpieui.v1.RemoteFileEntry.name)
+}
+inline ::std::string* PROTOBUF_NONNULL RemoteFileEntry::mutable_name()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  ::std::string* _s = _internal_mutable_name();
+  // @@protoc_insertion_point(field_mutable:kelpieui.v1.RemoteFileEntry.name)
+  return _s;
+}
+inline const ::std::string& RemoteFileEntry::_internal_name() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.name_.Get();
+}
+inline void RemoteFileEntry::_internal_set_name(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.name_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL RemoteFileEntry::_internal_mutable_name() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.name_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE RemoteFileEntry::release_name() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:kelpieui.v1.RemoteFileEntry.name)
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000001U)) {
+    return nullptr;
+  }
+  ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  auto* released = _impl_.name_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.name_.Set("", GetArena());
+  }
+  return released;
+}
+inline void RemoteFileEntry::set_allocated_name(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  }
+  _impl_.name_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.name_.IsDefault()) {
+    _impl_.name_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:kelpieui.v1.RemoteFileEntry.name)
+}
+
+// string path = 2;
+inline void RemoteFileEntry::clear_path() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.path_.ClearToEmpty();
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000002U);
+}
+inline const ::std::string& RemoteFileEntry::path() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:kelpieui.v1.RemoteFileEntry.path)
+  return _internal_path();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void RemoteFileEntry::set_path(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  _impl_.path_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:kelpieui.v1.RemoteFileEntry.path)
+}
+inline ::std::string* PROTOBUF_NONNULL RemoteFileEntry::mutable_path()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  ::std::string* _s = _internal_mutable_path();
+  // @@protoc_insertion_point(field_mutable:kelpieui.v1.RemoteFileEntry.path)
+  return _s;
+}
+inline const ::std::string& RemoteFileEntry::_internal_path() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.path_.Get();
+}
+inline void RemoteFileEntry::_internal_set_path(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.path_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL RemoteFileEntry::_internal_mutable_path() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.path_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE RemoteFileEntry::release_path() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:kelpieui.v1.RemoteFileEntry.path)
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000002U)) {
+    return nullptr;
+  }
+  ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
+  auto* released = _impl_.path_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.path_.Set("", GetArena());
+  }
+  return released;
+}
+inline void RemoteFileEntry::set_allocated_path(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
+  }
+  _impl_.path_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.path_.IsDefault()) {
+    _impl_.path_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:kelpieui.v1.RemoteFileEntry.path)
+}
+
+// bool is_dir = 3;
+inline void RemoteFileEntry::clear_is_dir() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.is_dir_ = false;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000020U);
+}
+inline bool RemoteFileEntry::is_dir() const {
+  // @@protoc_insertion_point(field_get:kelpieui.v1.RemoteFileEntry.is_dir)
+  return _internal_is_dir();
+}
+inline void RemoteFileEntry::set_is_dir(bool value) {
+  _internal_set_is_dir(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000020U);
+  // @@protoc_insertion_point(field_set:kelpieui.v1.RemoteFileEntry.is_dir)
+}
+inline bool RemoteFileEntry::_internal_is_dir() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.is_dir_;
+}
+inline void RemoteFileEntry::_internal_set_is_dir(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.is_dir_ = value;
+}
+
+// bool is_symlink = 4;
+inline void RemoteFileEntry::clear_is_symlink() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.is_symlink_ = false;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000040U);
+}
+inline bool RemoteFileEntry::is_symlink() const {
+  // @@protoc_insertion_point(field_get:kelpieui.v1.RemoteFileEntry.is_symlink)
+  return _internal_is_symlink();
+}
+inline void RemoteFileEntry::set_is_symlink(bool value) {
+  _internal_set_is_symlink(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000040U);
+  // @@protoc_insertion_point(field_set:kelpieui.v1.RemoteFileEntry.is_symlink)
+}
+inline bool RemoteFileEntry::_internal_is_symlink() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.is_symlink_;
+}
+inline void RemoteFileEntry::_internal_set_is_symlink(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.is_symlink_ = value;
+}
+
+// uint64 size = 5;
+inline void RemoteFileEntry::clear_size() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.size_ = ::uint64_t{0u};
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000010U);
+}
+inline ::uint64_t RemoteFileEntry::size() const {
+  // @@protoc_insertion_point(field_get:kelpieui.v1.RemoteFileEntry.size)
+  return _internal_size();
+}
+inline void RemoteFileEntry::set_size(::uint64_t value) {
+  _internal_set_size(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000010U);
+  // @@protoc_insertion_point(field_set:kelpieui.v1.RemoteFileEntry.size)
+}
+inline ::uint64_t RemoteFileEntry::_internal_size() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.size_;
+}
+inline void RemoteFileEntry::_internal_set_size(::uint64_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.size_ = value;
+}
+
+// string mode = 6;
+inline void RemoteFileEntry::clear_mode() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.mode_.ClearToEmpty();
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000004U);
+}
+inline const ::std::string& RemoteFileEntry::mode() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:kelpieui.v1.RemoteFileEntry.mode)
+  return _internal_mode();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void RemoteFileEntry::set_mode(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  SetHasBit(_impl_._has_bits_[0], 0x00000004U);
+  _impl_.mode_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:kelpieui.v1.RemoteFileEntry.mode)
+}
+inline ::std::string* PROTOBUF_NONNULL RemoteFileEntry::mutable_mode()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000004U);
+  ::std::string* _s = _internal_mutable_mode();
+  // @@protoc_insertion_point(field_mutable:kelpieui.v1.RemoteFileEntry.mode)
+  return _s;
+}
+inline const ::std::string& RemoteFileEntry::_internal_mode() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.mode_.Get();
+}
+inline void RemoteFileEntry::_internal_set_mode(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.mode_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL RemoteFileEntry::_internal_mutable_mode() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.mode_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE RemoteFileEntry::release_mode() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:kelpieui.v1.RemoteFileEntry.mode)
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000004U)) {
+    return nullptr;
+  }
+  ClearHasBit(_impl_._has_bits_[0], 0x00000004U);
+  auto* released = _impl_.mode_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.mode_.Set("", GetArena());
+  }
+  return released;
+}
+inline void RemoteFileEntry::set_allocated_mode(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[0], 0x00000004U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000004U);
+  }
+  _impl_.mode_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.mode_.IsDefault()) {
+    _impl_.mode_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:kelpieui.v1.RemoteFileEntry.mode)
+}
+
+// string modified_at = 7;
+inline void RemoteFileEntry::clear_modified_at() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.modified_at_.ClearToEmpty();
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000008U);
+}
+inline const ::std::string& RemoteFileEntry::modified_at() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:kelpieui.v1.RemoteFileEntry.modified_at)
+  return _internal_modified_at();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void RemoteFileEntry::set_modified_at(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  SetHasBit(_impl_._has_bits_[0], 0x00000008U);
+  _impl_.modified_at_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:kelpieui.v1.RemoteFileEntry.modified_at)
+}
+inline ::std::string* PROTOBUF_NONNULL RemoteFileEntry::mutable_modified_at()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000008U);
+  ::std::string* _s = _internal_mutable_modified_at();
+  // @@protoc_insertion_point(field_mutable:kelpieui.v1.RemoteFileEntry.modified_at)
+  return _s;
+}
+inline const ::std::string& RemoteFileEntry::_internal_modified_at() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.modified_at_.Get();
+}
+inline void RemoteFileEntry::_internal_set_modified_at(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.modified_at_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL RemoteFileEntry::_internal_mutable_modified_at() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.modified_at_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE RemoteFileEntry::release_modified_at() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:kelpieui.v1.RemoteFileEntry.modified_at)
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000008U)) {
+    return nullptr;
+  }
+  ClearHasBit(_impl_._has_bits_[0], 0x00000008U);
+  auto* released = _impl_.modified_at_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.modified_at_.Set("", GetArena());
+  }
+  return released;
+}
+inline void RemoteFileEntry::set_allocated_modified_at(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[0], 0x00000008U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000008U);
+  }
+  _impl_.modified_at_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.modified_at_.IsDefault()) {
+    _impl_.modified_at_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:kelpieui.v1.RemoteFileEntry.modified_at)
+}
+
+// bool hidden = 8;
+inline void RemoteFileEntry::clear_hidden() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.hidden_ = false;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000080U);
+}
+inline bool RemoteFileEntry::hidden() const {
+  // @@protoc_insertion_point(field_get:kelpieui.v1.RemoteFileEntry.hidden)
+  return _internal_hidden();
+}
+inline void RemoteFileEntry::set_hidden(bool value) {
+  _internal_set_hidden(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000080U);
+  // @@protoc_insertion_point(field_set:kelpieui.v1.RemoteFileEntry.hidden)
+}
+inline bool RemoteFileEntry::_internal_hidden() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.hidden_;
+}
+inline void RemoteFileEntry::_internal_set_hidden(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.hidden_ = value;
+}
+
+// bool is_drive = 9;
+inline void RemoteFileEntry::clear_is_drive() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.is_drive_ = false;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000100U);
+}
+inline bool RemoteFileEntry::is_drive() const {
+  // @@protoc_insertion_point(field_get:kelpieui.v1.RemoteFileEntry.is_drive)
+  return _internal_is_drive();
+}
+inline void RemoteFileEntry::set_is_drive(bool value) {
+  _internal_set_is_drive(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000100U);
+  // @@protoc_insertion_point(field_set:kelpieui.v1.RemoteFileEntry.is_drive)
+}
+inline bool RemoteFileEntry::_internal_is_drive() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.is_drive_;
+}
+inline void RemoteFileEntry::_internal_set_is_drive(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.is_drive_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// ListRemoteFilesRequest
+
+// string target_uuid = 1;
+inline void ListRemoteFilesRequest::clear_target_uuid() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.target_uuid_.ClearToEmpty();
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000001U);
+}
+inline const ::std::string& ListRemoteFilesRequest::target_uuid() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:kelpieui.v1.ListRemoteFilesRequest.target_uuid)
+  return _internal_target_uuid();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void ListRemoteFilesRequest::set_target_uuid(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  _impl_.target_uuid_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:kelpieui.v1.ListRemoteFilesRequest.target_uuid)
+}
+inline ::std::string* PROTOBUF_NONNULL ListRemoteFilesRequest::mutable_target_uuid()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  ::std::string* _s = _internal_mutable_target_uuid();
+  // @@protoc_insertion_point(field_mutable:kelpieui.v1.ListRemoteFilesRequest.target_uuid)
+  return _s;
+}
+inline const ::std::string& ListRemoteFilesRequest::_internal_target_uuid() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.target_uuid_.Get();
+}
+inline void ListRemoteFilesRequest::_internal_set_target_uuid(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.target_uuid_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL ListRemoteFilesRequest::_internal_mutable_target_uuid() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.target_uuid_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE ListRemoteFilesRequest::release_target_uuid() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:kelpieui.v1.ListRemoteFilesRequest.target_uuid)
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000001U)) {
+    return nullptr;
+  }
+  ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  auto* released = _impl_.target_uuid_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.target_uuid_.Set("", GetArena());
+  }
+  return released;
+}
+inline void ListRemoteFilesRequest::set_allocated_target_uuid(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  }
+  _impl_.target_uuid_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.target_uuid_.IsDefault()) {
+    _impl_.target_uuid_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:kelpieui.v1.ListRemoteFilesRequest.target_uuid)
+}
+
+// string path = 2;
+inline void ListRemoteFilesRequest::clear_path() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.path_.ClearToEmpty();
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000002U);
+}
+inline const ::std::string& ListRemoteFilesRequest::path() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:kelpieui.v1.ListRemoteFilesRequest.path)
+  return _internal_path();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void ListRemoteFilesRequest::set_path(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  _impl_.path_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:kelpieui.v1.ListRemoteFilesRequest.path)
+}
+inline ::std::string* PROTOBUF_NONNULL ListRemoteFilesRequest::mutable_path()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  ::std::string* _s = _internal_mutable_path();
+  // @@protoc_insertion_point(field_mutable:kelpieui.v1.ListRemoteFilesRequest.path)
+  return _s;
+}
+inline const ::std::string& ListRemoteFilesRequest::_internal_path() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.path_.Get();
+}
+inline void ListRemoteFilesRequest::_internal_set_path(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.path_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL ListRemoteFilesRequest::_internal_mutable_path() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.path_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE ListRemoteFilesRequest::release_path() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:kelpieui.v1.ListRemoteFilesRequest.path)
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000002U)) {
+    return nullptr;
+  }
+  ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
+  auto* released = _impl_.path_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.path_.Set("", GetArena());
+  }
+  return released;
+}
+inline void ListRemoteFilesRequest::set_allocated_path(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
+  }
+  _impl_.path_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.path_.IsDefault()) {
+    _impl_.path_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:kelpieui.v1.ListRemoteFilesRequest.path)
+}
+
+// -------------------------------------------------------------------
+
+// ListRemoteFilesResponse
+
+// string requested_path = 1;
+inline void ListRemoteFilesResponse::clear_requested_path() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.requested_path_.ClearToEmpty();
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000002U);
+}
+inline const ::std::string& ListRemoteFilesResponse::requested_path() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:kelpieui.v1.ListRemoteFilesResponse.requested_path)
+  return _internal_requested_path();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void ListRemoteFilesResponse::set_requested_path(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  _impl_.requested_path_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:kelpieui.v1.ListRemoteFilesResponse.requested_path)
+}
+inline ::std::string* PROTOBUF_NONNULL ListRemoteFilesResponse::mutable_requested_path()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  ::std::string* _s = _internal_mutable_requested_path();
+  // @@protoc_insertion_point(field_mutable:kelpieui.v1.ListRemoteFilesResponse.requested_path)
+  return _s;
+}
+inline const ::std::string& ListRemoteFilesResponse::_internal_requested_path() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.requested_path_.Get();
+}
+inline void ListRemoteFilesResponse::_internal_set_requested_path(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.requested_path_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL ListRemoteFilesResponse::_internal_mutable_requested_path() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.requested_path_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE ListRemoteFilesResponse::release_requested_path() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:kelpieui.v1.ListRemoteFilesResponse.requested_path)
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000002U)) {
+    return nullptr;
+  }
+  ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
+  auto* released = _impl_.requested_path_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.requested_path_.Set("", GetArena());
+  }
+  return released;
+}
+inline void ListRemoteFilesResponse::set_allocated_requested_path(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
+  }
+  _impl_.requested_path_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.requested_path_.IsDefault()) {
+    _impl_.requested_path_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:kelpieui.v1.ListRemoteFilesResponse.requested_path)
+}
+
+// string resolved_path = 2;
+inline void ListRemoteFilesResponse::clear_resolved_path() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.resolved_path_.ClearToEmpty();
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000004U);
+}
+inline const ::std::string& ListRemoteFilesResponse::resolved_path() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:kelpieui.v1.ListRemoteFilesResponse.resolved_path)
+  return _internal_resolved_path();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void ListRemoteFilesResponse::set_resolved_path(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  SetHasBit(_impl_._has_bits_[0], 0x00000004U);
+  _impl_.resolved_path_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:kelpieui.v1.ListRemoteFilesResponse.resolved_path)
+}
+inline ::std::string* PROTOBUF_NONNULL ListRemoteFilesResponse::mutable_resolved_path()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000004U);
+  ::std::string* _s = _internal_mutable_resolved_path();
+  // @@protoc_insertion_point(field_mutable:kelpieui.v1.ListRemoteFilesResponse.resolved_path)
+  return _s;
+}
+inline const ::std::string& ListRemoteFilesResponse::_internal_resolved_path() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.resolved_path_.Get();
+}
+inline void ListRemoteFilesResponse::_internal_set_resolved_path(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.resolved_path_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL ListRemoteFilesResponse::_internal_mutable_resolved_path() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.resolved_path_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE ListRemoteFilesResponse::release_resolved_path() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:kelpieui.v1.ListRemoteFilesResponse.resolved_path)
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000004U)) {
+    return nullptr;
+  }
+  ClearHasBit(_impl_._has_bits_[0], 0x00000004U);
+  auto* released = _impl_.resolved_path_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.resolved_path_.Set("", GetArena());
+  }
+  return released;
+}
+inline void ListRemoteFilesResponse::set_allocated_resolved_path(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[0], 0x00000004U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000004U);
+  }
+  _impl_.resolved_path_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.resolved_path_.IsDefault()) {
+    _impl_.resolved_path_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:kelpieui.v1.ListRemoteFilesResponse.resolved_path)
+}
+
+// string root_path = 3;
+inline void ListRemoteFilesResponse::clear_root_path() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.root_path_.ClearToEmpty();
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000008U);
+}
+inline const ::std::string& ListRemoteFilesResponse::root_path() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:kelpieui.v1.ListRemoteFilesResponse.root_path)
+  return _internal_root_path();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void ListRemoteFilesResponse::set_root_path(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  SetHasBit(_impl_._has_bits_[0], 0x00000008U);
+  _impl_.root_path_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:kelpieui.v1.ListRemoteFilesResponse.root_path)
+}
+inline ::std::string* PROTOBUF_NONNULL ListRemoteFilesResponse::mutable_root_path()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000008U);
+  ::std::string* _s = _internal_mutable_root_path();
+  // @@protoc_insertion_point(field_mutable:kelpieui.v1.ListRemoteFilesResponse.root_path)
+  return _s;
+}
+inline const ::std::string& ListRemoteFilesResponse::_internal_root_path() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.root_path_.Get();
+}
+inline void ListRemoteFilesResponse::_internal_set_root_path(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.root_path_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL ListRemoteFilesResponse::_internal_mutable_root_path() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.root_path_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE ListRemoteFilesResponse::release_root_path() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:kelpieui.v1.ListRemoteFilesResponse.root_path)
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000008U)) {
+    return nullptr;
+  }
+  ClearHasBit(_impl_._has_bits_[0], 0x00000008U);
+  auto* released = _impl_.root_path_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.root_path_.Set("", GetArena());
+  }
+  return released;
+}
+inline void ListRemoteFilesResponse::set_allocated_root_path(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[0], 0x00000008U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000008U);
+  }
+  _impl_.root_path_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.root_path_.IsDefault()) {
+    _impl_.root_path_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:kelpieui.v1.ListRemoteFilesResponse.root_path)
+}
+
+// string parent_path = 4;
+inline void ListRemoteFilesResponse::clear_parent_path() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.parent_path_.ClearToEmpty();
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000010U);
+}
+inline const ::std::string& ListRemoteFilesResponse::parent_path() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:kelpieui.v1.ListRemoteFilesResponse.parent_path)
+  return _internal_parent_path();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void ListRemoteFilesResponse::set_parent_path(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  SetHasBit(_impl_._has_bits_[0], 0x00000010U);
+  _impl_.parent_path_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:kelpieui.v1.ListRemoteFilesResponse.parent_path)
+}
+inline ::std::string* PROTOBUF_NONNULL ListRemoteFilesResponse::mutable_parent_path()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000010U);
+  ::std::string* _s = _internal_mutable_parent_path();
+  // @@protoc_insertion_point(field_mutable:kelpieui.v1.ListRemoteFilesResponse.parent_path)
+  return _s;
+}
+inline const ::std::string& ListRemoteFilesResponse::_internal_parent_path() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.parent_path_.Get();
+}
+inline void ListRemoteFilesResponse::_internal_set_parent_path(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.parent_path_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL ListRemoteFilesResponse::_internal_mutable_parent_path() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.parent_path_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE ListRemoteFilesResponse::release_parent_path() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:kelpieui.v1.ListRemoteFilesResponse.parent_path)
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000010U)) {
+    return nullptr;
+  }
+  ClearHasBit(_impl_._has_bits_[0], 0x00000010U);
+  auto* released = _impl_.parent_path_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.parent_path_.Set("", GetArena());
+  }
+  return released;
+}
+inline void ListRemoteFilesResponse::set_allocated_parent_path(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[0], 0x00000010U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000010U);
+  }
+  _impl_.parent_path_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.parent_path_.IsDefault()) {
+    _impl_.parent_path_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:kelpieui.v1.ListRemoteFilesResponse.parent_path)
+}
+
+// bool can_go_up = 5;
+inline void ListRemoteFilesResponse::clear_can_go_up() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.can_go_up_ = false;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000040U);
+}
+inline bool ListRemoteFilesResponse::can_go_up() const {
+  // @@protoc_insertion_point(field_get:kelpieui.v1.ListRemoteFilesResponse.can_go_up)
+  return _internal_can_go_up();
+}
+inline void ListRemoteFilesResponse::set_can_go_up(bool value) {
+  _internal_set_can_go_up(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000040U);
+  // @@protoc_insertion_point(field_set:kelpieui.v1.ListRemoteFilesResponse.can_go_up)
+}
+inline bool ListRemoteFilesResponse::_internal_can_go_up() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.can_go_up_;
+}
+inline void ListRemoteFilesResponse::_internal_set_can_go_up(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.can_go_up_ = value;
+}
+
+// repeated .kelpieui.v1.RemoteFileEntry entries = 6;
+inline int ListRemoteFilesResponse::_internal_entries_size() const {
+  return _internal_entries().size();
+}
+inline int ListRemoteFilesResponse::entries_size() const {
+  return _internal_entries_size();
+}
+inline void ListRemoteFilesResponse::clear_entries() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.entries_.Clear();
+  ClearHasBitForRepeated(_impl_._has_bits_[0],
+                  0x00000001U);
+}
+inline ::kelpieui::v1::RemoteFileEntry* PROTOBUF_NONNULL ListRemoteFilesResponse::mutable_entries(int index)
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_mutable:kelpieui.v1.ListRemoteFilesResponse.entries)
+  return _internal_mutable_entries()->Mutable(index);
+}
+inline ::google::protobuf::RepeatedPtrField<::kelpieui::v1::RemoteFileEntry>* PROTOBUF_NONNULL ListRemoteFilesResponse::mutable_entries()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBitForRepeated(_impl_._has_bits_[0], 0x00000001U);
+  // @@protoc_insertion_point(field_mutable_list:kelpieui.v1.ListRemoteFilesResponse.entries)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _internal_mutable_entries();
+}
+inline const ::kelpieui::v1::RemoteFileEntry& ListRemoteFilesResponse::entries(int index) const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:kelpieui.v1.ListRemoteFilesResponse.entries)
+  return _internal_entries().Get(index);
+}
+inline ::kelpieui::v1::RemoteFileEntry* PROTOBUF_NONNULL ListRemoteFilesResponse::add_entries()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::kelpieui::v1::RemoteFileEntry* _add =
+      _internal_mutable_entries()->InternalAddWithArena(
+          ::google::protobuf::MessageLite::internal_visibility(), GetArena());
+  SetHasBitForRepeated(_impl_._has_bits_[0], 0x00000001U);
+  // @@protoc_insertion_point(field_add:kelpieui.v1.ListRemoteFilesResponse.entries)
+  return _add;
+}
+inline const ::google::protobuf::RepeatedPtrField<::kelpieui::v1::RemoteFileEntry>& ListRemoteFilesResponse::entries() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_list:kelpieui.v1.ListRemoteFilesResponse.entries)
+  return _internal_entries();
+}
+inline const ::google::protobuf::RepeatedPtrField<::kelpieui::v1::RemoteFileEntry>&
+ListRemoteFilesResponse::_internal_entries() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.entries_;
+}
+inline ::google::protobuf::RepeatedPtrField<::kelpieui::v1::RemoteFileEntry>* PROTOBUF_NONNULL
+ListRemoteFilesResponse::_internal_mutable_entries() {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return &_impl_.entries_;
+}
+
+// bool virtual_root = 7;
+inline void ListRemoteFilesResponse::clear_virtual_root() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.virtual_root_ = false;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000080U);
+}
+inline bool ListRemoteFilesResponse::virtual_root() const {
+  // @@protoc_insertion_point(field_get:kelpieui.v1.ListRemoteFilesResponse.virtual_root)
+  return _internal_virtual_root();
+}
+inline void ListRemoteFilesResponse::set_virtual_root(bool value) {
+  _internal_set_virtual_root(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000080U);
+  // @@protoc_insertion_point(field_set:kelpieui.v1.ListRemoteFilesResponse.virtual_root)
+}
+inline bool ListRemoteFilesResponse::_internal_virtual_root() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.virtual_root_;
+}
+inline void ListRemoteFilesResponse::_internal_set_virtual_root(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.virtual_root_ = value;
+}
+
+// string display_path = 8;
+inline void ListRemoteFilesResponse::clear_display_path() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.display_path_.ClearToEmpty();
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000020U);
+}
+inline const ::std::string& ListRemoteFilesResponse::display_path() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:kelpieui.v1.ListRemoteFilesResponse.display_path)
+  return _internal_display_path();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void ListRemoteFilesResponse::set_display_path(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  SetHasBit(_impl_._has_bits_[0], 0x00000020U);
+  _impl_.display_path_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:kelpieui.v1.ListRemoteFilesResponse.display_path)
+}
+inline ::std::string* PROTOBUF_NONNULL ListRemoteFilesResponse::mutable_display_path()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000020U);
+  ::std::string* _s = _internal_mutable_display_path();
+  // @@protoc_insertion_point(field_mutable:kelpieui.v1.ListRemoteFilesResponse.display_path)
+  return _s;
+}
+inline const ::std::string& ListRemoteFilesResponse::_internal_display_path() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.display_path_.Get();
+}
+inline void ListRemoteFilesResponse::_internal_set_display_path(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.display_path_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL ListRemoteFilesResponse::_internal_mutable_display_path() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.display_path_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE ListRemoteFilesResponse::release_display_path() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:kelpieui.v1.ListRemoteFilesResponse.display_path)
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000020U)) {
+    return nullptr;
+  }
+  ClearHasBit(_impl_._has_bits_[0], 0x00000020U);
+  auto* released = _impl_.display_path_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.display_path_.Set("", GetArena());
+  }
+  return released;
+}
+inline void ListRemoteFilesResponse::set_allocated_display_path(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[0], 0x00000020U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000020U);
+  }
+  _impl_.display_path_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.display_path_.IsDefault()) {
+    _impl_.display_path_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:kelpieui.v1.ListRemoteFilesResponse.display_path)
 }
 
 // -------------------------------------------------------------------

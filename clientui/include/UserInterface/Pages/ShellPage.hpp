@@ -2,6 +2,7 @@
 #define STOCKMAN_SHELL_PAGE_HPP
 
 #include <QCheckBox>
+#include <QTableWidget>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPlainTextEdit>
@@ -31,11 +32,17 @@ namespace StockmanNamespace::UserInterface
         QString pendingTarget;
         QString pendingLine;
         std::shared_ptr<StockmanNamespace::ProxyStreamHandle> stream;
-        QLineEdit* downloadRemotePathInput = nullptr;
-        QLineEdit* downloadLocalPathInput = nullptr;
-        QPushButton* browseDownloadButton = nullptr;
-        QPushButton* startDownloadButton = nullptr;
+        QLineEdit* browsePathInput = nullptr;
+        QPushButton* browseGoButton = nullptr;
+        QPushButton* browseUpButton = nullptr;
+        QPushButton* browseRefreshButton = nullptr;
+        QTableWidget* browseTable = nullptr;
+        QLabel* browseStatusLabel = nullptr;
+        QPushButton* downloadButton = nullptr;
         QLabel* downloadStatusLabel = nullptr;
+        QString remoteRootPath;
+        QString remoteResolvedPath;
+        QString remoteParentPath;
         QLineEdit* uploadLocalPathInput = nullptr;
         QLineEdit* uploadRemotePathInput = nullptr;
         QCheckBox* uploadOverwriteCheck = nullptr;

@@ -2,6 +2,7 @@ package grpcserver
 
 import (
 	"context"
+	"io"
 	"strings"
 	"time"
 
@@ -160,19 +161,67 @@ func (s *service) SubmitLoot(ctx context.Context, req *uipb.SubmitLootRequest) (
 	return &uipb.SubmitLootResponse{Item: buildLootItem(saved)}, nil
 }
 
-func (s *service) GetLoot(ctx context.Context, req *uipb.GetLootRequest) (*uipb.GetLootResponse, error) {
+func (s *service) CollectLootFile(ctx context.Context, req *uipb.CollectLootFileRequest) (*uipb.CollectLootFileResponse, error) {
 	if s == nil || s.admin == nil {
 		return nil, status.Error(codes.Unavailable, "admin unavailable")
 	}
-	if req == nil || strings.TrimSpace(req.GetLootId()) == "" {
-		return nil, status.Error(codes.InvalidArgument, "loot_id required")
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "missing request")
 	}
-	rec, content, err := s.admin.GetLootContent(req.GetLootId())
+	target := strings.TrimSpace(req.GetTargetUuid())
+	remotePath := strings.TrimSpace(req.GetRemotePath())
+	if target == "" || remotePath == "" {
+		return nil, status.Error(codes.InvalidArgument, "target uuid and remote path required")
+	}
+	rec, err := s.admin.CollectLootFile(ctx, target, remotePath, s.currentOperator(ctx), normalizeTags(req.GetTags()))
 	if err != nil {
-		if rec.ID == "" {
-			return nil, status.Errorf(codes.NotFound, "get loot: %v", err)
-		}
-		return nil, status.Errorf(codes.Internal, "get loot content: %v", err)
+		return nil, status.Errorf(codes.Internal, "collect loot file failed: %v", err)
 	}
-	return &uipb.GetLootResponse{Item: buildLootItem(rec), Content: content}, nil
+	s.broadcastLootAdded(rec)
+	return &uipb.CollectLootFileResponse{Item: buildLootItem(rec)}, nil
+}
+
+func (s *service) SyncLoot(req *uipb.SyncLootRequest, stream uipb.KelpieUIService_SyncLootServer) error {
+	if s == nil || s.admin == nil {
+		return status.Error(codes.Unavailable, "admin unavailable")
+	}
+	if req == nil || strings.TrimSpace(req.GetLootId()) == "" {
+		return status.Error(codes.InvalidArgument, "loot_id required")
+	}
+	rec, reader, _, err := s.admin.OpenLootContent(req.GetLootId())
+	if err != nil {
+		return status.Errorf(codes.Internal, "open loot content: %v", err)
+	}
+	if reader == nil {
+		return status.Error(codes.FailedPrecondition, "loot content is not stored on kelpie")
+	}
+	defer reader.Close()
+
+	item := buildLootItem(rec)
+	buf := make([]byte, 64*1024)
+	first := true
+	for {
+		n, readErr := reader.Read(buf)
+		if n > 0 {
+			resp := &uipb.SyncLootChunk{
+				Data: append([]byte(nil), buf[:n]...),
+			}
+			if first {
+				resp.Item = item
+				first = false
+			}
+			if err := stream.Send(resp); err != nil {
+				return status.Errorf(codes.Unavailable, "send loot chunk: %v", err)
+			}
+		}
+		if readErr != nil {
+			if readErr == io.EOF {
+				if first {
+					return stream.Send(&uipb.SyncLootChunk{Item: item})
+				}
+				return nil
+			}
+			return status.Errorf(codes.Internal, "read loot content: %v", readErr)
+		}
+	}
 }

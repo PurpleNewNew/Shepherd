@@ -30,7 +30,7 @@ namespace StockmanNamespace::UserInterface
         limitSpin->setValue(100);
         refreshButton = new QPushButton(tr("Refresh"), this);
         submitButton = new QPushButton(tr("Submit File"), this);
-        downloadButton = new QPushButton(tr("Download Selected"), this);
+        downloadButton = new QPushButton(tr("Sync to Local"), this);
         lootControlLayout->addWidget(new QLabel(tr("Target:"), this));
         lootControlLayout->addWidget(targetInput);
         lootControlLayout->addWidget(new QLabel(tr("Tags:"), this));

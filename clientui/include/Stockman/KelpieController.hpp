@@ -10,6 +10,7 @@
 #include <QPointer>
 #include <QTimer>
 #include <QFile>
+#include <functional>
 #include <vector>
 #include <optional>
 #include <map>
@@ -90,12 +91,6 @@ namespace StockmanNamespace
         Q_OBJECT
 
     public:
-        struct FileDownloadSpec {
-            QString remotePath;
-            QString localPath;
-            int64_t offset{0};
-        };
-
         struct FileUploadSpec {
             QString localPath;
             QString remotePath;
@@ -222,9 +217,20 @@ namespace StockmanNamespace
                         bool uploadContent,
                         kelpieui::v1::LootItem* item,
                         QString& errorMessage);
-        bool GetLootContent(const QString& lootId,
+        bool CollectLootFile(const QString& targetUuid,
+                             const QString& remotePath,
+                             const QStringList& tags,
+                             kelpieui::v1::LootItem* item,
+                             QString& errorMessage);
+        bool ListRemoteFiles(const QString& targetUuid,
+                             const QString& path,
+                             kelpieui::v1::ListRemoteFilesResponse* listing,
+                             QString& errorMessage);
+        bool SyncLootToFile(const QString& lootId,
+                            const QString& localPath,
                             kelpieui::v1::LootItem* item,
-                            QByteArray* content,
+                            qint64* bytesWritten,
+                            const std::function<void(qint64, qint64)>& onProgress,
                             QString& errorMessage);
         bool ListDtnBundles(const QString& targetUuid,
                             int limit,
@@ -292,11 +298,6 @@ namespace StockmanNamespace
         std::shared_ptr<ProxyStreamHandle> StartShellStream(const QString& targetUuid,
                                                             kelpieui::v1::ShellMode mode,
                                                             QString& errorMessage);
-        [[nodiscard]] bool DownloadFileDataplane(const QString& targetUuid,
-                                                 const FileDownloadSpec& spec,
-                                                 QString& errorMessage,
-                                                 const std::function<void(qint64, qint64)>& onProgress = {},
-                                                 std::stop_token stopToken = {});
         [[nodiscard]] bool UploadFileDataplane(const QString& targetUuid,
                                                const FileUploadSpec& spec,
                                                QString& errorMessage,
@@ -368,14 +369,6 @@ namespace StockmanNamespace
                       QString& errorMessage,
                       const std::function<void(qint64, qint64)>& onProgress,
                       std::stop_token stopToken);
-        bool doDownload(const TransferEndpoint& endpoint,
-                        const Grpc::ConnectionOptions& grpcOptions,
-                        const QString& remotePath,
-                        qint64 offset,
-                        QFile& file,
-                        QString& errorMessage,
-                        const std::function<void(qint64, qint64)>& onProgress,
-                        std::stop_token stopToken);
         static QString generateSessionId();
         void removeStreamHandle(const QString& sessionId);
 

@@ -242,7 +242,7 @@ namespace StockmanNamespace::UserInterface
             });
     }
 
-    void KelpiePanel::downloadSelectedLoot()
+    void KelpiePanel::syncSelectedLootToLocal()
     {
         auto* ctrl = controller();
         if ( ctrl == nullptr )
@@ -273,7 +273,7 @@ namespace StockmanNamespace::UserInterface
         }
 
         setWidgetsEnabled({lootPage_->downloadButton, lootPage_->refreshButton, lootPage_->table}, false);
-        toastInfo(tr("Downloading loot %1...").arg(lootId));
+        toastInfo(tr("Syncing loot %1...").arg(lootId));
         const uint64_t epoch = ctrl->ConnectionEpoch();
 
         struct Result {
@@ -283,6 +283,7 @@ namespace StockmanNamespace::UserInterface
             bool ok{false};
             QString error;
             qint64 bytes{0};
+            kelpieui::v1::LootItem item;
         };
 
         runAsyncGuarded<Result>(
@@ -295,40 +296,17 @@ namespace StockmanNamespace::UserInterface
 
                 QString error;
                 kelpieui::v1::LootItem item;
-                QByteArray content;
-                if ( !ctrl->GetLootContent(lootId, &item, &content, error) )
-                {
-                    res.ok = false;
-                    res.error = error;
-                    return res;
-                }
-                if ( content.isEmpty() )
-                {
-                    res.ok = false;
-                    res.error = QObject::tr("Loot content is empty (storage_ref=%1)")
-                                    .arg(QString::fromStdString(item.storage_ref()));
-                    return res;
-                }
-
-                QFile out(savePath);
-                if ( !out.open(QIODevice::WriteOnly | QIODevice::Truncate) )
-                {
-                    res.ok = false;
-                    res.error = QObject::tr("Cannot open file for writing: %1").arg(savePath);
-                    return res;
-                }
-                const qint64 written = out.write(content);
-                out.close();
-                if ( written != content.size() )
-                {
-                    res.ok = false;
-                    res.error = QObject::tr("Loot download incomplete: wrote %1 / %2")
-                                    .arg(written)
-                                    .arg(content.size());
-                    return res;
-                }
-                res.ok = true;
-                res.bytes = content.size();
+                qint64 written = 0;
+                res.ok = ctrl->SyncLootToFile(
+                    lootId,
+                    savePath,
+                    &item,
+                    &written,
+                    {},
+                    error);
+                res.error = error;
+                res.bytes = written;
+                res.item = item;
                 return res;
             },
             [this]() {
@@ -339,10 +317,10 @@ namespace StockmanNamespace::UserInterface
                 return (ctrl != nullptr) && (ctrl->ConnectionEpoch() == res.epoch);
             },
             [this](const Result& res) {
-                toastError(tr("Loot download failed: %1").arg(res.error));
+                toastError(tr("Loot sync failed: %1").arg(res.error));
             },
             [this](const Result& res) {
-                toastInfo(tr("Loot saved: %1 (%2 bytes)")
+                toastInfo(tr("Loot synced: %1 (%2 bytes)")
                               .arg(QFileInfo(res.savePath).fileName())
                               .arg(res.bytes));
             });

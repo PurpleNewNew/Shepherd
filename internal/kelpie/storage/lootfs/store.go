@@ -1,9 +1,11 @@
 package lootfs
 
 import (
+	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"io"
 	"mime"
 	"os"
 	"path/filepath"
@@ -32,41 +34,80 @@ func New(baseDir string) (*Store, error) {
 
 // Store 将内容写入磁盘，并返回存储引用（绝对路径）、大小和 sha256。
 func (s *Store) Store(lootID string, data []byte, mimeType string) (string, uint64, string, error) {
+	if len(data) == 0 {
+		return "", 0, "", fmt.Errorf("lootfs: empty content")
+	}
+	return s.StoreStream(lootID, bytes.NewReader(data), mimeType)
+}
+
+// StoreStream 将流式内容写入磁盘，并返回存储引用、大小和 sha256。
+func (s *Store) StoreStream(lootID string, r io.Reader, mimeType string) (string, uint64, string, error) {
 	if s == nil {
 		return "", 0, "", fmt.Errorf("lootfs: nil store")
 	}
 	if strings.TrimSpace(lootID) == "" {
 		return "", 0, "", fmt.Errorf("lootfs: loot id required")
 	}
-	if len(data) == 0 {
-		return "", 0, "", fmt.Errorf("lootfs: empty content")
+	if r == nil {
+		return "", 0, "", fmt.Errorf("lootfs: reader required")
 	}
 	filename := lootID
 	if ext := guessExt(mimeType); ext != "" {
 		filename = fmt.Sprintf("%s%s", lootID, ext)
 	}
 	fullPath := filepath.Join(s.baseDir, filename)
-	if err := os.WriteFile(fullPath, data, 0o644); err != nil {
-		return "", 0, "", fmt.Errorf("lootfs: write file: %w", err)
+	tmpFile, err := os.CreateTemp(s.baseDir, lootID+".tmp-*")
+	if err != nil {
+		return "", 0, "", fmt.Errorf("lootfs: create temp file: %w", err)
 	}
-	hash := sha256.Sum256(data)
-	return fullPath, uint64(len(data)), hex.EncodeToString(hash[:]), nil
+	tmpPath := tmpFile.Name()
+	defer func() {
+		_ = tmpFile.Close()
+		_ = os.Remove(tmpPath)
+	}()
+	hasher := sha256.New()
+	written, err := io.Copy(io.MultiWriter(tmpFile, hasher), r)
+	if err != nil {
+		return "", 0, "", fmt.Errorf("lootfs: write stream: %w", err)
+	}
+	if written <= 0 {
+		return "", 0, "", fmt.Errorf("lootfs: empty content")
+	}
+	if err := tmpFile.Chmod(0o644); err != nil {
+		return "", 0, "", fmt.Errorf("lootfs: chmod temp file: %w", err)
+	}
+	if err := tmpFile.Close(); err != nil {
+		return "", 0, "", fmt.Errorf("lootfs: close temp file: %w", err)
+	}
+	if err := os.Rename(tmpPath, fullPath); err != nil {
+		return "", 0, "", fmt.Errorf("lootfs: commit file: %w", err)
+	}
+	return fullPath, uint64(written), hex.EncodeToString(hasher.Sum(nil)), nil
 }
 
-// Load 读取 Store 管理目录内的内容。
-func (s *Store) Load(storageRef string) ([]byte, error) {
+// Open 以只读流的形式打开已落盘的 loot 内容，并返回大小。
+func (s *Store) Open(storageRef string) (io.ReadCloser, uint64, error) {
 	if s == nil {
-		return nil, fmt.Errorf("lootfs: nil store")
+		return nil, 0, fmt.Errorf("lootfs: nil store")
 	}
 	fullPath, err := s.resolveStoragePath(storageRef)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
-	data, err := os.ReadFile(fullPath)
+	f, err := os.Open(fullPath)
 	if err != nil {
-		return nil, fmt.Errorf("lootfs: read file: %w", err)
+		return nil, 0, fmt.Errorf("lootfs: open file: %w", err)
 	}
-	return data, nil
+	info, err := f.Stat()
+	if err != nil {
+		_ = f.Close()
+		return nil, 0, fmt.Errorf("lootfs: stat file: %w", err)
+	}
+	size := uint64(0)
+	if info.Size() > 0 {
+		size = uint64(info.Size())
+	}
+	return f, size, nil
 }
 
 func (s *Store) resolveStoragePath(storageRef string) (string, error) {

@@ -22,7 +22,7 @@ namespace StockmanNamespace::UserInterface
         connect(chatPage_->refreshButton, &QPushButton::clicked, this, &KelpiePanel::refreshChat);
         connect(lootPage_->refreshButton, &QPushButton::clicked, this, &KelpiePanel::refreshLoot);
         connect(lootPage_->submitButton, &QPushButton::clicked, this, &KelpiePanel::submitLootFromFile);
-        connect(lootPage_->downloadButton, &QPushButton::clicked, this, &KelpiePanel::downloadSelectedLoot);
+        connect(lootPage_->downloadButton, &QPushButton::clicked, this, &KelpiePanel::syncSelectedLootToLocal);
         connect(workspace_.refreshProxiesButton, &QPushButton::clicked, this, &KelpiePanel::refreshProxies);
         connect(refreshListenersButton_, &QPushButton::clicked, this, &KelpiePanel::refreshListeners);
         connect(streams_.closeButton, &QPushButton::clicked, this, &KelpiePanel::closeSelectedStream);
@@ -74,8 +74,21 @@ namespace StockmanNamespace::UserInterface
         connect(shellPage_->openButton, &QPushButton::clicked, this, &KelpiePanel::startShell);
         connect(shellPage_->closeButton, &QPushButton::clicked, this, &KelpiePanel::stopShell);
         connect(shellPage_->input, &QLineEdit::returnPressed, this, &KelpiePanel::sendShellInput);
-        connect(shellPage_->browseDownloadButton, &QPushButton::clicked, this, &KelpiePanel::browseDownloadPath);
-        connect(shellPage_->startDownloadButton, &QPushButton::clicked, this, &KelpiePanel::startDownloadFile);
+        connect(shellPage_->browsePathInput, &QLineEdit::returnPressed, this, [this]() {
+            refreshRemoteFiles((shellPage_ != nullptr && shellPage_->browsePathInput != nullptr) ? shellPage_->browsePathInput->text() : QString());
+        });
+        connect(shellPage_->browseGoButton, &QPushButton::clicked, this, [this]() {
+            refreshRemoteFiles((shellPage_ != nullptr && shellPage_->browsePathInput != nullptr) ? shellPage_->browsePathInput->text() : QString());
+        });
+        connect(shellPage_->browseUpButton, &QPushButton::clicked, this, &KelpiePanel::browseRemoteFilesUp);
+        connect(shellPage_->browseRefreshButton, &QPushButton::clicked, this, [this]() {
+            refreshRemoteFiles((shellPage_ != nullptr && shellPage_->browsePathInput != nullptr) ? shellPage_->browsePathInput->text() : QString());
+        });
+        connect(shellPage_->browseTable, &QTableWidget::itemDoubleClicked, this, [this](QTableWidgetItem*) {
+            openSelectedRemoteEntry();
+        });
+        connect(shellPage_->browseTable, &QTableWidget::itemSelectionChanged, this, &KelpiePanel::updateRemoteFileSelection);
+        connect(shellPage_->downloadButton, &QPushButton::clicked, this, &KelpiePanel::collectRemoteFileToLoot);
         connect(shellPage_->browseUploadButton, &QPushButton::clicked, this, &KelpiePanel::browseUploadPath);
         connect(shellPage_->startUploadButton, &QPushButton::clicked, this, &KelpiePanel::startUploadFile);
         connect(shellPage_->startSocksButton, &QPushButton::clicked, this, &KelpiePanel::startSocksBridge);

@@ -571,7 +571,7 @@ func (agent *Agent) streamOpenHandler() bus.Handler {
 			if method == "1" {
 				go agent.startSSHTunnel(open.StreamID, opts, nil)
 			}
-		case "file-put", "file-get":
+		case "file-put", "file-get", "file-list":
 			agent.fileOnOpen(open.StreamID, opts)
 		case "proxy":
 			agent.proxyOnOpen(open.StreamID, opts)

@@ -273,6 +273,34 @@ struct TerminateSessionRequestDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 TerminateSessionRequestDefaultTypeInternal _TerminateSessionRequest_default_instance_;
 
+inline constexpr SyncLootRequest::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    ::_pbi::ConstantInitialized) noexcept
+      : _cached_size_{0},
+        loot_id_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()) {}
+
+template <typename>
+constexpr SyncLootRequest::SyncLootRequest(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(SyncLootRequest_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(internal_visibility(), ::_pbi::ConstantInitialized()) {
+}
+struct SyncLootRequestDefaultTypeInternal {
+  constexpr SyncLootRequestDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~SyncLootRequestDefaultTypeInternal() {}
+  union {
+    SyncLootRequest _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 SyncLootRequestDefaultTypeInternal _SyncLootRequest_default_instance_;
+
 inline constexpr SupplementalStatus::Impl_::Impl_(
     [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
     ::_pbi::ConstantInitialized) noexcept
@@ -1640,6 +1668,48 @@ struct RepairSessionRequestDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 RepairSessionRequestDefaultTypeInternal _RepairSessionRequest_default_instance_;
 
+inline constexpr RemoteFileEntry::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    ::_pbi::ConstantInitialized) noexcept
+      : _cached_size_{0},
+        name_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        path_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        mode_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        modified_at_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        size_{::uint64_t{0u}},
+        is_dir_{false},
+        is_symlink_{false},
+        hidden_{false},
+        is_drive_{false} {}
+
+template <typename>
+constexpr RemoteFileEntry::RemoteFileEntry(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(RemoteFileEntry_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(internal_visibility(), ::_pbi::ConstantInitialized()) {
+}
+struct RemoteFileEntryDefaultTypeInternal {
+  constexpr RemoteFileEntryDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~RemoteFileEntryDefaultTypeInternal() {}
+  union {
+    RemoteFileEntry _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 RemoteFileEntryDefaultTypeInternal _RemoteFileEntry_default_instance_;
+
 inline constexpr ReconnectSessionResponse::Impl_::Impl_(
     [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
     ::_pbi::ConstantInitialized) noexcept
@@ -2204,6 +2274,37 @@ struct ListRepairsRequestDefaultTypeInternal {
 
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ListRepairsRequestDefaultTypeInternal _ListRepairsRequest_default_instance_;
+
+inline constexpr ListRemoteFilesRequest::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    ::_pbi::ConstantInitialized) noexcept
+      : _cached_size_{0},
+        target_uuid_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        path_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()) {}
+
+template <typename>
+constexpr ListRemoteFilesRequest::ListRemoteFilesRequest(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(ListRemoteFilesRequest_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(internal_visibility(), ::_pbi::ConstantInitialized()) {
+}
+struct ListRemoteFilesRequestDefaultTypeInternal {
+  constexpr ListRemoteFilesRequestDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~ListRemoteFilesRequestDefaultTypeInternal() {}
+  union {
+    ListRemoteFilesRequest _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ListRemoteFilesRequestDefaultTypeInternal _ListRemoteFilesRequest_default_instance_;
 template <typename>
 constexpr ListProxiesRequest::ListProxiesRequest(::_pbi::ConstantInitialized)
 #if defined(PROTOBUF_CUSTOM_VTABLE)
@@ -2555,34 +2656,6 @@ struct GetMetricsRequestDefaultTypeInternal {
 
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 GetMetricsRequestDefaultTypeInternal _GetMetricsRequest_default_instance_;
-
-inline constexpr GetLootRequest::Impl_::Impl_(
-    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
-    ::_pbi::ConstantInitialized) noexcept
-      : _cached_size_{0},
-        loot_id_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()) {}
-
-template <typename>
-constexpr GetLootRequest::GetLootRequest(::_pbi::ConstantInitialized)
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-    : ::google::protobuf::Message(GetLootRequest_class_data_.base()),
-#else   // PROTOBUF_CUSTOM_VTABLE
-    : ::google::protobuf::Message(),
-#endif  // PROTOBUF_CUSTOM_VTABLE
-      _impl_(internal_visibility(), ::_pbi::ConstantInitialized()) {
-}
-struct GetLootRequestDefaultTypeInternal {
-  constexpr GetLootRequestDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
-  ~GetLootRequestDefaultTypeInternal() {}
-  union {
-    GetLootRequest _instance;
-  };
-};
-
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 GetLootRequestDefaultTypeInternal _GetLootRequest_default_instance_;
 
 inline constexpr GetDtnQueueStatsRequest::Impl_::Impl_(
     [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
@@ -2966,6 +3039,46 @@ struct ControllerListenerDefaultTypeInternal {
 
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ControllerListenerDefaultTypeInternal _ControllerListener_default_instance_;
+
+inline constexpr CollectLootFileRequest::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    ::_pbi::ConstantInitialized) noexcept
+      : _cached_size_{0},
+        #ifdef PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_REPEATED_PTR_FIELD
+        tags_{visibility, ::_pbi::InternalMetadataOffset::Build<
+            ::kelpieui::v1::CollectLootFileRequest,
+            PROTOBUF_FIELD_OFFSET(::kelpieui::v1::CollectLootFileRequest, _impl_.tags_)>()
+        }
+        #else  // !PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_REPEATED_PTR_FIELD
+        tags_ {}
+        #endif
+        ,
+        target_uuid_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        remote_path_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()) {}
+
+template <typename>
+constexpr CollectLootFileRequest::CollectLootFileRequest(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(CollectLootFileRequest_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(internal_visibility(), ::_pbi::ConstantInitialized()) {
+}
+struct CollectLootFileRequestDefaultTypeInternal {
+  constexpr CollectLootFileRequestDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~CollectLootFileRequestDefaultTypeInternal() {}
+  union {
+    CollectLootFileRequest _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 CollectLootFileRequestDefaultTypeInternal _CollectLootFileRequest_default_instance_;
 template <typename>
 constexpr CloseStreamResponse::CloseStreamResponse(::_pbi::ConstantInitialized)
 #if defined(PROTOBUF_CUSTOM_VTABLE)
@@ -3986,6 +4099,57 @@ struct ListRepairsResponseDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ListRepairsResponseDefaultTypeInternal _ListRepairsResponse_default_instance_;
 
+inline constexpr ListRemoteFilesResponse::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    ::_pbi::ConstantInitialized) noexcept
+      : _cached_size_{0},
+        #ifdef PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_REPEATED_PTR_FIELD
+        entries_{visibility, ::_pbi::InternalMetadataOffset::Build<
+            ::kelpieui::v1::ListRemoteFilesResponse,
+            PROTOBUF_FIELD_OFFSET(::kelpieui::v1::ListRemoteFilesResponse, _impl_.entries_)>()
+        }
+        #else  // !PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_REPEATED_PTR_FIELD
+        entries_ {}
+        #endif
+        ,
+        requested_path_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        resolved_path_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        root_path_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        parent_path_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        display_path_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        can_go_up_{false},
+        virtual_root_{false} {}
+
+template <typename>
+constexpr ListRemoteFilesResponse::ListRemoteFilesResponse(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(ListRemoteFilesResponse_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(internal_visibility(), ::_pbi::ConstantInitialized()) {
+}
+struct ListRemoteFilesResponseDefaultTypeInternal {
+  constexpr ListRemoteFilesResponseDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~ListRemoteFilesResponseDefaultTypeInternal() {}
+  union {
+    ListRemoteFilesResponse _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ListRemoteFilesResponseDefaultTypeInternal _ListRemoteFilesResponse_default_instance_;
+
 inline constexpr ListNodesResponse::Impl_::Impl_(
     [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
     ::_pbi::ConstantInitialized) noexcept
@@ -4540,6 +4704,35 @@ struct UpdatePivotListenerRequestDefaultTypeInternal {
 
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 UpdatePivotListenerRequestDefaultTypeInternal _UpdatePivotListenerRequest_default_instance_;
+
+inline constexpr SyncLootChunk::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    ::_pbi::ConstantInitialized) noexcept
+      : _cached_size_{0},
+        data_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        item_{nullptr} {}
+
+template <typename>
+constexpr SyncLootChunk::SyncLootChunk(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(SyncLootChunk_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(internal_visibility(), ::_pbi::ConstantInitialized()) {
+}
+struct SyncLootChunkDefaultTypeInternal {
+  constexpr SyncLootChunkDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~SyncLootChunkDefaultTypeInternal() {}
+  union {
+    SyncLootChunk _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 SyncLootChunkDefaultTypeInternal _SyncLootChunk_default_instance_;
 
 inline constexpr SubmitLootResponse::Impl_::Impl_(
     [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
@@ -5243,35 +5436,6 @@ struct ListLootResponseDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ListLootResponseDefaultTypeInternal _ListLootResponse_default_instance_;
 
-inline constexpr GetLootResponse::Impl_::Impl_(
-    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
-    ::_pbi::ConstantInitialized) noexcept
-      : _cached_size_{0},
-        content_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
-        item_{nullptr} {}
-
-template <typename>
-constexpr GetLootResponse::GetLootResponse(::_pbi::ConstantInitialized)
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-    : ::google::protobuf::Message(GetLootResponse_class_data_.base()),
-#else   // PROTOBUF_CUSTOM_VTABLE
-    : ::google::protobuf::Message(),
-#endif  // PROTOBUF_CUSTOM_VTABLE
-      _impl_(internal_visibility(), ::_pbi::ConstantInitialized()) {
-}
-struct GetLootResponseDefaultTypeInternal {
-  constexpr GetLootResponseDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
-  ~GetLootResponseDefaultTypeInternal() {}
-  union {
-    GetLootResponse _instance;
-  };
-};
-
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 GetLootResponseDefaultTypeInternal _GetLootResponse_default_instance_;
-
 inline constexpr GetDtnQueueStatsResponse::Impl_::Impl_(
     [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
     ::_pbi::ConstantInitialized) noexcept
@@ -5385,6 +5549,32 @@ struct CreatePivotListenerRequestDefaultTypeInternal {
 
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 CreatePivotListenerRequestDefaultTypeInternal _CreatePivotListenerRequest_default_instance_;
+
+inline constexpr CollectLootFileResponse::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    ::_pbi::ConstantInitialized) noexcept
+      : _cached_size_{0},
+        item_{nullptr} {}
+
+template <typename>
+constexpr CollectLootFileResponse::CollectLootFileResponse(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(CollectLootFileResponse_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(internal_visibility(), ::_pbi::ConstantInitialized()) {
+}
+struct CollectLootFileResponseDefaultTypeInternal {
+  constexpr CollectLootFileResponseDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~CollectLootFileResponseDefaultTypeInternal() {}
+  union {
+    CollectLootFileResponse _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 CollectLootFileResponseDefaultTypeInternal _CollectLootFileResponse_default_instance_;
 
 inline constexpr UiEvent::Impl_::Impl_(
     [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
@@ -5983,17 +6173,78 @@ const ::uint32_t
         PROTOBUF_FIELD_OFFSET(::kelpieui::v1::SubmitLootResponse, _impl_.item_),
         0,
         0x081, // bitmap
-        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::GetLootRequest, _impl_._has_bits_),
-        4, // hasbit index offset
-        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::GetLootRequest, _impl_.loot_id_),
+        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::CollectLootFileRequest, _impl_._has_bits_),
+        6, // hasbit index offset
+        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::CollectLootFileRequest, _impl_.target_uuid_),
+        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::CollectLootFileRequest, _impl_.remote_path_),
+        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::CollectLootFileRequest, _impl_.tags_),
+        1,
+        2,
         0,
         0x081, // bitmap
-        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::GetLootResponse, _impl_._has_bits_),
+        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::CollectLootFileResponse, _impl_._has_bits_),
+        4, // hasbit index offset
+        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::CollectLootFileResponse, _impl_.item_),
+        0,
+        0x081, // bitmap
+        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::SyncLootRequest, _impl_._has_bits_),
+        4, // hasbit index offset
+        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::SyncLootRequest, _impl_.loot_id_),
+        0,
+        0x081, // bitmap
+        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::SyncLootChunk, _impl_._has_bits_),
         5, // hasbit index offset
-        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::GetLootResponse, _impl_.item_),
-        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::GetLootResponse, _impl_.content_),
+        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::SyncLootChunk, _impl_.item_),
+        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::SyncLootChunk, _impl_.data_),
         1,
         0,
+        0x081, // bitmap
+        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::RemoteFileEntry, _impl_._has_bits_),
+        12, // hasbit index offset
+        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::RemoteFileEntry, _impl_.name_),
+        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::RemoteFileEntry, _impl_.path_),
+        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::RemoteFileEntry, _impl_.is_dir_),
+        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::RemoteFileEntry, _impl_.is_symlink_),
+        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::RemoteFileEntry, _impl_.size_),
+        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::RemoteFileEntry, _impl_.mode_),
+        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::RemoteFileEntry, _impl_.modified_at_),
+        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::RemoteFileEntry, _impl_.hidden_),
+        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::RemoteFileEntry, _impl_.is_drive_),
+        0,
+        1,
+        5,
+        6,
+        4,
+        2,
+        3,
+        7,
+        8,
+        0x081, // bitmap
+        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::ListRemoteFilesRequest, _impl_._has_bits_),
+        5, // hasbit index offset
+        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::ListRemoteFilesRequest, _impl_.target_uuid_),
+        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::ListRemoteFilesRequest, _impl_.path_),
+        0,
+        1,
+        0x081, // bitmap
+        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::ListRemoteFilesResponse, _impl_._has_bits_),
+        11, // hasbit index offset
+        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::ListRemoteFilesResponse, _impl_.requested_path_),
+        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::ListRemoteFilesResponse, _impl_.resolved_path_),
+        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::ListRemoteFilesResponse, _impl_.root_path_),
+        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::ListRemoteFilesResponse, _impl_.parent_path_),
+        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::ListRemoteFilesResponse, _impl_.can_go_up_),
+        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::ListRemoteFilesResponse, _impl_.entries_),
+        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::ListRemoteFilesResponse, _impl_.virtual_root_),
+        PROTOBUF_FIELD_OFFSET(::kelpieui::v1::ListRemoteFilesResponse, _impl_.display_path_),
+        1,
+        2,
+        3,
+        4,
+        6,
+        0,
+        7,
+        5,
         0x081, // bitmap
         PROTOBUF_FIELD_OFFSET(::kelpieui::v1::CreatePivotListenerRequest, _impl_._has_bits_),
         5, // hasbit index offset
@@ -6990,127 +7241,132 @@ static const ::_pbi::MigrationSchema
         {462, sizeof(::kelpieui::v1::SubmitLootRequest_MetadataEntry_DoNotUse)},
         {469, sizeof(::kelpieui::v1::SubmitLootRequest)},
         {494, sizeof(::kelpieui::v1::SubmitLootResponse)},
-        {499, sizeof(::kelpieui::v1::GetLootRequest)},
-        {504, sizeof(::kelpieui::v1::GetLootResponse)},
-        {511, sizeof(::kelpieui::v1::CreatePivotListenerRequest)},
-        {518, sizeof(::kelpieui::v1::CreatePivotListenerResponse)},
-        {523, sizeof(::kelpieui::v1::UpdatePivotListenerRequest)},
-        {532, sizeof(::kelpieui::v1::UpdatePivotListenerResponse)},
-        {537, sizeof(::kelpieui::v1::DeletePivotListenerRequest)},
-        {542, sizeof(::kelpieui::v1::DeletePivotListenerResponse)},
-        {543, sizeof(::kelpieui::v1::WatchEventsRequest)},
-        {548, sizeof(::kelpieui::v1::UiEvent)},
-        {563, sizeof(::kelpieui::v1::LootEvent)},
-        {570, sizeof(::kelpieui::v1::ChatMessage)},
-        {583, sizeof(::kelpieui::v1::ChatEvent)},
-        {588, sizeof(::kelpieui::v1::SendChatMessageRequest)},
-        {593, sizeof(::kelpieui::v1::SendChatMessageResponse)},
-        {598, sizeof(::kelpieui::v1::ListChatMessagesRequest)},
-        {605, sizeof(::kelpieui::v1::ListChatMessagesResponse)},
-        {610, sizeof(::kelpieui::v1::DialEvent)},
-        {617, sizeof(::kelpieui::v1::NodeEvent)},
-        {624, sizeof(::kelpieui::v1::StreamEvent)},
-        {633, sizeof(::kelpieui::v1::PivotListenerEvent)},
-        {640, sizeof(::kelpieui::v1::SessionEvent)},
-        {651, sizeof(::kelpieui::v1::StreamControl)},
-        {668, sizeof(::kelpieui::v1::ProxyStreamHandle_OptionsEntry_DoNotUse)},
-        {675, sizeof(::kelpieui::v1::ProxyStreamHandle)},
-        {686, sizeof(::kelpieui::v1::StartShellRequest)},
-        {695, sizeof(::kelpieui::v1::StartShellResponse)},
-        {700, sizeof(::kelpieui::v1::StartSocksProxyRequest)},
-        {711, sizeof(::kelpieui::v1::StartSocksProxyResponse)},
-        {716, sizeof(::kelpieui::v1::StartSshSessionRequest)},
-        {729, sizeof(::kelpieui::v1::StartSshSessionResponse)},
-        {734, sizeof(::kelpieui::v1::StreamRequest_OptionsEntry_DoNotUse)},
-        {741, sizeof(::kelpieui::v1::StreamRequest)},
-        {754, sizeof(::kelpieui::v1::StreamResponse)},
-        {765, sizeof(::kelpieui::v1::ProxyInfo_MetadataEntry_DoNotUse)},
-        {772, sizeof(::kelpieui::v1::ProxyInfo)},
-        {787, sizeof(::kelpieui::v1::ListProxiesRequest)},
-        {788, sizeof(::kelpieui::v1::ListProxiesResponse)},
-        {793, sizeof(::kelpieui::v1::ProxyEvent)},
-        {802, sizeof(::kelpieui::v1::SleepEvent)},
-        {819, sizeof(::kelpieui::v1::SleepProfile)},
-        {844, sizeof(::kelpieui::v1::ListSleepProfilesRequest)},
-        {845, sizeof(::kelpieui::v1::ListSleepProfilesResponse)},
-        {850, sizeof(::kelpieui::v1::RepairStatus)},
-        {865, sizeof(::kelpieui::v1::ListRepairsRequest)},
-        {866, sizeof(::kelpieui::v1::ListRepairsResponse)},
-        {871, sizeof(::kelpieui::v1::CloseStreamRequest)},
-        {878, sizeof(::kelpieui::v1::CloseStreamResponse)},
-        {879, sizeof(::kelpieui::v1::StartDialRequest)},
-        {888, sizeof(::kelpieui::v1::StartDialResponse)},
-        {899, sizeof(::kelpieui::v1::CancelDialRequest)},
-        {904, sizeof(::kelpieui::v1::CancelDialResponse)},
-        {911, sizeof(::kelpieui::v1::ListDialRequest)},
-        {912, sizeof(::kelpieui::v1::DialStatus)},
-        {933, sizeof(::kelpieui::v1::ListDialResponse)},
-        {938, sizeof(::kelpieui::v1::AuditLogEntry)},
-        {961, sizeof(::kelpieui::v1::AuditEvent)},
-        {966, sizeof(::kelpieui::v1::ListAuditLogsRequest)},
-        {979, sizeof(::kelpieui::v1::ListAuditLogsResponse)},
-        {984, sizeof(::kelpieui::v1::UpdateNodeMemoRequest)},
-        {991, sizeof(::kelpieui::v1::UpdateNodeMemoResponse)},
-        {992, sizeof(::kelpieui::v1::StartForwardProxyRequest)},
-        {1001, sizeof(::kelpieui::v1::StartForwardProxyResponse)},
-        {1012, sizeof(::kelpieui::v1::StopForwardProxyRequest)},
-        {1019, sizeof(::kelpieui::v1::StopForwardProxyResponse)},
-        {1024, sizeof(::kelpieui::v1::StartBackwardProxyRequest)},
-        {1033, sizeof(::kelpieui::v1::StartBackwardProxyResponse)},
-        {1044, sizeof(::kelpieui::v1::StopBackwardProxyRequest)},
-        {1051, sizeof(::kelpieui::v1::StopBackwardProxyResponse)},
-        {1056, sizeof(::kelpieui::v1::SessionInfo_MetadataEntry_DoNotUse)},
-        {1063, sizeof(::kelpieui::v1::SessionInfo)},
-        {1100, sizeof(::kelpieui::v1::ListSessionsRequest)},
-        {1109, sizeof(::kelpieui::v1::ListSessionsResponse)},
-        {1114, sizeof(::kelpieui::v1::MarkSessionRequest)},
-        {1123, sizeof(::kelpieui::v1::MarkSessionResponse)},
-        {1128, sizeof(::kelpieui::v1::RepairSessionRequest)},
-        {1137, sizeof(::kelpieui::v1::RepairSessionResponse)},
-        {1144, sizeof(::kelpieui::v1::ReconnectSessionRequest)},
-        {1151, sizeof(::kelpieui::v1::ReconnectSessionResponse)},
-        {1158, sizeof(::kelpieui::v1::TerminateSessionRequest)},
-        {1165, sizeof(::kelpieui::v1::TerminateSessionResponse)},
-        {1170, sizeof(::kelpieui::v1::SessionDiagnosticsRequest)},
-        {1179, sizeof(::kelpieui::v1::SessionMetric)},
-        {1186, sizeof(::kelpieui::v1::SessionProcess)},
-        {1201, sizeof(::kelpieui::v1::SessionIssue)},
-        {1210, sizeof(::kelpieui::v1::SessionDiagnosticsResponse)},
-        {1221, sizeof(::kelpieui::v1::UpdateSleepRequest)},
-        {1232, sizeof(::kelpieui::v1::UpdateSleepResponse)},
-        {1233, sizeof(::kelpieui::v1::ShutdownNodeRequest)},
-        {1238, sizeof(::kelpieui::v1::ShutdownNodeResponse)},
-        {1239, sizeof(::kelpieui::v1::StreamStatInfo)},
-        {1254, sizeof(::kelpieui::v1::StreamStatsRequest)},
-        {1255, sizeof(::kelpieui::v1::StreamStatsResponse)},
-        {1260, sizeof(::kelpieui::v1::StreamDiagnosticsRequest)},
-        {1261, sizeof(::kelpieui::v1::StreamDiagnosticsResponse)},
-        {1266, sizeof(::kelpieui::v1::StreamPingRequest)},
-        {1275, sizeof(::kelpieui::v1::StreamPingResponse)},
-        {1276, sizeof(::kelpieui::v1::NodeStatusRequest)},
-        {1281, sizeof(::kelpieui::v1::NodeStatusResponse)},
-        {1290, sizeof(::kelpieui::v1::NetworkInfo)},
-        {1299, sizeof(::kelpieui::v1::ListNetworksRequest)},
-        {1300, sizeof(::kelpieui::v1::ListNetworksResponse)},
-        {1307, sizeof(::kelpieui::v1::UseNetworkRequest)},
-        {1312, sizeof(::kelpieui::v1::UseNetworkResponse)},
-        {1317, sizeof(::kelpieui::v1::ResetNetworkRequest)},
-        {1318, sizeof(::kelpieui::v1::ResetNetworkResponse)},
-        {1323, sizeof(::kelpieui::v1::SetNodeNetworkRequest)},
-        {1330, sizeof(::kelpieui::v1::SetNodeNetworkResponse)},
-        {1331, sizeof(::kelpieui::v1::PruneOfflineRequest)},
-        {1332, sizeof(::kelpieui::v1::PruneOfflineResponse)},
-        {1337, sizeof(::kelpieui::v1::SupplementalStatus)},
-        {1348, sizeof(::kelpieui::v1::SupplementalMetrics)},
-        {1375, sizeof(::kelpieui::v1::ListSupplementalEventsRequest)},
-        {1380, sizeof(::kelpieui::v1::SupplementalEvent)},
-        {1397, sizeof(::kelpieui::v1::ListSupplementalEventsResponse)},
-        {1402, sizeof(::kelpieui::v1::ListSupplementalQualityRequest)},
-        {1409, sizeof(::kelpieui::v1::SupplementalQuality)},
-        {1430, sizeof(::kelpieui::v1::ListSupplementalQualityResponse)},
-        {1435, sizeof(::kelpieui::v1::SupplementalEmpty)},
-        {1436, sizeof(::kelpieui::v1::StartSshTunnelRequest)},
-        {1453, sizeof(::kelpieui::v1::StartSshTunnelResponse)},
+        {499, sizeof(::kelpieui::v1::CollectLootFileRequest)},
+        {508, sizeof(::kelpieui::v1::CollectLootFileResponse)},
+        {513, sizeof(::kelpieui::v1::SyncLootRequest)},
+        {518, sizeof(::kelpieui::v1::SyncLootChunk)},
+        {525, sizeof(::kelpieui::v1::RemoteFileEntry)},
+        {546, sizeof(::kelpieui::v1::ListRemoteFilesRequest)},
+        {553, sizeof(::kelpieui::v1::ListRemoteFilesResponse)},
+        {572, sizeof(::kelpieui::v1::CreatePivotListenerRequest)},
+        {579, sizeof(::kelpieui::v1::CreatePivotListenerResponse)},
+        {584, sizeof(::kelpieui::v1::UpdatePivotListenerRequest)},
+        {593, sizeof(::kelpieui::v1::UpdatePivotListenerResponse)},
+        {598, sizeof(::kelpieui::v1::DeletePivotListenerRequest)},
+        {603, sizeof(::kelpieui::v1::DeletePivotListenerResponse)},
+        {604, sizeof(::kelpieui::v1::WatchEventsRequest)},
+        {609, sizeof(::kelpieui::v1::UiEvent)},
+        {624, sizeof(::kelpieui::v1::LootEvent)},
+        {631, sizeof(::kelpieui::v1::ChatMessage)},
+        {644, sizeof(::kelpieui::v1::ChatEvent)},
+        {649, sizeof(::kelpieui::v1::SendChatMessageRequest)},
+        {654, sizeof(::kelpieui::v1::SendChatMessageResponse)},
+        {659, sizeof(::kelpieui::v1::ListChatMessagesRequest)},
+        {666, sizeof(::kelpieui::v1::ListChatMessagesResponse)},
+        {671, sizeof(::kelpieui::v1::DialEvent)},
+        {678, sizeof(::kelpieui::v1::NodeEvent)},
+        {685, sizeof(::kelpieui::v1::StreamEvent)},
+        {694, sizeof(::kelpieui::v1::PivotListenerEvent)},
+        {701, sizeof(::kelpieui::v1::SessionEvent)},
+        {712, sizeof(::kelpieui::v1::StreamControl)},
+        {729, sizeof(::kelpieui::v1::ProxyStreamHandle_OptionsEntry_DoNotUse)},
+        {736, sizeof(::kelpieui::v1::ProxyStreamHandle)},
+        {747, sizeof(::kelpieui::v1::StartShellRequest)},
+        {756, sizeof(::kelpieui::v1::StartShellResponse)},
+        {761, sizeof(::kelpieui::v1::StartSocksProxyRequest)},
+        {772, sizeof(::kelpieui::v1::StartSocksProxyResponse)},
+        {777, sizeof(::kelpieui::v1::StartSshSessionRequest)},
+        {790, sizeof(::kelpieui::v1::StartSshSessionResponse)},
+        {795, sizeof(::kelpieui::v1::StreamRequest_OptionsEntry_DoNotUse)},
+        {802, sizeof(::kelpieui::v1::StreamRequest)},
+        {815, sizeof(::kelpieui::v1::StreamResponse)},
+        {826, sizeof(::kelpieui::v1::ProxyInfo_MetadataEntry_DoNotUse)},
+        {833, sizeof(::kelpieui::v1::ProxyInfo)},
+        {848, sizeof(::kelpieui::v1::ListProxiesRequest)},
+        {849, sizeof(::kelpieui::v1::ListProxiesResponse)},
+        {854, sizeof(::kelpieui::v1::ProxyEvent)},
+        {863, sizeof(::kelpieui::v1::SleepEvent)},
+        {880, sizeof(::kelpieui::v1::SleepProfile)},
+        {905, sizeof(::kelpieui::v1::ListSleepProfilesRequest)},
+        {906, sizeof(::kelpieui::v1::ListSleepProfilesResponse)},
+        {911, sizeof(::kelpieui::v1::RepairStatus)},
+        {926, sizeof(::kelpieui::v1::ListRepairsRequest)},
+        {927, sizeof(::kelpieui::v1::ListRepairsResponse)},
+        {932, sizeof(::kelpieui::v1::CloseStreamRequest)},
+        {939, sizeof(::kelpieui::v1::CloseStreamResponse)},
+        {940, sizeof(::kelpieui::v1::StartDialRequest)},
+        {949, sizeof(::kelpieui::v1::StartDialResponse)},
+        {960, sizeof(::kelpieui::v1::CancelDialRequest)},
+        {965, sizeof(::kelpieui::v1::CancelDialResponse)},
+        {972, sizeof(::kelpieui::v1::ListDialRequest)},
+        {973, sizeof(::kelpieui::v1::DialStatus)},
+        {994, sizeof(::kelpieui::v1::ListDialResponse)},
+        {999, sizeof(::kelpieui::v1::AuditLogEntry)},
+        {1022, sizeof(::kelpieui::v1::AuditEvent)},
+        {1027, sizeof(::kelpieui::v1::ListAuditLogsRequest)},
+        {1040, sizeof(::kelpieui::v1::ListAuditLogsResponse)},
+        {1045, sizeof(::kelpieui::v1::UpdateNodeMemoRequest)},
+        {1052, sizeof(::kelpieui::v1::UpdateNodeMemoResponse)},
+        {1053, sizeof(::kelpieui::v1::StartForwardProxyRequest)},
+        {1062, sizeof(::kelpieui::v1::StartForwardProxyResponse)},
+        {1073, sizeof(::kelpieui::v1::StopForwardProxyRequest)},
+        {1080, sizeof(::kelpieui::v1::StopForwardProxyResponse)},
+        {1085, sizeof(::kelpieui::v1::StartBackwardProxyRequest)},
+        {1094, sizeof(::kelpieui::v1::StartBackwardProxyResponse)},
+        {1105, sizeof(::kelpieui::v1::StopBackwardProxyRequest)},
+        {1112, sizeof(::kelpieui::v1::StopBackwardProxyResponse)},
+        {1117, sizeof(::kelpieui::v1::SessionInfo_MetadataEntry_DoNotUse)},
+        {1124, sizeof(::kelpieui::v1::SessionInfo)},
+        {1161, sizeof(::kelpieui::v1::ListSessionsRequest)},
+        {1170, sizeof(::kelpieui::v1::ListSessionsResponse)},
+        {1175, sizeof(::kelpieui::v1::MarkSessionRequest)},
+        {1184, sizeof(::kelpieui::v1::MarkSessionResponse)},
+        {1189, sizeof(::kelpieui::v1::RepairSessionRequest)},
+        {1198, sizeof(::kelpieui::v1::RepairSessionResponse)},
+        {1205, sizeof(::kelpieui::v1::ReconnectSessionRequest)},
+        {1212, sizeof(::kelpieui::v1::ReconnectSessionResponse)},
+        {1219, sizeof(::kelpieui::v1::TerminateSessionRequest)},
+        {1226, sizeof(::kelpieui::v1::TerminateSessionResponse)},
+        {1231, sizeof(::kelpieui::v1::SessionDiagnosticsRequest)},
+        {1240, sizeof(::kelpieui::v1::SessionMetric)},
+        {1247, sizeof(::kelpieui::v1::SessionProcess)},
+        {1262, sizeof(::kelpieui::v1::SessionIssue)},
+        {1271, sizeof(::kelpieui::v1::SessionDiagnosticsResponse)},
+        {1282, sizeof(::kelpieui::v1::UpdateSleepRequest)},
+        {1293, sizeof(::kelpieui::v1::UpdateSleepResponse)},
+        {1294, sizeof(::kelpieui::v1::ShutdownNodeRequest)},
+        {1299, sizeof(::kelpieui::v1::ShutdownNodeResponse)},
+        {1300, sizeof(::kelpieui::v1::StreamStatInfo)},
+        {1315, sizeof(::kelpieui::v1::StreamStatsRequest)},
+        {1316, sizeof(::kelpieui::v1::StreamStatsResponse)},
+        {1321, sizeof(::kelpieui::v1::StreamDiagnosticsRequest)},
+        {1322, sizeof(::kelpieui::v1::StreamDiagnosticsResponse)},
+        {1327, sizeof(::kelpieui::v1::StreamPingRequest)},
+        {1336, sizeof(::kelpieui::v1::StreamPingResponse)},
+        {1337, sizeof(::kelpieui::v1::NodeStatusRequest)},
+        {1342, sizeof(::kelpieui::v1::NodeStatusResponse)},
+        {1351, sizeof(::kelpieui::v1::NetworkInfo)},
+        {1360, sizeof(::kelpieui::v1::ListNetworksRequest)},
+        {1361, sizeof(::kelpieui::v1::ListNetworksResponse)},
+        {1368, sizeof(::kelpieui::v1::UseNetworkRequest)},
+        {1373, sizeof(::kelpieui::v1::UseNetworkResponse)},
+        {1378, sizeof(::kelpieui::v1::ResetNetworkRequest)},
+        {1379, sizeof(::kelpieui::v1::ResetNetworkResponse)},
+        {1384, sizeof(::kelpieui::v1::SetNodeNetworkRequest)},
+        {1391, sizeof(::kelpieui::v1::SetNodeNetworkResponse)},
+        {1392, sizeof(::kelpieui::v1::PruneOfflineRequest)},
+        {1393, sizeof(::kelpieui::v1::PruneOfflineResponse)},
+        {1398, sizeof(::kelpieui::v1::SupplementalStatus)},
+        {1409, sizeof(::kelpieui::v1::SupplementalMetrics)},
+        {1436, sizeof(::kelpieui::v1::ListSupplementalEventsRequest)},
+        {1441, sizeof(::kelpieui::v1::SupplementalEvent)},
+        {1458, sizeof(::kelpieui::v1::ListSupplementalEventsResponse)},
+        {1463, sizeof(::kelpieui::v1::ListSupplementalQualityRequest)},
+        {1470, sizeof(::kelpieui::v1::SupplementalQuality)},
+        {1491, sizeof(::kelpieui::v1::ListSupplementalQualityResponse)},
+        {1496, sizeof(::kelpieui::v1::SupplementalEmpty)},
+        {1497, sizeof(::kelpieui::v1::StartSshTunnelRequest)},
+        {1514, sizeof(::kelpieui::v1::StartSshTunnelResponse)},
 };
 static const ::_pb::Message* PROTOBUF_NONNULL const file_default_instances[] = {
     &::kelpieui::v1::_SnapshotRequest_default_instance_._instance,
@@ -7162,8 +7418,13 @@ static const ::_pb::Message* PROTOBUF_NONNULL const file_default_instances[] = {
     &::kelpieui::v1::_SubmitLootRequest_MetadataEntry_DoNotUse_default_instance_._instance,
     &::kelpieui::v1::_SubmitLootRequest_default_instance_._instance,
     &::kelpieui::v1::_SubmitLootResponse_default_instance_._instance,
-    &::kelpieui::v1::_GetLootRequest_default_instance_._instance,
-    &::kelpieui::v1::_GetLootResponse_default_instance_._instance,
+    &::kelpieui::v1::_CollectLootFileRequest_default_instance_._instance,
+    &::kelpieui::v1::_CollectLootFileResponse_default_instance_._instance,
+    &::kelpieui::v1::_SyncLootRequest_default_instance_._instance,
+    &::kelpieui::v1::_SyncLootChunk_default_instance_._instance,
+    &::kelpieui::v1::_RemoteFileEntry_default_instance_._instance,
+    &::kelpieui::v1::_ListRemoteFilesRequest_default_instance_._instance,
+    &::kelpieui::v1::_ListRemoteFilesResponse_default_instance_._instance,
     &::kelpieui::v1::_CreatePivotListenerRequest_default_instance_._instance,
     &::kelpieui::v1::_CreatePivotListenerResponse_default_instance_._instance,
     &::kelpieui::v1::_UpdatePivotListenerRequest_default_instance_._instance,
@@ -7426,512 +7687,531 @@ const char descriptor_table_protodef_kelpieui_2fv1_2fkelpieui_2eproto[] ABSL_ATT
     "\t\022\014\n\004hash\030\t \001(\t\022\014\n\004size\030\n \001(\004\022\023\n\013storage"
     "_ref\030\013 \001(\t\032/\n\rMetadataEntry\022\013\n\003key\030\001 \001(\t"
     "\022\r\n\005value\030\002 \001(\t:\0028\001\"9\n\022SubmitLootRespons"
-    "e\022#\n\004item\030\001 \001(\0132\025.kelpieui.v1.LootItem\"!"
-    "\n\016GetLootRequest\022\017\n\007loot_id\030\001 \001(\t\"G\n\017Get"
-    "LootResponse\022#\n\004item\030\001 \001(\0132\025.kelpieui.v1"
-    ".LootItem\022\017\n\007content\030\002 \001(\014\"_\n\032CreatePivo"
-    "tListenerRequest\022\023\n\013target_uuid\030\001 \001(\t\022,\n"
-    "\004spec\030\002 \001(\0132\036.kelpieui.v1.PivotListenerS"
-    "pec\"K\n\033CreatePivotListenerResponse\022,\n\010li"
-    "stener\030\001 \001(\0132\032.kelpieui.v1.PivotListener"
-    "\"w\n\032UpdatePivotListenerRequest\022\023\n\013listen"
-    "er_id\030\001 \001(\t\022,\n\004spec\030\002 \001(\0132\036.kelpieui.v1."
-    "PivotListenerSpec\022\026\n\016desired_status\030\003 \001("
-    "\t\"K\n\033UpdatePivotListenerResponse\022,\n\010list"
-    "ener\030\001 \001(\0132\032.kelpieui.v1.PivotListener\"1"
-    "\n\032DeletePivotListenerRequest\022\023\n\013listener"
-    "_id\030\001 \001(\t\"\035\n\033DeletePivotListenerResponse"
-    "\".\n\022WatchEventsRequest\022\030\n\020interested_nod"
-    "es\030\001 \003(\t\"\355\004\n\007UiEvent\022,\n\nnode_event\030\001 \001(\013"
-    "2\026.kelpieui.v1.NodeEventH\000\022*\n\tlog_event\030"
-    "\002 \001(\0132\025.kelpieui.v1.LogEntryH\000\0220\n\014stream"
-    "_event\030\004 \001(\0132\030.kelpieui.v1.StreamEventH\000"
-    "\0229\n\016listener_event\030\005 \001(\0132\037.kelpieui.v1.P"
-    "ivotListenerEventH\000\0222\n\rsession_event\030\006 \001"
-    "(\0132\031.kelpieui.v1.SessionEventH\000\022,\n\ndial_"
-    "event\030\007 \001(\0132\026.kelpieui.v1.DialEventH\000\022.\n"
-    "\013proxy_event\030\010 \001(\0132\027.kelpieui.v1.ProxyEv"
-    "entH\000\022.\n\013sleep_event\030\t \001(\0132\027.kelpieui.v1"
-    ".SleepEventH\000\022<\n\022supplemental_event\030\n \001("
-    "\0132\036.kelpieui.v1.SupplementalEventH\000\022,\n\nc"
-    "hat_event\030\013 \001(\0132\026.kelpieui.v1.ChatEventH"
-    "\000\022.\n\013audit_event\030\014 \001(\0132\027.kelpieui.v1.Aud"
-    "itEventH\000\022,\n\nloot_event\030\r \001(\0132\026.kelpieui"
-    ".v1.LootEventH\000B\t\n\007payloadJ\004\010\003\020\004\"\225\001\n\tLoo"
-    "tEvent\022)\n\004kind\030\001 \001(\0162\033.kelpieui.v1.LootE"
-    "vent.Kind\022#\n\004item\030\002 \001(\0132\025.kelpieui.v1.Lo"
-    "otItem\"8\n\004Kind\022\032\n\026LOOT_EVENT_UNSPECIFIED"
-    "\020\000\022\024\n\020LOOT_EVENT_ADDED\020\001\"]\n\013ChatMessage\022"
-    "\n\n\002id\030\001 \001(\t\022\020\n\010username\030\002 \001(\t\022\014\n\004role\030\003 "
-    "\001(\t\022\017\n\007message\030\004 \001(\t\022\021\n\ttimestamp\030\005 \001(\t\""
-    "6\n\tChatEvent\022)\n\007message\030\001 \001(\0132\030.kelpieui"
-    ".v1.ChatMessage\")\n\026SendChatMessageReques"
-    "t\022\017\n\007message\030\001 \001(\t\"D\n\027SendChatMessageRes"
-    "ponse\022)\n\007message\030\001 \001(\0132\030.kelpieui.v1.Cha"
-    "tMessage\";\n\027ListChatMessagesRequest\022\r\n\005l"
-    "imit\030\001 \001(\005\022\021\n\tbefore_id\030\002 \001(\t\"F\n\030ListCha"
-    "tMessagesResponse\022*\n\010messages\030\001 \003(\0132\030.ke"
-    "lpieui.v1.ChatMessage\"\377\001\n\tDialEvent\022)\n\004k"
-    "ind\030\001 \001(\0162\033.kelpieui.v1.DialEvent.Kind\022\'"
-    "\n\006status\030\002 \001(\0132\027.kelpieui.v1.DialStatus\""
-    "\235\001\n\004Kind\022\032\n\026DIAL_EVENT_UNSPECIFIED\020\000\022\027\n\023"
-    "DIAL_EVENT_ENQUEUED\020\001\022\026\n\022DIAL_EVENT_RUNN"
-    "ING\020\002\022\030\n\024DIAL_EVENT_COMPLETED\020\003\022\025\n\021DIAL_"
-    "EVENT_FAILED\020\004\022\027\n\023DIAL_EVENT_CANCELED\020\005\""
-    "\225\001\n\tNodeEvent\022)\n\004kind\030\001 \001(\0162\033.kelpieui.v"
-    "1.NodeEvent.Kind\022#\n\004node\030\002 \001(\0132\025.kelpieu"
-    "i.v1.NodeInfo\"8\n\004Kind\022\013\n\007UNKNOWN\020\000\022\t\n\005AD"
-    "DED\020\001\022\013\n\007UPDATED\020\002\022\013\n\007REMOVED\020\003\"\315\001\n\013Stre"
-    "amEvent\022+\n\004kind\030\001 \001(\0162\035.kelpieui.v1.Stre"
-    "amEvent.Kind\022\'\n\006stream\030\002 \001(\0132\027.kelpieui."
-    "v1.StreamDiag\022\016\n\006reason\030\003 \001(\t\"X\n\004Kind\022\026\n"
-    "\022STREAM_UNSPECIFIED\020\000\022\021\n\rSTREAM_OPENED\020\001"
-    "\022\022\n\016STREAM_UPDATED\020\002\022\021\n\rSTREAM_CLOSED\020\003\""
-    "\360\001\n\022PivotListenerEvent\0222\n\004kind\030\001 \001(\0162$.k"
-    "elpieui.v1.PivotListenerEvent.Kind\022,\n\010li"
-    "stener\030\002 \001(\0132\032.kelpieui.v1.PivotListener"
-    "\"x\n\004Kind\022\036\n\032PIVOT_LISTENER_UNSPECIFIED\020\000"
-    "\022\030\n\024PIVOT_LISTENER_ADDED\020\001\022\032\n\026PIVOT_LIST"
-    "ENER_UPDATED\020\002\022\032\n\026PIVOT_LISTENER_REMOVED"
-    "\020\003\"\376\002\n\014SessionEvent\022,\n\004kind\030\001 \001(\0162\036.kelp"
-    "ieui.v1.SessionEvent.Kind\022)\n\007session\030\002 \001"
-    "(\0132\030.kelpieui.v1.SessionInfo\022\016\n\006reason\030\003"
-    " \001(\t\022\020\n\010operator\030\004 \001(\t\"\362\001\n\004Kind\022\035\n\031SESSI"
-    "ON_EVENT_UNSPECIFIED\020\000\022\027\n\023SESSION_EVENT_"
-    "ADDED\020\001\022\031\n\025SESSION_EVENT_UPDATED\020\002\022\031\n\025SE"
-    "SSION_EVENT_REMOVED\020\003\022\030\n\024SESSION_EVENT_M"
-    "ARKED\020\004\022 \n\034SESSION_EVENT_REPAIR_STARTED\020"
-    "\005\022\"\n\036SESSION_EVENT_REPAIR_COMPLETED\020\006\022\034\n"
-    "\030SESSION_EVENT_TERMINATED\020\007\"\216\002\n\rStreamCo"
-    "ntrol\022-\n\004kind\030\001 \001(\0162\037.kelpieui.v1.Stream"
-    "Control.Kind\022\014\n\004rows\030\002 \001(\r\022\014\n\004cols\030\003 \001(\r"
-    "\022\r\n\005error\030\004 \001(\t\0221\n\nerror_code\030\005 \001(\0162\035.ke"
-    "lpieui.v1.ProxyStreamError\022\021\n\tstream_id\030"
-    "\006 \001(\r\022\023\n\013stream_kind\030\007 \001(\t\"H\n\004Kind\022\024\n\020KI"
-    "ND_UNSPECIFIED\020\000\022\010\n\004OPEN\020\001\022\t\n\005CLOSE\020\002\022\t\n"
-    "\005ERROR\020\003\022\n\n\006RESIZE\020\004\"\270\001\n\021ProxyStreamHand"
-    "le\022\023\n\013target_uuid\030\001 \001(\t\022\022\n\nsession_id\030\002 "
-    "\001(\t\022\014\n\004kind\030\003 \001(\t\022<\n\007options\030\004 \003(\0132+.kel"
-    "pieui.v1.ProxyStreamHandle.OptionsEntry\032"
-    ".\n\014OptionsEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 "
-    "\001(\t:\0028\001\"i\n\021StartShellRequest\022\023\n\013target_u"
-    "uid\030\001 \001(\t\022$\n\004mode\030\002 \001(\0162\026.kelpieui.v1.Sh"
-    "ellMode\022\031\n\021resume_session_id\030\003 \001(\t\"D\n\022St"
-    "artShellResponse\022.\n\006handle\030\001 \001(\0132\036.kelpi"
-    "eui.v1.ProxyStreamHandle\"|\n\026StartSocksPr"
-    "oxyRequest\022\023\n\013target_uuid\030\001 \001(\t\022)\n\004auth\030"
-    "\002 \001(\0162\033.kelpieui.v1.SocksProxyAuth\022\020\n\010us"
-    "ername\030\003 \001(\t\022\020\n\010password\030\004 \001(\t\"I\n\027StartS"
-    "ocksProxyResponse\022.\n\006handle\030\001 \001(\0132\036.kelp"
-    "ieui.v1.ProxyStreamHandle\"\236\001\n\026StartSshSe"
-    "ssionRequest\022\023\n\013target_uuid\030\001 \001(\t\022\023\n\013ser"
-    "ver_addr\030\002 \001(\t\0226\n\013auth_method\030\003 \001(\0162!.ke"
-    "lpieui.v1.SshSessionAuthMethod\022\020\n\010userna"
-    "me\030\004 \001(\t\022\020\n\010password\030\005 \001(\t\"I\n\027StartSshSe"
-    "ssionResponse\022.\n\006handle\030\001 \001(\0132\036.kelpieui"
-    ".v1.ProxyStreamHandle\"\335\001\n\rStreamRequest\022"
-    "\022\n\nsession_id\030\001 \001(\t\022\023\n\013target_uuid\030\002 \001(\t"
-    "\0228\n\007options\030\003 \003(\0132\'.kelpieui.v1.StreamRe"
-    "quest.OptionsEntry\022\014\n\004data\030\004 \001(\014\022+\n\007cont"
-    "rol\030\005 \001(\0132\032.kelpieui.v1.StreamControl\032.\n"
-    "\014OptionsEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001("
-    "\t:\0028\001\"t\n\016StreamResponse\022\022\n\nsession_id\030\001 "
-    "\001(\t\022\023\n\013target_uuid\030\002 \001(\t\022\014\n\004data\030\003 \001(\014\022+"
-    "\n\007control\030\004 \001(\0132\032.kelpieui.v1.StreamCont"
-    "rol\"\307\001\n\tProxyInfo\022\020\n\010proxy_id\030\001 \001(\t\022\023\n\013t"
-    "arget_uuid\030\002 \001(\t\022\014\n\004kind\030\003 \001(\t\022\014\n\004bind\030\004"
-    " \001(\t\022\016\n\006remote\030\005 \001(\t\0226\n\010metadata\030\006 \003(\0132$"
-    ".kelpieui.v1.ProxyInfo.MetadataEntry\032/\n\r"
-    "MetadataEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001("
-    "\t:\0028\001\"\024\n\022ListProxiesRequest\">\n\023ListProxi"
-    "esResponse\022\'\n\007proxies\030\001 \003(\0132\026.kelpieui.v"
-    "1.ProxyInfo\"\336\001\n\nProxyEvent\022*\n\004kind\030\001 \001(\016"
-    "2\034.kelpieui.v1.ProxyEvent.Kind\022%\n\005proxy\030"
-    "\002 \001(\0132\026.kelpieui.v1.ProxyInfo\022\016\n\006reason\030"
-    "\003 \001(\t\"m\n\004Kind\022\033\n\027PROXY_EVENT_UNSPECIFIED"
-    "\020\000\022\027\n\023PROXY_EVENT_STARTED\020\001\022\027\n\023PROXY_EVE"
-    "NT_STOPPED\020\002\022\026\n\022PROXY_EVENT_FAILED\020\003\"\267\002\n"
-    "\nSleepEvent\022*\n\004kind\030\001 \001(\0162\034.kelpieui.v1."
-    "SleepEvent.Kind\022\023\n\013target_uuid\030\002 \001(\t\022\032\n\r"
-    "sleep_seconds\030\003 \001(\005H\000\210\001\001\022\031\n\014work_seconds"
-    "\030\004 \001(\005H\001\210\001\001\022\033\n\016jitter_percent\030\005 \001(\001H\002\210\001\001"
-    "\022\020\n\010operator\030\006 \001(\t\022\016\n\006reason\030\007 \001(\t\"<\n\004Ki"
-    "nd\022\033\n\027SLEEP_EVENT_UNSPECIFIED\020\000\022\027\n\023SLEEP"
-    "_EVENT_UPDATED\020\001B\020\n\016_sleep_secondsB\017\n\r_w"
-    "ork_secondsB\021\n\017_jitter_percent\"\252\002\n\014Sleep"
-    "Profile\022\023\n\013target_uuid\030\001 \001(\t\022\032\n\rsleep_se"
-    "conds\030\002 \001(\005H\000\210\001\001\022\031\n\014work_seconds\030\003 \001(\005H\001"
-    "\210\001\001\022\033\n\016jitter_percent\030\004 \001(\001H\002\210\001\001\022\017\n\007prof"
-    "ile\030\005 \001(\t\022\024\n\014last_updated\030\006 \001(\t\022\024\n\014next_"
-    "wake_at\030\007 \001(\t\022\016\n\006status\030\010 \001(\t\022\020\n\010operato"
-    "r\030\t \001(\t\022\016\n\006reason\030\n \001(\t\022\014\n\004memo\030\013 \001(\tB\020\n"
-    "\016_sleep_secondsB\017\n\r_work_secondsB\021\n\017_jit"
-    "ter_percent\"\032\n\030ListSleepProfilesRequest\""
-    "H\n\031ListSleepProfilesResponse\022+\n\010profiles"
-    "\030\001 \003(\0132\031.kelpieui.v1.SleepProfile\"\177\n\014Rep"
-    "airStatus\022\023\n\013target_uuid\030\001 \001(\t\022\020\n\010attemp"
-    "ts\030\002 \001(\005\022\024\n\014next_attempt\030\003 \001(\t\022\016\n\006broken"
-    "\030\004 \001(\010\022\022\n\nlast_error\030\005 \001(\t\022\016\n\006reason\030\006 \001"
-    "(\t\"\024\n\022ListRepairsRequest\"A\n\023ListRepairsR"
-    "esponse\022*\n\007repairs\030\001 \003(\0132\031.kelpieui.v1.R"
-    "epairStatus\"7\n\022CloseStreamRequest\022\021\n\tstr"
-    "eam_id\030\001 \001(\r\022\016\n\006reason\030\002 \001(\t\"\025\n\023CloseStr"
-    "eamResponse\"H\n\020StartDialRequest\022\023\n\013targe"
-    "t_uuid\030\001 \001(\t\022\017\n\007address\030\002 \001(\t\022\016\n\006reason\030"
-    "\003 \001(\t\"V\n\021StartDialResponse\022\017\n\007dial_id\030\001 "
-    "\001(\t\022\020\n\010accepted\030\002 \001(\010\022\017\n\007message\030\003 \001(\t\022\r"
-    "\n\005error\030\004 \001(\t\"$\n\021CancelDialRequest\022\017\n\007di"
-    "al_id\030\001 \001(\t\"5\n\022CancelDialResponse\022\020\n\010can"
-    "celed\030\001 \001(\010\022\r\n\005error\030\002 \001(\t\"\021\n\017ListDialRe"
-    "quest\"\303\001\n\nDialStatus\022\017\n\007dial_id\030\001 \001(\t\022\023\n"
-    "\013target_uuid\030\002 \001(\t\022\017\n\007address\030\003 \001(\t\022\016\n\006r"
-    "eason\030\004 \001(\t\022%\n\005state\030\005 \001(\0162\026.kelpieui.v1"
-    ".DialState\022\r\n\005error\030\006 \001(\t\022\020\n\010operator\030\007 "
-    "\001(\t\022\022\n\nstarted_at\030\010 \001(\t\022\022\n\nupdated_at\030\t "
-    "\001(\t\":\n\020ListDialResponse\022&\n\005dials\030\001 \003(\0132\027"
-    ".kelpieui.v1.DialStatus\"\257\001\n\rAuditLogEntr"
-    "y\022\n\n\002id\030\001 \001(\t\022\020\n\010username\030\002 \001(\t\022\014\n\004role\030"
-    "\003 \001(\t\022\016\n\006method\030\004 \001(\t\022\016\n\006target\030\005 \001(\t\022\022\n"
-    "\nparameters\030\006 \001(\t\022\016\n\006status\030\007 \001(\t\022\r\n\005err"
-    "or\030\010 \001(\t\022\014\n\004peer\030\t \001(\t\022\021\n\ttimestamp\030\n \001("
-    "\t\"7\n\nAuditEvent\022)\n\005entry\030\001 \001(\0132\032.kelpieu"
-    "i.v1.AuditLogEntry\"k\n\024ListAuditLogsReque"
-    "st\022\020\n\010username\030\001 \001(\t\022\016\n\006method\030\002 \001(\t\022\021\n\t"
-    "from_time\030\003 \001(\t\022\017\n\007to_time\030\004 \001(\t\022\r\n\005limi"
-    "t\030\005 \001(\005\"D\n\025ListAuditLogsResponse\022+\n\007entr"
-    "ies\030\001 \003(\0132\032.kelpieui.v1.AuditLogEntry\":\n"
-    "\025UpdateNodeMemoRequest\022\023\n\013target_uuid\030\001 "
-    "\001(\t\022\014\n\004memo\030\002 \001(\t\"\030\n\026UpdateNodeMemoRespo"
-    "nse\"X\n\030StartForwardProxyRequest\022\023\n\013targe"
-    "t_uuid\030\001 \001(\t\022\022\n\nlocal_bind\030\002 \001(\t\022\023\n\013remo"
-    "te_addr\030\003 \001(\t\"\200\001\n\031StartForwardProxyRespo"
-    "nse\022.\n\006handle\030\001 \001(\0132\036.kelpieui.v1.ProxyS"
-    "treamHandle\022\020\n\010proxy_id\030\002 \001(\t\022\014\n\004bind\030\003 "
-    "\001(\t\022\023\n\013remote_addr\030\004 \001(\t\"@\n\027StopForwardP"
-    "roxyRequest\022\023\n\013target_uuid\030\001 \001(\t\022\020\n\010prox"
-    "y_id\030\002 \001(\t\"+\n\030StopForwardProxyResponse\022\017"
-    "\n\007stopped\030\001 \001(\005\"Y\n\031StartBackwardProxyReq"
-    "uest\022\023\n\013target_uuid\030\001 \001(\t\022\023\n\013remote_port"
-    "\030\002 \001(\t\022\022\n\nlocal_port\030\003 \001(\t\"\207\001\n\032StartBack"
-    "wardProxyResponse\022.\n\006handle\030\001 \001(\0132\036.kelp"
-    "ieui.v1.ProxyStreamHandle\022\020\n\010proxy_id\030\002 "
-    "\001(\t\022\023\n\013remote_port\030\003 \001(\t\022\022\n\nlocal_port\030\004"
-    " \001(\t\"A\n\030StopBackwardProxyRequest\022\023\n\013targ"
-    "et_uuid\030\001 \001(\t\022\020\n\010proxy_id\030\002 \001(\t\",\n\031StopB"
-    "ackwardProxyResponse\022\017\n\007stopped\030\001 \001(\005\"\240\004"
-    "\n\013SessionInfo\022\023\n\013target_uuid\030\002 \001(\t\022*\n\006st"
-    "atus\030\003 \001(\0162\032.kelpieui.v1.SessionStatus\022\016"
-    "\n\006active\030\004 \001(\010\022\021\n\tconnected\030\005 \001(\010\022\023\n\013rem"
-    "ote_addr\030\006 \001(\t\022\020\n\010upstream\030\007 \001(\t\022\022\n\ndown"
-    "stream\030\010 \001(\t\022\022\n\nnetwork_id\030\t \001(\t\022\021\n\tlast"
-    "_seen\030\n \001(\t\022\022\n\nlast_error\030\013 \001(\t\022\025\n\rsleep"
-    "_profile\030\014 \001(\t\022\032\n\rsleep_seconds\030\r \001(\005H\000\210"
-    "\001\001\022\031\n\014work_seconds\030\016 \001(\005H\001\210\001\001\022\033\n\016jitter_"
-    "percent\030\017 \001(\001H\002\210\001\001\022\024\n\014last_command\030\020 \001(\t"
-    "\022\025\n\rlast_operator\030\021 \001(\t\0228\n\010metadata\030\022 \003("
-    "\0132&.kelpieui.v1.SessionInfo.MetadataEntr"
-    "y\032/\n\rMetadataEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value"
-    "\030\002 \001(\t:\0028\001B\020\n\016_sleep_secondsB\017\n\r_work_se"
-    "condsB\021\n\017_jitter_percent\"s\n\023ListSessions"
-    "Request\022\024\n\014target_uuids\030\001 \003(\t\022,\n\010statuse"
-    "s\030\002 \003(\0162\032.kelpieui.v1.SessionStatus\022\030\n\020i"
-    "nclude_inactive\030\003 \001(\010\"B\n\024ListSessionsRes"
-    "ponse\022*\n\010sessions\030\001 \003(\0132\030.kelpieui.v1.Se"
-    "ssionInfo\"i\n\022MarkSessionRequest\022\023\n\013targe"
-    "t_uuid\030\001 \001(\t\022.\n\006action\030\002 \001(\0162\036.kelpieui."
-    "v1.SessionMarkAction\022\016\n\006reason\030\003 \001(\t\"@\n\023"
-    "MarkSessionResponse\022)\n\007session\030\001 \001(\0132\030.k"
-    "elpieui.v1.SessionInfo\"J\n\024RepairSessionR"
-    "equest\022\023\n\013target_uuid\030\002 \001(\t\022\r\n\005force\030\003 \001"
-    "(\010\022\016\n\006reason\030\004 \001(\t\":\n\025RepairSessionRespo"
-    "nse\022\020\n\010enqueued\030\001 \001(\010\022\017\n\007message\030\002 \001(\t\">"
-    "\n\027ReconnectSessionRequest\022\023\n\013target_uuid"
-    "\030\002 \001(\t\022\016\n\006reason\030\003 \001(\t\"=\n\030ReconnectSessi"
-    "onResponse\022\020\n\010accepted\030\001 \001(\010\022\017\n\007message\030"
-    "\002 \001(\t\">\n\027TerminateSessionRequest\022\023\n\013targ"
-    "et_uuid\030\002 \001(\t\022\016\n\006reason\030\003 \001(\t\".\n\030Termina"
-    "teSessionResponse\022\022\n\nterminated\030\001 \001(\010\"d\n"
-    "\031SessionDiagnosticsRequest\022\023\n\013target_uui"
-    "d\030\002 \001(\t\022\031\n\021include_processes\030\003 \001(\010\022\027\n\017in"
-    "clude_metrics\030\004 \001(\010\",\n\rSessionMetric\022\014\n\004"
-    "name\030\001 \001(\t\022\r\n\005value\030\002 \001(\t\"k\n\016SessionProc"
-    "ess\022\013\n\003pid\030\001 \001(\t\022\014\n\004name\030\002 \001(\t\022\014\n\004user\030\003"
-    " \001(\t\022\016\n\006status\030\004 \001(\t\022\014\n\004path\030\005 \001(\t\022\022\n\nst"
-    "arted_at\030\006 \001(\t\"=\n\014SessionIssue\022\014\n\004code\030\001"
-    " \001(\t\022\017\n\007message\030\002 \001(\t\022\016\n\006detail\030\003 \001(\t\"\317\001"
-    "\n\032SessionDiagnosticsResponse\022)\n\007session\030"
-    "\001 \001(\0132\030.kelpieui.v1.SessionInfo\022+\n\007metri"
-    "cs\030\002 \003(\0132\032.kelpieui.v1.SessionMetric\022)\n\006"
-    "issues\030\003 \003(\0132\031.kelpieui.v1.SessionIssue\022"
-    ".\n\tprocesses\030\004 \003(\0132\033.kelpieui.v1.Session"
-    "Process\"\263\001\n\022UpdateSleepRequest\022\023\n\013target"
-    "_uuid\030\001 \001(\t\022\032\n\rsleep_seconds\030\002 \001(\005H\000\210\001\001\022"
-    "\031\n\014work_seconds\030\003 \001(\005H\001\210\001\001\022\033\n\016jitter_per"
-    "cent\030\004 \001(\001H\002\210\001\001B\020\n\016_sleep_secondsB\017\n\r_wo"
-    "rk_secondsB\021\n\017_jitter_percent\"\025\n\023UpdateS"
-    "leepResponse\"*\n\023ShutdownNodeRequest\022\023\n\013t"
-    "arget_uuid\030\001 \001(\t\"\026\n\024ShutdownNodeResponse"
-    "\"x\n\016StreamStatInfo\022\014\n\004kind\030\001 \001(\t\022\016\n\006open"
-    "ed\030\002 \001(\004\022\016\n\006closed\030\003 \001(\004\022\016\n\006active\030\004 \001(\004"
-    "\022\023\n\013last_reason\030\005 \001(\t\022\023\n\013last_closed\030\006 \001"
-    "(\t\"\024\n\022StreamStatsRequest\"A\n\023StreamStatsR"
-    "esponse\022*\n\005stats\030\001 \003(\0132\033.kelpieui.v1.Str"
-    "eamStatInfo\"\032\n\030StreamDiagnosticsRequest\""
-    "E\n\031StreamDiagnosticsResponse\022(\n\007streams\030"
-    "\001 \003(\0132\027.kelpieui.v1.StreamDiag\"M\n\021Stream"
-    "PingRequest\022\023\n\013target_uuid\030\001 \001(\t\022\r\n\005coun"
-    "t\030\002 \001(\005\022\024\n\014payload_size\030\003 \001(\005\"\024\n\022StreamP"
-    "ingResponse\"(\n\021NodeStatusRequest\022\023\n\013targ"
-    "et_uuid\030\001 \001(\t\"\230\001\n\022NodeStatusResponse\022#\n\004"
-    "node\030\001 \001(\0132\025.kelpieui.v1.NodeInfo\022(\n\007str"
-    "eams\030\002 \003(\0132\027.kelpieui.v1.StreamDiag\0223\n\017p"
-    "ivot_listeners\030\003 \003(\0132\032.kelpieui.v1.Pivot"
-    "Listener\"G\n\013NetworkInfo\022\022\n\nnetwork_id\030\001 "
-    "\001(\t\022\024\n\014target_uuids\030\002 \003(\t\022\016\n\006active\030\003 \001("
-    "\010\"\025\n\023ListNetworksRequest\"]\n\024ListNetworks"
-    "Response\022*\n\010networks\030\001 \003(\0132\030.kelpieui.v1"
-    ".NetworkInfo\022\031\n\021active_network_id\030\002 \001(\t\""
-    "\'\n\021UseNetworkRequest\022\022\n\nnetwork_id\030\001 \001(\t"
-    "\"/\n\022UseNetworkResponse\022\031\n\021active_network"
-    "_id\030\001 \001(\t\"\025\n\023ResetNetworkRequest\"1\n\024Rese"
-    "tNetworkResponse\022\031\n\021active_network_id\030\001 "
-    "\001(\t\"@\n\025SetNodeNetworkRequest\022\023\n\013target_u"
-    "uid\030\001 \001(\t\022\022\n\nnetwork_id\030\002 \001(\t\"\030\n\026SetNode"
-    "NetworkResponse\"\025\n\023PruneOfflineRequest\"\'"
-    "\n\024PruneOfflineResponse\022\017\n\007removed\030\001 \001(\005\""
-    "j\n\022SupplementalStatus\022\017\n\007enabled\030\001 \001(\010\022\024"
-    "\n\014queue_length\030\002 \001(\005\022\027\n\017pending_actions\030"
-    "\003 \001(\005\022\024\n\014active_links\030\004 \001(\005\"\221\002\n\023Suppleme"
-    "ntalMetrics\022\022\n\ndispatched\030\001 \001(\004\022\017\n\007succe"
-    "ss\030\002 \001(\004\022\020\n\010failures\030\003 \001(\004\022\017\n\007dropped\030\004 "
-    "\001(\004\022\020\n\010recycled\030\005 \001(\004\022\022\n\nqueue_high\030\006 \001("
-    "\004\022\024\n\014last_failure\030\007 \001(\t\022\021\n\tevent_seq\030\010 \001"
-    "(\004\022\027\n\017repair_attempts\030\t \001(\004\022\026\n\016repair_su"
-    "ccess\030\n \001(\004\022\027\n\017repair_failures\030\013 \001(\004\022\031\n\021"
-    "last_graph_report\030\014 \003(\t\".\n\035ListSupplemen"
-    "talEventsRequest\022\r\n\005limit\030\001 \001(\005\"\213\001\n\021Supp"
-    "lementalEvent\022\013\n\003seq\030\001 \001(\004\022\014\n\004kind\030\002 \001(\t"
-    "\022\016\n\006action\030\003 \001(\t\022\023\n\013source_uuid\030\004 \001(\t\022\023\n"
-    "\013target_uuid\030\005 \001(\t\022\016\n\006detail\030\006 \001(\t\022\021\n\tti"
-    "mestamp\030\007 \001(\t\"P\n\036ListSupplementalEventsR"
-    "esponse\022.\n\006events\030\001 \003(\0132\036.kelpieui.v1.Su"
-    "pplementalEvent\"C\n\036ListSupplementalQuali"
-    "tyRequest\022\r\n\005limit\030\001 \001(\005\022\022\n\nnode_uuids\030\002"
-    " \003(\t\"\341\001\n\023SupplementalQuality\022\021\n\tnode_uui"
-    "d\030\001 \001(\t\022\024\n\014health_score\030\002 \001(\001\022\025\n\rlatency"
-    "_score\030\003 \001(\001\022\025\n\rfailure_score\030\004 \001(\001\022\023\n\013q"
-    "ueue_score\030\005 \001(\001\022\027\n\017staleness_score\030\006 \001("
-    "\001\022\025\n\rtotal_success\030\007 \001(\004\022\026\n\016total_failur"
-    "es\030\010 \001(\004\022\026\n\016last_heartbeat\030\t \001(\t\"V\n\037List"
-    "SupplementalQualityResponse\0223\n\tqualities"
-    "\030\001 \003(\0132 .kelpieui.v1.SupplementalQuality"
-    "\"\023\n\021SupplementalEmpty\"\305\001\n\025StartSshTunnel"
+    "e\022#\n\004item\030\001 \001(\0132\025.kelpieui.v1.LootItem\"P"
+    "\n\026CollectLootFileRequest\022\023\n\013target_uuid\030"
+    "\001 \001(\t\022\023\n\013remote_path\030\002 \001(\t\022\014\n\004tags\030\003 \003(\t"
+    "\">\n\027CollectLootFileResponse\022#\n\004item\030\001 \001("
+    "\0132\025.kelpieui.v1.LootItem\"\"\n\017SyncLootRequ"
+    "est\022\017\n\007loot_id\030\001 \001(\t\"B\n\rSyncLootChunk\022#\n"
+    "\004item\030\001 \001(\0132\025.kelpieui.v1.LootItem\022\014\n\004da"
+    "ta\030\002 \001(\014\"\244\001\n\017RemoteFileEntry\022\014\n\004name\030\001 \001"
+    "(\t\022\014\n\004path\030\002 \001(\t\022\016\n\006is_dir\030\003 \001(\010\022\022\n\nis_s"
+    "ymlink\030\004 \001(\010\022\014\n\004size\030\005 \001(\004\022\014\n\004mode\030\006 \001(\t"
+    "\022\023\n\013modified_at\030\007 \001(\t\022\016\n\006hidden\030\010 \001(\010\022\020\n"
+    "\010is_drive\030\t \001(\010\";\n\026ListRemoteFilesReques"
+    "t\022\023\n\013target_uuid\030\001 \001(\t\022\014\n\004path\030\002 \001(\t\"\336\001\n"
+    "\027ListRemoteFilesResponse\022\026\n\016requested_pa"
+    "th\030\001 \001(\t\022\025\n\rresolved_path\030\002 \001(\t\022\021\n\troot_"
+    "path\030\003 \001(\t\022\023\n\013parent_path\030\004 \001(\t\022\021\n\tcan_g"
+    "o_up\030\005 \001(\010\022-\n\007entries\030\006 \003(\0132\034.kelpieui.v"
+    "1.RemoteFileEntry\022\024\n\014virtual_root\030\007 \001(\010\022"
+    "\024\n\014display_path\030\010 \001(\t\"_\n\032CreatePivotList"
+    "enerRequest\022\023\n\013target_uuid\030\001 \001(\t\022,\n\004spec"
+    "\030\002 \001(\0132\036.kelpieui.v1.PivotListenerSpec\"K"
+    "\n\033CreatePivotListenerResponse\022,\n\010listene"
+    "r\030\001 \001(\0132\032.kelpieui.v1.PivotListener\"w\n\032U"
+    "pdatePivotListenerRequest\022\023\n\013listener_id"
+    "\030\001 \001(\t\022,\n\004spec\030\002 \001(\0132\036.kelpieui.v1.Pivot"
+    "ListenerSpec\022\026\n\016desired_status\030\003 \001(\t\"K\n\033"
+    "UpdatePivotListenerResponse\022,\n\010listener\030"
+    "\001 \001(\0132\032.kelpieui.v1.PivotListener\"1\n\032Del"
+    "etePivotListenerRequest\022\023\n\013listener_id\030\001"
+    " \001(\t\"\035\n\033DeletePivotListenerResponse\".\n\022W"
+    "atchEventsRequest\022\030\n\020interested_nodes\030\001 "
+    "\003(\t\"\355\004\n\007UiEvent\022,\n\nnode_event\030\001 \001(\0132\026.ke"
+    "lpieui.v1.NodeEventH\000\022*\n\tlog_event\030\002 \001(\013"
+    "2\025.kelpieui.v1.LogEntryH\000\0220\n\014stream_even"
+    "t\030\004 \001(\0132\030.kelpieui.v1.StreamEventH\000\0229\n\016l"
+    "istener_event\030\005 \001(\0132\037.kelpieui.v1.PivotL"
+    "istenerEventH\000\0222\n\rsession_event\030\006 \001(\0132\031."
+    "kelpieui.v1.SessionEventH\000\022,\n\ndial_event"
+    "\030\007 \001(\0132\026.kelpieui.v1.DialEventH\000\022.\n\013prox"
+    "y_event\030\010 \001(\0132\027.kelpieui.v1.ProxyEventH\000"
+    "\022.\n\013sleep_event\030\t \001(\0132\027.kelpieui.v1.Slee"
+    "pEventH\000\022<\n\022supplemental_event\030\n \001(\0132\036.k"
+    "elpieui.v1.SupplementalEventH\000\022,\n\nchat_e"
+    "vent\030\013 \001(\0132\026.kelpieui.v1.ChatEventH\000\022.\n\013"
+    "audit_event\030\014 \001(\0132\027.kelpieui.v1.AuditEve"
+    "ntH\000\022,\n\nloot_event\030\r \001(\0132\026.kelpieui.v1.L"
+    "ootEventH\000B\t\n\007payloadJ\004\010\003\020\004\"\225\001\n\tLootEven"
+    "t\022)\n\004kind\030\001 \001(\0162\033.kelpieui.v1.LootEvent."
+    "Kind\022#\n\004item\030\002 \001(\0132\025.kelpieui.v1.LootIte"
+    "m\"8\n\004Kind\022\032\n\026LOOT_EVENT_UNSPECIFIED\020\000\022\024\n"
+    "\020LOOT_EVENT_ADDED\020\001\"]\n\013ChatMessage\022\n\n\002id"
+    "\030\001 \001(\t\022\020\n\010username\030\002 \001(\t\022\014\n\004role\030\003 \001(\t\022\017"
+    "\n\007message\030\004 \001(\t\022\021\n\ttimestamp\030\005 \001(\t\"6\n\tCh"
+    "atEvent\022)\n\007message\030\001 \001(\0132\030.kelpieui.v1.C"
+    "hatMessage\")\n\026SendChatMessageRequest\022\017\n\007"
+    "message\030\001 \001(\t\"D\n\027SendChatMessageResponse"
+    "\022)\n\007message\030\001 \001(\0132\030.kelpieui.v1.ChatMess"
+    "age\";\n\027ListChatMessagesRequest\022\r\n\005limit\030"
+    "\001 \001(\005\022\021\n\tbefore_id\030\002 \001(\t\"F\n\030ListChatMess"
+    "agesResponse\022*\n\010messages\030\001 \003(\0132\030.kelpieu"
+    "i.v1.ChatMessage\"\377\001\n\tDialEvent\022)\n\004kind\030\001"
+    " \001(\0162\033.kelpieui.v1.DialEvent.Kind\022\'\n\006sta"
+    "tus\030\002 \001(\0132\027.kelpieui.v1.DialStatus\"\235\001\n\004K"
+    "ind\022\032\n\026DIAL_EVENT_UNSPECIFIED\020\000\022\027\n\023DIAL_"
+    "EVENT_ENQUEUED\020\001\022\026\n\022DIAL_EVENT_RUNNING\020\002"
+    "\022\030\n\024DIAL_EVENT_COMPLETED\020\003\022\025\n\021DIAL_EVENT"
+    "_FAILED\020\004\022\027\n\023DIAL_EVENT_CANCELED\020\005\"\225\001\n\tN"
+    "odeEvent\022)\n\004kind\030\001 \001(\0162\033.kelpieui.v1.Nod"
+    "eEvent.Kind\022#\n\004node\030\002 \001(\0132\025.kelpieui.v1."
+    "NodeInfo\"8\n\004Kind\022\013\n\007UNKNOWN\020\000\022\t\n\005ADDED\020\001"
+    "\022\013\n\007UPDATED\020\002\022\013\n\007REMOVED\020\003\"\315\001\n\013StreamEve"
+    "nt\022+\n\004kind\030\001 \001(\0162\035.kelpieui.v1.StreamEve"
+    "nt.Kind\022\'\n\006stream\030\002 \001(\0132\027.kelpieui.v1.St"
+    "reamDiag\022\016\n\006reason\030\003 \001(\t\"X\n\004Kind\022\026\n\022STRE"
+    "AM_UNSPECIFIED\020\000\022\021\n\rSTREAM_OPENED\020\001\022\022\n\016S"
+    "TREAM_UPDATED\020\002\022\021\n\rSTREAM_CLOSED\020\003\"\360\001\n\022P"
+    "ivotListenerEvent\0222\n\004kind\030\001 \001(\0162$.kelpie"
+    "ui.v1.PivotListenerEvent.Kind\022,\n\010listene"
+    "r\030\002 \001(\0132\032.kelpieui.v1.PivotListener\"x\n\004K"
+    "ind\022\036\n\032PIVOT_LISTENER_UNSPECIFIED\020\000\022\030\n\024P"
+    "IVOT_LISTENER_ADDED\020\001\022\032\n\026PIVOT_LISTENER_"
+    "UPDATED\020\002\022\032\n\026PIVOT_LISTENER_REMOVED\020\003\"\376\002"
+    "\n\014SessionEvent\022,\n\004kind\030\001 \001(\0162\036.kelpieui."
+    "v1.SessionEvent.Kind\022)\n\007session\030\002 \001(\0132\030."
+    "kelpieui.v1.SessionInfo\022\016\n\006reason\030\003 \001(\t\022"
+    "\020\n\010operator\030\004 \001(\t\"\362\001\n\004Kind\022\035\n\031SESSION_EV"
+    "ENT_UNSPECIFIED\020\000\022\027\n\023SESSION_EVENT_ADDED"
+    "\020\001\022\031\n\025SESSION_EVENT_UPDATED\020\002\022\031\n\025SESSION"
+    "_EVENT_REMOVED\020\003\022\030\n\024SESSION_EVENT_MARKED"
+    "\020\004\022 \n\034SESSION_EVENT_REPAIR_STARTED\020\005\022\"\n\036"
+    "SESSION_EVENT_REPAIR_COMPLETED\020\006\022\034\n\030SESS"
+    "ION_EVENT_TERMINATED\020\007\"\216\002\n\rStreamControl"
+    "\022-\n\004kind\030\001 \001(\0162\037.kelpieui.v1.StreamContr"
+    "ol.Kind\022\014\n\004rows\030\002 \001(\r\022\014\n\004cols\030\003 \001(\r\022\r\n\005e"
+    "rror\030\004 \001(\t\0221\n\nerror_code\030\005 \001(\0162\035.kelpieu"
+    "i.v1.ProxyStreamError\022\021\n\tstream_id\030\006 \001(\r"
+    "\022\023\n\013stream_kind\030\007 \001(\t\"H\n\004Kind\022\024\n\020KIND_UN"
+    "SPECIFIED\020\000\022\010\n\004OPEN\020\001\022\t\n\005CLOSE\020\002\022\t\n\005ERRO"
+    "R\020\003\022\n\n\006RESIZE\020\004\"\270\001\n\021ProxyStreamHandle\022\023\n"
+    "\013target_uuid\030\001 \001(\t\022\022\n\nsession_id\030\002 \001(\t\022\014"
+    "\n\004kind\030\003 \001(\t\022<\n\007options\030\004 \003(\0132+.kelpieui"
+    ".v1.ProxyStreamHandle.OptionsEntry\032.\n\014Op"
+    "tionsEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\002"
+    "8\001\"i\n\021StartShellRequest\022\023\n\013target_uuid\030\001"
+    " \001(\t\022$\n\004mode\030\002 \001(\0162\026.kelpieui.v1.ShellMo"
+    "de\022\031\n\021resume_session_id\030\003 \001(\t\"D\n\022StartSh"
+    "ellResponse\022.\n\006handle\030\001 \001(\0132\036.kelpieui.v"
+    "1.ProxyStreamHandle\"|\n\026StartSocksProxyRe"
+    "quest\022\023\n\013target_uuid\030\001 \001(\t\022)\n\004auth\030\002 \001(\016"
+    "2\033.kelpieui.v1.SocksProxyAuth\022\020\n\010usernam"
+    "e\030\003 \001(\t\022\020\n\010password\030\004 \001(\t\"I\n\027StartSocksP"
+    "roxyResponse\022.\n\006handle\030\001 \001(\0132\036.kelpieui."
+    "v1.ProxyStreamHandle\"\236\001\n\026StartSshSession"
     "Request\022\023\n\013target_uuid\030\001 \001(\t\022\023\n\013server_a"
-    "ddr\030\002 \001(\t\022\022\n\nagent_port\030\003 \001(\t\0225\n\013auth_me"
-    "thod\030\004 \001(\0162 .kelpieui.v1.SshTunnelAuthMe"
-    "thod\022\020\n\010username\030\005 \001(\t\022\020\n\010password\030\006 \001(\t"
-    "\022\023\n\013private_key\030\007 \001(\014\"\030\n\026StartSshTunnelR"
-    "esponse*q\n\013DtnPriority\022\034\n\030DTN_PRIORITY_U"
-    "NSPECIFIED\020\000\022\024\n\020DTN_PRIORITY_LOW\020\001\022\027\n\023DT"
-    "N_PRIORITY_NORMAL\020\002\022\025\n\021DTN_PRIORITY_HIGH"
-    "\020\003*\233\001\n\021PivotListenerMode\022#\n\037PIVOT_LISTEN"
-    "ER_MODE_UNSPECIFIED\020\000\022\036\n\032PIVOT_LISTENER_"
-    "MODE_NORMAL\020\001\022 \n\034PIVOT_LISTENER_MODE_IPT"
-    "ABLES\020\002\022\037\n\033PIVOT_LISTENER_MODE_SOREUSE\020\003"
-    "*\345\001\n\030ControllerListenerStatus\022*\n&CONTROL"
-    "LER_LISTENER_STATUS_UNSPECIFIED\020\000\022&\n\"CON"
-    "TROLLER_LISTENER_STATUS_PENDING\020\001\022&\n\"CON"
-    "TROLLER_LISTENER_STATUS_RUNNING\020\002\022%\n!CON"
-    "TROLLER_LISTENER_STATUS_FAILED\020\003\022&\n\"CONT"
-    "ROLLER_LISTENER_STATUS_STOPPED\020\004*}\n\014Loot"
-    "Category\022\035\n\031LOOT_CATEGORY_UNSPECIFIED\020\000\022"
-    "\026\n\022LOOT_CATEGORY_FILE\020\001\022\034\n\030LOOT_CATEGORY"
-    "_SCREENSHOT\020\002\022\030\n\024LOOT_CATEGORY_TICKET\020\003*"
-    "\335\001\n\020ProxyStreamError\022!\n\035PROXYSTREAM_ERRO"
-    "R_UNSPECIFIED\020\000\022(\n$PROXYSTREAM_ERROR_TAR"
-    "GET_UNAVAILABLE\020\001\022&\n\"PROXYSTREAM_ERROR_I"
-    "NVALID_ARGUMENT\020\002\022\032\n\026PROXYSTREAM_ERROR_B"
-    "IND\020\003\022\034\n\030PROXYSTREAM_ERROR_REMOTE\020\004\022\032\n\026P"
-    "ROXYSTREAM_ERROR_AUTH\020\005*P\n\tShellMode\022\032\n\026"
-    "SHELL_MODE_UNSPECIFIED\020\000\022\023\n\017SHELL_MODE_P"
-    "IPE\020\001\022\022\n\016SHELL_MODE_PTY\020\002*l\n\016SocksProxyA"
-    "uth\022 \n\034SOCKS_PROXY_AUTH_UNSPECIFIED\020\000\022\031\n"
-    "\025SOCKS_PROXY_AUTH_NONE\020\001\022\035\n\031SOCKS_PROXY_"
-    "AUTH_USERPASS\020\002*e\n\024SshSessionAuthMethod\022"
-    "\'\n#SSH_SESSION_AUTH_METHOD_UNSPECIFIED\020\000"
-    "\022$\n SSH_SESSION_AUTH_METHOD_PASSWORD\020\001*\242"
-    "\001\n\tDialState\022\032\n\026DIAL_STATE_UNSPECIFIED\020\000"
-    "\022\027\n\023DIAL_STATE_ENQUEUED\020\001\022\026\n\022DIAL_STATE_"
-    "RUNNING\020\002\022\030\n\024DIAL_STATE_SUCCEEDED\020\003\022\025\n\021D"
-    "IAL_STATE_FAILED\020\004\022\027\n\023DIAL_STATE_CANCELE"
-    "D\020\005*\300\001\n\rSessionStatus\022\036\n\032SESSION_STATUS_"
-    "UNSPECIFIED\020\000\022\031\n\025SESSION_STATUS_ACTIVE\020\001"
-    "\022\033\n\027SESSION_STATUS_DEGRADED\020\002\022\031\n\025SESSION"
-    "_STATUS_FAILED\020\003\022\036\n\032SESSION_STATUS_MARKE"
-    "D_DEAD\020\004\022\034\n\030SESSION_STATUS_REPAIRING\020\005*\232"
-    "\001\n\021SessionMarkAction\022#\n\037SESSION_MARK_ACT"
-    "ION_UNSPECIFIED\020\000\022\035\n\031SESSION_MARK_ACTION"
-    "_ALIVE\020\001\022\034\n\030SESSION_MARK_ACTION_DEAD\020\002\022#"
-    "\n\037SESSION_MARK_ACTION_MAINTENANCE\020\003*\203\001\n\023"
-    "SshTunnelAuthMethod\022&\n\"SSH_TUNNEL_AUTH_M"
-    "ETHOD_UNSPECIFIED\020\000\022#\n\037SSH_TUNNEL_AUTH_M"
-    "ETHOD_PASSWORD\020\001\022\037\n\033SSH_TUNNEL_AUTH_METH"
-    "OD_CERT\020\0022\203\031\n\017KelpieUIService\022J\n\013GetSnap"
-    "shot\022\034.kelpieui.v1.SnapshotRequest\032\035.kel"
-    "pieui.v1.SnapshotResponse\022J\n\tListNodes\022\035"
-    ".kelpieui.v1.ListNodesRequest\032\036.kelpieui"
-    ".v1.ListNodesResponse\022P\n\013GetTopology\022\037.k"
-    "elpieui.v1.GetTopologyRequest\032 .kelpieui"
-    ".v1.GetTopologyResponse\022F\n\013WatchEvents\022\037"
-    ".kelpieui.v1.WatchEventsRequest\032\024.kelpie"
-    "ui.v1.UiEvent0\001\022G\n\010ListLoot\022\034.kelpieui.v"
-    "1.ListLootRequest\032\035.kelpieui.v1.ListLoot"
-    "Response\022M\n\nSubmitLoot\022\036.kelpieui.v1.Sub"
-    "mitLootRequest\032\037.kelpieui.v1.SubmitLootR"
-    "esponse\022D\n\007GetLoot\022\033.kelpieui.v1.GetLoot"
-    "Request\032\034.kelpieui.v1.GetLootResponse\022J\n"
-    "\013ProxyStream\022\032.kelpieui.v1.StreamRequest"
-    "\032\033.kelpieui.v1.StreamResponse(\0010\001\022M\n\nSta"
-    "rtShell\022\036.kelpieui.v1.StartShellRequest\032"
-    "\037.kelpieui.v1.StartShellResponse\022\\\n\017Star"
-    "tSocksProxy\022#.kelpieui.v1.StartSocksProx"
-    "yRequest\032$.kelpieui.v1.StartSocksProxyRe"
-    "sponse\022\\\n\017StartSshSession\022#.kelpieui.v1."
-    "StartSshSessionRequest\032$.kelpieui.v1.Sta"
-    "rtSshSessionResponse\022Y\n\016UpdateNodeMemo\022\""
-    ".kelpieui.v1.UpdateNodeMemoRequest\032#.kel"
-    "pieui.v1.UpdateNodeMemoResponse\022S\n\014ListS"
-    "essions\022 .kelpieui.v1.ListSessionsReques"
-    "t\032!.kelpieui.v1.ListSessionsResponse\022P\n\013"
-    "MarkSession\022\037.kelpieui.v1.MarkSessionReq"
-    "uest\032 .kelpieui.v1.MarkSessionResponse\022V"
-    "\n\rRepairSession\022!.kelpieui.v1.RepairSess"
-    "ionRequest\032\".kelpieui.v1.RepairSessionRe"
-    "sponse\022_\n\020ReconnectSession\022$.kelpieui.v1"
-    ".ReconnectSessionRequest\032%.kelpieui.v1.R"
-    "econnectSessionResponse\022_\n\020TerminateSess"
-    "ion\022$.kelpieui.v1.TerminateSessionReques"
-    "t\032%.kelpieui.v1.TerminateSessionResponse"
-    "\022h\n\025GetSessionDiagnostics\022&.kelpieui.v1."
-    "SessionDiagnosticsRequest\032\'.kelpieui.v1."
-    "SessionDiagnosticsResponse\022P\n\013CloseStrea"
-    "m\022\037.kelpieui.v1.CloseStreamRequest\032 .kel"
-    "pieui.v1.CloseStreamResponse\022Y\n\016StartSsh"
-    "Tunnel\022\".kelpieui.v1.StartSshTunnelReque"
-    "st\032#.kelpieui.v1.StartSshTunnelResponse\022"
-    "S\n\014ShutdownNode\022 .kelpieui.v1.ShutdownNo"
-    "deRequest\032!.kelpieui.v1.ShutdownNodeResp"
-    "onse\022P\n\013StreamStats\022\037.kelpieui.v1.Stream"
-    "StatsRequest\032 .kelpieui.v1.StreamStatsRe"
-    "sponse\022b\n\021StreamDiagnostics\022%.kelpieui.v"
-    "1.StreamDiagnosticsRequest\032&.kelpieui.v1"
-    ".StreamDiagnosticsResponse\022M\n\nStreamPing"
-    "\022\036.kelpieui.v1.StreamPingRequest\032\037.kelpi"
-    "eui.v1.StreamPingResponse\022M\n\nGetMetrics\022"
-    "\036.kelpieui.v1.GetMetricsRequest\032\037.kelpie"
-    "ui.v1.GetMetricsResponse\022_\n\020GetDtnQueueS"
-    "tats\022$.kelpieui.v1.GetDtnQueueStatsReque"
-    "st\032%.kelpieui.v1.GetDtnQueueStatsRespons"
-    "e\022Y\n\016ListDtnBundles\022\".kelpieui.v1.ListDt"
-    "nBundlesRequest\032#.kelpieui.v1.ListDtnBun"
-    "dlesResponse\022b\n\021EnqueueDtnPayload\022%.kelp"
-    "ieui.v1.EnqueueDtnPayloadRequest\032&.kelpi"
-    "eui.v1.EnqueueDtnPayloadResponse\022M\n\nNode"
-    "Status\022\036.kelpieui.v1.NodeStatusRequest\032\037"
-    ".kelpieui.v1.NodeStatusResponse\022S\n\014ListN"
-    "etworks\022 .kelpieui.v1.ListNetworksReques"
-    "t\032!.kelpieui.v1.ListNetworksResponse\022M\n\n"
-    "UseNetwork\022\036.kelpieui.v1.UseNetworkReque"
-    "st\032\037.kelpieui.v1.UseNetworkResponse\022S\n\014R"
-    "esetNetwork\022 .kelpieui.v1.ResetNetworkRe"
-    "quest\032!.kelpieui.v1.ResetNetworkResponse"
-    "\022Y\n\016SetNodeNetwork\022\".kelpieui.v1.SetNode"
-    "NetworkRequest\032#.kelpieui.v1.SetNodeNetw"
-    "orkResponse\022S\n\014PruneOffline\022 .kelpieui.v"
-    "1.PruneOfflineRequest\032!.kelpieui.v1.Prun"
-    "eOfflineResponse\022\\\n\017SendChatMessage\022#.ke"
-    "lpieui.v1.SendChatMessageRequest\032$.kelpi"
-    "eui.v1.SendChatMessageResponse\022_\n\020ListCh"
-    "atMessages\022$.kelpieui.v1.ListChatMessage"
-    "sRequest\032%.kelpieui.v1.ListChatMessagesR"
-    "esponse\022V\n\rListAuditLogs\022!.kelpieui.v1.L"
-    "istAuditLogsRequest\032\".kelpieui.v1.ListAu"
-    "ditLogsResponse2\300\003\n\031PivotListenerAdminSe"
-    "rvice\022e\n\022ListPivotListeners\022&.kelpieui.v"
-    "1.ListPivotListenersRequest\032\'.kelpieui.v"
-    "1.ListPivotListenersResponse\022h\n\023CreatePi"
-    "votListener\022\'.kelpieui.v1.CreatePivotLis"
-    "tenerRequest\032(.kelpieui.v1.CreatePivotLi"
-    "stenerResponse\022h\n\023UpdatePivotListener\022\'."
-    "kelpieui.v1.UpdatePivotListenerRequest\032("
-    ".kelpieui.v1.UpdatePivotListenerResponse"
-    "\022h\n\023DeletePivotListener\022\'.kelpieui.v1.De"
-    "letePivotListenerRequest\032(.kelpieui.v1.D"
-    "eletePivotListenerResponse2\201\004\n\036Controlle"
-    "rListenerAdminService\022t\n\027ListControllerL"
-    "isteners\022+.kelpieui.v1.ListControllerLis"
-    "tenersRequest\032,.kelpieui.v1.ListControll"
-    "erListenersResponse\022w\n\030CreateControllerL"
-    "istener\022,.kelpieui.v1.CreateControllerLi"
-    "stenerRequest\032-.kelpieui.v1.CreateContro"
-    "llerListenerResponse\022w\n\030UpdateController"
-    "Listener\022,.kelpieui.v1.UpdateControllerL"
-    "istenerRequest\032-.kelpieui.v1.UpdateContr"
-    "ollerListenerResponse\022w\n\030DeleteControlle"
-    "rListener\022,.kelpieui.v1.DeleteController"
-    "ListenerRequest\032-.kelpieui.v1.DeleteCont"
-    "rollerListenerResponse2\365\003\n\021ProxyAdminSer"
-    "vice\022b\n\021StartForwardProxy\022%.kelpieui.v1."
-    "StartForwardProxyRequest\032&.kelpieui.v1.S"
-    "tartForwardProxyResponse\022_\n\020StopForwardP"
-    "roxy\022$.kelpieui.v1.StopForwardProxyReque"
-    "st\032%.kelpieui.v1.StopForwardProxyRespons"
-    "e\022e\n\022StartBackwardProxy\022&.kelpieui.v1.St"
-    "artBackwardProxyRequest\032\'.kelpieui.v1.St"
-    "artBackwardProxyResponse\022b\n\021StopBackward"
-    "Proxy\022%.kelpieui.v1.StopBackwardProxyReq"
-    "uest\032&.kelpieui.v1.StopBackwardProxyResp"
-    "onse\022P\n\013ListProxies\022\037.kelpieui.v1.ListPr"
-    "oxiesRequest\032 .kelpieui.v1.ListProxiesRe"
-    "sponse2\311\001\n\021SleepAdminService\022P\n\013UpdateSl"
-    "eep\022\037.kelpieui.v1.UpdateSleepRequest\032 .k"
-    "elpieui.v1.UpdateSleepResponse\022b\n\021ListSl"
-    "eepProfiles\022%.kelpieui.v1.ListSleepProfi"
-    "lesRequest\032&.kelpieui.v1.ListSleepProfil"
-    "esResponse2\213\004\n\030SupplementalAdminService\022"
-    "X\n\025GetSupplementalStatus\022\036.kelpieui.v1.S"
-    "upplementalEmpty\032\037.kelpieui.v1.Supplemen"
-    "talStatus\022Z\n\026GetSupplementalMetrics\022\036.ke"
-    "lpieui.v1.SupplementalEmpty\032 .kelpieui.v"
-    "1.SupplementalMetrics\022q\n\026ListSupplementa"
-    "lEvents\022*.kelpieui.v1.ListSupplementalEv"
-    "entsRequest\032+.kelpieui.v1.ListSupplement"
-    "alEventsResponse\022t\n\027ListSupplementalQual"
-    "ity\022+.kelpieui.v1.ListSupplementalQualit"
-    "yRequest\032,.kelpieui.v1.ListSupplementalQ"
-    "ualityResponse\022P\n\013ListRepairs\022\037.kelpieui"
-    ".v1.ListRepairsRequest\032 .kelpieui.v1.Lis"
-    "tRepairsResponse2\372\001\n\023ConnectAdminService"
-    "\022J\n\tStartDial\022\035.kelpieui.v1.StartDialReq"
-    "uest\032\036.kelpieui.v1.StartDialResponse\022M\n\n"
-    "CancelDial\022\036.kelpieui.v1.CancelDialReque"
-    "st\032\037.kelpieui.v1.CancelDialResponse\022H\n\tL"
-    "istDials\022\034.kelpieui.v1.ListDialRequest\032\035"
-    ".kelpieui.v1.ListDialResponseB8Z6codeber"
-    "g.org/agnoie/shepherd/internal/kelpie/ui"
-    "pb;uipbb\006proto3"
+    "ddr\030\002 \001(\t\0226\n\013auth_method\030\003 \001(\0162!.kelpieu"
+    "i.v1.SshSessionAuthMethod\022\020\n\010username\030\004 "
+    "\001(\t\022\020\n\010password\030\005 \001(\t\"I\n\027StartSshSession"
+    "Response\022.\n\006handle\030\001 \001(\0132\036.kelpieui.v1.P"
+    "roxyStreamHandle\"\335\001\n\rStreamRequest\022\022\n\nse"
+    "ssion_id\030\001 \001(\t\022\023\n\013target_uuid\030\002 \001(\t\0228\n\007o"
+    "ptions\030\003 \003(\0132\'.kelpieui.v1.StreamRequest"
+    ".OptionsEntry\022\014\n\004data\030\004 \001(\014\022+\n\007control\030\005"
+    " \001(\0132\032.kelpieui.v1.StreamControl\032.\n\014Opti"
+    "onsEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001"
+    "\"t\n\016StreamResponse\022\022\n\nsession_id\030\001 \001(\t\022\023"
+    "\n\013target_uuid\030\002 \001(\t\022\014\n\004data\030\003 \001(\014\022+\n\007con"
+    "trol\030\004 \001(\0132\032.kelpieui.v1.StreamControl\"\307"
+    "\001\n\tProxyInfo\022\020\n\010proxy_id\030\001 \001(\t\022\023\n\013target"
+    "_uuid\030\002 \001(\t\022\014\n\004kind\030\003 \001(\t\022\014\n\004bind\030\004 \001(\t\022"
+    "\016\n\006remote\030\005 \001(\t\0226\n\010metadata\030\006 \003(\0132$.kelp"
+    "ieui.v1.ProxyInfo.MetadataEntry\032/\n\rMetad"
+    "ataEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001"
+    "\"\024\n\022ListProxiesRequest\">\n\023ListProxiesRes"
+    "ponse\022\'\n\007proxies\030\001 \003(\0132\026.kelpieui.v1.Pro"
+    "xyInfo\"\336\001\n\nProxyEvent\022*\n\004kind\030\001 \001(\0162\034.ke"
+    "lpieui.v1.ProxyEvent.Kind\022%\n\005proxy\030\002 \001(\013"
+    "2\026.kelpieui.v1.ProxyInfo\022\016\n\006reason\030\003 \001(\t"
+    "\"m\n\004Kind\022\033\n\027PROXY_EVENT_UNSPECIFIED\020\000\022\027\n"
+    "\023PROXY_EVENT_STARTED\020\001\022\027\n\023PROXY_EVENT_ST"
+    "OPPED\020\002\022\026\n\022PROXY_EVENT_FAILED\020\003\"\267\002\n\nSlee"
+    "pEvent\022*\n\004kind\030\001 \001(\0162\034.kelpieui.v1.Sleep"
+    "Event.Kind\022\023\n\013target_uuid\030\002 \001(\t\022\032\n\rsleep"
+    "_seconds\030\003 \001(\005H\000\210\001\001\022\031\n\014work_seconds\030\004 \001("
+    "\005H\001\210\001\001\022\033\n\016jitter_percent\030\005 \001(\001H\002\210\001\001\022\020\n\010o"
+    "perator\030\006 \001(\t\022\016\n\006reason\030\007 \001(\t\"<\n\004Kind\022\033\n"
+    "\027SLEEP_EVENT_UNSPECIFIED\020\000\022\027\n\023SLEEP_EVEN"
+    "T_UPDATED\020\001B\020\n\016_sleep_secondsB\017\n\r_work_s"
+    "econdsB\021\n\017_jitter_percent\"\252\002\n\014SleepProfi"
+    "le\022\023\n\013target_uuid\030\001 \001(\t\022\032\n\rsleep_seconds"
+    "\030\002 \001(\005H\000\210\001\001\022\031\n\014work_seconds\030\003 \001(\005H\001\210\001\001\022\033"
+    "\n\016jitter_percent\030\004 \001(\001H\002\210\001\001\022\017\n\007profile\030\005"
+    " \001(\t\022\024\n\014last_updated\030\006 \001(\t\022\024\n\014next_wake_"
+    "at\030\007 \001(\t\022\016\n\006status\030\010 \001(\t\022\020\n\010operator\030\t \001"
+    "(\t\022\016\n\006reason\030\n \001(\t\022\014\n\004memo\030\013 \001(\tB\020\n\016_sle"
+    "ep_secondsB\017\n\r_work_secondsB\021\n\017_jitter_p"
+    "ercent\"\032\n\030ListSleepProfilesRequest\"H\n\031Li"
+    "stSleepProfilesResponse\022+\n\010profiles\030\001 \003("
+    "\0132\031.kelpieui.v1.SleepProfile\"\177\n\014RepairSt"
+    "atus\022\023\n\013target_uuid\030\001 \001(\t\022\020\n\010attempts\030\002 "
+    "\001(\005\022\024\n\014next_attempt\030\003 \001(\t\022\016\n\006broken\030\004 \001("
+    "\010\022\022\n\nlast_error\030\005 \001(\t\022\016\n\006reason\030\006 \001(\t\"\024\n"
+    "\022ListRepairsRequest\"A\n\023ListRepairsRespon"
+    "se\022*\n\007repairs\030\001 \003(\0132\031.kelpieui.v1.Repair"
+    "Status\"7\n\022CloseStreamRequest\022\021\n\tstream_i"
+    "d\030\001 \001(\r\022\016\n\006reason\030\002 \001(\t\"\025\n\023CloseStreamRe"
+    "sponse\"H\n\020StartDialRequest\022\023\n\013target_uui"
+    "d\030\001 \001(\t\022\017\n\007address\030\002 \001(\t\022\016\n\006reason\030\003 \001(\t"
+    "\"V\n\021StartDialResponse\022\017\n\007dial_id\030\001 \001(\t\022\020"
+    "\n\010accepted\030\002 \001(\010\022\017\n\007message\030\003 \001(\t\022\r\n\005err"
+    "or\030\004 \001(\t\"$\n\021CancelDialRequest\022\017\n\007dial_id"
+    "\030\001 \001(\t\"5\n\022CancelDialResponse\022\020\n\010canceled"
+    "\030\001 \001(\010\022\r\n\005error\030\002 \001(\t\"\021\n\017ListDialRequest"
+    "\"\303\001\n\nDialStatus\022\017\n\007dial_id\030\001 \001(\t\022\023\n\013targ"
+    "et_uuid\030\002 \001(\t\022\017\n\007address\030\003 \001(\t\022\016\n\006reason"
+    "\030\004 \001(\t\022%\n\005state\030\005 \001(\0162\026.kelpieui.v1.Dial"
+    "State\022\r\n\005error\030\006 \001(\t\022\020\n\010operator\030\007 \001(\t\022\022"
+    "\n\nstarted_at\030\010 \001(\t\022\022\n\nupdated_at\030\t \001(\t\":"
+    "\n\020ListDialResponse\022&\n\005dials\030\001 \003(\0132\027.kelp"
+    "ieui.v1.DialStatus\"\257\001\n\rAuditLogEntry\022\n\n\002"
+    "id\030\001 \001(\t\022\020\n\010username\030\002 \001(\t\022\014\n\004role\030\003 \001(\t"
+    "\022\016\n\006method\030\004 \001(\t\022\016\n\006target\030\005 \001(\t\022\022\n\npara"
+    "meters\030\006 \001(\t\022\016\n\006status\030\007 \001(\t\022\r\n\005error\030\010 "
+    "\001(\t\022\014\n\004peer\030\t \001(\t\022\021\n\ttimestamp\030\n \001(\t\"7\n\n"
+    "AuditEvent\022)\n\005entry\030\001 \001(\0132\032.kelpieui.v1."
+    "AuditLogEntry\"k\n\024ListAuditLogsRequest\022\020\n"
+    "\010username\030\001 \001(\t\022\016\n\006method\030\002 \001(\t\022\021\n\tfrom_"
+    "time\030\003 \001(\t\022\017\n\007to_time\030\004 \001(\t\022\r\n\005limit\030\005 \001"
+    "(\005\"D\n\025ListAuditLogsResponse\022+\n\007entries\030\001"
+    " \003(\0132\032.kelpieui.v1.AuditLogEntry\":\n\025Upda"
+    "teNodeMemoRequest\022\023\n\013target_uuid\030\001 \001(\t\022\014"
+    "\n\004memo\030\002 \001(\t\"\030\n\026UpdateNodeMemoResponse\"X"
+    "\n\030StartForwardProxyRequest\022\023\n\013target_uui"
+    "d\030\001 \001(\t\022\022\n\nlocal_bind\030\002 \001(\t\022\023\n\013remote_ad"
+    "dr\030\003 \001(\t\"\200\001\n\031StartForwardProxyResponse\022."
+    "\n\006handle\030\001 \001(\0132\036.kelpieui.v1.ProxyStream"
+    "Handle\022\020\n\010proxy_id\030\002 \001(\t\022\014\n\004bind\030\003 \001(\t\022\023"
+    "\n\013remote_addr\030\004 \001(\t\"@\n\027StopForwardProxyR"
+    "equest\022\023\n\013target_uuid\030\001 \001(\t\022\020\n\010proxy_id\030"
+    "\002 \001(\t\"+\n\030StopForwardProxyResponse\022\017\n\007sto"
+    "pped\030\001 \001(\005\"Y\n\031StartBackwardProxyRequest\022"
+    "\023\n\013target_uuid\030\001 \001(\t\022\023\n\013remote_port\030\002 \001("
+    "\t\022\022\n\nlocal_port\030\003 \001(\t\"\207\001\n\032StartBackwardP"
+    "roxyResponse\022.\n\006handle\030\001 \001(\0132\036.kelpieui."
+    "v1.ProxyStreamHandle\022\020\n\010proxy_id\030\002 \001(\t\022\023"
+    "\n\013remote_port\030\003 \001(\t\022\022\n\nlocal_port\030\004 \001(\t\""
+    "A\n\030StopBackwardProxyRequest\022\023\n\013target_uu"
+    "id\030\001 \001(\t\022\020\n\010proxy_id\030\002 \001(\t\",\n\031StopBackwa"
+    "rdProxyResponse\022\017\n\007stopped\030\001 \001(\005\"\240\004\n\013Ses"
+    "sionInfo\022\023\n\013target_uuid\030\002 \001(\t\022*\n\006status\030"
+    "\003 \001(\0162\032.kelpieui.v1.SessionStatus\022\016\n\006act"
+    "ive\030\004 \001(\010\022\021\n\tconnected\030\005 \001(\010\022\023\n\013remote_a"
+    "ddr\030\006 \001(\t\022\020\n\010upstream\030\007 \001(\t\022\022\n\ndownstrea"
+    "m\030\010 \001(\t\022\022\n\nnetwork_id\030\t \001(\t\022\021\n\tlast_seen"
+    "\030\n \001(\t\022\022\n\nlast_error\030\013 \001(\t\022\025\n\rsleep_prof"
+    "ile\030\014 \001(\t\022\032\n\rsleep_seconds\030\r \001(\005H\000\210\001\001\022\031\n"
+    "\014work_seconds\030\016 \001(\005H\001\210\001\001\022\033\n\016jitter_perce"
+    "nt\030\017 \001(\001H\002\210\001\001\022\024\n\014last_command\030\020 \001(\t\022\025\n\rl"
+    "ast_operator\030\021 \001(\t\0228\n\010metadata\030\022 \003(\0132&.k"
+    "elpieui.v1.SessionInfo.MetadataEntry\032/\n\r"
+    "MetadataEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001("
+    "\t:\0028\001B\020\n\016_sleep_secondsB\017\n\r_work_seconds"
+    "B\021\n\017_jitter_percent\"s\n\023ListSessionsReque"
+    "st\022\024\n\014target_uuids\030\001 \003(\t\022,\n\010statuses\030\002 \003"
+    "(\0162\032.kelpieui.v1.SessionStatus\022\030\n\020includ"
+    "e_inactive\030\003 \001(\010\"B\n\024ListSessionsResponse"
+    "\022*\n\010sessions\030\001 \003(\0132\030.kelpieui.v1.Session"
+    "Info\"i\n\022MarkSessionRequest\022\023\n\013target_uui"
+    "d\030\001 \001(\t\022.\n\006action\030\002 \001(\0162\036.kelpieui.v1.Se"
+    "ssionMarkAction\022\016\n\006reason\030\003 \001(\t\"@\n\023MarkS"
+    "essionResponse\022)\n\007session\030\001 \001(\0132\030.kelpie"
+    "ui.v1.SessionInfo\"J\n\024RepairSessionReques"
+    "t\022\023\n\013target_uuid\030\002 \001(\t\022\r\n\005force\030\003 \001(\010\022\016\n"
+    "\006reason\030\004 \001(\t\":\n\025RepairSessionResponse\022\020"
+    "\n\010enqueued\030\001 \001(\010\022\017\n\007message\030\002 \001(\t\">\n\027Rec"
+    "onnectSessionRequest\022\023\n\013target_uuid\030\002 \001("
+    "\t\022\016\n\006reason\030\003 \001(\t\"=\n\030ReconnectSessionRes"
+    "ponse\022\020\n\010accepted\030\001 \001(\010\022\017\n\007message\030\002 \001(\t"
+    "\">\n\027TerminateSessionRequest\022\023\n\013target_uu"
+    "id\030\002 \001(\t\022\016\n\006reason\030\003 \001(\t\".\n\030TerminateSes"
+    "sionResponse\022\022\n\nterminated\030\001 \001(\010\"d\n\031Sess"
+    "ionDiagnosticsRequest\022\023\n\013target_uuid\030\002 \001"
+    "(\t\022\031\n\021include_processes\030\003 \001(\010\022\027\n\017include"
+    "_metrics\030\004 \001(\010\",\n\rSessionMetric\022\014\n\004name\030"
+    "\001 \001(\t\022\r\n\005value\030\002 \001(\t\"k\n\016SessionProcess\022\013"
+    "\n\003pid\030\001 \001(\t\022\014\n\004name\030\002 \001(\t\022\014\n\004user\030\003 \001(\t\022"
+    "\016\n\006status\030\004 \001(\t\022\014\n\004path\030\005 \001(\t\022\022\n\nstarted"
+    "_at\030\006 \001(\t\"=\n\014SessionIssue\022\014\n\004code\030\001 \001(\t\022"
+    "\017\n\007message\030\002 \001(\t\022\016\n\006detail\030\003 \001(\t\"\317\001\n\032Ses"
+    "sionDiagnosticsResponse\022)\n\007session\030\001 \001(\013"
+    "2\030.kelpieui.v1.SessionInfo\022+\n\007metrics\030\002 "
+    "\003(\0132\032.kelpieui.v1.SessionMetric\022)\n\006issue"
+    "s\030\003 \003(\0132\031.kelpieui.v1.SessionIssue\022.\n\tpr"
+    "ocesses\030\004 \003(\0132\033.kelpieui.v1.SessionProce"
+    "ss\"\263\001\n\022UpdateSleepRequest\022\023\n\013target_uuid"
+    "\030\001 \001(\t\022\032\n\rsleep_seconds\030\002 \001(\005H\000\210\001\001\022\031\n\014wo"
+    "rk_seconds\030\003 \001(\005H\001\210\001\001\022\033\n\016jitter_percent\030"
+    "\004 \001(\001H\002\210\001\001B\020\n\016_sleep_secondsB\017\n\r_work_se"
+    "condsB\021\n\017_jitter_percent\"\025\n\023UpdateSleepR"
+    "esponse\"*\n\023ShutdownNodeRequest\022\023\n\013target"
+    "_uuid\030\001 \001(\t\"\026\n\024ShutdownNodeResponse\"x\n\016S"
+    "treamStatInfo\022\014\n\004kind\030\001 \001(\t\022\016\n\006opened\030\002 "
+    "\001(\004\022\016\n\006closed\030\003 \001(\004\022\016\n\006active\030\004 \001(\004\022\023\n\013l"
+    "ast_reason\030\005 \001(\t\022\023\n\013last_closed\030\006 \001(\t\"\024\n"
+    "\022StreamStatsRequest\"A\n\023StreamStatsRespon"
+    "se\022*\n\005stats\030\001 \003(\0132\033.kelpieui.v1.StreamSt"
+    "atInfo\"\032\n\030StreamDiagnosticsRequest\"E\n\031St"
+    "reamDiagnosticsResponse\022(\n\007streams\030\001 \003(\013"
+    "2\027.kelpieui.v1.StreamDiag\"M\n\021StreamPingR"
+    "equest\022\023\n\013target_uuid\030\001 \001(\t\022\r\n\005count\030\002 \001"
+    "(\005\022\024\n\014payload_size\030\003 \001(\005\"\024\n\022StreamPingRe"
+    "sponse\"(\n\021NodeStatusRequest\022\023\n\013target_uu"
+    "id\030\001 \001(\t\"\230\001\n\022NodeStatusResponse\022#\n\004node\030"
+    "\001 \001(\0132\025.kelpieui.v1.NodeInfo\022(\n\007streams\030"
+    "\002 \003(\0132\027.kelpieui.v1.StreamDiag\0223\n\017pivot_"
+    "listeners\030\003 \003(\0132\032.kelpieui.v1.PivotListe"
+    "ner\"G\n\013NetworkInfo\022\022\n\nnetwork_id\030\001 \001(\t\022\024"
+    "\n\014target_uuids\030\002 \003(\t\022\016\n\006active\030\003 \001(\010\"\025\n\023"
+    "ListNetworksRequest\"]\n\024ListNetworksRespo"
+    "nse\022*\n\010networks\030\001 \003(\0132\030.kelpieui.v1.Netw"
+    "orkInfo\022\031\n\021active_network_id\030\002 \001(\t\"\'\n\021Us"
+    "eNetworkRequest\022\022\n\nnetwork_id\030\001 \001(\t\"/\n\022U"
+    "seNetworkResponse\022\031\n\021active_network_id\030\001"
+    " \001(\t\"\025\n\023ResetNetworkRequest\"1\n\024ResetNetw"
+    "orkResponse\022\031\n\021active_network_id\030\001 \001(\t\"@"
+    "\n\025SetNodeNetworkRequest\022\023\n\013target_uuid\030\001"
+    " \001(\t\022\022\n\nnetwork_id\030\002 \001(\t\"\030\n\026SetNodeNetwo"
+    "rkResponse\"\025\n\023PruneOfflineRequest\"\'\n\024Pru"
+    "neOfflineResponse\022\017\n\007removed\030\001 \001(\005\"j\n\022Su"
+    "pplementalStatus\022\017\n\007enabled\030\001 \001(\010\022\024\n\014que"
+    "ue_length\030\002 \001(\005\022\027\n\017pending_actions\030\003 \001(\005"
+    "\022\024\n\014active_links\030\004 \001(\005\"\221\002\n\023SupplementalM"
+    "etrics\022\022\n\ndispatched\030\001 \001(\004\022\017\n\007success\030\002 "
+    "\001(\004\022\020\n\010failures\030\003 \001(\004\022\017\n\007dropped\030\004 \001(\004\022\020"
+    "\n\010recycled\030\005 \001(\004\022\022\n\nqueue_high\030\006 \001(\004\022\024\n\014"
+    "last_failure\030\007 \001(\t\022\021\n\tevent_seq\030\010 \001(\004\022\027\n"
+    "\017repair_attempts\030\t \001(\004\022\026\n\016repair_success"
+    "\030\n \001(\004\022\027\n\017repair_failures\030\013 \001(\004\022\031\n\021last_"
+    "graph_report\030\014 \003(\t\".\n\035ListSupplementalEv"
+    "entsRequest\022\r\n\005limit\030\001 \001(\005\"\213\001\n\021Supplemen"
+    "talEvent\022\013\n\003seq\030\001 \001(\004\022\014\n\004kind\030\002 \001(\t\022\016\n\006a"
+    "ction\030\003 \001(\t\022\023\n\013source_uuid\030\004 \001(\t\022\023\n\013targ"
+    "et_uuid\030\005 \001(\t\022\016\n\006detail\030\006 \001(\t\022\021\n\ttimesta"
+    "mp\030\007 \001(\t\"P\n\036ListSupplementalEventsRespon"
+    "se\022.\n\006events\030\001 \003(\0132\036.kelpieui.v1.Supplem"
+    "entalEvent\"C\n\036ListSupplementalQualityReq"
+    "uest\022\r\n\005limit\030\001 \001(\005\022\022\n\nnode_uuids\030\002 \003(\t\""
+    "\341\001\n\023SupplementalQuality\022\021\n\tnode_uuid\030\001 \001"
+    "(\t\022\024\n\014health_score\030\002 \001(\001\022\025\n\rlatency_scor"
+    "e\030\003 \001(\001\022\025\n\rfailure_score\030\004 \001(\001\022\023\n\013queue_"
+    "score\030\005 \001(\001\022\027\n\017staleness_score\030\006 \001(\001\022\025\n\r"
+    "total_success\030\007 \001(\004\022\026\n\016total_failures\030\010 "
+    "\001(\004\022\026\n\016last_heartbeat\030\t \001(\t\"V\n\037ListSuppl"
+    "ementalQualityResponse\0223\n\tqualities\030\001 \003("
+    "\0132 .kelpieui.v1.SupplementalQuality\"\023\n\021S"
+    "upplementalEmpty\"\305\001\n\025StartSshTunnelReque"
+    "st\022\023\n\013target_uuid\030\001 \001(\t\022\023\n\013server_addr\030\002"
+    " \001(\t\022\022\n\nagent_port\030\003 \001(\t\0225\n\013auth_method\030"
+    "\004 \001(\0162 .kelpieui.v1.SshTunnelAuthMethod\022"
+    "\020\n\010username\030\005 \001(\t\022\020\n\010password\030\006 \001(\t\022\023\n\013p"
+    "rivate_key\030\007 \001(\014\"\030\n\026StartSshTunnelRespon"
+    "se*q\n\013DtnPriority\022\034\n\030DTN_PRIORITY_UNSPEC"
+    "IFIED\020\000\022\024\n\020DTN_PRIORITY_LOW\020\001\022\027\n\023DTN_PRI"
+    "ORITY_NORMAL\020\002\022\025\n\021DTN_PRIORITY_HIGH\020\003*\233\001"
+    "\n\021PivotListenerMode\022#\n\037PIVOT_LISTENER_MO"
+    "DE_UNSPECIFIED\020\000\022\036\n\032PIVOT_LISTENER_MODE_"
+    "NORMAL\020\001\022 \n\034PIVOT_LISTENER_MODE_IPTABLES"
+    "\020\002\022\037\n\033PIVOT_LISTENER_MODE_SOREUSE\020\003*\345\001\n\030"
+    "ControllerListenerStatus\022*\n&CONTROLLER_L"
+    "ISTENER_STATUS_UNSPECIFIED\020\000\022&\n\"CONTROLL"
+    "ER_LISTENER_STATUS_PENDING\020\001\022&\n\"CONTROLL"
+    "ER_LISTENER_STATUS_RUNNING\020\002\022%\n!CONTROLL"
+    "ER_LISTENER_STATUS_FAILED\020\003\022&\n\"CONTROLLE"
+    "R_LISTENER_STATUS_STOPPED\020\004*}\n\014LootCateg"
+    "ory\022\035\n\031LOOT_CATEGORY_UNSPECIFIED\020\000\022\026\n\022LO"
+    "OT_CATEGORY_FILE\020\001\022\034\n\030LOOT_CATEGORY_SCRE"
+    "ENSHOT\020\002\022\030\n\024LOOT_CATEGORY_TICKET\020\003*\335\001\n\020P"
+    "roxyStreamError\022!\n\035PROXYSTREAM_ERROR_UNS"
+    "PECIFIED\020\000\022(\n$PROXYSTREAM_ERROR_TARGET_U"
+    "NAVAILABLE\020\001\022&\n\"PROXYSTREAM_ERROR_INVALI"
+    "D_ARGUMENT\020\002\022\032\n\026PROXYSTREAM_ERROR_BIND\020\003"
+    "\022\034\n\030PROXYSTREAM_ERROR_REMOTE\020\004\022\032\n\026PROXYS"
+    "TREAM_ERROR_AUTH\020\005*P\n\tShellMode\022\032\n\026SHELL"
+    "_MODE_UNSPECIFIED\020\000\022\023\n\017SHELL_MODE_PIPE\020\001"
+    "\022\022\n\016SHELL_MODE_PTY\020\002*l\n\016SocksProxyAuth\022 "
+    "\n\034SOCKS_PROXY_AUTH_UNSPECIFIED\020\000\022\031\n\025SOCK"
+    "S_PROXY_AUTH_NONE\020\001\022\035\n\031SOCKS_PROXY_AUTH_"
+    "USERPASS\020\002*e\n\024SshSessionAuthMethod\022\'\n#SS"
+    "H_SESSION_AUTH_METHOD_UNSPECIFIED\020\000\022$\n S"
+    "SH_SESSION_AUTH_METHOD_PASSWORD\020\001*\242\001\n\tDi"
+    "alState\022\032\n\026DIAL_STATE_UNSPECIFIED\020\000\022\027\n\023D"
+    "IAL_STATE_ENQUEUED\020\001\022\026\n\022DIAL_STATE_RUNNI"
+    "NG\020\002\022\030\n\024DIAL_STATE_SUCCEEDED\020\003\022\025\n\021DIAL_S"
+    "TATE_FAILED\020\004\022\027\n\023DIAL_STATE_CANCELED\020\005*\300"
+    "\001\n\rSessionStatus\022\036\n\032SESSION_STATUS_UNSPE"
+    "CIFIED\020\000\022\031\n\025SESSION_STATUS_ACTIVE\020\001\022\033\n\027S"
+    "ESSION_STATUS_DEGRADED\020\002\022\031\n\025SESSION_STAT"
+    "US_FAILED\020\003\022\036\n\032SESSION_STATUS_MARKED_DEA"
+    "D\020\004\022\034\n\030SESSION_STATUS_REPAIRING\020\005*\232\001\n\021Se"
+    "ssionMarkAction\022#\n\037SESSION_MARK_ACTION_U"
+    "NSPECIFIED\020\000\022\035\n\031SESSION_MARK_ACTION_ALIV"
+    "E\020\001\022\034\n\030SESSION_MARK_ACTION_DEAD\020\002\022#\n\037SES"
+    "SION_MARK_ACTION_MAINTENANCE\020\003*\203\001\n\023SshTu"
+    "nnelAuthMethod\022&\n\"SSH_TUNNEL_AUTH_METHOD"
+    "_UNSPECIFIED\020\000\022#\n\037SSH_TUNNEL_AUTH_METHOD"
+    "_PASSWORD\020\001\022\037\n\033SSH_TUNNEL_AUTH_METHOD_CE"
+    "RT\020\0022\301\032\n\017KelpieUIService\022J\n\013GetSnapshot\022"
+    "\034.kelpieui.v1.SnapshotRequest\032\035.kelpieui"
+    ".v1.SnapshotResponse\022J\n\tListNodes\022\035.kelp"
+    "ieui.v1.ListNodesRequest\032\036.kelpieui.v1.L"
+    "istNodesResponse\022P\n\013GetTopology\022\037.kelpie"
+    "ui.v1.GetTopologyRequest\032 .kelpieui.v1.G"
+    "etTopologyResponse\022F\n\013WatchEvents\022\037.kelp"
+    "ieui.v1.WatchEventsRequest\032\024.kelpieui.v1"
+    ".UiEvent0\001\022G\n\010ListLoot\022\034.kelpieui.v1.Lis"
+    "tLootRequest\032\035.kelpieui.v1.ListLootRespo"
+    "nse\022M\n\nSubmitLoot\022\036.kelpieui.v1.SubmitLo"
+    "otRequest\032\037.kelpieui.v1.SubmitLootRespon"
+    "se\022\\\n\017CollectLootFile\022#.kelpieui.v1.Coll"
+    "ectLootFileRequest\032$.kelpieui.v1.Collect"
+    "LootFileResponse\022F\n\010SyncLoot\022\034.kelpieui."
+    "v1.SyncLootRequest\032\032.kelpieui.v1.SyncLoo"
+    "tChunk0\001\022\\\n\017ListRemoteFiles\022#.kelpieui.v"
+    "1.ListRemoteFilesRequest\032$.kelpieui.v1.L"
+    "istRemoteFilesResponse\022J\n\013ProxyStream\022\032."
+    "kelpieui.v1.StreamRequest\032\033.kelpieui.v1."
+    "StreamResponse(\0010\001\022M\n\nStartShell\022\036.kelpi"
+    "eui.v1.StartShellRequest\032\037.kelpieui.v1.S"
+    "tartShellResponse\022\\\n\017StartSocksProxy\022#.k"
+    "elpieui.v1.StartSocksProxyRequest\032$.kelp"
+    "ieui.v1.StartSocksProxyResponse\022\\\n\017Start"
+    "SshSession\022#.kelpieui.v1.StartSshSession"
+    "Request\032$.kelpieui.v1.StartSshSessionRes"
+    "ponse\022Y\n\016UpdateNodeMemo\022\".kelpieui.v1.Up"
+    "dateNodeMemoRequest\032#.kelpieui.v1.Update"
+    "NodeMemoResponse\022S\n\014ListSessions\022 .kelpi"
+    "eui.v1.ListSessionsRequest\032!.kelpieui.v1"
+    ".ListSessionsResponse\022P\n\013MarkSession\022\037.k"
+    "elpieui.v1.MarkSessionRequest\032 .kelpieui"
+    ".v1.MarkSessionResponse\022V\n\rRepairSession"
+    "\022!.kelpieui.v1.RepairSessionRequest\032\".ke"
+    "lpieui.v1.RepairSessionResponse\022_\n\020Recon"
+    "nectSession\022$.kelpieui.v1.ReconnectSessi"
+    "onRequest\032%.kelpieui.v1.ReconnectSession"
+    "Response\022_\n\020TerminateSession\022$.kelpieui."
+    "v1.TerminateSessionRequest\032%.kelpieui.v1"
+    ".TerminateSessionResponse\022h\n\025GetSessionD"
+    "iagnostics\022&.kelpieui.v1.SessionDiagnost"
+    "icsRequest\032\'.kelpieui.v1.SessionDiagnost"
+    "icsResponse\022P\n\013CloseStream\022\037.kelpieui.v1"
+    ".CloseStreamRequest\032 .kelpieui.v1.CloseS"
+    "treamResponse\022Y\n\016StartSshTunnel\022\".kelpie"
+    "ui.v1.StartSshTunnelRequest\032#.kelpieui.v"
+    "1.StartSshTunnelResponse\022S\n\014ShutdownNode"
+    "\022 .kelpieui.v1.ShutdownNodeRequest\032!.kel"
+    "pieui.v1.ShutdownNodeResponse\022P\n\013StreamS"
+    "tats\022\037.kelpieui.v1.StreamStatsRequest\032 ."
+    "kelpieui.v1.StreamStatsResponse\022b\n\021Strea"
+    "mDiagnostics\022%.kelpieui.v1.StreamDiagnos"
+    "ticsRequest\032&.kelpieui.v1.StreamDiagnost"
+    "icsResponse\022M\n\nStreamPing\022\036.kelpieui.v1."
+    "StreamPingRequest\032\037.kelpieui.v1.StreamPi"
+    "ngResponse\022M\n\nGetMetrics\022\036.kelpieui.v1.G"
+    "etMetricsRequest\032\037.kelpieui.v1.GetMetric"
+    "sResponse\022_\n\020GetDtnQueueStats\022$.kelpieui"
+    ".v1.GetDtnQueueStatsRequest\032%.kelpieui.v"
+    "1.GetDtnQueueStatsResponse\022Y\n\016ListDtnBun"
+    "dles\022\".kelpieui.v1.ListDtnBundlesRequest"
+    "\032#.kelpieui.v1.ListDtnBundlesResponse\022b\n"
+    "\021EnqueueDtnPayload\022%.kelpieui.v1.Enqueue"
+    "DtnPayloadRequest\032&.kelpieui.v1.EnqueueD"
+    "tnPayloadResponse\022M\n\nNodeStatus\022\036.kelpie"
+    "ui.v1.NodeStatusRequest\032\037.kelpieui.v1.No"
+    "deStatusResponse\022S\n\014ListNetworks\022 .kelpi"
+    "eui.v1.ListNetworksRequest\032!.kelpieui.v1"
+    ".ListNetworksResponse\022M\n\nUseNetwork\022\036.ke"
+    "lpieui.v1.UseNetworkRequest\032\037.kelpieui.v"
+    "1.UseNetworkResponse\022S\n\014ResetNetwork\022 .k"
+    "elpieui.v1.ResetNetworkRequest\032!.kelpieu"
+    "i.v1.ResetNetworkResponse\022Y\n\016SetNodeNetw"
+    "ork\022\".kelpieui.v1.SetNodeNetworkRequest\032"
+    "#.kelpieui.v1.SetNodeNetworkResponse\022S\n\014"
+    "PruneOffline\022 .kelpieui.v1.PruneOfflineR"
+    "equest\032!.kelpieui.v1.PruneOfflineRespons"
+    "e\022\\\n\017SendChatMessage\022#.kelpieui.v1.SendC"
+    "hatMessageRequest\032$.kelpieui.v1.SendChat"
+    "MessageResponse\022_\n\020ListChatMessages\022$.ke"
+    "lpieui.v1.ListChatMessagesRequest\032%.kelp"
+    "ieui.v1.ListChatMessagesResponse\022V\n\rList"
+    "AuditLogs\022!.kelpieui.v1.ListAuditLogsReq"
+    "uest\032\".kelpieui.v1.ListAuditLogsResponse"
+    "2\300\003\n\031PivotListenerAdminService\022e\n\022ListPi"
+    "votListeners\022&.kelpieui.v1.ListPivotList"
+    "enersRequest\032\'.kelpieui.v1.ListPivotList"
+    "enersResponse\022h\n\023CreatePivotListener\022\'.k"
+    "elpieui.v1.CreatePivotListenerRequest\032(."
+    "kelpieui.v1.CreatePivotListenerResponse\022"
+    "h\n\023UpdatePivotListener\022\'.kelpieui.v1.Upd"
+    "atePivotListenerRequest\032(.kelpieui.v1.Up"
+    "datePivotListenerResponse\022h\n\023DeletePivot"
+    "Listener\022\'.kelpieui.v1.DeletePivotListen"
+    "erRequest\032(.kelpieui.v1.DeletePivotListe"
+    "nerResponse2\201\004\n\036ControllerListenerAdminS"
+    "ervice\022t\n\027ListControllerListeners\022+.kelp"
+    "ieui.v1.ListControllerListenersRequest\032,"
+    ".kelpieui.v1.ListControllerListenersResp"
+    "onse\022w\n\030CreateControllerListener\022,.kelpi"
+    "eui.v1.CreateControllerListenerRequest\032-"
+    ".kelpieui.v1.CreateControllerListenerRes"
+    "ponse\022w\n\030UpdateControllerListener\022,.kelp"
+    "ieui.v1.UpdateControllerListenerRequest\032"
+    "-.kelpieui.v1.UpdateControllerListenerRe"
+    "sponse\022w\n\030DeleteControllerListener\022,.kel"
+    "pieui.v1.DeleteControllerListenerRequest"
+    "\032-.kelpieui.v1.DeleteControllerListenerR"
+    "esponse2\365\003\n\021ProxyAdminService\022b\n\021StartFo"
+    "rwardProxy\022%.kelpieui.v1.StartForwardPro"
+    "xyRequest\032&.kelpieui.v1.StartForwardProx"
+    "yResponse\022_\n\020StopForwardProxy\022$.kelpieui"
+    ".v1.StopForwardProxyRequest\032%.kelpieui.v"
+    "1.StopForwardProxyResponse\022e\n\022StartBackw"
+    "ardProxy\022&.kelpieui.v1.StartBackwardProx"
+    "yRequest\032\'.kelpieui.v1.StartBackwardProx"
+    "yResponse\022b\n\021StopBackwardProxy\022%.kelpieu"
+    "i.v1.StopBackwardProxyRequest\032&.kelpieui"
+    ".v1.StopBackwardProxyResponse\022P\n\013ListPro"
+    "xies\022\037.kelpieui.v1.ListProxiesRequest\032 ."
+    "kelpieui.v1.ListProxiesResponse2\311\001\n\021Slee"
+    "pAdminService\022P\n\013UpdateSleep\022\037.kelpieui."
+    "v1.UpdateSleepRequest\032 .kelpieui.v1.Upda"
+    "teSleepResponse\022b\n\021ListSleepProfiles\022%.k"
+    "elpieui.v1.ListSleepProfilesRequest\032&.ke"
+    "lpieui.v1.ListSleepProfilesResponse2\213\004\n\030"
+    "SupplementalAdminService\022X\n\025GetSupplemen"
+    "talStatus\022\036.kelpieui.v1.SupplementalEmpt"
+    "y\032\037.kelpieui.v1.SupplementalStatus\022Z\n\026Ge"
+    "tSupplementalMetrics\022\036.kelpieui.v1.Suppl"
+    "ementalEmpty\032 .kelpieui.v1.SupplementalM"
+    "etrics\022q\n\026ListSupplementalEvents\022*.kelpi"
+    "eui.v1.ListSupplementalEventsRequest\032+.k"
+    "elpieui.v1.ListSupplementalEventsRespons"
+    "e\022t\n\027ListSupplementalQuality\022+.kelpieui."
+    "v1.ListSupplementalQualityRequest\032,.kelp"
+    "ieui.v1.ListSupplementalQualityResponse\022"
+    "P\n\013ListRepairs\022\037.kelpieui.v1.ListRepairs"
+    "Request\032 .kelpieui.v1.ListRepairsRespons"
+    "e2\372\001\n\023ConnectAdminService\022J\n\tStartDial\022\035"
+    ".kelpieui.v1.StartDialRequest\032\036.kelpieui"
+    ".v1.StartDialResponse\022M\n\nCancelDial\022\036.ke"
+    "lpieui.v1.CancelDialRequest\032\037.kelpieui.v"
+    "1.CancelDialResponse\022H\n\tListDials\022\034.kelp"
+    "ieui.v1.ListDialRequest\032\035.kelpieui.v1.Li"
+    "stDialResponseB8Z6codeberg.org/agnoie/sh"
+    "epherd/internal/kelpie/uipb;uipbb\006proto3"
 };
 static ::absl::once_flag descriptor_table_kelpieui_2fv1_2fkelpieui_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_kelpieui_2fv1_2fkelpieui_2eproto = {
     false,
     false,
-    25335,
+    26120,
     descriptor_table_protodef_kelpieui_2fv1_2fkelpieui_2eproto,
     "kelpieui/v1/kelpieui.proto",
     &descriptor_table_kelpieui_2fv1_2fkelpieui_2eproto_once,
     nullptr,
     0,
-    170,
+    175,
     schemas,
     file_default_instances,
     TableStruct_kelpieui_2fv1_2fkelpieui_2eproto::offsets,
@@ -25856,62 +26136,725 @@ void SubmitLootResponse::InternalSwap(SubmitLootResponse* PROTOBUF_RESTRICT PROT
 }
 // ===================================================================
 
-class GetLootRequest::_Internal {
+class CollectLootFileRequest::_Internal {
  public:
   using HasBits =
-      decltype(::std::declval<GetLootRequest>()._impl_._has_bits_);
+      decltype(::std::declval<CollectLootFileRequest>()._impl_._has_bits_);
   static constexpr ::int32_t kHasBitsOffset =
-      8 * PROTOBUF_FIELD_OFFSET(GetLootRequest, _impl_._has_bits_);
+      8 * PROTOBUF_FIELD_OFFSET(CollectLootFileRequest, _impl_._has_bits_);
 };
 
-GetLootRequest::GetLootRequest(::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+CollectLootFileRequest::CollectLootFileRequest(::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-    : ::google::protobuf::Message(arena, GetLootRequest_class_data_.base()) {
+    : ::google::protobuf::Message(arena, CollectLootFileRequest_class_data_.base()) {
 #else   // PROTOBUF_CUSTOM_VTABLE
     : ::google::protobuf::Message(arena) {
 #endif  // PROTOBUF_CUSTOM_VTABLE
   SharedCtor(arena);
-  // @@protoc_insertion_point(arena_constructor:kelpieui.v1.GetLootRequest)
+  // @@protoc_insertion_point(arena_constructor:kelpieui.v1.CollectLootFileRequest)
 }
-PROTOBUF_NDEBUG_INLINE GetLootRequest::Impl_::Impl_(
+PROTOBUF_NDEBUG_INLINE CollectLootFileRequest::Impl_::Impl_(
     [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
     [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
-    [[maybe_unused]] const ::kelpieui::v1::GetLootRequest& from_msg)
+    [[maybe_unused]] const ::kelpieui::v1::CollectLootFileRequest& from_msg)
       : _has_bits_{from._has_bits_},
         _cached_size_{0},
-        loot_id_(arena, from.loot_id_) {}
+        #ifdef PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_REPEATED_PTR_FIELD
+        tags_{visibility, ::_pbi::InternalMetadataOffset::Build<
+            ::kelpieui::v1::CollectLootFileRequest,
+            PROTOBUF_FIELD_OFFSET(::kelpieui::v1::CollectLootFileRequest, _impl_.tags_)>()
+        , from.tags_}
+        #else
+        tags_ { visibility, arena, from.tags_ }
+        #endif
+        ,
+        target_uuid_(arena, from.target_uuid_),
+        remote_path_(arena, from.remote_path_) {}
 
-GetLootRequest::GetLootRequest(
+CollectLootFileRequest::CollectLootFileRequest(
     ::google::protobuf::Arena* PROTOBUF_NULLABLE arena,
-    const GetLootRequest& from)
+    const CollectLootFileRequest& from)
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-    : ::google::protobuf::Message(arena, GetLootRequest_class_data_.base()) {
+    : ::google::protobuf::Message(arena, CollectLootFileRequest_class_data_.base()) {
 #else   // PROTOBUF_CUSTOM_VTABLE
     : ::google::protobuf::Message(arena) {
 #endif  // PROTOBUF_CUSTOM_VTABLE
-  GetLootRequest* const _this = this;
+  CollectLootFileRequest* const _this = this;
   (void)_this;
   _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
       from._internal_metadata_);
   new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
 
-  // @@protoc_insertion_point(copy_constructor:kelpieui.v1.GetLootRequest)
+  // @@protoc_insertion_point(copy_constructor:kelpieui.v1.CollectLootFileRequest)
 }
-PROTOBUF_NDEBUG_INLINE GetLootRequest::Impl_::Impl_(
+PROTOBUF_NDEBUG_INLINE CollectLootFileRequest::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+      : _cached_size_{0},
+        #ifdef PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_REPEATED_PTR_FIELD
+        tags_{visibility, ::_pbi::InternalMetadataOffset::Build<
+            ::kelpieui::v1::CollectLootFileRequest,
+            PROTOBUF_FIELD_OFFSET(::kelpieui::v1::CollectLootFileRequest, _impl_.tags_)>()
+        }
+        #else
+        tags_ { visibility, arena }
+        #endif
+        ,
+        target_uuid_(arena),
+        remote_path_(arena) {}
+
+inline void CollectLootFileRequest::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
+  new (&_impl_) Impl_(internal_visibility(), arena);
+}
+CollectLootFileRequest::~CollectLootFileRequest() {
+  // @@protoc_insertion_point(destructor:kelpieui.v1.CollectLootFileRequest)
+  SharedDtor(*this);
+}
+inline void CollectLootFileRequest::SharedDtor(MessageLite& self) {
+  CollectLootFileRequest& this_ = static_cast<CollectLootFileRequest&>(self);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
+  ABSL_DCHECK(this_.GetArena() == nullptr);
+  this_._impl_.target_uuid_.Destroy();
+  this_._impl_.remote_path_.Destroy();
+  this_._impl_.~Impl_();
+}
+
+inline void* PROTOBUF_NONNULL CollectLootFileRequest::PlacementNew_(
+    const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena) {
+  return ::new (mem) CollectLootFileRequest(arena);
+}
+#ifdef PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_REPEATED_PTR_FIELD
+constexpr auto CollectLootFileRequest::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(CollectLootFileRequest),
+                                            alignof(CollectLootFileRequest));
+}
+#else  // !PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_REPEATED_PTR_FIELD
+constexpr auto CollectLootFileRequest::InternalNewImpl_() {
+  constexpr auto arena_bits = ::google::protobuf::internal::EncodePlacementArenaOffsets({
+      PROTOBUF_FIELD_OFFSET(CollectLootFileRequest, _impl_.tags_) +
+          decltype(CollectLootFileRequest::_impl_.tags_)::
+              InternalGetArenaOffset(
+                  ::google::protobuf::Message::internal_visibility()),
+  });
+  if (arena_bits.has_value()) {
+    return ::google::protobuf::internal::MessageCreator::CopyInit(
+        sizeof(CollectLootFileRequest), alignof(CollectLootFileRequest), *arena_bits);
+  } else {
+    return ::google::protobuf::internal::MessageCreator(&CollectLootFileRequest::PlacementNew_,
+                                 sizeof(CollectLootFileRequest),
+                                 alignof(CollectLootFileRequest));
+  }
+}
+#endif
+constexpr auto CollectLootFileRequest::InternalGenerateClassData_() {
+  return ::google::protobuf::internal::ClassDataFull{
+      ::google::protobuf::internal::ClassData{
+          &_CollectLootFileRequest_default_instance_._instance,
+          &_table_.header,
+          nullptr,  // IsInitialized
+          &CollectLootFileRequest::MergeImpl,
+          ::google::protobuf::Message::GetNewImpl<CollectLootFileRequest>(),
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+          &CollectLootFileRequest::SharedDtor,
+          ::google::protobuf::Message::GetClearImpl<CollectLootFileRequest>(), &CollectLootFileRequest::ByteSizeLong,
+              &CollectLootFileRequest::_InternalSerialize,
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          PROTOBUF_FIELD_OFFSET(CollectLootFileRequest, _impl_._cached_size_),
+          false,
+      },
+      &CollectLootFileRequest::kDescriptorMethods,
+      &descriptor_table_kelpieui_2fv1_2fkelpieui_2eproto,
+      nullptr,  // tracker
+  };
+}
+
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 const
+    ::google::protobuf::internal::ClassDataFull CollectLootFileRequest_class_data_ =
+        CollectLootFileRequest::InternalGenerateClassData_();
+
+PROTOBUF_ATTRIBUTE_WEAK const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL
+CollectLootFileRequest::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&CollectLootFileRequest_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(CollectLootFileRequest_class_data_.tc_table);
+  return CollectLootFileRequest_class_data_.base();
+}
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<2, 3, 0, 69, 2>
+CollectLootFileRequest::_table_ = {
+  {
+    PROTOBUF_FIELD_OFFSET(CollectLootFileRequest, _impl_._has_bits_),
+    0, // no _extensions_
+    3, 24,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294967288,  // skipmap
+    offsetof(decltype(_table_), field_entries),
+    3,  // num_field_entries
+    0,  // num_aux_entries
+    offsetof(decltype(_table_), field_names),  // no aux_entries
+    CollectLootFileRequest_class_data_.base(),
+    nullptr,  // post_loop_handler
+    ::_pbi::TcParser::GenericFallback,  // fallback
+    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
+    ::_pbi::TcParser::GetTable<::kelpieui::v1::CollectLootFileRequest>(),  // to_prefetch
+    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
+  }, {{
+    {::_pbi::TcParser::MiniParse, {}},
+    // string target_uuid = 1;
+    {::_pbi::TcParser::FastUS1,
+     {10, 1, 0,
+      PROTOBUF_FIELD_OFFSET(CollectLootFileRequest, _impl_.target_uuid_)}},
+    // string remote_path = 2;
+    {::_pbi::TcParser::FastUS1,
+     {18, 2, 0,
+      PROTOBUF_FIELD_OFFSET(CollectLootFileRequest, _impl_.remote_path_)}},
+    // repeated string tags = 3;
+    {::_pbi::TcParser::FastUR1,
+     {26, 0, 0,
+      PROTOBUF_FIELD_OFFSET(CollectLootFileRequest, _impl_.tags_)}},
+  }}, {{
+    65535, 65535
+  }}, {{
+    // string target_uuid = 1;
+    {PROTOBUF_FIELD_OFFSET(CollectLootFileRequest, _impl_.target_uuid_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // string remote_path = 2;
+    {PROTOBUF_FIELD_OFFSET(CollectLootFileRequest, _impl_.remote_path_), _Internal::kHasBitsOffset + 2, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // repeated string tags = 3;
+    {PROTOBUF_FIELD_OFFSET(CollectLootFileRequest, _impl_.tags_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcRepeated | ::_fl::kUtf8String | ::_fl::kRepSString)},
+  }},
+  // no aux_entries
+  {{
+    "\42\13\13\4\0\0\0\0"
+    "kelpieui.v1.CollectLootFileRequest"
+    "target_uuid"
+    "remote_path"
+    "tags"
+  }},
+};
+PROTOBUF_NOINLINE void CollectLootFileRequest::Clear() {
+// @@protoc_insertion_point(message_clear_start:kelpieui.v1.CollectLootFileRequest)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x00000007U)) {
+    if (CheckHasBitForRepeated(cached_has_bits, 0x00000001U)) {
+      _impl_.tags_.Clear();
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      _impl_.target_uuid_.ClearNonDefaultToEmpty();
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+      _impl_.remote_path_.ClearNonDefaultToEmpty();
+    }
+  }
+  _impl_._has_bits_.Clear();
+  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::uint8_t* PROTOBUF_NONNULL CollectLootFileRequest::_InternalSerialize(
+    const ::google::protobuf::MessageLite& base, ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) {
+  const CollectLootFileRequest& this_ = static_cast<const CollectLootFileRequest&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::uint8_t* PROTOBUF_NONNULL CollectLootFileRequest::_InternalSerialize(
+    ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+  const CollectLootFileRequest& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  // @@protoc_insertion_point(serialize_to_array_start:kelpieui.v1.CollectLootFileRequest)
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = this_._impl_._has_bits_[0];
+  // string target_uuid = 1;
+  if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+    if (!this_._internal_target_uuid().empty()) {
+      const ::std::string& _s = this_._internal_target_uuid();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "kelpieui.v1.CollectLootFileRequest.target_uuid");
+      target = stream->WriteStringMaybeAliased(1, _s, target);
+    }
+  }
+
+  // string remote_path = 2;
+  if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+    if (!this_._internal_remote_path().empty()) {
+      const ::std::string& _s = this_._internal_remote_path();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "kelpieui.v1.CollectLootFileRequest.remote_path");
+      target = stream->WriteStringMaybeAliased(2, _s, target);
+    }
+  }
+
+  // repeated string tags = 3;
+  if (CheckHasBitForRepeated(cached_has_bits, 0x00000001U)) {
+    for (int i = 0, n = this_._internal_tags_size(); i < n; ++i) {
+      const auto& s = this_._internal_tags().Get(i);
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          s.data(), static_cast<int>(s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "kelpieui.v1.CollectLootFileRequest.tags");
+      target = stream->WriteString(3, s, target);
+    }
+  }
+
+  if (ABSL_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
+    target =
+        ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+            this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:kelpieui.v1.CollectLootFileRequest)
+  return target;
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::size_t CollectLootFileRequest::ByteSizeLong(const MessageLite& base) {
+  const CollectLootFileRequest& this_ = static_cast<const CollectLootFileRequest&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::size_t CollectLootFileRequest::ByteSizeLong() const {
+  const CollectLootFileRequest& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  // @@protoc_insertion_point(message_byte_size_start:kelpieui.v1.CollectLootFileRequest)
+  ::size_t total_size = 0;
+
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void)cached_has_bits;
+
+  ::_pbi::Prefetch5LinesFrom7Lines(&this_);
+  cached_has_bits = this_._impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x00000007U)) {
+    // repeated string tags = 3;
+    if (CheckHasBitForRepeated(cached_has_bits, 0x00000001U)) {
+      total_size +=
+          1 * ::google::protobuf::internal::FromIntSize(this_._internal_tags().size());
+      for (int i = 0, n = this_._internal_tags().size(); i < n; ++i) {
+        total_size += ::google::protobuf::internal::WireFormatLite::StringSize(
+            this_._internal_tags().Get(i));
+      }
+    }
+    // string target_uuid = 1;
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      if (!this_._internal_target_uuid().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_target_uuid());
+      }
+    }
+    // string remote_path = 2;
+    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+      if (!this_._internal_remote_path().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_remote_path());
+      }
+    }
+  }
+  return this_.MaybeComputeUnknownFieldsSize(total_size,
+                                             &this_._impl_._cached_size_);
+}
+
+void CollectLootFileRequest::MergeImpl(::google::protobuf::MessageLite& to_msg,
+                            const ::google::protobuf::MessageLite& from_msg) {
+   auto* const _this =
+      static_cast<CollectLootFileRequest*>(&to_msg);
+  auto& from = static_cast<const CollectLootFileRequest&>(from_msg);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    from.CheckHasBitConsistency();
+  }
+  ::google::protobuf::Arena* arena = _this->GetArena();
+  // @@protoc_insertion_point(class_specific_merge_from_start:kelpieui.v1.CollectLootFileRequest)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = from._impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x00000007U)) {
+    if (CheckHasBitForRepeated(cached_has_bits, 0x00000001U)) {
+      _this->_internal_mutable_tags()->InternalMergeFromWithArena(
+          ::google::protobuf::MessageLite::internal_visibility(), arena,
+          from._internal_tags());
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      if (!from._internal_target_uuid().empty()) {
+        _this->_internal_set_target_uuid(from._internal_target_uuid());
+      } else {
+        if (_this->_impl_.target_uuid_.IsDefault()) {
+          _this->_internal_set_target_uuid("");
+        }
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+      if (!from._internal_remote_path().empty()) {
+        _this->_internal_set_remote_path(from._internal_remote_path());
+      } else {
+        if (_this->_impl_.remote_path_.IsDefault()) {
+          _this->_internal_set_remote_path("");
+        }
+      }
+    }
+  }
+  _this->_impl_._has_bits_[0] |= cached_has_bits;
+  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+}
+
+void CollectLootFileRequest::CopyFrom(const CollectLootFileRequest& from) {
+  // @@protoc_insertion_point(class_specific_copy_from_start:kelpieui.v1.CollectLootFileRequest)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+
+void CollectLootFileRequest::InternalSwap(CollectLootFileRequest* PROTOBUF_RESTRICT PROTOBUF_NONNULL other) {
+  using ::std::swap;
+  auto* arena = GetArena();
+  ABSL_DCHECK_EQ(arena, other->GetArena());
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  _impl_.tags_.InternalSwap(&other->_impl_.tags_);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.target_uuid_, &other->_impl_.target_uuid_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.remote_path_, &other->_impl_.remote_path_, arena);
+}
+
+::google::protobuf::Metadata CollectLootFileRequest::GetMetadata() const {
+  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
+}
+// ===================================================================
+
+class CollectLootFileResponse::_Internal {
+ public:
+  using HasBits =
+      decltype(::std::declval<CollectLootFileResponse>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+      8 * PROTOBUF_FIELD_OFFSET(CollectLootFileResponse, _impl_._has_bits_);
+};
+
+CollectLootFileResponse::CollectLootFileResponse(::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, CollectLootFileResponse_class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:kelpieui.v1.CollectLootFileResponse)
+}
+PROTOBUF_NDEBUG_INLINE CollectLootFileResponse::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+    [[maybe_unused]] const ::kelpieui::v1::CollectLootFileResponse& from_msg)
+      : _has_bits_{from._has_bits_},
+        _cached_size_{0} {}
+
+CollectLootFileResponse::CollectLootFileResponse(
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena,
+    const CollectLootFileResponse& from)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, CollectLootFileResponse_class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  CollectLootFileResponse* const _this = this;
+  (void)_this;
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+  ::uint32_t cached_has_bits = _impl_._has_bits_[0];
+  _impl_.item_ = (CheckHasBit(cached_has_bits, 0x00000001U))
+                ? ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.item_)
+                : nullptr;
+
+  // @@protoc_insertion_point(copy_constructor:kelpieui.v1.CollectLootFileResponse)
+}
+PROTOBUF_NDEBUG_INLINE CollectLootFileResponse::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+      : _cached_size_{0} {}
+
+inline void CollectLootFileResponse::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
+  new (&_impl_) Impl_(internal_visibility(), arena);
+  _impl_.item_ = {};
+}
+CollectLootFileResponse::~CollectLootFileResponse() {
+  // @@protoc_insertion_point(destructor:kelpieui.v1.CollectLootFileResponse)
+  SharedDtor(*this);
+}
+inline void CollectLootFileResponse::SharedDtor(MessageLite& self) {
+  CollectLootFileResponse& this_ = static_cast<CollectLootFileResponse&>(self);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
+  ABSL_DCHECK(this_.GetArena() == nullptr);
+  delete this_._impl_.item_;
+  this_._impl_.~Impl_();
+}
+
+inline void* PROTOBUF_NONNULL CollectLootFileResponse::PlacementNew_(
+    const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena) {
+  return ::new (mem) CollectLootFileResponse(arena);
+}
+constexpr auto CollectLootFileResponse::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::ZeroInit(sizeof(CollectLootFileResponse),
+                                            alignof(CollectLootFileResponse));
+}
+constexpr auto CollectLootFileResponse::InternalGenerateClassData_() {
+  return ::google::protobuf::internal::ClassDataFull{
+      ::google::protobuf::internal::ClassData{
+          &_CollectLootFileResponse_default_instance_._instance,
+          &_table_.header,
+          nullptr,  // IsInitialized
+          &CollectLootFileResponse::MergeImpl,
+          ::google::protobuf::Message::GetNewImpl<CollectLootFileResponse>(),
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+          &CollectLootFileResponse::SharedDtor,
+          ::google::protobuf::Message::GetClearImpl<CollectLootFileResponse>(), &CollectLootFileResponse::ByteSizeLong,
+              &CollectLootFileResponse::_InternalSerialize,
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          PROTOBUF_FIELD_OFFSET(CollectLootFileResponse, _impl_._cached_size_),
+          false,
+      },
+      &CollectLootFileResponse::kDescriptorMethods,
+      &descriptor_table_kelpieui_2fv1_2fkelpieui_2eproto,
+      nullptr,  // tracker
+  };
+}
+
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 const
+    ::google::protobuf::internal::ClassDataFull CollectLootFileResponse_class_data_ =
+        CollectLootFileResponse::InternalGenerateClassData_();
+
+PROTOBUF_ATTRIBUTE_WEAK const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL
+CollectLootFileResponse::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&CollectLootFileResponse_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(CollectLootFileResponse_class_data_.tc_table);
+  return CollectLootFileResponse_class_data_.base();
+}
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<0, 1, 1, 0, 2>
+CollectLootFileResponse::_table_ = {
+  {
+    PROTOBUF_FIELD_OFFSET(CollectLootFileResponse, _impl_._has_bits_),
+    0, // no _extensions_
+    1, 0,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294967294,  // skipmap
+    offsetof(decltype(_table_), field_entries),
+    1,  // num_field_entries
+    1,  // num_aux_entries
+    offsetof(decltype(_table_), aux_entries),
+    CollectLootFileResponse_class_data_.base(),
+    nullptr,  // post_loop_handler
+    ::_pbi::TcParser::GenericFallback,  // fallback
+    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
+    ::_pbi::TcParser::GetTable<::kelpieui::v1::CollectLootFileResponse>(),  // to_prefetch
+    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
+  }, {{
+    // .kelpieui.v1.LootItem item = 1;
+    {::_pbi::TcParser::FastMtS1,
+     {10, 0, 0,
+      PROTOBUF_FIELD_OFFSET(CollectLootFileResponse, _impl_.item_)}},
+  }}, {{
+    65535, 65535
+  }}, {{
+    // .kelpieui.v1.LootItem item = 1;
+    {PROTOBUF_FIELD_OFFSET(CollectLootFileResponse, _impl_.item_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcOptional | ::_fl::kMessage | ::_fl::kTvTable)},
+  }},
+  {{
+      {::_pbi::TcParser::GetTable<::kelpieui::v1::LootItem>()},
+  }},
+  {{
+  }},
+};
+PROTOBUF_NOINLINE void CollectLootFileResponse::Clear() {
+// @@protoc_insertion_point(message_clear_start:kelpieui.v1.CollectLootFileResponse)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _impl_._has_bits_[0];
+  if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+    ABSL_DCHECK(_impl_.item_ != nullptr);
+    _impl_.item_->Clear();
+  }
+  _impl_._has_bits_.Clear();
+  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::uint8_t* PROTOBUF_NONNULL CollectLootFileResponse::_InternalSerialize(
+    const ::google::protobuf::MessageLite& base, ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) {
+  const CollectLootFileResponse& this_ = static_cast<const CollectLootFileResponse&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::uint8_t* PROTOBUF_NONNULL CollectLootFileResponse::_InternalSerialize(
+    ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+  const CollectLootFileResponse& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  // @@protoc_insertion_point(serialize_to_array_start:kelpieui.v1.CollectLootFileResponse)
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = this_._impl_._has_bits_[0];
+  // .kelpieui.v1.LootItem item = 1;
+  if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+    target = ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
+        1, *this_._impl_.item_, this_._impl_.item_->GetCachedSize(), target,
+        stream);
+  }
+
+  if (ABSL_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
+    target =
+        ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+            this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:kelpieui.v1.CollectLootFileResponse)
+  return target;
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::size_t CollectLootFileResponse::ByteSizeLong(const MessageLite& base) {
+  const CollectLootFileResponse& this_ = static_cast<const CollectLootFileResponse&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::size_t CollectLootFileResponse::ByteSizeLong() const {
+  const CollectLootFileResponse& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  // @@protoc_insertion_point(message_byte_size_start:kelpieui.v1.CollectLootFileResponse)
+  ::size_t total_size = 0;
+
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void)cached_has_bits;
+
+   {
+    // .kelpieui.v1.LootItem item = 1;
+    cached_has_bits = this_._impl_._has_bits_[0];
+    if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+      total_size += 1 +
+                    ::google::protobuf::internal::WireFormatLite::MessageSize(*this_._impl_.item_);
+    }
+  }
+  return this_.MaybeComputeUnknownFieldsSize(total_size,
+                                             &this_._impl_._cached_size_);
+}
+
+void CollectLootFileResponse::MergeImpl(::google::protobuf::MessageLite& to_msg,
+                            const ::google::protobuf::MessageLite& from_msg) {
+   auto* const _this =
+      static_cast<CollectLootFileResponse*>(&to_msg);
+  auto& from = static_cast<const CollectLootFileResponse&>(from_msg);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    from.CheckHasBitConsistency();
+  }
+  ::google::protobuf::Arena* arena = _this->GetArena();
+  // @@protoc_insertion_point(class_specific_merge_from_start:kelpieui.v1.CollectLootFileResponse)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = from._impl_._has_bits_[0];
+  if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+    ABSL_DCHECK(from._impl_.item_ != nullptr);
+    if (_this->_impl_.item_ == nullptr) {
+      _this->_impl_.item_ = ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.item_);
+    } else {
+      _this->_impl_.item_->MergeFrom(*from._impl_.item_);
+    }
+  }
+  _this->_impl_._has_bits_[0] |= cached_has_bits;
+  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+}
+
+void CollectLootFileResponse::CopyFrom(const CollectLootFileResponse& from) {
+  // @@protoc_insertion_point(class_specific_copy_from_start:kelpieui.v1.CollectLootFileResponse)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+
+void CollectLootFileResponse::InternalSwap(CollectLootFileResponse* PROTOBUF_RESTRICT PROTOBUF_NONNULL other) {
+  using ::std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  swap(_impl_.item_, other->_impl_.item_);
+}
+
+::google::protobuf::Metadata CollectLootFileResponse::GetMetadata() const {
+  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
+}
+// ===================================================================
+
+class SyncLootRequest::_Internal {
+ public:
+  using HasBits =
+      decltype(::std::declval<SyncLootRequest>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+      8 * PROTOBUF_FIELD_OFFSET(SyncLootRequest, _impl_._has_bits_);
+};
+
+SyncLootRequest::SyncLootRequest(::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, SyncLootRequest_class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:kelpieui.v1.SyncLootRequest)
+}
+PROTOBUF_NDEBUG_INLINE SyncLootRequest::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+    [[maybe_unused]] const ::kelpieui::v1::SyncLootRequest& from_msg)
+      : _has_bits_{from._has_bits_},
+        _cached_size_{0},
+        loot_id_(arena, from.loot_id_) {}
+
+SyncLootRequest::SyncLootRequest(
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena,
+    const SyncLootRequest& from)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, SyncLootRequest_class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  SyncLootRequest* const _this = this;
+  (void)_this;
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+
+  // @@protoc_insertion_point(copy_constructor:kelpieui.v1.SyncLootRequest)
+}
+PROTOBUF_NDEBUG_INLINE SyncLootRequest::Impl_::Impl_(
     [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
     [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
       : _cached_size_{0},
         loot_id_(arena) {}
 
-inline void GetLootRequest::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
+inline void SyncLootRequest::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
 }
-GetLootRequest::~GetLootRequest() {
-  // @@protoc_insertion_point(destructor:kelpieui.v1.GetLootRequest)
+SyncLootRequest::~SyncLootRequest() {
+  // @@protoc_insertion_point(destructor:kelpieui.v1.SyncLootRequest)
   SharedDtor(*this);
 }
-inline void GetLootRequest::SharedDtor(MessageLite& self) {
-  GetLootRequest& this_ = static_cast<GetLootRequest&>(self);
+inline void SyncLootRequest::SharedDtor(MessageLite& self) {
+  SyncLootRequest& this_ = static_cast<SyncLootRequest&>(self);
   if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
     this_.CheckHasBitConsistency();
   }
@@ -25921,52 +26864,52 @@ inline void GetLootRequest::SharedDtor(MessageLite& self) {
   this_._impl_.~Impl_();
 }
 
-inline void* PROTOBUF_NONNULL GetLootRequest::PlacementNew_(
+inline void* PROTOBUF_NONNULL SyncLootRequest::PlacementNew_(
     const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
     ::google::protobuf::Arena* PROTOBUF_NULLABLE arena) {
-  return ::new (mem) GetLootRequest(arena);
+  return ::new (mem) SyncLootRequest(arena);
 }
-constexpr auto GetLootRequest::InternalNewImpl_() {
-  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(GetLootRequest),
-                                            alignof(GetLootRequest));
+constexpr auto SyncLootRequest::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(SyncLootRequest),
+                                            alignof(SyncLootRequest));
 }
-constexpr auto GetLootRequest::InternalGenerateClassData_() {
+constexpr auto SyncLootRequest::InternalGenerateClassData_() {
   return ::google::protobuf::internal::ClassDataFull{
       ::google::protobuf::internal::ClassData{
-          &_GetLootRequest_default_instance_._instance,
+          &_SyncLootRequest_default_instance_._instance,
           &_table_.header,
           nullptr,  // IsInitialized
-          &GetLootRequest::MergeImpl,
-          ::google::protobuf::Message::GetNewImpl<GetLootRequest>(),
+          &SyncLootRequest::MergeImpl,
+          ::google::protobuf::Message::GetNewImpl<SyncLootRequest>(),
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-          &GetLootRequest::SharedDtor,
-          ::google::protobuf::Message::GetClearImpl<GetLootRequest>(), &GetLootRequest::ByteSizeLong,
-              &GetLootRequest::_InternalSerialize,
+          &SyncLootRequest::SharedDtor,
+          ::google::protobuf::Message::GetClearImpl<SyncLootRequest>(), &SyncLootRequest::ByteSizeLong,
+              &SyncLootRequest::_InternalSerialize,
 #endif  // PROTOBUF_CUSTOM_VTABLE
-          PROTOBUF_FIELD_OFFSET(GetLootRequest, _impl_._cached_size_),
+          PROTOBUF_FIELD_OFFSET(SyncLootRequest, _impl_._cached_size_),
           false,
       },
-      &GetLootRequest::kDescriptorMethods,
+      &SyncLootRequest::kDescriptorMethods,
       &descriptor_table_kelpieui_2fv1_2fkelpieui_2eproto,
       nullptr,  // tracker
   };
 }
 
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 const
-    ::google::protobuf::internal::ClassDataFull GetLootRequest_class_data_ =
-        GetLootRequest::InternalGenerateClassData_();
+    ::google::protobuf::internal::ClassDataFull SyncLootRequest_class_data_ =
+        SyncLootRequest::InternalGenerateClassData_();
 
 PROTOBUF_ATTRIBUTE_WEAK const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL
-GetLootRequest::GetClassData() const {
-  ::google::protobuf::internal::PrefetchToLocalCache(&GetLootRequest_class_data_);
-  ::google::protobuf::internal::PrefetchToLocalCache(GetLootRequest_class_data_.tc_table);
-  return GetLootRequest_class_data_.base();
+SyncLootRequest::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&SyncLootRequest_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(SyncLootRequest_class_data_.tc_table);
+  return SyncLootRequest_class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<0, 1, 0, 42, 2>
-GetLootRequest::_table_ = {
+const ::_pbi::TcParseTable<0, 1, 0, 43, 2>
+SyncLootRequest::_table_ = {
   {
-    PROTOBUF_FIELD_OFFSET(GetLootRequest, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(SyncLootRequest, _impl_._has_bits_),
     0, // no _extensions_
     1, 0,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
@@ -25975,32 +26918,32 @@ GetLootRequest::_table_ = {
     1,  // num_field_entries
     0,  // num_aux_entries
     offsetof(decltype(_table_), field_names),  // no aux_entries
-    GetLootRequest_class_data_.base(),
+    SyncLootRequest_class_data_.base(),
     nullptr,  // post_loop_handler
     ::_pbi::TcParser::GenericFallback,  // fallback
     #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
-    ::_pbi::TcParser::GetTable<::kelpieui::v1::GetLootRequest>(),  // to_prefetch
+    ::_pbi::TcParser::GetTable<::kelpieui::v1::SyncLootRequest>(),  // to_prefetch
     #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
   }, {{
     // string loot_id = 1;
     {::_pbi::TcParser::FastUS1,
      {10, 0, 0,
-      PROTOBUF_FIELD_OFFSET(GetLootRequest, _impl_.loot_id_)}},
+      PROTOBUF_FIELD_OFFSET(SyncLootRequest, _impl_.loot_id_)}},
   }}, {{
     65535, 65535
   }}, {{
     // string loot_id = 1;
-    {PROTOBUF_FIELD_OFFSET(GetLootRequest, _impl_.loot_id_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    {PROTOBUF_FIELD_OFFSET(SyncLootRequest, _impl_.loot_id_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
   }},
   // no aux_entries
   {{
-    "\32\7\0\0\0\0\0\0"
-    "kelpieui.v1.GetLootRequest"
+    "\33\7\0\0\0\0\0\0"
+    "kelpieui.v1.SyncLootRequest"
     "loot_id"
   }},
 };
-PROTOBUF_NOINLINE void GetLootRequest::Clear() {
-// @@protoc_insertion_point(message_clear_start:kelpieui.v1.GetLootRequest)
+PROTOBUF_NOINLINE void SyncLootRequest::Clear() {
+// @@protoc_insertion_point(message_clear_start:kelpieui.v1.SyncLootRequest)
   ::google::protobuf::internal::TSanWrite(&_impl_);
   ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
@@ -26015,20 +26958,20 @@ PROTOBUF_NOINLINE void GetLootRequest::Clear() {
 }
 
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-::uint8_t* PROTOBUF_NONNULL GetLootRequest::_InternalSerialize(
+::uint8_t* PROTOBUF_NONNULL SyncLootRequest::_InternalSerialize(
     const ::google::protobuf::MessageLite& base, ::uint8_t* PROTOBUF_NONNULL target,
     ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) {
-  const GetLootRequest& this_ = static_cast<const GetLootRequest&>(base);
+  const SyncLootRequest& this_ = static_cast<const SyncLootRequest&>(base);
 #else   // PROTOBUF_CUSTOM_VTABLE
-::uint8_t* PROTOBUF_NONNULL GetLootRequest::_InternalSerialize(
+::uint8_t* PROTOBUF_NONNULL SyncLootRequest::_InternalSerialize(
     ::uint8_t* PROTOBUF_NONNULL target,
     ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
-  const GetLootRequest& this_ = *this;
+  const SyncLootRequest& this_ = *this;
 #endif  // PROTOBUF_CUSTOM_VTABLE
   if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
     this_.CheckHasBitConsistency();
   }
-  // @@protoc_insertion_point(serialize_to_array_start:kelpieui.v1.GetLootRequest)
+  // @@protoc_insertion_point(serialize_to_array_start:kelpieui.v1.SyncLootRequest)
   ::uint32_t cached_has_bits = 0;
   (void)cached_has_bits;
 
@@ -26038,7 +26981,7 @@ PROTOBUF_NOINLINE void GetLootRequest::Clear() {
     if (!this_._internal_loot_id().empty()) {
       const ::std::string& _s = this_._internal_loot_id();
       ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "kelpieui.v1.GetLootRequest.loot_id");
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "kelpieui.v1.SyncLootRequest.loot_id");
       target = stream->WriteStringMaybeAliased(1, _s, target);
     }
   }
@@ -26048,18 +26991,18 @@ PROTOBUF_NOINLINE void GetLootRequest::Clear() {
         ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
             this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:kelpieui.v1.GetLootRequest)
+  // @@protoc_insertion_point(serialize_to_array_end:kelpieui.v1.SyncLootRequest)
   return target;
 }
 
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-::size_t GetLootRequest::ByteSizeLong(const MessageLite& base) {
-  const GetLootRequest& this_ = static_cast<const GetLootRequest&>(base);
+::size_t SyncLootRequest::ByteSizeLong(const MessageLite& base) {
+  const SyncLootRequest& this_ = static_cast<const SyncLootRequest&>(base);
 #else   // PROTOBUF_CUSTOM_VTABLE
-::size_t GetLootRequest::ByteSizeLong() const {
-  const GetLootRequest& this_ = *this;
+::size_t SyncLootRequest::ByteSizeLong() const {
+  const SyncLootRequest& this_ = *this;
 #endif  // PROTOBUF_CUSTOM_VTABLE
-  // @@protoc_insertion_point(message_byte_size_start:kelpieui.v1.GetLootRequest)
+  // @@protoc_insertion_point(message_byte_size_start:kelpieui.v1.SyncLootRequest)
   ::size_t total_size = 0;
 
   ::uint32_t cached_has_bits = 0;
@@ -26080,15 +27023,15 @@ PROTOBUF_NOINLINE void GetLootRequest::Clear() {
                                              &this_._impl_._cached_size_);
 }
 
-void GetLootRequest::MergeImpl(::google::protobuf::MessageLite& to_msg,
+void SyncLootRequest::MergeImpl(::google::protobuf::MessageLite& to_msg,
                             const ::google::protobuf::MessageLite& from_msg) {
    auto* const _this =
-      static_cast<GetLootRequest*>(&to_msg);
-  auto& from = static_cast<const GetLootRequest&>(from_msg);
+      static_cast<SyncLootRequest*>(&to_msg);
+  auto& from = static_cast<const SyncLootRequest&>(from_msg);
   if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
     from.CheckHasBitConsistency();
   }
-  // @@protoc_insertion_point(class_specific_merge_from_start:kelpieui.v1.GetLootRequest)
+  // @@protoc_insertion_point(class_specific_merge_from_start:kelpieui.v1.SyncLootRequest)
   ABSL_DCHECK_NE(&from, _this);
   ::uint32_t cached_has_bits = 0;
   (void)cached_has_bits;
@@ -26108,15 +27051,15 @@ void GetLootRequest::MergeImpl(::google::protobuf::MessageLite& to_msg,
       from._internal_metadata_);
 }
 
-void GetLootRequest::CopyFrom(const GetLootRequest& from) {
-  // @@protoc_insertion_point(class_specific_copy_from_start:kelpieui.v1.GetLootRequest)
+void SyncLootRequest::CopyFrom(const SyncLootRequest& from) {
+  // @@protoc_insertion_point(class_specific_copy_from_start:kelpieui.v1.SyncLootRequest)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
 
-void GetLootRequest::InternalSwap(GetLootRequest* PROTOBUF_RESTRICT PROTOBUF_NONNULL other) {
+void SyncLootRequest::InternalSwap(SyncLootRequest* PROTOBUF_RESTRICT PROTOBUF_NONNULL other) {
   using ::std::swap;
   auto* arena = GetArena();
   ABSL_DCHECK_EQ(arena, other->GetArena());
@@ -26125,45 +27068,45 @@ void GetLootRequest::InternalSwap(GetLootRequest* PROTOBUF_RESTRICT PROTOBUF_NON
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.loot_id_, &other->_impl_.loot_id_, arena);
 }
 
-::google::protobuf::Metadata GetLootRequest::GetMetadata() const {
+::google::protobuf::Metadata SyncLootRequest::GetMetadata() const {
   return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
 }
 // ===================================================================
 
-class GetLootResponse::_Internal {
+class SyncLootChunk::_Internal {
  public:
   using HasBits =
-      decltype(::std::declval<GetLootResponse>()._impl_._has_bits_);
+      decltype(::std::declval<SyncLootChunk>()._impl_._has_bits_);
   static constexpr ::int32_t kHasBitsOffset =
-      8 * PROTOBUF_FIELD_OFFSET(GetLootResponse, _impl_._has_bits_);
+      8 * PROTOBUF_FIELD_OFFSET(SyncLootChunk, _impl_._has_bits_);
 };
 
-GetLootResponse::GetLootResponse(::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+SyncLootChunk::SyncLootChunk(::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-    : ::google::protobuf::Message(arena, GetLootResponse_class_data_.base()) {
+    : ::google::protobuf::Message(arena, SyncLootChunk_class_data_.base()) {
 #else   // PROTOBUF_CUSTOM_VTABLE
     : ::google::protobuf::Message(arena) {
 #endif  // PROTOBUF_CUSTOM_VTABLE
   SharedCtor(arena);
-  // @@protoc_insertion_point(arena_constructor:kelpieui.v1.GetLootResponse)
+  // @@protoc_insertion_point(arena_constructor:kelpieui.v1.SyncLootChunk)
 }
-PROTOBUF_NDEBUG_INLINE GetLootResponse::Impl_::Impl_(
+PROTOBUF_NDEBUG_INLINE SyncLootChunk::Impl_::Impl_(
     [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
     [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
-    [[maybe_unused]] const ::kelpieui::v1::GetLootResponse& from_msg)
+    [[maybe_unused]] const ::kelpieui::v1::SyncLootChunk& from_msg)
       : _has_bits_{from._has_bits_},
         _cached_size_{0},
-        content_(arena, from.content_) {}
+        data_(arena, from.data_) {}
 
-GetLootResponse::GetLootResponse(
+SyncLootChunk::SyncLootChunk(
     ::google::protobuf::Arena* PROTOBUF_NULLABLE arena,
-    const GetLootResponse& from)
+    const SyncLootChunk& from)
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-    : ::google::protobuf::Message(arena, GetLootResponse_class_data_.base()) {
+    : ::google::protobuf::Message(arena, SyncLootChunk_class_data_.base()) {
 #else   // PROTOBUF_CUSTOM_VTABLE
     : ::google::protobuf::Message(arena) {
 #endif  // PROTOBUF_CUSTOM_VTABLE
-  GetLootResponse* const _this = this;
+  SyncLootChunk* const _this = this;
   (void)_this;
   _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
       from._internal_metadata_);
@@ -26173,80 +27116,80 @@ GetLootResponse::GetLootResponse(
                 ? ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.item_)
                 : nullptr;
 
-  // @@protoc_insertion_point(copy_constructor:kelpieui.v1.GetLootResponse)
+  // @@protoc_insertion_point(copy_constructor:kelpieui.v1.SyncLootChunk)
 }
-PROTOBUF_NDEBUG_INLINE GetLootResponse::Impl_::Impl_(
+PROTOBUF_NDEBUG_INLINE SyncLootChunk::Impl_::Impl_(
     [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
     [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
       : _cached_size_{0},
-        content_(arena) {}
+        data_(arena) {}
 
-inline void GetLootResponse::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
+inline void SyncLootChunk::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
   _impl_.item_ = {};
 }
-GetLootResponse::~GetLootResponse() {
-  // @@protoc_insertion_point(destructor:kelpieui.v1.GetLootResponse)
+SyncLootChunk::~SyncLootChunk() {
+  // @@protoc_insertion_point(destructor:kelpieui.v1.SyncLootChunk)
   SharedDtor(*this);
 }
-inline void GetLootResponse::SharedDtor(MessageLite& self) {
-  GetLootResponse& this_ = static_cast<GetLootResponse&>(self);
+inline void SyncLootChunk::SharedDtor(MessageLite& self) {
+  SyncLootChunk& this_ = static_cast<SyncLootChunk&>(self);
   if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
     this_.CheckHasBitConsistency();
   }
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
-  this_._impl_.content_.Destroy();
+  this_._impl_.data_.Destroy();
   delete this_._impl_.item_;
   this_._impl_.~Impl_();
 }
 
-inline void* PROTOBUF_NONNULL GetLootResponse::PlacementNew_(
+inline void* PROTOBUF_NONNULL SyncLootChunk::PlacementNew_(
     const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
     ::google::protobuf::Arena* PROTOBUF_NULLABLE arena) {
-  return ::new (mem) GetLootResponse(arena);
+  return ::new (mem) SyncLootChunk(arena);
 }
-constexpr auto GetLootResponse::InternalNewImpl_() {
-  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(GetLootResponse),
-                                            alignof(GetLootResponse));
+constexpr auto SyncLootChunk::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(SyncLootChunk),
+                                            alignof(SyncLootChunk));
 }
-constexpr auto GetLootResponse::InternalGenerateClassData_() {
+constexpr auto SyncLootChunk::InternalGenerateClassData_() {
   return ::google::protobuf::internal::ClassDataFull{
       ::google::protobuf::internal::ClassData{
-          &_GetLootResponse_default_instance_._instance,
+          &_SyncLootChunk_default_instance_._instance,
           &_table_.header,
           nullptr,  // IsInitialized
-          &GetLootResponse::MergeImpl,
-          ::google::protobuf::Message::GetNewImpl<GetLootResponse>(),
+          &SyncLootChunk::MergeImpl,
+          ::google::protobuf::Message::GetNewImpl<SyncLootChunk>(),
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-          &GetLootResponse::SharedDtor,
-          ::google::protobuf::Message::GetClearImpl<GetLootResponse>(), &GetLootResponse::ByteSizeLong,
-              &GetLootResponse::_InternalSerialize,
+          &SyncLootChunk::SharedDtor,
+          ::google::protobuf::Message::GetClearImpl<SyncLootChunk>(), &SyncLootChunk::ByteSizeLong,
+              &SyncLootChunk::_InternalSerialize,
 #endif  // PROTOBUF_CUSTOM_VTABLE
-          PROTOBUF_FIELD_OFFSET(GetLootResponse, _impl_._cached_size_),
+          PROTOBUF_FIELD_OFFSET(SyncLootChunk, _impl_._cached_size_),
           false,
       },
-      &GetLootResponse::kDescriptorMethods,
+      &SyncLootChunk::kDescriptorMethods,
       &descriptor_table_kelpieui_2fv1_2fkelpieui_2eproto,
       nullptr,  // tracker
   };
 }
 
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 const
-    ::google::protobuf::internal::ClassDataFull GetLootResponse_class_data_ =
-        GetLootResponse::InternalGenerateClassData_();
+    ::google::protobuf::internal::ClassDataFull SyncLootChunk_class_data_ =
+        SyncLootChunk::InternalGenerateClassData_();
 
 PROTOBUF_ATTRIBUTE_WEAK const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL
-GetLootResponse::GetClassData() const {
-  ::google::protobuf::internal::PrefetchToLocalCache(&GetLootResponse_class_data_);
-  ::google::protobuf::internal::PrefetchToLocalCache(GetLootResponse_class_data_.tc_table);
-  return GetLootResponse_class_data_.base();
+SyncLootChunk::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&SyncLootChunk_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(SyncLootChunk_class_data_.tc_table);
+  return SyncLootChunk_class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
 const ::_pbi::TcParseTable<1, 2, 1, 0, 2>
-GetLootResponse::_table_ = {
+SyncLootChunk::_table_ = {
   {
-    PROTOBUF_FIELD_OFFSET(GetLootResponse, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(SyncLootChunk, _impl_._has_bits_),
     0, // no _extensions_
     2, 8,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
@@ -26255,28 +27198,28 @@ GetLootResponse::_table_ = {
     2,  // num_field_entries
     1,  // num_aux_entries
     offsetof(decltype(_table_), aux_entries),
-    GetLootResponse_class_data_.base(),
+    SyncLootChunk_class_data_.base(),
     nullptr,  // post_loop_handler
     ::_pbi::TcParser::GenericFallback,  // fallback
     #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
-    ::_pbi::TcParser::GetTable<::kelpieui::v1::GetLootResponse>(),  // to_prefetch
+    ::_pbi::TcParser::GetTable<::kelpieui::v1::SyncLootChunk>(),  // to_prefetch
     #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
   }, {{
-    // bytes content = 2;
+    // bytes data = 2;
     {::_pbi::TcParser::FastBS1,
      {18, 0, 0,
-      PROTOBUF_FIELD_OFFSET(GetLootResponse, _impl_.content_)}},
+      PROTOBUF_FIELD_OFFSET(SyncLootChunk, _impl_.data_)}},
     // .kelpieui.v1.LootItem item = 1;
     {::_pbi::TcParser::FastMtS1,
      {10, 1, 0,
-      PROTOBUF_FIELD_OFFSET(GetLootResponse, _impl_.item_)}},
+      PROTOBUF_FIELD_OFFSET(SyncLootChunk, _impl_.item_)}},
   }}, {{
     65535, 65535
   }}, {{
     // .kelpieui.v1.LootItem item = 1;
-    {PROTOBUF_FIELD_OFFSET(GetLootResponse, _impl_.item_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcOptional | ::_fl::kMessage | ::_fl::kTvTable)},
-    // bytes content = 2;
-    {PROTOBUF_FIELD_OFFSET(GetLootResponse, _impl_.content_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcOptional | ::_fl::kBytes | ::_fl::kRepAString)},
+    {PROTOBUF_FIELD_OFFSET(SyncLootChunk, _impl_.item_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcOptional | ::_fl::kMessage | ::_fl::kTvTable)},
+    // bytes data = 2;
+    {PROTOBUF_FIELD_OFFSET(SyncLootChunk, _impl_.data_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcOptional | ::_fl::kBytes | ::_fl::kRepAString)},
   }},
   {{
       {::_pbi::TcParser::GetTable<::kelpieui::v1::LootItem>()},
@@ -26284,8 +27227,8 @@ GetLootResponse::_table_ = {
   {{
   }},
 };
-PROTOBUF_NOINLINE void GetLootResponse::Clear() {
-// @@protoc_insertion_point(message_clear_start:kelpieui.v1.GetLootResponse)
+PROTOBUF_NOINLINE void SyncLootChunk::Clear() {
+// @@protoc_insertion_point(message_clear_start:kelpieui.v1.SyncLootChunk)
   ::google::protobuf::internal::TSanWrite(&_impl_);
   ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
@@ -26294,7 +27237,7 @@ PROTOBUF_NOINLINE void GetLootResponse::Clear() {
   cached_has_bits = _impl_._has_bits_[0];
   if (BatchCheckHasBit(cached_has_bits, 0x00000003U)) {
     if (CheckHasBit(cached_has_bits, 0x00000001U)) {
-      _impl_.content_.ClearNonDefaultToEmpty();
+      _impl_.data_.ClearNonDefaultToEmpty();
     }
     if (CheckHasBit(cached_has_bits, 0x00000002U)) {
       ABSL_DCHECK(_impl_.item_ != nullptr);
@@ -26306,20 +27249,20 @@ PROTOBUF_NOINLINE void GetLootResponse::Clear() {
 }
 
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-::uint8_t* PROTOBUF_NONNULL GetLootResponse::_InternalSerialize(
+::uint8_t* PROTOBUF_NONNULL SyncLootChunk::_InternalSerialize(
     const ::google::protobuf::MessageLite& base, ::uint8_t* PROTOBUF_NONNULL target,
     ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) {
-  const GetLootResponse& this_ = static_cast<const GetLootResponse&>(base);
+  const SyncLootChunk& this_ = static_cast<const SyncLootChunk&>(base);
 #else   // PROTOBUF_CUSTOM_VTABLE
-::uint8_t* PROTOBUF_NONNULL GetLootResponse::_InternalSerialize(
+::uint8_t* PROTOBUF_NONNULL SyncLootChunk::_InternalSerialize(
     ::uint8_t* PROTOBUF_NONNULL target,
     ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
-  const GetLootResponse& this_ = *this;
+  const SyncLootChunk& this_ = *this;
 #endif  // PROTOBUF_CUSTOM_VTABLE
   if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
     this_.CheckHasBitConsistency();
   }
-  // @@protoc_insertion_point(serialize_to_array_start:kelpieui.v1.GetLootResponse)
+  // @@protoc_insertion_point(serialize_to_array_start:kelpieui.v1.SyncLootChunk)
   ::uint32_t cached_has_bits = 0;
   (void)cached_has_bits;
 
@@ -26331,10 +27274,10 @@ PROTOBUF_NOINLINE void GetLootResponse::Clear() {
         stream);
   }
 
-  // bytes content = 2;
+  // bytes data = 2;
   if (CheckHasBit(cached_has_bits, 0x00000001U)) {
-    if (!this_._internal_content().empty()) {
-      const ::std::string& _s = this_._internal_content();
+    if (!this_._internal_data().empty()) {
+      const ::std::string& _s = this_._internal_data();
       target = stream->WriteBytesMaybeAliased(2, _s, target);
     }
   }
@@ -26344,18 +27287,18 @@ PROTOBUF_NOINLINE void GetLootResponse::Clear() {
         ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
             this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:kelpieui.v1.GetLootResponse)
+  // @@protoc_insertion_point(serialize_to_array_end:kelpieui.v1.SyncLootChunk)
   return target;
 }
 
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-::size_t GetLootResponse::ByteSizeLong(const MessageLite& base) {
-  const GetLootResponse& this_ = static_cast<const GetLootResponse&>(base);
+::size_t SyncLootChunk::ByteSizeLong(const MessageLite& base) {
+  const SyncLootChunk& this_ = static_cast<const SyncLootChunk&>(base);
 #else   // PROTOBUF_CUSTOM_VTABLE
-::size_t GetLootResponse::ByteSizeLong() const {
-  const GetLootResponse& this_ = *this;
+::size_t SyncLootChunk::ByteSizeLong() const {
+  const SyncLootChunk& this_ = *this;
 #endif  // PROTOBUF_CUSTOM_VTABLE
-  // @@protoc_insertion_point(message_byte_size_start:kelpieui.v1.GetLootResponse)
+  // @@protoc_insertion_point(message_byte_size_start:kelpieui.v1.SyncLootChunk)
   ::size_t total_size = 0;
 
   ::uint32_t cached_has_bits = 0;
@@ -26365,11 +27308,11 @@ PROTOBUF_NOINLINE void GetLootResponse::Clear() {
   ::_pbi::Prefetch5LinesFrom7Lines(&this_);
   cached_has_bits = this_._impl_._has_bits_[0];
   if (BatchCheckHasBit(cached_has_bits, 0x00000003U)) {
-    // bytes content = 2;
+    // bytes data = 2;
     if (CheckHasBit(cached_has_bits, 0x00000001U)) {
-      if (!this_._internal_content().empty()) {
+      if (!this_._internal_data().empty()) {
         total_size += 1 + ::google::protobuf::internal::WireFormatLite::BytesSize(
-                                        this_._internal_content());
+                                        this_._internal_data());
       }
     }
     // .kelpieui.v1.LootItem item = 1;
@@ -26382,16 +27325,16 @@ PROTOBUF_NOINLINE void GetLootResponse::Clear() {
                                              &this_._impl_._cached_size_);
 }
 
-void GetLootResponse::MergeImpl(::google::protobuf::MessageLite& to_msg,
+void SyncLootChunk::MergeImpl(::google::protobuf::MessageLite& to_msg,
                             const ::google::protobuf::MessageLite& from_msg) {
    auto* const _this =
-      static_cast<GetLootResponse*>(&to_msg);
-  auto& from = static_cast<const GetLootResponse&>(from_msg);
+      static_cast<SyncLootChunk*>(&to_msg);
+  auto& from = static_cast<const SyncLootChunk&>(from_msg);
   if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
     from.CheckHasBitConsistency();
   }
   ::google::protobuf::Arena* arena = _this->GetArena();
-  // @@protoc_insertion_point(class_specific_merge_from_start:kelpieui.v1.GetLootResponse)
+  // @@protoc_insertion_point(class_specific_merge_from_start:kelpieui.v1.SyncLootChunk)
   ABSL_DCHECK_NE(&from, _this);
   ::uint32_t cached_has_bits = 0;
   (void)cached_has_bits;
@@ -26399,11 +27342,11 @@ void GetLootResponse::MergeImpl(::google::protobuf::MessageLite& to_msg,
   cached_has_bits = from._impl_._has_bits_[0];
   if (BatchCheckHasBit(cached_has_bits, 0x00000003U)) {
     if (CheckHasBit(cached_has_bits, 0x00000001U)) {
-      if (!from._internal_content().empty()) {
-        _this->_internal_set_content(from._internal_content());
+      if (!from._internal_data().empty()) {
+        _this->_internal_set_data(from._internal_data());
       } else {
-        if (_this->_impl_.content_.IsDefault()) {
-          _this->_internal_set_content("");
+        if (_this->_impl_.data_.IsDefault()) {
+          _this->_internal_set_data("");
         }
       }
     }
@@ -26421,25 +27364,1496 @@ void GetLootResponse::MergeImpl(::google::protobuf::MessageLite& to_msg,
       from._internal_metadata_);
 }
 
-void GetLootResponse::CopyFrom(const GetLootResponse& from) {
-  // @@protoc_insertion_point(class_specific_copy_from_start:kelpieui.v1.GetLootResponse)
+void SyncLootChunk::CopyFrom(const SyncLootChunk& from) {
+  // @@protoc_insertion_point(class_specific_copy_from_start:kelpieui.v1.SyncLootChunk)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
 
-void GetLootResponse::InternalSwap(GetLootResponse* PROTOBUF_RESTRICT PROTOBUF_NONNULL other) {
+void SyncLootChunk::InternalSwap(SyncLootChunk* PROTOBUF_RESTRICT PROTOBUF_NONNULL other) {
   using ::std::swap;
   auto* arena = GetArena();
   ABSL_DCHECK_EQ(arena, other->GetArena());
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.content_, &other->_impl_.content_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.data_, &other->_impl_.data_, arena);
   swap(_impl_.item_, other->_impl_.item_);
 }
 
-::google::protobuf::Metadata GetLootResponse::GetMetadata() const {
+::google::protobuf::Metadata SyncLootChunk::GetMetadata() const {
+  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
+}
+// ===================================================================
+
+class RemoteFileEntry::_Internal {
+ public:
+  using HasBits =
+      decltype(::std::declval<RemoteFileEntry>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+      8 * PROTOBUF_FIELD_OFFSET(RemoteFileEntry, _impl_._has_bits_);
+};
+
+RemoteFileEntry::RemoteFileEntry(::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, RemoteFileEntry_class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:kelpieui.v1.RemoteFileEntry)
+}
+PROTOBUF_NDEBUG_INLINE RemoteFileEntry::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+    [[maybe_unused]] const ::kelpieui::v1::RemoteFileEntry& from_msg)
+      : _has_bits_{from._has_bits_},
+        _cached_size_{0},
+        name_(arena, from.name_),
+        path_(arena, from.path_),
+        mode_(arena, from.mode_),
+        modified_at_(arena, from.modified_at_) {}
+
+RemoteFileEntry::RemoteFileEntry(
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena,
+    const RemoteFileEntry& from)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, RemoteFileEntry_class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  RemoteFileEntry* const _this = this;
+  (void)_this;
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+  ::memcpy(reinterpret_cast<char*>(&_impl_) +
+               offsetof(Impl_, size_),
+           reinterpret_cast<const char*>(&from._impl_) +
+               offsetof(Impl_, size_),
+           offsetof(Impl_, is_drive_) -
+               offsetof(Impl_, size_) +
+               sizeof(Impl_::is_drive_));
+
+  // @@protoc_insertion_point(copy_constructor:kelpieui.v1.RemoteFileEntry)
+}
+PROTOBUF_NDEBUG_INLINE RemoteFileEntry::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+      : _cached_size_{0},
+        name_(arena),
+        path_(arena),
+        mode_(arena),
+        modified_at_(arena) {}
+
+inline void RemoteFileEntry::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
+  new (&_impl_) Impl_(internal_visibility(), arena);
+  ::memset(reinterpret_cast<char*>(&_impl_) +
+               offsetof(Impl_, size_),
+           0,
+           offsetof(Impl_, is_drive_) -
+               offsetof(Impl_, size_) +
+               sizeof(Impl_::is_drive_));
+}
+RemoteFileEntry::~RemoteFileEntry() {
+  // @@protoc_insertion_point(destructor:kelpieui.v1.RemoteFileEntry)
+  SharedDtor(*this);
+}
+inline void RemoteFileEntry::SharedDtor(MessageLite& self) {
+  RemoteFileEntry& this_ = static_cast<RemoteFileEntry&>(self);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
+  ABSL_DCHECK(this_.GetArena() == nullptr);
+  this_._impl_.name_.Destroy();
+  this_._impl_.path_.Destroy();
+  this_._impl_.mode_.Destroy();
+  this_._impl_.modified_at_.Destroy();
+  this_._impl_.~Impl_();
+}
+
+inline void* PROTOBUF_NONNULL RemoteFileEntry::PlacementNew_(
+    const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena) {
+  return ::new (mem) RemoteFileEntry(arena);
+}
+constexpr auto RemoteFileEntry::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(RemoteFileEntry),
+                                            alignof(RemoteFileEntry));
+}
+constexpr auto RemoteFileEntry::InternalGenerateClassData_() {
+  return ::google::protobuf::internal::ClassDataFull{
+      ::google::protobuf::internal::ClassData{
+          &_RemoteFileEntry_default_instance_._instance,
+          &_table_.header,
+          nullptr,  // IsInitialized
+          &RemoteFileEntry::MergeImpl,
+          ::google::protobuf::Message::GetNewImpl<RemoteFileEntry>(),
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+          &RemoteFileEntry::SharedDtor,
+          ::google::protobuf::Message::GetClearImpl<RemoteFileEntry>(), &RemoteFileEntry::ByteSizeLong,
+              &RemoteFileEntry::_InternalSerialize,
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          PROTOBUF_FIELD_OFFSET(RemoteFileEntry, _impl_._cached_size_),
+          false,
+      },
+      &RemoteFileEntry::kDescriptorMethods,
+      &descriptor_table_kelpieui_2fv1_2fkelpieui_2eproto,
+      nullptr,  // tracker
+  };
+}
+
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 const
+    ::google::protobuf::internal::ClassDataFull RemoteFileEntry_class_data_ =
+        RemoteFileEntry::InternalGenerateClassData_();
+
+PROTOBUF_ATTRIBUTE_WEAK const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL
+RemoteFileEntry::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&RemoteFileEntry_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(RemoteFileEntry_class_data_.tc_table);
+  return RemoteFileEntry_class_data_.base();
+}
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<4, 9, 0, 67, 2>
+RemoteFileEntry::_table_ = {
+  {
+    PROTOBUF_FIELD_OFFSET(RemoteFileEntry, _impl_._has_bits_),
+    0, // no _extensions_
+    9, 120,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294966784,  // skipmap
+    offsetof(decltype(_table_), field_entries),
+    9,  // num_field_entries
+    0,  // num_aux_entries
+    offsetof(decltype(_table_), field_names),  // no aux_entries
+    RemoteFileEntry_class_data_.base(),
+    nullptr,  // post_loop_handler
+    ::_pbi::TcParser::GenericFallback,  // fallback
+    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
+    ::_pbi::TcParser::GetTable<::kelpieui::v1::RemoteFileEntry>(),  // to_prefetch
+    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
+  }, {{
+    {::_pbi::TcParser::MiniParse, {}},
+    // string name = 1;
+    {::_pbi::TcParser::FastUS1,
+     {10, 0, 0,
+      PROTOBUF_FIELD_OFFSET(RemoteFileEntry, _impl_.name_)}},
+    // string path = 2;
+    {::_pbi::TcParser::FastUS1,
+     {18, 1, 0,
+      PROTOBUF_FIELD_OFFSET(RemoteFileEntry, _impl_.path_)}},
+    // bool is_dir = 3;
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(RemoteFileEntry, _impl_.is_dir_), 5>(),
+     {24, 5, 0,
+      PROTOBUF_FIELD_OFFSET(RemoteFileEntry, _impl_.is_dir_)}},
+    // bool is_symlink = 4;
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(RemoteFileEntry, _impl_.is_symlink_), 6>(),
+     {32, 6, 0,
+      PROTOBUF_FIELD_OFFSET(RemoteFileEntry, _impl_.is_symlink_)}},
+    // uint64 size = 5;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(RemoteFileEntry, _impl_.size_), 4>(),
+     {40, 4, 0,
+      PROTOBUF_FIELD_OFFSET(RemoteFileEntry, _impl_.size_)}},
+    // string mode = 6;
+    {::_pbi::TcParser::FastUS1,
+     {50, 2, 0,
+      PROTOBUF_FIELD_OFFSET(RemoteFileEntry, _impl_.mode_)}},
+    // string modified_at = 7;
+    {::_pbi::TcParser::FastUS1,
+     {58, 3, 0,
+      PROTOBUF_FIELD_OFFSET(RemoteFileEntry, _impl_.modified_at_)}},
+    // bool hidden = 8;
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(RemoteFileEntry, _impl_.hidden_), 7>(),
+     {64, 7, 0,
+      PROTOBUF_FIELD_OFFSET(RemoteFileEntry, _impl_.hidden_)}},
+    // bool is_drive = 9;
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(RemoteFileEntry, _impl_.is_drive_), 8>(),
+     {72, 8, 0,
+      PROTOBUF_FIELD_OFFSET(RemoteFileEntry, _impl_.is_drive_)}},
+    {::_pbi::TcParser::MiniParse, {}},
+    {::_pbi::TcParser::MiniParse, {}},
+    {::_pbi::TcParser::MiniParse, {}},
+    {::_pbi::TcParser::MiniParse, {}},
+    {::_pbi::TcParser::MiniParse, {}},
+    {::_pbi::TcParser::MiniParse, {}},
+  }}, {{
+    65535, 65535
+  }}, {{
+    // string name = 1;
+    {PROTOBUF_FIELD_OFFSET(RemoteFileEntry, _impl_.name_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // string path = 2;
+    {PROTOBUF_FIELD_OFFSET(RemoteFileEntry, _impl_.path_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // bool is_dir = 3;
+    {PROTOBUF_FIELD_OFFSET(RemoteFileEntry, _impl_.is_dir_), _Internal::kHasBitsOffset + 5, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
+    // bool is_symlink = 4;
+    {PROTOBUF_FIELD_OFFSET(RemoteFileEntry, _impl_.is_symlink_), _Internal::kHasBitsOffset + 6, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
+    // uint64 size = 5;
+    {PROTOBUF_FIELD_OFFSET(RemoteFileEntry, _impl_.size_), _Internal::kHasBitsOffset + 4, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt64)},
+    // string mode = 6;
+    {PROTOBUF_FIELD_OFFSET(RemoteFileEntry, _impl_.mode_), _Internal::kHasBitsOffset + 2, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // string modified_at = 7;
+    {PROTOBUF_FIELD_OFFSET(RemoteFileEntry, _impl_.modified_at_), _Internal::kHasBitsOffset + 3, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // bool hidden = 8;
+    {PROTOBUF_FIELD_OFFSET(RemoteFileEntry, _impl_.hidden_), _Internal::kHasBitsOffset + 7, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
+    // bool is_drive = 9;
+    {PROTOBUF_FIELD_OFFSET(RemoteFileEntry, _impl_.is_drive_), _Internal::kHasBitsOffset + 8, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
+  }},
+  // no aux_entries
+  {{
+    "\33\4\4\0\0\0\4\13\0\0\0\0\0\0\0\0"
+    "kelpieui.v1.RemoteFileEntry"
+    "name"
+    "path"
+    "mode"
+    "modified_at"
+  }},
+};
+PROTOBUF_NOINLINE void RemoteFileEntry::Clear() {
+// @@protoc_insertion_point(message_clear_start:kelpieui.v1.RemoteFileEntry)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x0000000fU)) {
+    if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+      _impl_.name_.ClearNonDefaultToEmpty();
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      _impl_.path_.ClearNonDefaultToEmpty();
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+      _impl_.mode_.ClearNonDefaultToEmpty();
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000008U)) {
+      _impl_.modified_at_.ClearNonDefaultToEmpty();
+    }
+  }
+  if (BatchCheckHasBit(cached_has_bits, 0x000000f0U)) {
+    ::memset(&_impl_.size_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.hidden_) -
+        reinterpret_cast<char*>(&_impl_.size_)) + sizeof(_impl_.hidden_));
+  }
+  _impl_.is_drive_ = false;
+  _impl_._has_bits_.Clear();
+  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::uint8_t* PROTOBUF_NONNULL RemoteFileEntry::_InternalSerialize(
+    const ::google::protobuf::MessageLite& base, ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) {
+  const RemoteFileEntry& this_ = static_cast<const RemoteFileEntry&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::uint8_t* PROTOBUF_NONNULL RemoteFileEntry::_InternalSerialize(
+    ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+  const RemoteFileEntry& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  // @@protoc_insertion_point(serialize_to_array_start:kelpieui.v1.RemoteFileEntry)
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = this_._impl_._has_bits_[0];
+  // string name = 1;
+  if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+    if (!this_._internal_name().empty()) {
+      const ::std::string& _s = this_._internal_name();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "kelpieui.v1.RemoteFileEntry.name");
+      target = stream->WriteStringMaybeAliased(1, _s, target);
+    }
+  }
+
+  // string path = 2;
+  if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+    if (!this_._internal_path().empty()) {
+      const ::std::string& _s = this_._internal_path();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "kelpieui.v1.RemoteFileEntry.path");
+      target = stream->WriteStringMaybeAliased(2, _s, target);
+    }
+  }
+
+  // bool is_dir = 3;
+  if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+    if (this_._internal_is_dir() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteBoolToArray(
+          3, this_._internal_is_dir(), target);
+    }
+  }
+
+  // bool is_symlink = 4;
+  if (CheckHasBit(cached_has_bits, 0x00000040U)) {
+    if (this_._internal_is_symlink() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteBoolToArray(
+          4, this_._internal_is_symlink(), target);
+    }
+  }
+
+  // uint64 size = 5;
+  if (CheckHasBit(cached_has_bits, 0x00000010U)) {
+    if (this_._internal_size() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteUInt64ToArray(
+          5, this_._internal_size(), target);
+    }
+  }
+
+  // string mode = 6;
+  if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+    if (!this_._internal_mode().empty()) {
+      const ::std::string& _s = this_._internal_mode();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "kelpieui.v1.RemoteFileEntry.mode");
+      target = stream->WriteStringMaybeAliased(6, _s, target);
+    }
+  }
+
+  // string modified_at = 7;
+  if (CheckHasBit(cached_has_bits, 0x00000008U)) {
+    if (!this_._internal_modified_at().empty()) {
+      const ::std::string& _s = this_._internal_modified_at();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "kelpieui.v1.RemoteFileEntry.modified_at");
+      target = stream->WriteStringMaybeAliased(7, _s, target);
+    }
+  }
+
+  // bool hidden = 8;
+  if (CheckHasBit(cached_has_bits, 0x00000080U)) {
+    if (this_._internal_hidden() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteBoolToArray(
+          8, this_._internal_hidden(), target);
+    }
+  }
+
+  // bool is_drive = 9;
+  if (CheckHasBit(cached_has_bits, 0x00000100U)) {
+    if (this_._internal_is_drive() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteBoolToArray(
+          9, this_._internal_is_drive(), target);
+    }
+  }
+
+  if (ABSL_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
+    target =
+        ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+            this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:kelpieui.v1.RemoteFileEntry)
+  return target;
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::size_t RemoteFileEntry::ByteSizeLong(const MessageLite& base) {
+  const RemoteFileEntry& this_ = static_cast<const RemoteFileEntry&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::size_t RemoteFileEntry::ByteSizeLong() const {
+  const RemoteFileEntry& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  // @@protoc_insertion_point(message_byte_size_start:kelpieui.v1.RemoteFileEntry)
+  ::size_t total_size = 0;
+
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void)cached_has_bits;
+
+  ::_pbi::Prefetch5LinesFrom7Lines(&this_);
+  cached_has_bits = this_._impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x000000ffU)) {
+    // string name = 1;
+    if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+      if (!this_._internal_name().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_name());
+      }
+    }
+    // string path = 2;
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      if (!this_._internal_path().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_path());
+      }
+    }
+    // string mode = 6;
+    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+      if (!this_._internal_mode().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_mode());
+      }
+    }
+    // string modified_at = 7;
+    if (CheckHasBit(cached_has_bits, 0x00000008U)) {
+      if (!this_._internal_modified_at().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_modified_at());
+      }
+    }
+    // uint64 size = 5;
+    if (CheckHasBit(cached_has_bits, 0x00000010U)) {
+      if (this_._internal_size() != 0) {
+        total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(
+            this_._internal_size());
+      }
+    }
+    // bool is_dir = 3;
+    if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+      if (this_._internal_is_dir() != 0) {
+        total_size += 2;
+      }
+    }
+    // bool is_symlink = 4;
+    if (CheckHasBit(cached_has_bits, 0x00000040U)) {
+      if (this_._internal_is_symlink() != 0) {
+        total_size += 2;
+      }
+    }
+    // bool hidden = 8;
+    if (CheckHasBit(cached_has_bits, 0x00000080U)) {
+      if (this_._internal_hidden() != 0) {
+        total_size += 2;
+      }
+    }
+  }
+   {
+    // bool is_drive = 9;
+    if (CheckHasBit(cached_has_bits, 0x00000100U)) {
+      if (this_._internal_is_drive() != 0) {
+        total_size += 2;
+      }
+    }
+  }
+  return this_.MaybeComputeUnknownFieldsSize(total_size,
+                                             &this_._impl_._cached_size_);
+}
+
+void RemoteFileEntry::MergeImpl(::google::protobuf::MessageLite& to_msg,
+                            const ::google::protobuf::MessageLite& from_msg) {
+   auto* const _this =
+      static_cast<RemoteFileEntry*>(&to_msg);
+  auto& from = static_cast<const RemoteFileEntry&>(from_msg);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    from.CheckHasBitConsistency();
+  }
+  // @@protoc_insertion_point(class_specific_merge_from_start:kelpieui.v1.RemoteFileEntry)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = from._impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x000000ffU)) {
+    if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+      if (!from._internal_name().empty()) {
+        _this->_internal_set_name(from._internal_name());
+      } else {
+        if (_this->_impl_.name_.IsDefault()) {
+          _this->_internal_set_name("");
+        }
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      if (!from._internal_path().empty()) {
+        _this->_internal_set_path(from._internal_path());
+      } else {
+        if (_this->_impl_.path_.IsDefault()) {
+          _this->_internal_set_path("");
+        }
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+      if (!from._internal_mode().empty()) {
+        _this->_internal_set_mode(from._internal_mode());
+      } else {
+        if (_this->_impl_.mode_.IsDefault()) {
+          _this->_internal_set_mode("");
+        }
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000008U)) {
+      if (!from._internal_modified_at().empty()) {
+        _this->_internal_set_modified_at(from._internal_modified_at());
+      } else {
+        if (_this->_impl_.modified_at_.IsDefault()) {
+          _this->_internal_set_modified_at("");
+        }
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000010U)) {
+      if (from._internal_size() != 0) {
+        _this->_impl_.size_ = from._impl_.size_;
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+      if (from._internal_is_dir() != 0) {
+        _this->_impl_.is_dir_ = from._impl_.is_dir_;
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000040U)) {
+      if (from._internal_is_symlink() != 0) {
+        _this->_impl_.is_symlink_ = from._impl_.is_symlink_;
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000080U)) {
+      if (from._internal_hidden() != 0) {
+        _this->_impl_.hidden_ = from._impl_.hidden_;
+      }
+    }
+  }
+  if (CheckHasBit(cached_has_bits, 0x00000100U)) {
+    if (from._internal_is_drive() != 0) {
+      _this->_impl_.is_drive_ = from._impl_.is_drive_;
+    }
+  }
+  _this->_impl_._has_bits_[0] |= cached_has_bits;
+  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+}
+
+void RemoteFileEntry::CopyFrom(const RemoteFileEntry& from) {
+  // @@protoc_insertion_point(class_specific_copy_from_start:kelpieui.v1.RemoteFileEntry)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+
+void RemoteFileEntry::InternalSwap(RemoteFileEntry* PROTOBUF_RESTRICT PROTOBUF_NONNULL other) {
+  using ::std::swap;
+  auto* arena = GetArena();
+  ABSL_DCHECK_EQ(arena, other->GetArena());
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.name_, &other->_impl_.name_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.path_, &other->_impl_.path_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.mode_, &other->_impl_.mode_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.modified_at_, &other->_impl_.modified_at_, arena);
+  ::google::protobuf::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(RemoteFileEntry, _impl_.is_drive_)
+      + sizeof(RemoteFileEntry::_impl_.is_drive_)
+      - PROTOBUF_FIELD_OFFSET(RemoteFileEntry, _impl_.size_)>(
+          reinterpret_cast<char*>(&_impl_.size_),
+          reinterpret_cast<char*>(&other->_impl_.size_));
+}
+
+::google::protobuf::Metadata RemoteFileEntry::GetMetadata() const {
+  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
+}
+// ===================================================================
+
+class ListRemoteFilesRequest::_Internal {
+ public:
+  using HasBits =
+      decltype(::std::declval<ListRemoteFilesRequest>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+      8 * PROTOBUF_FIELD_OFFSET(ListRemoteFilesRequest, _impl_._has_bits_);
+};
+
+ListRemoteFilesRequest::ListRemoteFilesRequest(::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, ListRemoteFilesRequest_class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:kelpieui.v1.ListRemoteFilesRequest)
+}
+PROTOBUF_NDEBUG_INLINE ListRemoteFilesRequest::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+    [[maybe_unused]] const ::kelpieui::v1::ListRemoteFilesRequest& from_msg)
+      : _has_bits_{from._has_bits_},
+        _cached_size_{0},
+        target_uuid_(arena, from.target_uuid_),
+        path_(arena, from.path_) {}
+
+ListRemoteFilesRequest::ListRemoteFilesRequest(
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena,
+    const ListRemoteFilesRequest& from)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, ListRemoteFilesRequest_class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  ListRemoteFilesRequest* const _this = this;
+  (void)_this;
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+
+  // @@protoc_insertion_point(copy_constructor:kelpieui.v1.ListRemoteFilesRequest)
+}
+PROTOBUF_NDEBUG_INLINE ListRemoteFilesRequest::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+      : _cached_size_{0},
+        target_uuid_(arena),
+        path_(arena) {}
+
+inline void ListRemoteFilesRequest::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
+  new (&_impl_) Impl_(internal_visibility(), arena);
+}
+ListRemoteFilesRequest::~ListRemoteFilesRequest() {
+  // @@protoc_insertion_point(destructor:kelpieui.v1.ListRemoteFilesRequest)
+  SharedDtor(*this);
+}
+inline void ListRemoteFilesRequest::SharedDtor(MessageLite& self) {
+  ListRemoteFilesRequest& this_ = static_cast<ListRemoteFilesRequest&>(self);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
+  ABSL_DCHECK(this_.GetArena() == nullptr);
+  this_._impl_.target_uuid_.Destroy();
+  this_._impl_.path_.Destroy();
+  this_._impl_.~Impl_();
+}
+
+inline void* PROTOBUF_NONNULL ListRemoteFilesRequest::PlacementNew_(
+    const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena) {
+  return ::new (mem) ListRemoteFilesRequest(arena);
+}
+constexpr auto ListRemoteFilesRequest::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(ListRemoteFilesRequest),
+                                            alignof(ListRemoteFilesRequest));
+}
+constexpr auto ListRemoteFilesRequest::InternalGenerateClassData_() {
+  return ::google::protobuf::internal::ClassDataFull{
+      ::google::protobuf::internal::ClassData{
+          &_ListRemoteFilesRequest_default_instance_._instance,
+          &_table_.header,
+          nullptr,  // IsInitialized
+          &ListRemoteFilesRequest::MergeImpl,
+          ::google::protobuf::Message::GetNewImpl<ListRemoteFilesRequest>(),
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+          &ListRemoteFilesRequest::SharedDtor,
+          ::google::protobuf::Message::GetClearImpl<ListRemoteFilesRequest>(), &ListRemoteFilesRequest::ByteSizeLong,
+              &ListRemoteFilesRequest::_InternalSerialize,
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          PROTOBUF_FIELD_OFFSET(ListRemoteFilesRequest, _impl_._cached_size_),
+          false,
+      },
+      &ListRemoteFilesRequest::kDescriptorMethods,
+      &descriptor_table_kelpieui_2fv1_2fkelpieui_2eproto,
+      nullptr,  // tracker
+  };
+}
+
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 const
+    ::google::protobuf::internal::ClassDataFull ListRemoteFilesRequest_class_data_ =
+        ListRemoteFilesRequest::InternalGenerateClassData_();
+
+PROTOBUF_ATTRIBUTE_WEAK const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL
+ListRemoteFilesRequest::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&ListRemoteFilesRequest_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(ListRemoteFilesRequest_class_data_.tc_table);
+  return ListRemoteFilesRequest_class_data_.base();
+}
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<1, 2, 0, 58, 2>
+ListRemoteFilesRequest::_table_ = {
+  {
+    PROTOBUF_FIELD_OFFSET(ListRemoteFilesRequest, _impl_._has_bits_),
+    0, // no _extensions_
+    2, 8,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294967292,  // skipmap
+    offsetof(decltype(_table_), field_entries),
+    2,  // num_field_entries
+    0,  // num_aux_entries
+    offsetof(decltype(_table_), field_names),  // no aux_entries
+    ListRemoteFilesRequest_class_data_.base(),
+    nullptr,  // post_loop_handler
+    ::_pbi::TcParser::GenericFallback,  // fallback
+    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
+    ::_pbi::TcParser::GetTable<::kelpieui::v1::ListRemoteFilesRequest>(),  // to_prefetch
+    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
+  }, {{
+    // string path = 2;
+    {::_pbi::TcParser::FastUS1,
+     {18, 1, 0,
+      PROTOBUF_FIELD_OFFSET(ListRemoteFilesRequest, _impl_.path_)}},
+    // string target_uuid = 1;
+    {::_pbi::TcParser::FastUS1,
+     {10, 0, 0,
+      PROTOBUF_FIELD_OFFSET(ListRemoteFilesRequest, _impl_.target_uuid_)}},
+  }}, {{
+    65535, 65535
+  }}, {{
+    // string target_uuid = 1;
+    {PROTOBUF_FIELD_OFFSET(ListRemoteFilesRequest, _impl_.target_uuid_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // string path = 2;
+    {PROTOBUF_FIELD_OFFSET(ListRemoteFilesRequest, _impl_.path_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+  }},
+  // no aux_entries
+  {{
+    "\42\13\4\0\0\0\0\0"
+    "kelpieui.v1.ListRemoteFilesRequest"
+    "target_uuid"
+    "path"
+  }},
+};
+PROTOBUF_NOINLINE void ListRemoteFilesRequest::Clear() {
+// @@protoc_insertion_point(message_clear_start:kelpieui.v1.ListRemoteFilesRequest)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x00000003U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+      _impl_.target_uuid_.ClearNonDefaultToEmpty();
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      _impl_.path_.ClearNonDefaultToEmpty();
+    }
+  }
+  _impl_._has_bits_.Clear();
+  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::uint8_t* PROTOBUF_NONNULL ListRemoteFilesRequest::_InternalSerialize(
+    const ::google::protobuf::MessageLite& base, ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) {
+  const ListRemoteFilesRequest& this_ = static_cast<const ListRemoteFilesRequest&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::uint8_t* PROTOBUF_NONNULL ListRemoteFilesRequest::_InternalSerialize(
+    ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+  const ListRemoteFilesRequest& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  // @@protoc_insertion_point(serialize_to_array_start:kelpieui.v1.ListRemoteFilesRequest)
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = this_._impl_._has_bits_[0];
+  // string target_uuid = 1;
+  if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+    if (!this_._internal_target_uuid().empty()) {
+      const ::std::string& _s = this_._internal_target_uuid();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "kelpieui.v1.ListRemoteFilesRequest.target_uuid");
+      target = stream->WriteStringMaybeAliased(1, _s, target);
+    }
+  }
+
+  // string path = 2;
+  if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+    if (!this_._internal_path().empty()) {
+      const ::std::string& _s = this_._internal_path();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "kelpieui.v1.ListRemoteFilesRequest.path");
+      target = stream->WriteStringMaybeAliased(2, _s, target);
+    }
+  }
+
+  if (ABSL_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
+    target =
+        ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+            this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:kelpieui.v1.ListRemoteFilesRequest)
+  return target;
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::size_t ListRemoteFilesRequest::ByteSizeLong(const MessageLite& base) {
+  const ListRemoteFilesRequest& this_ = static_cast<const ListRemoteFilesRequest&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::size_t ListRemoteFilesRequest::ByteSizeLong() const {
+  const ListRemoteFilesRequest& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  // @@protoc_insertion_point(message_byte_size_start:kelpieui.v1.ListRemoteFilesRequest)
+  ::size_t total_size = 0;
+
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void)cached_has_bits;
+
+  ::_pbi::Prefetch5LinesFrom7Lines(&this_);
+  cached_has_bits = this_._impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x00000003U)) {
+    // string target_uuid = 1;
+    if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+      if (!this_._internal_target_uuid().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_target_uuid());
+      }
+    }
+    // string path = 2;
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      if (!this_._internal_path().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_path());
+      }
+    }
+  }
+  return this_.MaybeComputeUnknownFieldsSize(total_size,
+                                             &this_._impl_._cached_size_);
+}
+
+void ListRemoteFilesRequest::MergeImpl(::google::protobuf::MessageLite& to_msg,
+                            const ::google::protobuf::MessageLite& from_msg) {
+   auto* const _this =
+      static_cast<ListRemoteFilesRequest*>(&to_msg);
+  auto& from = static_cast<const ListRemoteFilesRequest&>(from_msg);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    from.CheckHasBitConsistency();
+  }
+  // @@protoc_insertion_point(class_specific_merge_from_start:kelpieui.v1.ListRemoteFilesRequest)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = from._impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x00000003U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+      if (!from._internal_target_uuid().empty()) {
+        _this->_internal_set_target_uuid(from._internal_target_uuid());
+      } else {
+        if (_this->_impl_.target_uuid_.IsDefault()) {
+          _this->_internal_set_target_uuid("");
+        }
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      if (!from._internal_path().empty()) {
+        _this->_internal_set_path(from._internal_path());
+      } else {
+        if (_this->_impl_.path_.IsDefault()) {
+          _this->_internal_set_path("");
+        }
+      }
+    }
+  }
+  _this->_impl_._has_bits_[0] |= cached_has_bits;
+  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+}
+
+void ListRemoteFilesRequest::CopyFrom(const ListRemoteFilesRequest& from) {
+  // @@protoc_insertion_point(class_specific_copy_from_start:kelpieui.v1.ListRemoteFilesRequest)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+
+void ListRemoteFilesRequest::InternalSwap(ListRemoteFilesRequest* PROTOBUF_RESTRICT PROTOBUF_NONNULL other) {
+  using ::std::swap;
+  auto* arena = GetArena();
+  ABSL_DCHECK_EQ(arena, other->GetArena());
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.target_uuid_, &other->_impl_.target_uuid_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.path_, &other->_impl_.path_, arena);
+}
+
+::google::protobuf::Metadata ListRemoteFilesRequest::GetMetadata() const {
+  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
+}
+// ===================================================================
+
+class ListRemoteFilesResponse::_Internal {
+ public:
+  using HasBits =
+      decltype(::std::declval<ListRemoteFilesResponse>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+      8 * PROTOBUF_FIELD_OFFSET(ListRemoteFilesResponse, _impl_._has_bits_);
+};
+
+ListRemoteFilesResponse::ListRemoteFilesResponse(::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, ListRemoteFilesResponse_class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:kelpieui.v1.ListRemoteFilesResponse)
+}
+PROTOBUF_NDEBUG_INLINE ListRemoteFilesResponse::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+    [[maybe_unused]] const ::kelpieui::v1::ListRemoteFilesResponse& from_msg)
+      : _has_bits_{from._has_bits_},
+        _cached_size_{0},
+        #ifdef PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_REPEATED_PTR_FIELD
+        entries_{visibility, ::_pbi::InternalMetadataOffset::Build<
+            ::kelpieui::v1::ListRemoteFilesResponse,
+            PROTOBUF_FIELD_OFFSET(::kelpieui::v1::ListRemoteFilesResponse, _impl_.entries_)>()
+        , from.entries_}
+        #else
+        entries_ { visibility, arena, from.entries_ }
+        #endif
+        ,
+        requested_path_(arena, from.requested_path_),
+        resolved_path_(arena, from.resolved_path_),
+        root_path_(arena, from.root_path_),
+        parent_path_(arena, from.parent_path_),
+        display_path_(arena, from.display_path_) {}
+
+ListRemoteFilesResponse::ListRemoteFilesResponse(
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena,
+    const ListRemoteFilesResponse& from)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, ListRemoteFilesResponse_class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  ListRemoteFilesResponse* const _this = this;
+  (void)_this;
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+  ::memcpy(reinterpret_cast<char*>(&_impl_) +
+               offsetof(Impl_, can_go_up_),
+           reinterpret_cast<const char*>(&from._impl_) +
+               offsetof(Impl_, can_go_up_),
+           offsetof(Impl_, virtual_root_) -
+               offsetof(Impl_, can_go_up_) +
+               sizeof(Impl_::virtual_root_));
+
+  // @@protoc_insertion_point(copy_constructor:kelpieui.v1.ListRemoteFilesResponse)
+}
+PROTOBUF_NDEBUG_INLINE ListRemoteFilesResponse::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+      : _cached_size_{0},
+        #ifdef PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_REPEATED_PTR_FIELD
+        entries_{visibility, ::_pbi::InternalMetadataOffset::Build<
+            ::kelpieui::v1::ListRemoteFilesResponse,
+            PROTOBUF_FIELD_OFFSET(::kelpieui::v1::ListRemoteFilesResponse, _impl_.entries_)>()
+        }
+        #else
+        entries_ { visibility, arena }
+        #endif
+        ,
+        requested_path_(arena),
+        resolved_path_(arena),
+        root_path_(arena),
+        parent_path_(arena),
+        display_path_(arena) {}
+
+inline void ListRemoteFilesResponse::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
+  new (&_impl_) Impl_(internal_visibility(), arena);
+  ::memset(reinterpret_cast<char*>(&_impl_) +
+               offsetof(Impl_, can_go_up_),
+           0,
+           offsetof(Impl_, virtual_root_) -
+               offsetof(Impl_, can_go_up_) +
+               sizeof(Impl_::virtual_root_));
+}
+ListRemoteFilesResponse::~ListRemoteFilesResponse() {
+  // @@protoc_insertion_point(destructor:kelpieui.v1.ListRemoteFilesResponse)
+  SharedDtor(*this);
+}
+inline void ListRemoteFilesResponse::SharedDtor(MessageLite& self) {
+  ListRemoteFilesResponse& this_ = static_cast<ListRemoteFilesResponse&>(self);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
+  ABSL_DCHECK(this_.GetArena() == nullptr);
+  this_._impl_.requested_path_.Destroy();
+  this_._impl_.resolved_path_.Destroy();
+  this_._impl_.root_path_.Destroy();
+  this_._impl_.parent_path_.Destroy();
+  this_._impl_.display_path_.Destroy();
+  this_._impl_.~Impl_();
+}
+
+inline void* PROTOBUF_NONNULL ListRemoteFilesResponse::PlacementNew_(
+    const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena) {
+  return ::new (mem) ListRemoteFilesResponse(arena);
+}
+#ifdef PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_REPEATED_PTR_FIELD
+constexpr auto ListRemoteFilesResponse::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(ListRemoteFilesResponse),
+                                            alignof(ListRemoteFilesResponse));
+}
+#else  // !PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_REPEATED_PTR_FIELD
+constexpr auto ListRemoteFilesResponse::InternalNewImpl_() {
+  constexpr auto arena_bits = ::google::protobuf::internal::EncodePlacementArenaOffsets({
+      PROTOBUF_FIELD_OFFSET(ListRemoteFilesResponse, _impl_.entries_) +
+          decltype(ListRemoteFilesResponse::_impl_.entries_)::
+              InternalGetArenaOffset(
+                  ::google::protobuf::Message::internal_visibility()),
+  });
+  if (arena_bits.has_value()) {
+    return ::google::protobuf::internal::MessageCreator::CopyInit(
+        sizeof(ListRemoteFilesResponse), alignof(ListRemoteFilesResponse), *arena_bits);
+  } else {
+    return ::google::protobuf::internal::MessageCreator(&ListRemoteFilesResponse::PlacementNew_,
+                                 sizeof(ListRemoteFilesResponse),
+                                 alignof(ListRemoteFilesResponse));
+  }
+}
+#endif
+constexpr auto ListRemoteFilesResponse::InternalGenerateClassData_() {
+  return ::google::protobuf::internal::ClassDataFull{
+      ::google::protobuf::internal::ClassData{
+          &_ListRemoteFilesResponse_default_instance_._instance,
+          &_table_.header,
+          nullptr,  // IsInitialized
+          &ListRemoteFilesResponse::MergeImpl,
+          ::google::protobuf::Message::GetNewImpl<ListRemoteFilesResponse>(),
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+          &ListRemoteFilesResponse::SharedDtor,
+          ::google::protobuf::Message::GetClearImpl<ListRemoteFilesResponse>(), &ListRemoteFilesResponse::ByteSizeLong,
+              &ListRemoteFilesResponse::_InternalSerialize,
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          PROTOBUF_FIELD_OFFSET(ListRemoteFilesResponse, _impl_._cached_size_),
+          false,
+      },
+      &ListRemoteFilesResponse::kDescriptorMethods,
+      &descriptor_table_kelpieui_2fv1_2fkelpieui_2eproto,
+      nullptr,  // tracker
+  };
+}
+
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 const
+    ::google::protobuf::internal::ClassDataFull ListRemoteFilesResponse_class_data_ =
+        ListRemoteFilesResponse::InternalGenerateClassData_();
+
+PROTOBUF_ATTRIBUTE_WEAK const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL
+ListRemoteFilesResponse::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&ListRemoteFilesResponse_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(ListRemoteFilesResponse_class_data_.tc_table);
+  return ListRemoteFilesResponse_class_data_.base();
+}
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<3, 8, 1, 111, 2>
+ListRemoteFilesResponse::_table_ = {
+  {
+    PROTOBUF_FIELD_OFFSET(ListRemoteFilesResponse, _impl_._has_bits_),
+    0, // no _extensions_
+    8, 56,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294967040,  // skipmap
+    offsetof(decltype(_table_), field_entries),
+    8,  // num_field_entries
+    1,  // num_aux_entries
+    offsetof(decltype(_table_), aux_entries),
+    ListRemoteFilesResponse_class_data_.base(),
+    nullptr,  // post_loop_handler
+    ::_pbi::TcParser::GenericFallback,  // fallback
+    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
+    ::_pbi::TcParser::GetTable<::kelpieui::v1::ListRemoteFilesResponse>(),  // to_prefetch
+    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
+  }, {{
+    // string display_path = 8;
+    {::_pbi::TcParser::FastUS1,
+     {66, 5, 0,
+      PROTOBUF_FIELD_OFFSET(ListRemoteFilesResponse, _impl_.display_path_)}},
+    // string requested_path = 1;
+    {::_pbi::TcParser::FastUS1,
+     {10, 1, 0,
+      PROTOBUF_FIELD_OFFSET(ListRemoteFilesResponse, _impl_.requested_path_)}},
+    // string resolved_path = 2;
+    {::_pbi::TcParser::FastUS1,
+     {18, 2, 0,
+      PROTOBUF_FIELD_OFFSET(ListRemoteFilesResponse, _impl_.resolved_path_)}},
+    // string root_path = 3;
+    {::_pbi::TcParser::FastUS1,
+     {26, 3, 0,
+      PROTOBUF_FIELD_OFFSET(ListRemoteFilesResponse, _impl_.root_path_)}},
+    // string parent_path = 4;
+    {::_pbi::TcParser::FastUS1,
+     {34, 4, 0,
+      PROTOBUF_FIELD_OFFSET(ListRemoteFilesResponse, _impl_.parent_path_)}},
+    // bool can_go_up = 5;
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(ListRemoteFilesResponse, _impl_.can_go_up_), 6>(),
+     {40, 6, 0,
+      PROTOBUF_FIELD_OFFSET(ListRemoteFilesResponse, _impl_.can_go_up_)}},
+    // repeated .kelpieui.v1.RemoteFileEntry entries = 6;
+    {::_pbi::TcParser::FastMtR1,
+     {50, 0, 0,
+      PROTOBUF_FIELD_OFFSET(ListRemoteFilesResponse, _impl_.entries_)}},
+    // bool virtual_root = 7;
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(ListRemoteFilesResponse, _impl_.virtual_root_), 7>(),
+     {56, 7, 0,
+      PROTOBUF_FIELD_OFFSET(ListRemoteFilesResponse, _impl_.virtual_root_)}},
+  }}, {{
+    65535, 65535
+  }}, {{
+    // string requested_path = 1;
+    {PROTOBUF_FIELD_OFFSET(ListRemoteFilesResponse, _impl_.requested_path_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // string resolved_path = 2;
+    {PROTOBUF_FIELD_OFFSET(ListRemoteFilesResponse, _impl_.resolved_path_), _Internal::kHasBitsOffset + 2, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // string root_path = 3;
+    {PROTOBUF_FIELD_OFFSET(ListRemoteFilesResponse, _impl_.root_path_), _Internal::kHasBitsOffset + 3, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // string parent_path = 4;
+    {PROTOBUF_FIELD_OFFSET(ListRemoteFilesResponse, _impl_.parent_path_), _Internal::kHasBitsOffset + 4, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // bool can_go_up = 5;
+    {PROTOBUF_FIELD_OFFSET(ListRemoteFilesResponse, _impl_.can_go_up_), _Internal::kHasBitsOffset + 6, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
+    // repeated .kelpieui.v1.RemoteFileEntry entries = 6;
+    {PROTOBUF_FIELD_OFFSET(ListRemoteFilesResponse, _impl_.entries_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcRepeated | ::_fl::kMessage | ::_fl::kTvTable)},
+    // bool virtual_root = 7;
+    {PROTOBUF_FIELD_OFFSET(ListRemoteFilesResponse, _impl_.virtual_root_), _Internal::kHasBitsOffset + 7, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
+    // string display_path = 8;
+    {PROTOBUF_FIELD_OFFSET(ListRemoteFilesResponse, _impl_.display_path_), _Internal::kHasBitsOffset + 5, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+  }},
+  {{
+      {::_pbi::TcParser::GetTable<::kelpieui::v1::RemoteFileEntry>()},
+  }},
+  {{
+    "\43\16\15\11\13\0\0\0\14\0\0\0\0\0\0\0"
+    "kelpieui.v1.ListRemoteFilesResponse"
+    "requested_path"
+    "resolved_path"
+    "root_path"
+    "parent_path"
+    "display_path"
+  }},
+};
+PROTOBUF_NOINLINE void ListRemoteFilesResponse::Clear() {
+// @@protoc_insertion_point(message_clear_start:kelpieui.v1.ListRemoteFilesResponse)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x0000003fU)) {
+    if (CheckHasBitForRepeated(cached_has_bits, 0x00000001U)) {
+      _impl_.entries_.Clear();
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      _impl_.requested_path_.ClearNonDefaultToEmpty();
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+      _impl_.resolved_path_.ClearNonDefaultToEmpty();
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000008U)) {
+      _impl_.root_path_.ClearNonDefaultToEmpty();
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000010U)) {
+      _impl_.parent_path_.ClearNonDefaultToEmpty();
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+      _impl_.display_path_.ClearNonDefaultToEmpty();
+    }
+  }
+  ::memset(&_impl_.can_go_up_, 0, static_cast<::size_t>(
+      reinterpret_cast<char*>(&_impl_.virtual_root_) -
+      reinterpret_cast<char*>(&_impl_.can_go_up_)) + sizeof(_impl_.virtual_root_));
+  _impl_._has_bits_.Clear();
+  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::uint8_t* PROTOBUF_NONNULL ListRemoteFilesResponse::_InternalSerialize(
+    const ::google::protobuf::MessageLite& base, ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) {
+  const ListRemoteFilesResponse& this_ = static_cast<const ListRemoteFilesResponse&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::uint8_t* PROTOBUF_NONNULL ListRemoteFilesResponse::_InternalSerialize(
+    ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+  const ListRemoteFilesResponse& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  // @@protoc_insertion_point(serialize_to_array_start:kelpieui.v1.ListRemoteFilesResponse)
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = this_._impl_._has_bits_[0];
+  // string requested_path = 1;
+  if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+    if (!this_._internal_requested_path().empty()) {
+      const ::std::string& _s = this_._internal_requested_path();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "kelpieui.v1.ListRemoteFilesResponse.requested_path");
+      target = stream->WriteStringMaybeAliased(1, _s, target);
+    }
+  }
+
+  // string resolved_path = 2;
+  if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+    if (!this_._internal_resolved_path().empty()) {
+      const ::std::string& _s = this_._internal_resolved_path();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "kelpieui.v1.ListRemoteFilesResponse.resolved_path");
+      target = stream->WriteStringMaybeAliased(2, _s, target);
+    }
+  }
+
+  // string root_path = 3;
+  if (CheckHasBit(cached_has_bits, 0x00000008U)) {
+    if (!this_._internal_root_path().empty()) {
+      const ::std::string& _s = this_._internal_root_path();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "kelpieui.v1.ListRemoteFilesResponse.root_path");
+      target = stream->WriteStringMaybeAliased(3, _s, target);
+    }
+  }
+
+  // string parent_path = 4;
+  if (CheckHasBit(cached_has_bits, 0x00000010U)) {
+    if (!this_._internal_parent_path().empty()) {
+      const ::std::string& _s = this_._internal_parent_path();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "kelpieui.v1.ListRemoteFilesResponse.parent_path");
+      target = stream->WriteStringMaybeAliased(4, _s, target);
+    }
+  }
+
+  // bool can_go_up = 5;
+  if (CheckHasBit(cached_has_bits, 0x00000040U)) {
+    if (this_._internal_can_go_up() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteBoolToArray(
+          5, this_._internal_can_go_up(), target);
+    }
+  }
+
+  // repeated .kelpieui.v1.RemoteFileEntry entries = 6;
+  if (CheckHasBitForRepeated(cached_has_bits, 0x00000001U)) {
+    for (unsigned i = 0, n = static_cast<unsigned>(
+                             this_._internal_entries_size());
+         i < n; i++) {
+      const auto& repfield = this_._internal_entries().Get(i);
+      target =
+          ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
+              6, repfield, repfield.GetCachedSize(),
+              target, stream);
+    }
+  }
+
+  // bool virtual_root = 7;
+  if (CheckHasBit(cached_has_bits, 0x00000080U)) {
+    if (this_._internal_virtual_root() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteBoolToArray(
+          7, this_._internal_virtual_root(), target);
+    }
+  }
+
+  // string display_path = 8;
+  if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+    if (!this_._internal_display_path().empty()) {
+      const ::std::string& _s = this_._internal_display_path();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "kelpieui.v1.ListRemoteFilesResponse.display_path");
+      target = stream->WriteStringMaybeAliased(8, _s, target);
+    }
+  }
+
+  if (ABSL_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
+    target =
+        ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+            this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:kelpieui.v1.ListRemoteFilesResponse)
+  return target;
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::size_t ListRemoteFilesResponse::ByteSizeLong(const MessageLite& base) {
+  const ListRemoteFilesResponse& this_ = static_cast<const ListRemoteFilesResponse&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::size_t ListRemoteFilesResponse::ByteSizeLong() const {
+  const ListRemoteFilesResponse& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  // @@protoc_insertion_point(message_byte_size_start:kelpieui.v1.ListRemoteFilesResponse)
+  ::size_t total_size = 0;
+
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void)cached_has_bits;
+
+  ::_pbi::Prefetch5LinesFrom7Lines(&this_);
+  cached_has_bits = this_._impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x000000ffU)) {
+    // repeated .kelpieui.v1.RemoteFileEntry entries = 6;
+    if (CheckHasBitForRepeated(cached_has_bits, 0x00000001U)) {
+      total_size += 1UL * this_._internal_entries_size();
+      for (const auto& msg : this_._internal_entries()) {
+        total_size += ::google::protobuf::internal::WireFormatLite::MessageSize(msg);
+      }
+    }
+    // string requested_path = 1;
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      if (!this_._internal_requested_path().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_requested_path());
+      }
+    }
+    // string resolved_path = 2;
+    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+      if (!this_._internal_resolved_path().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_resolved_path());
+      }
+    }
+    // string root_path = 3;
+    if (CheckHasBit(cached_has_bits, 0x00000008U)) {
+      if (!this_._internal_root_path().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_root_path());
+      }
+    }
+    // string parent_path = 4;
+    if (CheckHasBit(cached_has_bits, 0x00000010U)) {
+      if (!this_._internal_parent_path().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_parent_path());
+      }
+    }
+    // string display_path = 8;
+    if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+      if (!this_._internal_display_path().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_display_path());
+      }
+    }
+    // bool can_go_up = 5;
+    if (CheckHasBit(cached_has_bits, 0x00000040U)) {
+      if (this_._internal_can_go_up() != 0) {
+        total_size += 2;
+      }
+    }
+    // bool virtual_root = 7;
+    if (CheckHasBit(cached_has_bits, 0x00000080U)) {
+      if (this_._internal_virtual_root() != 0) {
+        total_size += 2;
+      }
+    }
+  }
+  return this_.MaybeComputeUnknownFieldsSize(total_size,
+                                             &this_._impl_._cached_size_);
+}
+
+void ListRemoteFilesResponse::MergeImpl(::google::protobuf::MessageLite& to_msg,
+                            const ::google::protobuf::MessageLite& from_msg) {
+   auto* const _this =
+      static_cast<ListRemoteFilesResponse*>(&to_msg);
+  auto& from = static_cast<const ListRemoteFilesResponse&>(from_msg);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    from.CheckHasBitConsistency();
+  }
+  ::google::protobuf::Arena* arena = _this->GetArena();
+  // @@protoc_insertion_point(class_specific_merge_from_start:kelpieui.v1.ListRemoteFilesResponse)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = from._impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x000000ffU)) {
+    if (CheckHasBitForRepeated(cached_has_bits, 0x00000001U)) {
+      _this->_internal_mutable_entries()->InternalMergeFromWithArena(
+          ::google::protobuf::MessageLite::internal_visibility(), arena,
+          from._internal_entries());
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      if (!from._internal_requested_path().empty()) {
+        _this->_internal_set_requested_path(from._internal_requested_path());
+      } else {
+        if (_this->_impl_.requested_path_.IsDefault()) {
+          _this->_internal_set_requested_path("");
+        }
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+      if (!from._internal_resolved_path().empty()) {
+        _this->_internal_set_resolved_path(from._internal_resolved_path());
+      } else {
+        if (_this->_impl_.resolved_path_.IsDefault()) {
+          _this->_internal_set_resolved_path("");
+        }
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000008U)) {
+      if (!from._internal_root_path().empty()) {
+        _this->_internal_set_root_path(from._internal_root_path());
+      } else {
+        if (_this->_impl_.root_path_.IsDefault()) {
+          _this->_internal_set_root_path("");
+        }
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000010U)) {
+      if (!from._internal_parent_path().empty()) {
+        _this->_internal_set_parent_path(from._internal_parent_path());
+      } else {
+        if (_this->_impl_.parent_path_.IsDefault()) {
+          _this->_internal_set_parent_path("");
+        }
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+      if (!from._internal_display_path().empty()) {
+        _this->_internal_set_display_path(from._internal_display_path());
+      } else {
+        if (_this->_impl_.display_path_.IsDefault()) {
+          _this->_internal_set_display_path("");
+        }
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000040U)) {
+      if (from._internal_can_go_up() != 0) {
+        _this->_impl_.can_go_up_ = from._impl_.can_go_up_;
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000080U)) {
+      if (from._internal_virtual_root() != 0) {
+        _this->_impl_.virtual_root_ = from._impl_.virtual_root_;
+      }
+    }
+  }
+  _this->_impl_._has_bits_[0] |= cached_has_bits;
+  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+}
+
+void ListRemoteFilesResponse::CopyFrom(const ListRemoteFilesResponse& from) {
+  // @@protoc_insertion_point(class_specific_copy_from_start:kelpieui.v1.ListRemoteFilesResponse)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+
+void ListRemoteFilesResponse::InternalSwap(ListRemoteFilesResponse* PROTOBUF_RESTRICT PROTOBUF_NONNULL other) {
+  using ::std::swap;
+  auto* arena = GetArena();
+  ABSL_DCHECK_EQ(arena, other->GetArena());
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  _impl_.entries_.InternalSwap(&other->_impl_.entries_);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.requested_path_, &other->_impl_.requested_path_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.resolved_path_, &other->_impl_.resolved_path_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.root_path_, &other->_impl_.root_path_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.parent_path_, &other->_impl_.parent_path_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.display_path_, &other->_impl_.display_path_, arena);
+  ::google::protobuf::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(ListRemoteFilesResponse, _impl_.virtual_root_)
+      + sizeof(ListRemoteFilesResponse::_impl_.virtual_root_)
+      - PROTOBUF_FIELD_OFFSET(ListRemoteFilesResponse, _impl_.can_go_up_)>(
+          reinterpret_cast<char*>(&_impl_.can_go_up_),
+          reinterpret_cast<char*>(&other->_impl_.can_go_up_));
+}
+
+::google::protobuf::Metadata ListRemoteFilesResponse::GetMetadata() const {
   return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
 }
 // ===================================================================

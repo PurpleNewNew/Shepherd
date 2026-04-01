@@ -25,7 +25,9 @@ const (
 	KelpieUIService_WatchEvents_FullMethodName           = "/kelpieui.v1.KelpieUIService/WatchEvents"
 	KelpieUIService_ListLoot_FullMethodName              = "/kelpieui.v1.KelpieUIService/ListLoot"
 	KelpieUIService_SubmitLoot_FullMethodName            = "/kelpieui.v1.KelpieUIService/SubmitLoot"
-	KelpieUIService_GetLoot_FullMethodName               = "/kelpieui.v1.KelpieUIService/GetLoot"
+	KelpieUIService_CollectLootFile_FullMethodName       = "/kelpieui.v1.KelpieUIService/CollectLootFile"
+	KelpieUIService_SyncLoot_FullMethodName              = "/kelpieui.v1.KelpieUIService/SyncLoot"
+	KelpieUIService_ListRemoteFiles_FullMethodName       = "/kelpieui.v1.KelpieUIService/ListRemoteFiles"
 	KelpieUIService_ProxyStream_FullMethodName           = "/kelpieui.v1.KelpieUIService/ProxyStream"
 	KelpieUIService_StartShell_FullMethodName            = "/kelpieui.v1.KelpieUIService/StartShell"
 	KelpieUIService_StartSocksProxy_FullMethodName       = "/kelpieui.v1.KelpieUIService/StartSocksProxy"
@@ -68,7 +70,9 @@ type KelpieUIServiceClient interface {
 	WatchEvents(ctx context.Context, in *WatchEventsRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[UiEvent], error)
 	ListLoot(ctx context.Context, in *ListLootRequest, opts ...grpc.CallOption) (*ListLootResponse, error)
 	SubmitLoot(ctx context.Context, in *SubmitLootRequest, opts ...grpc.CallOption) (*SubmitLootResponse, error)
-	GetLoot(ctx context.Context, in *GetLootRequest, opts ...grpc.CallOption) (*GetLootResponse, error)
+	CollectLootFile(ctx context.Context, in *CollectLootFileRequest, opts ...grpc.CallOption) (*CollectLootFileResponse, error)
+	SyncLoot(ctx context.Context, in *SyncLootRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[SyncLootChunk], error)
+	ListRemoteFiles(ctx context.Context, in *ListRemoteFilesRequest, opts ...grpc.CallOption) (*ListRemoteFilesResponse, error)
 	ProxyStream(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[StreamRequest, StreamResponse], error)
 	StartShell(ctx context.Context, in *StartShellRequest, opts ...grpc.CallOption) (*StartShellResponse, error)
 	StartSocksProxy(ctx context.Context, in *StartSocksProxyRequest, opts ...grpc.CallOption) (*StartSocksProxyResponse, error)
@@ -178,10 +182,39 @@ func (c *kelpieUIServiceClient) SubmitLoot(ctx context.Context, in *SubmitLootRe
 	return out, nil
 }
 
-func (c *kelpieUIServiceClient) GetLoot(ctx context.Context, in *GetLootRequest, opts ...grpc.CallOption) (*GetLootResponse, error) {
+func (c *kelpieUIServiceClient) CollectLootFile(ctx context.Context, in *CollectLootFileRequest, opts ...grpc.CallOption) (*CollectLootFileResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetLootResponse)
-	err := c.cc.Invoke(ctx, KelpieUIService_GetLoot_FullMethodName, in, out, cOpts...)
+	out := new(CollectLootFileResponse)
+	err := c.cc.Invoke(ctx, KelpieUIService_CollectLootFile_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *kelpieUIServiceClient) SyncLoot(ctx context.Context, in *SyncLootRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[SyncLootChunk], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &KelpieUIService_ServiceDesc.Streams[1], KelpieUIService_SyncLoot_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[SyncLootRequest, SyncLootChunk]{ClientStream: stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type KelpieUIService_SyncLootClient = grpc.ServerStreamingClient[SyncLootChunk]
+
+func (c *kelpieUIServiceClient) ListRemoteFiles(ctx context.Context, in *ListRemoteFilesRequest, opts ...grpc.CallOption) (*ListRemoteFilesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListRemoteFilesResponse)
+	err := c.cc.Invoke(ctx, KelpieUIService_ListRemoteFiles_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -190,7 +223,7 @@ func (c *kelpieUIServiceClient) GetLoot(ctx context.Context, in *GetLootRequest,
 
 func (c *kelpieUIServiceClient) ProxyStream(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[StreamRequest, StreamResponse], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	stream, err := c.cc.NewStream(ctx, &KelpieUIService_ServiceDesc.Streams[1], KelpieUIService_ProxyStream_FullMethodName, cOpts...)
+	stream, err := c.cc.NewStream(ctx, &KelpieUIService_ServiceDesc.Streams[2], KelpieUIService_ProxyStream_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -501,7 +534,9 @@ type KelpieUIServiceServer interface {
 	WatchEvents(*WatchEventsRequest, grpc.ServerStreamingServer[UiEvent]) error
 	ListLoot(context.Context, *ListLootRequest) (*ListLootResponse, error)
 	SubmitLoot(context.Context, *SubmitLootRequest) (*SubmitLootResponse, error)
-	GetLoot(context.Context, *GetLootRequest) (*GetLootResponse, error)
+	CollectLootFile(context.Context, *CollectLootFileRequest) (*CollectLootFileResponse, error)
+	SyncLoot(*SyncLootRequest, grpc.ServerStreamingServer[SyncLootChunk]) error
+	ListRemoteFiles(context.Context, *ListRemoteFilesRequest) (*ListRemoteFilesResponse, error)
 	ProxyStream(grpc.BidiStreamingServer[StreamRequest, StreamResponse]) error
 	StartShell(context.Context, *StartShellRequest) (*StartShellResponse, error)
 	StartSocksProxy(context.Context, *StartSocksProxyRequest) (*StartSocksProxyResponse, error)
@@ -560,8 +595,14 @@ func (UnimplementedKelpieUIServiceServer) ListLoot(context.Context, *ListLootReq
 func (UnimplementedKelpieUIServiceServer) SubmitLoot(context.Context, *SubmitLootRequest) (*SubmitLootResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SubmitLoot not implemented")
 }
-func (UnimplementedKelpieUIServiceServer) GetLoot(context.Context, *GetLootRequest) (*GetLootResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetLoot not implemented")
+func (UnimplementedKelpieUIServiceServer) CollectLootFile(context.Context, *CollectLootFileRequest) (*CollectLootFileResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CollectLootFile not implemented")
+}
+func (UnimplementedKelpieUIServiceServer) SyncLoot(*SyncLootRequest, grpc.ServerStreamingServer[SyncLootChunk]) error {
+	return status.Errorf(codes.Unimplemented, "method SyncLoot not implemented")
+}
+func (UnimplementedKelpieUIServiceServer) ListRemoteFiles(context.Context, *ListRemoteFilesRequest) (*ListRemoteFilesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListRemoteFiles not implemented")
 }
 func (UnimplementedKelpieUIServiceServer) ProxyStream(grpc.BidiStreamingServer[StreamRequest, StreamResponse]) error {
 	return status.Errorf(codes.Unimplemented, "method ProxyStream not implemented")
@@ -775,20 +816,49 @@ func _KelpieUIService_SubmitLoot_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KelpieUIService_GetLoot_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetLootRequest)
+func _KelpieUIService_CollectLootFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CollectLootFileRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(KelpieUIServiceServer).GetLoot(ctx, in)
+		return srv.(KelpieUIServiceServer).CollectLootFile(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: KelpieUIService_GetLoot_FullMethodName,
+		FullMethod: KelpieUIService_CollectLootFile_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KelpieUIServiceServer).GetLoot(ctx, req.(*GetLootRequest))
+		return srv.(KelpieUIServiceServer).CollectLootFile(ctx, req.(*CollectLootFileRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _KelpieUIService_SyncLoot_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(SyncLootRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(KelpieUIServiceServer).SyncLoot(m, &grpc.GenericServerStream[SyncLootRequest, SyncLootChunk]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type KelpieUIService_SyncLootServer = grpc.ServerStreamingServer[SyncLootChunk]
+
+func _KelpieUIService_ListRemoteFiles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListRemoteFilesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KelpieUIServiceServer).ListRemoteFiles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: KelpieUIService_ListRemoteFiles_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KelpieUIServiceServer).ListRemoteFiles(ctx, req.(*ListRemoteFilesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1350,8 +1420,12 @@ var KelpieUIService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _KelpieUIService_SubmitLoot_Handler,
 		},
 		{
-			MethodName: "GetLoot",
-			Handler:    _KelpieUIService_GetLoot_Handler,
+			MethodName: "CollectLootFile",
+			Handler:    _KelpieUIService_CollectLootFile_Handler,
+		},
+		{
+			MethodName: "ListRemoteFiles",
+			Handler:    _KelpieUIService_ListRemoteFiles_Handler,
 		},
 		{
 			MethodName: "StartShell",
@@ -1474,6 +1548,11 @@ var KelpieUIService_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "WatchEvents",
 			Handler:       _KelpieUIService_WatchEvents_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "SyncLoot",
+			Handler:       _KelpieUIService_SyncLoot_Handler,
 			ServerStreams: true,
 		},
 		{

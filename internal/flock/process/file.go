@@ -9,8 +9,13 @@ import (
 	"mime"
 	"os"
 	"path/filepath"
+	"runtime"
+	"sort"
 	"strconv"
 	"strings"
+	"time"
+
+	"codeberg.org/agnoie/shepherd/pkg/filebrowser"
 )
 
 const defaultMaxFileSize int64 = 0
@@ -192,9 +197,160 @@ func (agent *Agent) fileOnOpen(streamID uint32, opts map[string]string) {
 				}
 			}
 		}(streamID, st)
+	case "file-list":
+		go agent.fileListOnOpen(streamID, path)
 	default:
 		agent.sendStreamClose(streamID, 1, "unsupported file mode")
 	}
+}
+
+func (agent *Agent) fileListOnOpen(streamID uint32, requestedPath string) {
+	if agent == nil {
+		return
+	}
+	requestedPath = strings.TrimSpace(requestedPath)
+	if requestedPath == "" {
+		listing, err := agent.rootListing()
+		if err != nil {
+			agent.sendStreamClose(streamID, 1, err.Error())
+			return
+		}
+		listing.RequestedPath = ""
+		payload, err := filebrowser.Marshal(listing)
+		if err != nil {
+			agent.sendStreamClose(streamID, 1, err.Error())
+			return
+		}
+		for len(payload) > 0 {
+			chunk := payload
+			if len(chunk) > 32768 {
+				chunk = payload[:32768]
+			}
+			agent.sendStreamData(streamID, chunk)
+			payload = payload[len(chunk):]
+		}
+		agent.sendStreamClose(streamID, 0, fmt.Sprintf("ok entries=%d", len(listing.Entries)))
+		return
+	}
+	target, err := agent.sanitizeFilePath(requestedPath)
+	if err != nil {
+		agent.sendStreamClose(streamID, 1, err.Error())
+		return
+	}
+	root := filesystemRoot(target)
+	listing, err := directoryListing(target, requestedPath, root)
+	if err != nil {
+		agent.sendStreamClose(streamID, 1, err.Error())
+		return
+	}
+	payload, err := filebrowser.Marshal(listing)
+	if err != nil {
+		agent.sendStreamClose(streamID, 1, err.Error())
+		return
+	}
+	for len(payload) > 0 {
+		chunk := payload
+		if len(chunk) > 32768 {
+			chunk = payload[:32768]
+		}
+		agent.sendStreamData(streamID, chunk)
+		payload = payload[len(chunk):]
+	}
+	agent.sendStreamClose(streamID, 0, fmt.Sprintf("ok entries=%d", len(listing.Entries)))
+}
+
+func (agent *Agent) rootListing() (filebrowser.Listing, error) {
+	if runtime.GOOS == "windows" {
+		entries := make([]filebrowser.Entry, 0, 26)
+		for drive := 'A'; drive <= 'Z'; drive++ {
+			path := fmt.Sprintf("%c:\\", drive)
+			info, err := os.Stat(path)
+			if err != nil || !info.IsDir() {
+				continue
+			}
+			entries = append(entries, filebrowser.Entry{
+				Name:    path[:2],
+				Path:    path,
+				IsDir:   true,
+				IsDrive: true,
+				Mode:    info.Mode().String(),
+			})
+		}
+		return filebrowser.Listing{
+			DisplayPath: "Computer",
+			VirtualRoot: true,
+			Entries:     entries,
+		}, nil
+	}
+	return directoryListing("/", "/", "/")
+}
+
+func directoryListing(target, requestedPath, root string) (filebrowser.Listing, error) {
+	info, err := os.Stat(target)
+	if err != nil {
+		return filebrowser.Listing{}, err
+	}
+	if !info.IsDir() {
+		return filebrowser.Listing{}, fmt.Errorf("path is not a directory")
+	}
+	entries, err := os.ReadDir(target)
+	if err != nil {
+		return filebrowser.Listing{}, err
+	}
+	sort.Slice(entries, func(i, j int) bool {
+		leftName := strings.ToLower(entries[i].Name())
+		rightName := strings.ToLower(entries[j].Name())
+		leftDir := entries[i].IsDir()
+		rightDir := entries[j].IsDir()
+		if leftDir != rightDir {
+			return leftDir
+		}
+		return leftName < rightName
+	})
+
+	listing := filebrowser.Listing{
+		RequestedPath: requestedPath,
+		ResolvedPath:  target,
+		DisplayPath:   target,
+		RootPath:      root,
+	}
+	if canGoUp(root, target) {
+		listing.CanGoUp = true
+		listing.ParentPath = filepath.Dir(target)
+	}
+	listing.Entries = make([]filebrowser.Entry, 0, len(entries))
+	for _, entry := range entries {
+		fullPath := filepath.Join(target, entry.Name())
+		lstat, err := os.Lstat(fullPath)
+		if err != nil {
+			continue
+		}
+		isSymlink := lstat.Mode()&os.ModeSymlink != 0
+		isDir := lstat.IsDir()
+		size := lstat.Size()
+		modifiedAt := lstat.ModTime().UTC().Format(time.RFC3339Nano)
+		mode := lstat.Mode().String()
+		if isSymlink {
+			if targetInfo, statErr := os.Stat(fullPath); statErr == nil {
+				isDir = targetInfo.IsDir()
+				if !isDir {
+					size = targetInfo.Size()
+				}
+				modifiedAt = targetInfo.ModTime().UTC().Format(time.RFC3339Nano)
+			}
+		}
+		listing.Entries = append(listing.Entries, filebrowser.Entry{
+			Name:       entry.Name(),
+			Path:       fullPath,
+			IsDir:      isDir,
+			IsSymlink:  isSymlink,
+			Size:       size,
+			Mode:       mode,
+			ModifiedAt: modifiedAt,
+			Hidden:     strings.HasPrefix(entry.Name(), "."),
+		})
+	}
+	return listing, nil
 }
 
 func (agent *Agent) fileOnData(streamID uint32, data []byte) {
@@ -399,19 +555,53 @@ func (agent *Agent) sanitizeFilePath(path string) (string, error) {
 	if agent == nil {
 		return "", fmt.Errorf("agent unavailable")
 	}
-	clean := filepath.Clean(path)
-	if strings.Contains(clean, "..") {
-		return "", fmt.Errorf("path traversal rejected")
+	base := strings.TrimSpace(agent.workDir)
+	if base == "" {
+		base = "."
+	}
+	base = filepath.Clean(base)
+	clean := filepath.Clean(strings.TrimSpace(path))
+	if clean == "." && strings.TrimSpace(path) == "" {
+		return base, nil
+	}
+	if volume := filepath.VolumeName(clean); volume != "" && volume == clean {
+		clean += string(filepath.Separator)
 	}
 	if filepath.IsAbs(clean) {
-		rel, err := filepath.Rel(agent.workDir, clean)
-		if err != nil {
-			return "", err
-		}
-		if strings.HasPrefix(rel, "..") {
-			return "", fmt.Errorf("path outside working directory")
-		}
 		return clean, nil
 	}
-	return filepath.Join(agent.workDir, clean), nil
+	return filepath.Clean(filepath.Join(base, clean)), nil
+}
+
+func canGoUp(root, target string) bool {
+	root = filepath.Clean(root)
+	target = filepath.Clean(target)
+	if root == "" || target == "" || root == target {
+		return false
+	}
+	rel, err := filepath.Rel(root, target)
+	if err != nil {
+		return false
+	}
+	if rel == "." || rel == "" || strings.HasPrefix(rel, "..") {
+		return false
+	}
+	return true
+}
+
+func filesystemRoot(path string) string {
+	clean := filepath.Clean(path)
+	if !filepath.IsAbs(clean) {
+		if abs, err := filepath.Abs(clean); err == nil {
+			clean = abs
+		}
+	}
+	volume := filepath.VolumeName(clean)
+	if volume != "" {
+		return volume + string(filepath.Separator)
+	}
+	if filepath.IsAbs(clean) {
+		return string(filepath.Separator)
+	}
+	return filepath.Clean(clean)
 }

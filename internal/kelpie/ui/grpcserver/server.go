@@ -26,6 +26,7 @@ import (
 	"codeberg.org/agnoie/shepherd/internal/kelpie/topology"
 	"codeberg.org/agnoie/shepherd/internal/kelpie/uipb"
 	"codeberg.org/agnoie/shepherd/pkg/bus"
+	"codeberg.org/agnoie/shepherd/pkg/filebrowser"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/peer"
@@ -89,7 +90,9 @@ type ListenerAdmin interface {
 type LootAdmin interface {
 	ListLoot(filter process.LootFilter) []process.LootRecord
 	SubmitLoot(rec process.LootRecord, content []byte) (process.LootRecord, error)
-	GetLootContent(lootID string) (process.LootRecord, []byte, error)
+	OpenLootContent(lootID string) (process.LootRecord, io.ReadCloser, uint64, error)
+	CollectLootFile(ctx context.Context, targetUUID, remotePath, operator string, tags []string) (process.LootRecord, error)
+	ListRemoteFiles(ctx context.Context, targetUUID, remotePath string) (filebrowser.Listing, error)
 }
 
 type ProxyAdmin interface {

@@ -246,10 +246,6 @@ func (admin *Admin) handleStreamClose(hdr *protocol.Header, msg *protocol.Stream
 	if meta != nil {
 		kind = meta["kind"]
 	}
-	target := ""
-	if hdr != nil {
-		target = strings.TrimSpace(hdr.Sender)
-	}
 	admin.recordStreamClose(kind, msg.Reason)
 	admin.rememberStreamReason(msg.StreamID, msg.Reason)
 	if kind == "" {
@@ -259,32 +255,6 @@ func (admin *Admin) handleStreamClose(hdr *protocol.Header, msg *protocol.Stream
 		printer.Warning("\r\n[*] Stream(%s) closed: %s\r\n", kind, msg.Reason)
 	} else {
 		printer.Warning("\r\n[*] Stream(%s) closed.\r\n", kind)
-	}
-	// 针对 file-put/file-get，记录完成的 loot（仅成功时）。
-	if (kind == "file-put" || kind == "file-get") && admin.lootStore != nil {
-		path := ""
-		if meta != nil {
-			path = strings.TrimSpace(meta["path"])
-		}
-		rec := LootRecord{
-			TargetUUID: target,
-			Category:   LootCategoryFile,
-			Name:       path,
-			OriginPath: path,
-			Tags:       []string{kind, "completed"},
-		}
-		if parsed := parseStreamReason(msg.Reason); parsed != nil {
-			if parsed.size > 0 {
-				rec.Size = uint64(parsed.size)
-			}
-			if parsed.hash != "" {
-				rec.Hash = parsed.hash
-			}
-			if parsed.mime != "" {
-				rec.Mime = parsed.mime
-			}
-		}
-		_, _ = admin.SubmitLoot(rec, nil)
 	}
 	admin.streamEngine.HandleClose(msg)
 }

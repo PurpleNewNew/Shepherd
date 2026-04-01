@@ -1,9 +1,13 @@
 package process
 
 import (
+	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"io"
+	"mime"
+	"path"
 	"strings"
 	"time"
 
@@ -55,7 +59,8 @@ type LootPersistence interface {
 // LootContentStore 提供 loot 内容落盘接口。
 type LootContentStore interface {
 	Store(lootID string, data []byte, mime string) (storageRef string, size uint64, hash string, err error)
-	Load(storageRef string) ([]byte, error)
+	StoreStream(lootID string, r io.Reader, mime string) (storageRef string, size uint64, hash string, err error)
+	Open(storageRef string) (io.ReadCloser, uint64, error)
 }
 
 // SubmitLoot 在 Kelpie 管理端记录一条 loot 事件。
@@ -134,20 +139,115 @@ func (admin *Admin) GetLoot(lootID string) (LootRecord, error) {
 	return admin.lootStore.GetLoot(strings.TrimSpace(lootID))
 }
 
-// GetLootContent 返回指定 loot 记录及其可读内容。
-func (admin *Admin) GetLootContent(lootID string) (LootRecord, []byte, error) {
+// OpenLootContent 以流式方式打开 loot 内容，用于导出/同步到本地。
+func (admin *Admin) OpenLootContent(lootID string) (LootRecord, io.ReadCloser, uint64, error) {
 	rec, err := admin.GetLoot(lootID)
 	if err != nil {
-		return LootRecord{}, nil, err
+		return LootRecord{}, nil, 0, err
 	}
 	if strings.TrimSpace(rec.StorageRef) == "" || admin == nil || admin.lootContentStore == nil {
-		return rec, nil, nil
+		return rec, nil, 0, nil
 	}
-	content, err := admin.lootContentStore.Load(rec.StorageRef)
+	reader, size, err := admin.lootContentStore.Open(rec.StorageRef)
 	if err != nil {
-		return rec, nil, fmt.Errorf("load loot content: %w", err)
+		return rec, nil, 0, fmt.Errorf("open loot content: %w", err)
 	}
-	return rec, content, nil
+	return rec, reader, size, nil
+}
+
+// CollectLootFile 让 Kelpie 直接向目标节点发起 file-get，并将结果落到服务端 Loot 仓。
+func (admin *Admin) CollectLootFile(ctx context.Context, targetUUID, remotePath, operator string, tags []string) (LootRecord, error) {
+	if admin == nil || admin.lootStore == nil {
+		return LootRecord{}, fmt.Errorf("loot store unavailable")
+	}
+	if admin.lootContentStore == nil {
+		return LootRecord{}, fmt.Errorf("loot content store unavailable")
+	}
+	targetUUID = strings.TrimSpace(targetUUID)
+	remotePath = strings.TrimSpace(remotePath)
+	if targetUUID == "" {
+		return LootRecord{}, fmt.Errorf("target uuid required")
+	}
+	if remotePath == "" {
+		return LootRecord{}, fmt.Errorf("remote path required")
+	}
+	name := lootNameFromPath(remotePath)
+	guessedMime := mime.TypeByExtension(strings.ToLower(path.Ext(name)))
+	streamHandle, err := admin.OpenStream(ctx, targetUUID, "", map[string]string{
+		"kind": "file-get",
+		"path": remotePath,
+	})
+	if err != nil {
+		return LootRecord{}, fmt.Errorf("open remote file stream: %w", err)
+	}
+	defer streamHandle.Close()
+
+	rec := LootRecord{
+		ID:         utils.GenerateUUID(),
+		TargetUUID: targetUUID,
+		Operator:   strings.TrimSpace(operator),
+		Category:   LootCategoryFile,
+		Name:       name,
+		OriginPath: remotePath,
+		Mime:       guessedMime,
+		Tags:       normalizeTags(tags),
+		CreatedAt:  time.Now().UTC(),
+	}
+	storageRef, size, hash, err := admin.lootContentStore.StoreStream(rec.ID, streamHandle, rec.Mime)
+	if err != nil {
+		return LootRecord{}, fmt.Errorf("store collected loot: %w", err)
+	}
+	rec.StorageRef = storageRef
+	rec.Size = size
+	rec.Hash = hash
+
+	if streamID := streamHandleID(streamHandle); streamID != 0 {
+		reason := admin.StreamCloseReason(streamID)
+		if reason != "" && !streamCloseSucceeded(reason) {
+			return LootRecord{}, fmt.Errorf("remote file transfer failed: %s", reason)
+		}
+		if parsed := parseStreamReason(reason); parsed != nil {
+			if parsed.size > 0 {
+				rec.Size = uint64(parsed.size)
+			}
+			if parsed.hash != "" {
+				rec.Hash = parsed.hash
+			}
+			if parsed.mime != "" {
+				rec.Mime = parsed.mime
+			}
+		}
+	}
+
+	saved, err := admin.SubmitLoot(rec, nil)
+	if err != nil {
+		return LootRecord{}, err
+	}
+	return saved, nil
+}
+
+func lootNameFromPath(remotePath string) string {
+	normalized := strings.ReplaceAll(strings.TrimSpace(remotePath), "\\", "/")
+	name := strings.TrimSpace(path.Base(normalized))
+	if name == "" || name == "." || name == "/" {
+		return "remote-file"
+	}
+	return name
+}
+
+func streamHandleID(handle io.ReadWriteCloser) uint32 {
+	type streamIDProvider interface {
+		ID() uint32
+	}
+	if provider, ok := handle.(streamIDProvider); ok {
+		return provider.ID()
+	}
+	return 0
+}
+
+func streamCloseSucceeded(reason string) bool {
+	reason = strings.TrimSpace(strings.ToLower(reason))
+	return reason == "ok" || strings.HasPrefix(reason, "ok ")
 }
 
 func normalizeTags(tags []string) []string {

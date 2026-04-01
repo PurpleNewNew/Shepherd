@@ -2,6 +2,7 @@ package process
 
 import (
 	"fmt"
+	"io"
 	"path/filepath"
 	"testing"
 
@@ -72,9 +73,17 @@ func TestSubmitLootStoresContentAndLoadsItBack(t *testing.T) {
 		t.Fatalf("expected content hash to be recorded")
 	}
 
-	record, content, err := admin.GetLootContent(saved.ID)
+	record, reader, _, err := admin.OpenLootContent(saved.ID)
 	if err != nil {
-		t.Fatalf("get loot content: %v", err)
+		t.Fatalf("open loot content: %v", err)
+	}
+	if reader == nil {
+		t.Fatalf("expected loot content reader")
+	}
+	defer reader.Close()
+	content, err := io.ReadAll(reader)
+	if err != nil {
+		t.Fatalf("read loot content: %v", err)
 	}
 	if record.ID != saved.ID {
 		t.Fatalf("expected record %s, got %s", saved.ID, record.ID)
