@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref, shallowRef, watch } from 'vue';
+import { onBeforeUnmount, ref, shallowRef, watch } from 'vue';
 import {
   forceCenter,
   forceCollide,
@@ -43,8 +43,9 @@ interface ForceLink extends SimulationLinkDatum<ForceNode> {
 const containerRef = ref<HTMLElement | null>(null);
 const svgRef = ref<SVGSVGElement | null>(null);
 const groupRef = ref<SVGGElement | null>(null);
-const hovered = ref<string>('');
 const simulation = shallowRef<Simulation<ForceNode, ForceLink> | null>(null);
+// 节点/边仍然通过 Vue 的 v-for 负责 enter/exit，但位置属性 x/y/x1/x2...
+// 由 simulation.on('tick') 直接 setAttribute 更新，避免 Vue diff 开销。
 const forceNodes = shallowRef<ForceNode[]>([]);
 const forceLinks = shallowRef<ForceLink[]>([]);
 const zoomBehavior = shallowRef<ZoomBehavior<SVGSVGElement, unknown> | null>(
@@ -57,18 +58,55 @@ const transform = ref<{ x: number; y: number; k: number }>({
 });
 const dimensions = ref<{ w: number; h: number }>({ w: 800, h: 600 });
 
-const hoveredNeighbors = computed(() => {
-  const id = hovered.value || props.selected;
-  if (!id) return new Set<string>();
-  const set = new Set<string>([id]);
-  for (const link of forceLinks.value) {
-    const s = typeof link.source === 'string' ? link.source : link.source.uuid;
-    const t = typeof link.target === 'string' ? link.target : link.target.uuid;
-    if (s === id) set.add(t);
-    if (t === id) set.add(s);
+/**
+ * 每一帧由 d3 simulation 触发，直接 DOM 操作节点和边的坐标，
+ * 绕过 Vue 的响应式 diff。rAF 节流避免 tick 超过显示刷新率做无用功。
+ */
+let rafHandle = 0;
+function scheduleTickRender() {
+  if (rafHandle) return;
+  rafHandle = requestAnimationFrame(() => {
+    rafHandle = 0;
+    tickRender();
+  });
+}
+function tickRender() {
+  const root = groupRef.value;
+  if (!root) return;
+
+  // 用 data-uuid / data-idx 作为身份索引，无需 d3.data().join()。
+  const nodeByUuid = new Map<string, ForceNode>();
+  for (const n of forceNodes.value) nodeByUuid.set(n.uuid, n);
+
+  const gs = root.querySelectorAll<SVGGElement>('g.node');
+  for (let i = 0; i < gs.length; i++) {
+    const el = gs[i];
+    const uuid = el.dataset.uuid;
+    if (!uuid) continue;
+    const n = nodeByUuid.get(uuid);
+    if (!n) continue;
+    const x = n.x ?? 0;
+    const y = n.y ?? 0;
+    // 用 transform attr 而不是 translate：SVG 的 transform 属性对位置变更很便宜，
+    // 不会触发 style recalc。
+    el.setAttribute('transform', `translate(${x},${y})`);
   }
-  return set;
-});
+
+  const lines = root.querySelectorAll<SVGLineElement>('line.edge');
+  const links = forceLinks.value;
+  for (let i = 0; i < lines.length; i++) {
+    const el = lines[i];
+    const idx = Number(el.dataset.idx);
+    const link = links[idx];
+    if (!link) continue;
+    const s = typeof link.source === 'string' ? null : link.source;
+    const t = typeof link.target === 'string' ? null : link.target;
+    el.setAttribute('x1', String(s?.x ?? 0));
+    el.setAttribute('y1', String(s?.y ?? 0));
+    el.setAttribute('x2', String(t?.x ?? 0));
+    el.setAttribute('y2', String(t?.y ?? 0));
+  }
+}
 
 function rebuildSimulation() {
   const container = containerRef.value;
@@ -118,8 +156,13 @@ function rebuildSimulation() {
     .force('center', forceCenter(w / 2, h / 2).strength(0.08))
     .force('collide', forceCollide<ForceNode>().radius(26))
     .alpha(0.9)
-    .alphaDecay(0.035);
+    .alphaDecay(0.05)           // 略加快收敛，减少后台无谓计算
+    .velocityDecay(0.4)         // 标准阻尼
+    .on('tick', scheduleTickRender);
   simulation.value = sim;
+
+  // Vue 首次渲染完 DOM 后，初始 tick 一次把位置填上，避免首帧在 (0,0)。
+  queueMicrotask(() => tickRender());
 }
 
 function setupZoom() {
@@ -150,63 +193,59 @@ function onNodeClick(uuid: string) {
   emit('select', uuid);
 }
 
-// 简易拖拽：鼠标按下节点时固定位置。
-function onMouseDown(
-  event: MouseEvent,
-  node: ForceNode,
-) {
+/*
+ * 节点拖拽：
+ *   - 使用 Pointer Events + setPointerCapture，保证拖出 SVG 边界也能收到 move。
+ *   - 拖拽期间给 node 设 fx/fy（固定位置），alphaTarget 维持低温，simulation
+ *     自己会调度 tick；我们不直接调 setAttribute，全部走 tickRender。
+ *   - 不做 rAF 节流：d3.simulation 的 tick 本身就是每帧一次，pointermove
+ *     高频到来只是更新 fx/fy 的两个字段，极廉价。
+ */
+function onPointerDown(event: PointerEvent, node: ForceNode) {
   event.preventDefault();
   event.stopPropagation();
   if (!simulation.value || !svgRef.value) return;
+  const target = event.currentTarget as SVGGElement | null;
+  target?.setPointerCapture?.(event.pointerId);
+
   const sim = simulation.value;
-  sim.alphaTarget(0.3).restart();
+  sim.alphaTarget(0.25).restart();
   const svg = svgRef.value;
   const rect = svg.getBoundingClientRect();
-  const t = transform.value;
-  const startX = (event.clientX - rect.left - t.x) / t.k;
-  const startY = (event.clientY - rect.top - t.y) / t.k;
-  node.fx = startX;
-  node.fy = startY;
 
-  const move = (ev: MouseEvent) => {
-    const x = (ev.clientX - rect.left - t.x) / t.k;
-    const y = (ev.clientY - rect.top - t.y) / t.k;
-    node.fx = x;
-    node.fy = y;
+  const toLocal = (clientX: number, clientY: number) => {
+    const t = transform.value;
+    return {
+      x: (clientX - rect.left - t.x) / t.k,
+      y: (clientY - rect.top - t.y) / t.k,
+    };
   };
-  const up = () => {
+
+  const start = toLocal(event.clientX, event.clientY);
+  node.fx = start.x;
+  node.fy = start.y;
+
+  const move = (ev: PointerEvent) => {
+    const p = toLocal(ev.clientX, ev.clientY);
+    node.fx = p.x;
+    node.fy = p.y;
+  };
+  const up = (ev: PointerEvent) => {
     sim.alphaTarget(0);
-    // 双击还原由 onNodeDouble 处理；这里保持固定位置让用户手工布局。
-    window.removeEventListener('mousemove', move);
-    window.removeEventListener('mouseup', up);
+    target?.releasePointerCapture?.(ev.pointerId);
+    target?.removeEventListener('pointermove', move);
+    target?.removeEventListener('pointerup', up);
+    target?.removeEventListener('pointercancel', up);
   };
-  window.addEventListener('mousemove', move);
-  window.addEventListener('mouseup', up);
+  target?.addEventListener('pointermove', move);
+  target?.addEventListener('pointerup', up);
+  target?.addEventListener('pointercancel', up);
 }
 
 function onNodeDouble(node: ForceNode) {
   node.fx = null;
   node.fy = null;
   simulation.value?.alpha(0.3).restart();
-}
-
-function linkCoords(link: ForceLink) {
-  const s = typeof link.source === 'string' ? null : link.source;
-  const t = typeof link.target === 'string' ? null : link.target;
-  return {
-    x1: s?.x ?? 0,
-    y1: s?.y ?? 0,
-    x2: t?.x ?? 0,
-    y2: t?.y ?? 0,
-  };
-}
-
-function linkDim(link: ForceLink): boolean {
-  const s = typeof link.source === 'string' ? link.source : link.source.uuid;
-  const t = typeof link.target === 'string' ? link.target : link.target.uuid;
-  const id = hovered.value || props.selected;
-  if (!id) return false;
-  return !(s === id || t === id);
 }
 
 // observer：容器大小变化时重算 simulation center
@@ -255,83 +294,82 @@ watch(
 );
 
 onBeforeUnmount(() => {
+  simulation.value?.on('tick', null);
   simulation.value?.stop();
+  if (rafHandle) cancelAnimationFrame(rafHandle);
+  rafHandle = 0;
   ro?.disconnect();
 });
 </script>
 
 <template>
   <div class="force-graph" ref="containerRef">
-    <svg ref="svgRef" :viewBox="`0 0 ${dimensions.w} ${dimensions.h}`"
-      :width="dimensions.w" :height="dimensions.h">
-      <defs>
-        <filter id="sf-glow" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="3" result="blur" />
-          <feMerge>
-            <feMergeNode in="blur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-      </defs>
-      <g ref="groupRef"
-        :transform="`translate(${transform.x},${transform.y}) scale(${transform.k})`">
+    <svg
+      ref="svgRef"
+      :viewBox="`0 0 ${dimensions.w} ${dimensions.h}`"
+      :width="dimensions.w"
+      :height="dimensions.h"
+    >
+      <!--
+        Cohere 亮色主题：去掉暗主题的 glow filter，改用"实心圆 + selected halo"
+        的极简表达。节点/边的颜色来自 graphUtils 里的 Interaction Blue / 冷灰
+        系列，所有连线走 #17171c 冷灰，只有补链才用 Focus Purple 虚线强调。
+      -->
+      <g
+        ref="groupRef"
+        :transform="`translate(${transform.x},${transform.y}) scale(${transform.k})`"
+      >
+        <!--
+          line 的 x1/y1/x2/y2 和 g.node 的 transform 都不使用响应式绑定，
+          由 tickRender 直接 setAttribute 更新；data-idx / data-uuid 作为身份索引。
+        -->
         <line
           v-for="(link, i) in forceLinks"
           :key="`l-${i}`"
-          :class="[
-            'edge',
-            { supp: link.supplemental },
-            { dim: linkDim(link) },
-            { highlight:
-              !linkDim(link) && (hovered || selected) },
-          ]"
-          :x1="linkCoords(link).x1"
-          :y1="linkCoords(link).y1"
-          :x2="linkCoords(link).x2"
-          :y2="linkCoords(link).y2"
+          :class="['edge', { supp: link.supplemental }]"
+          :data-idx="i"
+          x1="0"
+          y1="0"
+          x2="0"
+          y2="0"
         />
 
         <g
           v-for="node in forceNodes"
           :key="node.uuid"
-          :class="[
-            'node',
-            {
-              selected: selected === node.uuid,
-              dim: (hovered || selected)
-                && !hoveredNeighbors.has(node.uuid),
-            },
-          ]"
-          :transform="`translate(${node.x ?? 0},${node.y ?? 0})`"
-          @mousedown="onMouseDown($event, node)"
+          :class="['node', { selected: selected === node.uuid }]"
+          :data-uuid="node.uuid"
+          transform="translate(0,0)"
+          @pointerdown="onPointerDown($event, node)"
           @click.stop="onNodeClick(node.uuid)"
           @dblclick.stop="onNodeDouble(node)"
-          @mouseenter="hovered = node.uuid"
-          @mouseleave="hovered = ''"
         >
+          <!-- halo：仅 selected / hover 时出现（hover 由 CSS :hover 驱动，零 JS 开销） -->
           <circle
+            class="halo"
+            :r="nodeRadius(node.data) + 8"
+            :fill="statusColor(statusCategory(node.data))"
+            fill-opacity="0.12"
+          />
+          <!-- 主节点：实心圆 + 白描边 -->
+          <circle
+            class="dot"
             :r="nodeRadius(node.data)"
             :fill="statusColor(statusCategory(node.data))"
-            :opacity="0.85"
-            filter="url(#sf-glow)"
+            stroke="#ffffff"
+            stroke-width="1.5"
           />
-          <circle
-            :r="nodeRadius(node.data) + 4"
-            fill="none"
-            :stroke="statusColor(statusCategory(node.data))"
-            stroke-opacity="0.35"
-            stroke-width="1.4"
-          />
-          <text
-            class="node-label"
-            :y="nodeRadius(node.data) + 14"
-          >{{ aliasOf(node.data) }}</text>
+          <text class="node-label" :y="nodeRadius(node.data) + 16">
+            {{ aliasOf(node.data) }}
+          </text>
         </g>
       </g>
     </svg>
 
     <div class="ctrls">
-      <button class="sf-btn ghost" @click="resetZoom" title="重置视图">⟲</button>
+      <button class="sf-btn ghost" @click="resetZoom" title="Reset view">
+        ⟲ Reset
+      </button>
     </div>
   </div>
 </template>
@@ -353,39 +391,41 @@ svg:active {
   cursor: grabbing;
 }
 
+/* 边：默认 Muted Slate 冷灰极细线，补链 = Focus Purple 虚线。 */
 .edge {
-  stroke: rgba(255, 255, 255, 0.2);
-  stroke-width: 1.4;
-  transition: stroke var(--sf-dur-fast) var(--sf-ease),
-    stroke-opacity var(--sf-dur-fast) var(--sf-ease);
+  stroke: rgba(17, 17, 28, 0.22);
+  stroke-width: 1.2;
+  pointer-events: none; /* 不响应鼠标，避免拖拽时命中 */
 }
 .edge.supp {
-  stroke: var(--sf-info);
-  stroke-opacity: 0.45;
+  stroke: var(--sf-focus-purple);
+  stroke-opacity: 0.55;
   stroke-dasharray: 6 4;
-}
-.edge.highlight {
-  stroke: var(--sf-accent);
-  stroke-opacity: 0.85;
-}
-.edge.dim {
-  stroke-opacity: 0.05;
+  stroke-width: 1.4;
 }
 
 .node {
-  cursor: pointer;
-  transition: transform var(--sf-dur-fast) var(--sf-ease),
-    opacity var(--sf-dur-fast) var(--sf-ease);
+  cursor: grab;
+  touch-action: none; /* 关闭浏览器对触摸手势的默认处理，让拖拽更跟手 */
 }
-.node.dim {
-  opacity: 0.25;
+.node:active {
+  cursor: grabbing;
 }
-.node.selected circle:first-child {
-  stroke: #ffffff;
+
+/* halo：默认不可见，selected/hover 时出来 */
+.halo {
+  opacity: 0;
+  transition: opacity var(--sf-dur-fast) var(--sf-ease);
+}
+.node:hover .halo,
+.node.selected .halo {
+  opacity: 1;
+}
+
+/* 选中态：主圆外加深色描边，让"被选"非常明确 */
+.node.selected .dot {
+  stroke: var(--sf-fg-0);
   stroke-width: 2;
-}
-.node:hover circle:first-child {
-  filter: brightness(1.2);
 }
 
 .node-label {
@@ -395,12 +435,19 @@ svg:active {
   pointer-events: none;
   font-family: var(--sf-font-mono);
   letter-spacing: 0.2px;
+  paint-order: stroke;
+  stroke: #ffffff;      /* 给 label 一圈白描边，避免和 edge 冲突难读 */
+  stroke-width: 3;
+}
+.node.selected .node-label,
+.node:hover .node-label {
+  fill: var(--sf-fg-0);
 }
 
 .ctrls {
   position: absolute;
-  bottom: 12px;
-  right: 12px;
+  bottom: 14px;
+  right: 14px;
   display: flex;
   gap: 6px;
 }

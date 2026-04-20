@@ -1,3 +1,11 @@
+/*
+ * Stockman 全局样式：Cohere 风格明亮主题。
+ *   - 白底画布，所有装饰性阴影/发光都移除；
+ *   - 按钮基础为 ghost（透明 → hover 蓝），Dark Solid 做 CTA；
+ *   - card / panel 一律白底 + 1px 冷灰边 + 22px 签名圆角；
+ *   - label 采用 CohereMono 替代品 IBM Plex Mono + uppercase + tracking。
+ */
+
 *,
 *::before,
 *::after {
@@ -13,7 +21,7 @@ body,
 }
 
 html {
-  color-scheme: dark;
+  color-scheme: light;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-size-adjust: 100%;
@@ -21,19 +29,12 @@ html {
 
 body {
   font-family: var(--sf-font-sans);
-  color: var(--sf-fg-0);
-  background: radial-gradient(
-      1200px 800px at 15% -10%,
-      rgba(122, 183, 255, 0.12),
-      transparent 60%
-    ),
-    radial-gradient(
-      900px 700px at 110% 120%,
-      rgba(193, 161, 255, 0.1),
-      transparent 55%
-    ),
-    var(--sf-bg-0);
+  color: var(--sf-fg-1);
+  background: var(--sf-bg-0);
   overflow: hidden;
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 400;
 }
 
 button,
@@ -41,8 +42,9 @@ input,
 select,
 textarea {
   font-family: inherit;
-  font-size: 0.92rem;
+  font-size: 0.875rem;
   color: inherit;
+  line-height: 1.5;
 }
 
 button {
@@ -53,10 +55,91 @@ button {
 
 ::selection {
   background: var(--sf-accent-dim);
+  color: var(--sf-accent);
+}
+
+/* ---------- Typography utilities ---------- */
+
+/* 72px display，serif，tight tracking，品牌主 hero 用 */
+.sf-display-xl {
+  font-family: var(--sf-font-display);
+  font-weight: 400;
+  font-size: 4.5rem;       /* 72px */
+  line-height: 1.0;
+  letter-spacing: var(--sf-tracking-display-xl);
   color: var(--sf-fg-0);
 }
 
-/* 工具类 */
+/* 60px display，section 主标题 */
+.sf-display-lg {
+  font-family: var(--sf-font-display);
+  font-weight: 400;
+  font-size: 3.75rem;      /* 60px */
+  line-height: 1.0;
+  letter-spacing: var(--sf-tracking-display-lg);
+  color: var(--sf-fg-0);
+}
+
+/* 48px sans section heading */
+.sf-h1 {
+  font-family: var(--sf-font-sans);
+  font-weight: 400;
+  font-size: 3rem;         /* 48px */
+  line-height: 1.2;
+  letter-spacing: var(--sf-tracking-h1);
+  color: var(--sf-fg-0);
+}
+
+/* 32px sans sub-heading（卡片标题） */
+.sf-h2 {
+  font-family: var(--sf-font-sans);
+  font-weight: 400;
+  font-size: 2rem;         /* 32px */
+  line-height: 1.2;
+  letter-spacing: var(--sf-tracking-h2);
+  color: var(--sf-fg-0);
+}
+
+.sf-h3 {
+  font-family: var(--sf-font-sans);
+  font-weight: 500;
+  font-size: 1.25rem;      /* 20px */
+  line-height: 1.3;
+  letter-spacing: -0.2px;
+  color: var(--sf-fg-0);
+}
+
+/* 18px Body Large（intro 段落） */
+.sf-body-lg {
+  font-family: var(--sf-font-sans);
+  font-weight: 400;
+  font-size: 1.125rem;     /* 18px */
+  line-height: 1.4;
+  color: var(--sf-fg-1);
+}
+
+/* uppercase 小分区标签：CohereMono 特征 */
+.sf-label {
+  font-family: var(--sf-font-mono);
+  font-weight: 400;
+  font-size: 0.75rem;      /* 12px（比 14px 更紧凑，适合密集布局） */
+  line-height: 1.4;
+  letter-spacing: var(--sf-tracking-label);
+  text-transform: uppercase;
+  color: var(--sf-fg-3);
+}
+.sf-label.sf-label--strong {
+  color: var(--sf-fg-1);
+}
+
+/* 次要说明（12px caption） */
+.sf-small {
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--sf-fg-3);
+}
+
+/* ---------- 布局 utilities ---------- */
 .sf-flex {
   display: flex;
 }
@@ -64,143 +147,229 @@ button {
   display: flex;
   flex-direction: column;
 }
+.sf-gap-xs {
+  gap: 6px;
+}
 .sf-gap-sm {
   gap: 8px;
 }
 .sf-gap {
-  gap: 14px;
+  gap: 16px;
 }
 .sf-gap-lg {
   gap: 22px;
 }
+.sf-gap-xl {
+  gap: 32px;
+}
 .sf-muted {
-  color: var(--sf-fg-2);
+  color: var(--sf-fg-3);
 }
 .sf-mono {
   font-family: var(--sf-font-mono);
   font-feature-settings: "ss01", "cv11";
 }
+
+/* ---------- Chip（状态标签）---------- */
 .sf-chip {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 3px 9px;
-  border-radius: 999px;
+  padding: 4px 10px;
+  border-radius: var(--sf-r-pill);
   border: 1px solid var(--sf-border-2);
-  background: var(--sf-bg-2);
+  background: var(--sf-bg-0);
   color: var(--sf-fg-1);
-  font-size: 0.78rem;
-  line-height: 1.1;
+  font-size: 0.75rem;
+  line-height: 1.2;
+  font-family: var(--sf-font-mono);
+  letter-spacing: 0.16px;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 .sf-chip.ok {
-  border-color: rgba(107, 225, 157, 0.4);
+  border-color: rgba(42, 127, 85, 0.28);
   color: var(--sf-ok);
-  background: rgba(107, 225, 157, 0.08);
+  background: var(--sf-ok-bg);
 }
 .sf-chip.warn {
-  border-color: rgba(255, 205, 106, 0.4);
+  border-color: rgba(181, 118, 15, 0.28);
   color: var(--sf-warn);
-  background: rgba(255, 205, 106, 0.08);
+  background: var(--sf-warn-bg);
 }
 .sf-chip.danger {
-  border-color: rgba(255, 122, 147, 0.4);
+  border-color: rgba(179, 0, 0, 0.28);
   color: var(--sf-danger);
-  background: rgba(255, 122, 147, 0.08);
+  background: var(--sf-danger-bg);
 }
 .sf-chip.info {
-  border-color: rgba(137, 224, 255, 0.4);
-  color: var(--sf-info);
-  background: rgba(137, 224, 255, 0.08);
+  border-color: var(--sf-accent-line);
+  color: var(--sf-accent);
+  background: var(--sf-info-bg);
 }
 
-/* 常用面板外观 */
+/* ---------- Card / Panel：22px 签名圆角、白底、1px 冷灰边 ---------- */
 .sf-panel {
   background: var(--sf-bg-2);
   border: 1px solid var(--sf-border-1);
-  border-radius: var(--sf-r-lg);
-  box-shadow: var(--sf-shadow-1);
+  border-radius: var(--sf-r-xl);            /* 22px */
+  box-shadow: var(--sf-shadow-0);           /* 默认无阴影，靠 border */
+}
+.sf-panel--emphasis {
+  border-color: var(--sf-border-2);
+}
+.sf-panel--snow {
+  background: var(--sf-bg-1);
 }
 
+/* ---------- Buttons ---------- */
+/*
+ * 基础按钮：Cohere 的默认 ghost 风格——透明背景、黑字，仅在 hover/focus 时
+ * 文字变成 Interaction Blue。Stockman 里我们额外保留一个 border，因为面板
+ * 内可能 button 并排出现，需要形明确的点击区。
+ */
 .sf-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 8px 14px;
-  border-radius: var(--sf-r-md);
-  background: var(--sf-bg-3);
+  padding: 10px 18px;
+  border-radius: var(--sf-r-pill);          /* 按钮为 pill */
+  background: transparent;
   border: 1px solid var(--sf-border-2);
   color: var(--sf-fg-0);
   font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.25;
+  letter-spacing: 0;
   transition: background var(--sf-dur-fast) var(--sf-ease),
     border-color var(--sf-dur-fast) var(--sf-ease),
+    color var(--sf-dur-fast) var(--sf-ease),
     transform var(--sf-dur-fast) var(--sf-ease);
 }
 .sf-btn:hover {
-  background: #252b36;
-  border-color: var(--sf-accent-line);
+  color: var(--sf-accent);
+  border-color: var(--sf-accent);
+  background: var(--sf-accent-dim);
+}
+.sf-btn:focus-visible {
+  outline: 2px solid var(--sf-accent);
+  outline-offset: 2px;
 }
 .sf-btn:active {
-  transform: translateY(1px);
+  transform: translateY(0.5px);
 }
 .sf-btn:disabled {
-  opacity: 0.5;
+  opacity: 0.45;
   cursor: not-allowed;
   transform: none;
 }
+.sf-btn:disabled:hover {
+  color: var(--sf-fg-0);
+  background: transparent;
+  border-color: var(--sf-border-2);
+}
 
+/* Dark Solid（CTA：黑底白字，用于连接 / 提交这类主动作） */
 .sf-btn.primary {
-  background: linear-gradient(135deg, #3d7bff 0%, #7ab7ff 100%);
-  border-color: transparent;
-  color: #0a0d13;
+  background: var(--sf-fg-0);
+  color: var(--sf-bg-0);
+  border-color: var(--sf-fg-0);
 }
 .sf-btn.primary:hover {
-  filter: brightness(1.05);
+  background: var(--sf-accent);
+  border-color: var(--sf-accent);
+  color: #ffffff;
 }
 
+/* Ghost：完全透明，仅在 hover 时文字变蓝，用于工具条 / 次要动作 */
 .sf-btn.ghost {
   background: transparent;
-  border: 1px solid var(--sf-border-1);
+  border-color: transparent;
+  padding: 8px 12px;
+}
+.sf-btn.ghost:hover {
+  color: var(--sf-accent);
+  background: var(--sf-accent-dim);
+  border-color: transparent;
 }
 
+/* Danger：浅红底 + 深红字，保留但尽量少用 */
 .sf-btn.danger {
-  background: rgba(255, 122, 147, 0.12);
-  border-color: rgba(255, 122, 147, 0.35);
+  background: var(--sf-danger-bg);
+  border-color: rgba(179, 0, 0, 0.32);
+  color: var(--sf-danger);
+}
+.sf-btn.danger:hover {
+  background: rgba(179, 0, 0, 0.12);
+  border-color: var(--sf-danger);
   color: var(--sf-danger);
 }
 
-.sf-input {
+/* ---------- 表单 ---------- */
+.sf-input,
+.sf-select,
+textarea.sf-input {
   width: 100%;
-  padding: 10px 14px;
-  background: var(--sf-bg-1);
-  border: 1px solid var(--sf-border-1);
-  border-radius: var(--sf-r-md);
+  padding: 12px 14px;
+  background: var(--sf-bg-0);
+  border: 1px solid var(--sf-border-2);
+  border-radius: var(--sf-r-sm);            /* 8px：更像 enterprise form */
   color: var(--sf-fg-0);
   outline: none;
+  font-size: 0.9rem;
   transition: border-color var(--sf-dur-fast) var(--sf-ease),
-    background var(--sf-dur-fast) var(--sf-ease);
+    box-shadow var(--sf-dur-fast) var(--sf-ease);
 }
-.sf-input:hover {
-  border-color: var(--sf-border-2);
+.sf-input:hover,
+.sf-select:hover {
+  border-color: var(--sf-fg-0);
 }
-.sf-input:focus {
-  border-color: var(--sf-accent);
-  background: var(--sf-bg-2);
+.sf-input:focus,
+.sf-select:focus,
+textarea.sf-input:focus {
+  border-color: var(--sf-focus-purple);
+  box-shadow: 0 0 0 3px rgba(155, 96, 170, 0.16);
 }
 .sf-input::placeholder {
   color: var(--sf-fg-3);
 }
-
 .sf-select {
   appearance: none;
-  background: var(--sf-bg-1);
-  border: 1px solid var(--sf-border-1);
-  padding: 10px 14px;
-  border-radius: var(--sf-r-md);
-  color: var(--sf-fg-0);
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--sf-fg-3) 50%),
+    linear-gradient(135deg, var(--sf-fg-3) 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) 50%,
+    calc(100% - 13px) 50%;
+  background-size: 5px 5px;
+  background-repeat: no-repeat;
+  padding-right: 34px;
 }
 
-/* 动画：淡入 + 轻微上推 */
+/* ---------- Hero Violet Band（戏剧对比用，慎用） ----------
+   示例：ConnectView 左栏 / 节点详情的头条。不要把它用作卡片背景。 */
+.sf-hero-violet {
+  color: var(--sf-fg-on-violet);
+  background:
+    radial-gradient(
+      1200px 600px at 20% 0%,
+      rgba(107, 63, 174, 0.55),
+      transparent 60%
+    ),
+    radial-gradient(
+      800px 500px at 120% 120%,
+      rgba(75, 42, 122, 0.6),
+      transparent 55%
+    ),
+    linear-gradient(160deg, #1d1130 0%, #17171c 100%);
+}
+.sf-hero-violet .sf-muted,
+.sf-hero-violet .sf-label {
+  color: var(--sf-fg-on-violet-dim);
+}
+
+/* ---------- 动画：淡入上推、阶段切换 ---------- */
 @keyframes sf-fade-up {
   from {
     opacity: 0;
@@ -218,24 +387,20 @@ button {
   animation: sf-fade-up var(--sf-dur) var(--sf-ease) reverse;
 }
 
-/* 动画：阶段切换（连接页 -> 主界面） */
 .sf-stage-enter-active,
 .sf-stage-leave-active {
-  transition: opacity 360ms var(--sf-ease), transform 360ms var(--sf-ease),
-    filter 360ms var(--sf-ease);
+  transition: opacity 360ms var(--sf-ease), transform 360ms var(--sf-ease);
 }
 .sf-stage-enter-from {
   opacity: 0;
-  transform: scale(1.02);
-  filter: blur(8px);
+  transform: translateY(8px);
 }
 .sf-stage-leave-to {
   opacity: 0;
-  transform: scale(0.98);
-  filter: blur(4px);
+  transform: translateY(-8px);
 }
 
-/* 滚动条 */
+/* ---------- 滚动条：浅色、极细 ---------- */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
@@ -244,13 +409,23 @@ button {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(17, 17, 28, 0.15);
   border-radius: 5px;
   border: 2px solid transparent;
   background-clip: padding-box;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(17, 17, 28, 0.28);
   background-clip: padding-box;
   border: 2px solid transparent;
+}
+
+/* ---------- Link（默认状态） ---------- */
+a {
+  color: var(--sf-fg-1);
+  text-decoration: none;
+  transition: color var(--sf-dur-fast) var(--sf-ease);
+}
+a:hover {
+  color: var(--sf-accent);
 }

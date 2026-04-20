@@ -3,8 +3,21 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="color-scheme" content="dark" />
+    <meta name="color-scheme" content="light" />
     <title>Stockman · Shepherd</title>
+    <!--
+      Cohere 风格三字体：
+        - IBM Plex Serif   :: 作为 CohereText 的 display serif 替代
+        - Inter            :: 作为 Unica77 的 body sans 替代
+        - IBM Plex Mono    :: 作为 CohereMono 的 uppercase label 替代
+      都是 SIL/OFL 免费商用。放在 <link rel="preconnect"> 前置以降低首字节延迟。
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Serif:wght@300;400&family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <div id="app"></div>

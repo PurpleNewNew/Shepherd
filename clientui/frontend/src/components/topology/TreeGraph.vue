@@ -186,24 +186,33 @@ watch([containerRef], ([el]) => {
           @click="uuid !== '__root__' && onClick(uuid)"
         >
           <template v-if="uuid === '__root__'">
-            <rect x="-28" y="-14" width="56" height="28" rx="10"
-              fill="rgba(122,183,255,0.16)" stroke="rgba(122,183,255,0.45)" />
-            <text class="label" dy="5">Kelpie</text>
+            <!-- 虚拟 Kelpie 根：22px 圆角的黑色 solid 胶囊，视觉上是整棵树的"所有者" -->
+            <rect
+              x="-42"
+              y="-16"
+              width="84"
+              height="32"
+              rx="16"
+              fill="#17171c"
+              stroke="#17171c"
+            />
+            <text class="label root-label" dy="5">KELPIE</text>
           </template>
           <template v-else>
             <circle
-              :r="nodeRadius(node.data)"
+              class="halo"
+              :r="nodeRadius(node.data) + 7"
               :fill="statusColor(statusCategory(node.data))"
-              opacity="0.88"
+              fill-opacity="0.12"
             />
             <circle
-              :r="nodeRadius(node.data) + 4"
-              fill="none"
-              :stroke="statusColor(statusCategory(node.data))"
-              stroke-opacity="0.3"
-              stroke-width="1.4"
+              class="dot"
+              :r="nodeRadius(node.data)"
+              :fill="statusColor(statusCategory(node.data))"
+              stroke="#ffffff"
+              stroke-width="1.5"
             />
-            <text class="label" :y="nodeRadius(node.data) + 14">
+            <text class="label" :y="nodeRadius(node.data) + 16">
               {{ aliasOf(node.data) }}
             </text>
           </template>
@@ -223,38 +232,67 @@ svg {
   height: 100%;
   display: block;
 }
+
 .edge {
   fill: none;
-  stroke: rgba(255, 255, 255, 0.16);
-  stroke-width: 1.4;
+  stroke: rgba(17, 17, 28, 0.2);
+  stroke-width: 1.2;
   transition: stroke var(--sf-dur-fast) var(--sf-ease),
-    stroke-opacity var(--sf-dur-fast) var(--sf-ease);
+    stroke-opacity var(--sf-dur-fast) var(--sf-ease),
+    stroke-width var(--sf-dur-fast) var(--sf-ease);
 }
 .edge.supp {
-  stroke: var(--sf-info);
-  stroke-opacity: 0.5;
+  stroke: var(--sf-focus-purple);
+  stroke-opacity: 0.55;
   stroke-dasharray: 6 4;
+  stroke-width: 1.4;
 }
 .edge.highlight {
   stroke: var(--sf-accent);
-  stroke-opacity: 0.9;
+  stroke-opacity: 0.95;
+  stroke-width: 1.6;
 }
+
 .node {
   cursor: pointer;
-  transition: transform var(--sf-dur-fast) var(--sf-ease);
+  transition: opacity var(--sf-dur-fast) var(--sf-ease);
 }
 .node.virtual {
   cursor: default;
 }
-.node.selected circle:first-child {
-  stroke: #ffffff;
+.halo {
+  opacity: 0;
+  transition: opacity var(--sf-dur-fast) var(--sf-ease);
+}
+.node:hover .halo,
+.node.selected .halo {
+  opacity: 1;
+}
+.node.selected .dot {
+  stroke: var(--sf-fg-0);
   stroke-width: 2;
 }
+
 .label {
   fill: var(--sf-fg-1);
   font-size: 10.5px;
   text-anchor: middle;
   font-family: var(--sf-font-mono);
   pointer-events: none;
+  paint-order: stroke;
+  stroke: #ffffff;
+  stroke-width: 3;
+  letter-spacing: 0.2px;
+}
+.root-label {
+  fill: #ffffff;
+  stroke: none;
+  font-family: var(--sf-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.6px;
+}
+.node.selected .label,
+.node:hover .label {
+  fill: var(--sf-fg-0);
 }
 </style>

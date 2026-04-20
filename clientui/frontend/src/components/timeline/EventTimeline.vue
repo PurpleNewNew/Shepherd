@@ -9,15 +9,15 @@ const topo = useTopologyStore();
 
 interface KindFilter { key: EventKind | 'all'; label: string; }
 const kinds: KindFilter[] = [
-  { key: 'all', label: '全部' },
-  { key: 'node', label: '节点' },
-  { key: 'session', label: '会话' },
-  { key: 'supplemental', label: '补链' },
-  { key: 'sleep', label: '睡眠' },
-  { key: 'stream', label: '流' },
-  { key: 'log', label: '日志' },
-  { key: 'dial', label: '拨号' },
-  { key: 'listener', label: '监听' },
+  { key: 'all', label: 'All' },
+  { key: 'node', label: 'Node' },
+  { key: 'session', label: 'Session' },
+  { key: 'supplemental', label: 'Supp' },
+  { key: 'sleep', label: 'Sleep' },
+  { key: 'stream', label: 'Stream' },
+  { key: 'log', label: 'Log' },
+  { key: 'dial', label: 'Dial' },
+  { key: 'listener', label: 'Listener' },
 ];
 
 const activeKind = ref<'all' | EventKind>('all');
@@ -86,11 +86,13 @@ function alias(uuid?: string): string {
 <template>
   <div class="timeline-wrap sf-panel">
     <header class="top">
-      <div class="filter-chips">
+      <div class="filter-chips" role="tablist" aria-label="Event kind filter">
         <button
           v-for="k in kinds"
           :key="k.key"
           :class="['chip-btn', { active: activeKind === k.key }]"
+          role="tab"
+          :aria-selected="activeKind === k.key"
           @click="activeKind = k.key"
         >
           {{ k.label }}
@@ -100,16 +102,16 @@ function alias(uuid?: string): string {
         <input
           class="sf-input keyword"
           v-model="keyword"
-          placeholder="搜索 summary / uuid"
+          placeholder="Search summary / uuid"
         />
         <label class="toggle">
           <input type="checkbox" v-model="selectedOnly" />
-          仅看选中节点
+          <span>Selected only</span>
         </label>
         <button class="sf-btn ghost" @click="events.togglePause()">
-          {{ events.paused ? '继续订阅' : '暂停订阅' }}
+          {{ events.paused ? '▶ Resume' : '⏸ Pause' }}
         </button>
-        <button class="sf-btn ghost" @click="events.clear()">清空</button>
+        <button class="sf-btn ghost" @click="events.clear()">Clear</button>
       </div>
     </header>
 
@@ -118,9 +120,9 @@ function alias(uuid?: string): string {
         <li
           v-for="ev in filtered"
           :key="ev.seq"
-          :class="['event', 'kind-' + ev.kind]"
+          :class="['event', 'kind-' + ev.kind, kindTone(ev.kind)]"
         >
-          <div class="dot" :class="kindTone(ev.kind)"></div>
+          <div class="rail" />
           <div class="body">
             <div class="head">
               <span class="time sf-mono">{{ fmtTime(ev.timestamp) }}</span>
@@ -130,161 +132,218 @@ function alias(uuid?: string): string {
               <span v-if="ev.target" class="target sf-mono">
                 → {{ alias(ev.target) }}
               </span>
-              <span v-if="ev.source" class="source sf-mono sf-muted">
+              <span v-if="ev.source" class="source sf-mono">
                 from {{ alias(ev.source) }}
               </span>
             </div>
-            <div class="summary">{{ ev.summary || '(空)' }}</div>
-            <div v-if="ev.reason" class="reason sf-muted sf-mono">reason: {{ ev.reason }}</div>
-            <div v-if="ev.extras && Object.keys(ev.extras).length" class="extras sf-muted">
-              <span v-for="(v, k) in ev.extras" :key="k" class="tag">{{ k }}={{ v }}</span>
+            <div class="summary">{{ ev.summary || '—' }}</div>
+            <div v-if="ev.reason" class="reason sf-mono">
+              reason: {{ ev.reason }}
+            </div>
+            <div
+              v-if="ev.extras && Object.keys(ev.extras).length"
+              class="extras"
+            >
+              <span v-for="(v, k) in ev.extras" :key="k" class="tag">
+                <b>{{ k }}</b>={{ v }}
+              </span>
             </div>
           </div>
         </li>
       </TransitionGroup>
-      <li v-if="!filtered.length" class="empty sf-muted">
-        没有匹配的事件。可尝试调整过滤条件或等待节点产生新事件。
+      <li v-if="!filtered.length" class="empty">
+        <p class="sf-label sf-label--strong">No matching events</p>
+        <p class="empty-lede">
+          调整过滤条件，或等待节点产生新事件；用 Demo Console 可以手工触发一个。
+        </p>
       </li>
     </ul>
   </div>
 </template>
 
 <style scoped>
+/*
+ * EventTimeline：白底 22px 卡，内部事件行走"左侧颜色 rail + body"布局。
+ * rail 颜色是语义色（info/ok/warn/danger），是整条记录的唯一彩色元素；
+ * body 所有文字走黑灰梯度，避免信息拥挤时色彩过载。
+ */
+
 .timeline-wrap {
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
   min-height: 0;
-  padding: 12px 16px 16px;
+  padding: 20px 24px 24px;
 }
+
 .top {
   display: flex;
-  gap: 12px;
+  gap: 16px;
   align-items: center;
   flex-wrap: wrap;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--sf-border-1);
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--sf-border-0);
 }
+
+/* 过滤器 segmented pill */
 .filter-chips {
   display: flex;
-  gap: 4px;
+  gap: 2px;
   padding: 3px;
   background: var(--sf-bg-1);
   border: 1px solid var(--sf-border-1);
-  border-radius: 999px;
+  border-radius: var(--sf-r-pill);
   flex-wrap: wrap;
 }
 .chip-btn {
-  padding: 5px 11px;
-  border-radius: 999px;
-  font-size: 0.82rem;
+  padding: 6px 14px;
+  border-radius: var(--sf-r-pill);
+  font-size: 0.78rem;
+  font-weight: 500;
   color: var(--sf-fg-2);
   transition: background var(--sf-dur-fast), color var(--sf-dur-fast);
+  letter-spacing: 0;
 }
 .chip-btn:hover {
   color: var(--sf-fg-0);
 }
 .chip-btn.active {
-  background: var(--sf-accent-dim);
-  color: var(--sf-accent);
-  box-shadow: inset 0 0 0 1px var(--sf-accent-line);
+  background: var(--sf-fg-0);
+  color: var(--sf-bg-0);
 }
+
 .controls {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   margin-left: auto;
   align-items: center;
   flex-wrap: wrap;
 }
 .keyword {
-  width: 240px;
+  width: 260px;
 }
 .toggle {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 0.84rem;
+  gap: 8px;
+  font-size: 0.85rem;
   color: var(--sf-fg-1);
 }
 .toggle input {
-  accent-color: var(--sf-accent);
+  accent-color: var(--sf-fg-0);
+  width: 14px;
+  height: 14px;
 }
 
+/* timeline 主体 */
 .timeline {
   list-style: none;
-  margin: 10px 0 0;
+  margin: 16px 0 0;
   padding: 0 4px 6px;
   flex: 1 1 auto;
   overflow: auto;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
 }
+
+/* 单条事件：[left rail] + [body] */
 .event {
   display: grid;
-  grid-template-columns: 12px 1fr;
-  gap: 12px;
-  padding: 8px 10px;
+  grid-template-columns: 3px 1fr;
+  gap: 14px;
+  padding: 12px 14px 12px 10px;
   border-radius: var(--sf-r-md);
-  background: var(--sf-bg-1);
-  border: 1px solid transparent;
+  background: var(--sf-bg-0);
+  border: 1px solid var(--sf-border-0);
   transition: background var(--sf-dur-fast) var(--sf-ease),
     border-color var(--sf-dur-fast) var(--sf-ease);
 }
 .event:hover {
-  background: var(--sf-bg-2);
+  background: var(--sf-bg-1);
   border-color: var(--sf-border-1);
 }
-.event .dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  margin-top: 8px;
-  background: var(--sf-fg-3);
+.rail {
+  width: 3px;
+  border-radius: 2px;
+  background: var(--sf-border-2);
 }
-.dot.ok {
+.event.ok .rail {
   background: var(--sf-ok);
 }
-.dot.warn {
+.event.warn .rail {
   background: var(--sf-warn);
 }
-.dot.info {
-  background: var(--sf-info);
+.event.info .rail {
+  background: var(--sf-accent);
 }
-.dot.danger {
+.event.danger .rail {
   background: var(--sf-danger);
 }
+
 .head {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   align-items: center;
   flex-wrap: wrap;
 }
 .time {
-  font-size: 0.78rem;
-  color: var(--sf-fg-2);
+  font-family: var(--sf-font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.16px;
+  color: var(--sf-fg-3);
+  text-transform: uppercase;
 }
 .target,
 .source {
-  font-size: 0.82rem;
+  font-family: var(--sf-font-mono);
+  font-size: 0.78rem;
+  color: var(--sf-fg-1);
+}
+.source {
+  color: var(--sf-fg-3);
 }
 .summary {
-  margin-top: 3px;
+  margin-top: 4px;
   color: var(--sf-fg-0);
+  font-size: 0.9rem;
+  line-height: 1.5;
 }
-.reason,
+.reason {
+  margin-top: 4px;
+  font-size: 0.75rem;
+  color: var(--sf-fg-3);
+}
 .extras {
-  margin-top: 3px;
-  font-size: 0.78rem;
+  margin-top: 6px;
+  font-family: var(--sf-font-mono);
+  font-size: 0.72rem;
+  color: var(--sf-fg-3);
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
 }
-.tag {
-  display: inline-block;
-  margin-right: 6px;
+.extras .tag b {
+  color: var(--sf-fg-1);
+  font-weight: 500;
 }
+
 .empty {
-  padding: 20px;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 40px 24px;
   background: var(--sf-bg-1);
   border-radius: var(--sf-r-md);
+  border: 1px dashed var(--sf-border-2);
+  color: var(--sf-fg-2);
+  text-align: center;
+}
+.empty-lede {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--sf-fg-3);
 }
 </style>

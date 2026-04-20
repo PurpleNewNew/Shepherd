@@ -16,14 +16,15 @@ var assets embed.FS
 func main() {
 	app := NewApp()
 	err := wails.Run(&options.App{
-		Title:            "Stockman · Shepherd 答辩演示客户端",
-		Width:            1320,
-		Height:           860,
-		MinWidth:         1080,
-		MinHeight:        680,
-		Frameless:        false,
-		DisableResize:    false,
-		BackgroundColour: &options.RGBA{R: 11, G: 13, B: 17, A: 255},
+		Title:         "Stockman · Shepherd 答辩演示客户端",
+		Width:         1320,
+		Height:        860,
+		MinWidth:      1080,
+		MinHeight:     680,
+		Frameless:     false,
+		DisableResize: false,
+		// Cohere 风格：纯白画布（#ffffff）。WebView 不透明，避免桌面毛玻璃穿透。
+		BackgroundColour: &options.RGBA{R: 255, G: 255, B: 255, A: 255},
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
@@ -40,9 +41,10 @@ func main() {
 				UseToolbar:                 false,
 				HideToolbarSeparator:       true,
 			},
-			Appearance:           mac.NSAppearanceNameDarkAqua,
-			WebviewIsTransparent: true,
-			WindowIsTranslucent:  true,
+			// 明亮主题：切换 NSAppearance 为 Aqua，并关闭 WebView 透明，让白背景稳定呈现。
+			Appearance:           mac.NSAppearanceNameAqua,
+			WebviewIsTransparent: false,
+			WindowIsTranslucent:  false,
 		},
 	})
 	if err != nil {

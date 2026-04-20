@@ -1,58 +1,119 @@
 /*
- * Stockman 设计 tokens：深色演示主题。
- * 基调参考 Dracula 与 Tokyo-Night，突出"数据可视化 + 演示"两个目标。
+ * Stockman 设计 tokens：Cohere 风格明亮主题。
+ *
+ * 设计基调（对应 docs 里的 DESIGN.md "Design System Inspired by Cohere"）：
+ *   - 纯白画布 + 冷灰边框，极简克制；
+ *   - 三重字体对比（display serif / body sans / uppercase mono label）；
+ *   - 22px 是"Cohere card"的签名 radius，主卡片 / 图片 / dialog 用它；
+ *   - 蓝 `#1863dc` 只用于 hover/focus，紫 `#9b60aa` 作为 input focus；
+ *   - 深紫（violet）作为 hero band 的戏剧对比色；
+ *   - 近无 shadow，深度靠颜色对比和 border 传达。
  */
 :root {
-  /* 表面 */
-  --sf-bg-0: #0b0d11;            /* 最底层 */
-  --sf-bg-1: #111419;            /* 一级容器 */
-  --sf-bg-2: #181c23;            /* 二级容器（卡片） */
-  --sf-bg-3: #20252e;            /* 三级容器（elevated） */
-  --sf-bg-hover: rgba(255, 255, 255, 0.04);
+  /* ---------- 表面 / Surface ---------- */
+  --sf-bg-0: #ffffff;              /* 主画布（Pure White） */
+  --sf-bg-1: #fafafa;              /* 二级容器（Snow，轻微抬升） */
+  --sf-bg-2: #ffffff;              /* 卡片背景（与画布一致，靠 border 形区别） */
+  --sf-bg-3: #f2f2f2;              /* 更深一级（浅灰，用于 hover / inset） */
+  --sf-bg-hover: rgba(24, 99, 220, 0.06); /* hover highlight，使用 Interaction Blue 的淡水 */
 
-  /* 前景 */
-  --sf-fg-0: #e8ecf4;
-  --sf-fg-1: #b6bfd0;
-  --sf-fg-2: #7f8aa0;
-  --sf-fg-3: #586175;
+  /* 深紫 hero band（两段用来当戏剧对比，例如 ConnectView 左栏装饰、Stat 头条） */
+  --sf-violet-0: #17171c;          /* 近黑，带蓝紫倾向，用于 footer / 深色条 */
+  --sf-violet-1: #2a1d44;          /* 深紫，hero 渐变 */
+  --sf-violet-2: #4b2a7a;          /* 中紫 */
+  --sf-violet-3: #6b3fae;          /* 品牌紫 */
 
-  /* 品牌/强调 */
-  --sf-accent: #7ab7ff;
-  --sf-accent-hover: #9bc9ff;
-  --sf-accent-dim: rgba(122, 183, 255, 0.15);
-  --sf-accent-line: rgba(122, 183, 255, 0.35);
+  /* ---------- 前景 / Text ---------- */
+  --sf-fg-0: #000000;              /* Cohere Black，最强 display 文本 */
+  --sf-fg-1: #212121;              /* Near Black，正文 */
+  --sf-fg-2: #5a5a66;              /* 次要说明 */
+  --sf-fg-3: #93939f;              /* Muted Slate：caption / metadata */
 
-  /* 语义色 */
-  --sf-ok: #6be19d;
-  --sf-warn: #ffcd6a;
-  --sf-danger: #ff7a93;
-  --sf-info: #89e0ff;
-  --sf-purple: #c1a1ff;
-  --sf-teal: #5ee0d7;
+  /* 反色文本（放在深紫 hero 段上） */
+  --sf-fg-on-violet: #ffffff;
+  --sf-fg-on-violet-dim: rgba(255, 255, 255, 0.72);
 
-  /* 边框 */
-  --sf-border-0: rgba(255, 255, 255, 0.04);
-  --sf-border-1: rgba(255, 255, 255, 0.08);
-  --sf-border-2: rgba(255, 255, 255, 0.14);
+  /* ---------- 强调 / Accent ---------- */
+  --sf-accent: #1863dc;            /* Interaction Blue：hover / focus / active link */
+  --sf-accent-hover: #0e50bf;      /* 按下状态 */
+  --sf-accent-dim: rgba(24, 99, 220, 0.08);
+  --sf-accent-line: rgba(24, 99, 220, 0.22);
+  --sf-focus-ring: rgba(76, 110, 230, 0.5); /* Ring Blue 50% */
+  --sf-focus-purple: #9b60aa;      /* input focus border */
 
-  /* 阴影 */
-  --sf-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2);
-  --sf-shadow-2: 0 8px 24px rgba(0, 0, 0, 0.45);
+  /* ---------- 语义色（保持克制，只用于 chip / 状态） ---------- */
+  --sf-ok: #2a7f55;                /* 偏暗的绿，避免与 Cohere 冷色系冲突 */
+  --sf-warn: #b5760f;              /* 琥珀棕 */
+  --sf-danger: #b30000;            /* DESIGN.md 里提到的 focus-shadow error 红 */
+  --sf-info: var(--sf-accent);     /* 直接复用 Interaction Blue */
+  --sf-purple: var(--sf-violet-3);
+  --sf-teal: #0f7b7b;
 
-  /* 圆角 */
-  --sf-r-sm: 6px;
-  --sf-r-md: 10px;
-  --sf-r-lg: 14px;
-  --sf-r-xl: 20px;
+  --sf-ok-bg: rgba(42, 127, 85, 0.08);
+  --sf-warn-bg: rgba(181, 118, 15, 0.08);
+  --sf-danger-bg: rgba(179, 0, 0, 0.06);
+  --sf-info-bg: var(--sf-accent-dim);
 
-  /* 文字 */
-  --sf-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display",
-    "PingFang SC", "Segoe UI", "Roboto", "Inter", "Helvetica Neue",
-    sans-serif;
-  --sf-font-mono: "SF Mono", "JetBrains Mono", ui-monospace, "Cascadia Code",
-    "Consolas", monospace;
+  /* ---------- 边框 / Border ---------- */
+  --sf-border-0: #f2f2f2;          /* Lightest Gray：卡 inner 分隔 */
+  --sf-border-1: #e5e7eb;          /* Border Light：标准边 */
+  --sf-border-2: #d9d9dd;          /* Border Cool：强调边 */
+  --sf-border-strong: #17171c;     /* 几乎黑，用于 dark solid button 的边 */
 
-  /* 动效 */
+  /* ---------- 阴影（几乎不用，保留 1/2 级做重要 modal） ---------- */
+  --sf-shadow-0: none;
+  --sf-shadow-1: 0 1px 1px rgba(17, 17, 28, 0.03),
+    0 8px 24px rgba(17, 17, 28, 0.04);
+  --sf-shadow-2: 0 8px 28px rgba(17, 17, 28, 0.08),
+    0 2px 4px rgba(17, 17, 28, 0.04);
+
+  /* ---------- 圆角 / Radius ----------
+     Cohere 的 signature 是 22px。其他 size 配合：
+       - 4px：nav item / tiny tag / pagination
+       - 8px：dialog / small card
+       - 16px：medium featured card
+       - 20px：large feature card
+       - 22px：primary card / hero image —— THE Cohere radius
+       - pill：button / status indicator
+  */
+  --sf-r-xs: 4px;
+  --sf-r-sm: 8px;
+  --sf-r-md: 16px;
+  --sf-r-lg: 20px;
+  --sf-r-xl: 22px;                 /* 签名 */
+  --sf-r-pill: 9999px;
+
+  /* ---------- 文字 / Typography ---------- */
+  --sf-font-display: "IBM Plex Serif", "Source Serif 4", "Tiempos Headline",
+    Georgia, "Times New Roman", serif;
+  --sf-font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --sf-font-mono: "IBM Plex Mono", "JetBrains Mono", "SF Mono", ui-monospace,
+    "Cascadia Code", Menlo, Consolas, monospace;
+
+  /* display 字号的负字距：参考 DESIGN.md 第 3 节表格 */
+  --sf-tracking-display-xl: -1.44px; /* 72px */
+  --sf-tracking-display-lg: -1.2px;  /* 60px */
+  --sf-tracking-h1: -0.48px;         /* 48px */
+  --sf-tracking-h2: -0.32px;         /* 32px */
+  --sf-tracking-label: 0.28px;       /* uppercase label 14px */
+
+  /* ---------- spacing 基础 8 ---------- */
+  --sf-space-1: 2px;
+  --sf-space-2: 6px;
+  --sf-space-3: 8px;
+  --sf-space-4: 12px;
+  --sf-space-5: 16px;
+  --sf-space-6: 20px;
+  --sf-space-7: 22px;
+  --sf-space-8: 24px;
+  --sf-space-9: 28px;
+  --sf-space-10: 32px;
+  --sf-space-12: 40px;
+  --sf-space-14: 56px;
+  --sf-space-15: 60px;
+
+  /* ---------- 动效 ---------- */
   --sf-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
   --sf-dur-fast: 120ms;
   --sf-dur: 220ms;

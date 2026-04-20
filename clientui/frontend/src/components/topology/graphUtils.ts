@@ -17,16 +17,21 @@ export function statusCategory(n: NodeSummary | undefined | null): StatusCategor
   return 'unknown';
 }
 
+// Cohere 风格节点色：
+//   online   -> Interaction Blue #1863dc（视觉主权）
+//   sleeping -> 琥珀棕 #b5760f（克制提醒）
+//   offline  -> Muted Slate #93939f（失活冷灰）
+//   unknown  -> Border Cool #d9d9dd（最浅灰，让未知更弱）
 export function statusColor(category: StatusCategory): string {
   switch (category) {
     case 'online':
-      return '#6be19d';
+      return '#1863dc';
     case 'sleeping':
-      return '#ffcd6a';
+      return '#b5760f';
     case 'offline':
-      return '#ff7a93';
+      return '#93939f';
     default:
-      return '#89e0ff';
+      return '#d9d9dd';
   }
 }
 
