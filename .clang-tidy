@@ -1,4 +1,0 @@
-Checks: '-*,clang-analyzer-*,bugprone-*,performance-*,modernize-*,-modernize-use-trailing-return-type'
-WarningsAsErrors: 'clang-analyzer-*,bugprone-*,performance-*'
-HeaderFilterRegex: 'clientui/src/(Stockman|UserInterface)/.*'
-FormatStyle: none

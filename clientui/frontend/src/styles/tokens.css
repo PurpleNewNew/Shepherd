@@ -1,0 +1,60 @@
+/*
+ * Stockman 设计 tokens：深色演示主题。
+ * 基调参考 Dracula 与 Tokyo-Night，突出"数据可视化 + 演示"两个目标。
+ */
+:root {
+  /* 表面 */
+  --sf-bg-0: #0b0d11;            /* 最底层 */
+  --sf-bg-1: #111419;            /* 一级容器 */
+  --sf-bg-2: #181c23;            /* 二级容器（卡片） */
+  --sf-bg-3: #20252e;            /* 三级容器（elevated） */
+  --sf-bg-hover: rgba(255, 255, 255, 0.04);
+
+  /* 前景 */
+  --sf-fg-0: #e8ecf4;
+  --sf-fg-1: #b6bfd0;
+  --sf-fg-2: #7f8aa0;
+  --sf-fg-3: #586175;
+
+  /* 品牌/强调 */
+  --sf-accent: #7ab7ff;
+  --sf-accent-hover: #9bc9ff;
+  --sf-accent-dim: rgba(122, 183, 255, 0.15);
+  --sf-accent-line: rgba(122, 183, 255, 0.35);
+
+  /* 语义色 */
+  --sf-ok: #6be19d;
+  --sf-warn: #ffcd6a;
+  --sf-danger: #ff7a93;
+  --sf-info: #89e0ff;
+  --sf-purple: #c1a1ff;
+  --sf-teal: #5ee0d7;
+
+  /* 边框 */
+  --sf-border-0: rgba(255, 255, 255, 0.04);
+  --sf-border-1: rgba(255, 255, 255, 0.08);
+  --sf-border-2: rgba(255, 255, 255, 0.14);
+
+  /* 阴影 */
+  --sf-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2);
+  --sf-shadow-2: 0 8px 24px rgba(0, 0, 0, 0.45);
+
+  /* 圆角 */
+  --sf-r-sm: 6px;
+  --sf-r-md: 10px;
+  --sf-r-lg: 14px;
+  --sf-r-xl: 20px;
+
+  /* 文字 */
+  --sf-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+    "PingFang SC", "Segoe UI", "Roboto", "Inter", "Helvetica Neue",
+    sans-serif;
+  --sf-font-mono: "SF Mono", "JetBrains Mono", ui-monospace, "Cascadia Code",
+    "Consolas", monospace;
+
+  /* 动效 */
+  --sf-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --sf-dur-fast: 120ms;
+  --sf-dur: 220ms;
+  --sf-dur-slow: 420ms;
+}

@@ -34,7 +34,7 @@
 
 - **Kelpie（管理端/服务端）**：维护拓扑图、DTN 队列、STREAM 引擎，并向 GUI 暴露 gRPC API（见 `cmd/kelpie`、`internal/kelpie/`）。
 - **Flock（代理端）**：在受限网络中执行 gossip、路由与 relay，处理 DTN/STREAM 消息与睡眠/唤醒循环（见 `cmd/flock`、`internal/flock/`）。
-- **Stockman（GUI 客户端）**：Qt6 桌面客户端，通过 gRPC 与 Kelpie 交互（见 `clientui/`）。
+- **Stockman（GUI 客户端）**：桌面客户端，通过 gRPC 与 Kelpie 交互（见 `clientui/`）。`academic` 分支已将其从旧版 Qt6 C++ 客户端重写为基于 Wails v2 + Vue 3 + Vite 的轻量演示客户端，聚焦连接管理、拓扑总览、节点详情、事件时间线、演示控制台五类视图，适合答辩现场展示。
 
 ### 2.2 关键机制
 

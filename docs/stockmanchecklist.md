@@ -1,5 +1,7 @@
 # Stockman 交互回归清单
 
+> **注意**：此清单对应的是旧版 Qt6 C++ Stockman 客户端（覆盖 Shell / Tasking / Loot / Chat / Topology / Transfer / SOCKS / Proxy / SSH 等完整运维路径）。在 `academic` 分支上 Stockman 已经重写为 Wails v2 + Vue 3 的轻量演示客户端，**不实现本文列出的大多数交互路径**。本文保留作为历史回归参考，新版客户端的验证方式请见 `clientui/README.md` 与 `docs/stockmansetup.md`。新版演示路径要点可以简单总结为：连接 → 拓扑切换（力导向/树状）→ 选中节点 → 控制台发 DTN → 事件时间线出现对应事件 → 用 Sleep 改 duty-cycle 再发 DTN → PruneOffline 回正视图。
+
 本文用于固定 Stockman 在毕业设计阶段最容易出现回归的交互路径，重点回答两个问题：
 
 - 这次界面重构之后，核心操作是否仍然稳定。
@@ -7,7 +9,7 @@
 
 适用范围：
 
-- `clientui/` 页面结构重构后
+- 旧版 Qt6 C++ `clientui/` 页面结构重构后
 - Shell / Tasking / Loot / Chat / Topology 相关交互修改后
 - 提交前的手工回归
 
