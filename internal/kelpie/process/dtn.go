@@ -299,6 +299,33 @@ func connEndpoints(conn net.Conn) string {
 	return local + "->" + remote
 }
 
+// dtnPermanentAckErrors 是 flock 侧在 applyDTNPayload 返回的错误
+// （见 internal/flock/process/router.go）中属于**永久性**的那类：
+// 再重试多少次都不会成功，应立即丢弃 bundle，避免无限 Requeue
+// 把 session/连接/gossip 节奏一起卷入死循环。
+var dtnPermanentAckErrors = []string{
+	"unsupported payload",
+	"unsupported stream subcommand",
+	"invalid payload",
+	"invalid proto envelope",
+	"invalid message type",
+	"invalid payload hex",
+	"decode payload",
+}
+
+func isPermanentDTNAckError(errStr string) bool {
+	if errStr == "" {
+		return false
+	}
+	lower := strings.ToLower(errStr)
+	for _, needle := range dtnPermanentAckErrors {
+		if strings.Contains(lower, needle) {
+			return true
+		}
+	}
+	return false
+}
+
 func (admin *Admin) onDTNAck(ack *protocol.DTNAck) {
 	if admin == nil || ack == nil || admin.dtnManager == nil {
 		return
@@ -324,6 +351,17 @@ func (admin *Admin) onDTNAck(ack *protocol.DTNAck) {
 		return
 	}
 	admin.dtnFailed++
+	// 永久性错误直接丢弃，不进重试队列。
+	//
+	// 例如 flock 侧的 "unsupported payload"——重发多少次结果都一样，
+	// 循环派送反而会持续占用 session 写路径，把同链路的 gossip/心跳节奏
+	// 挤掉，最终表现为远端节点莫名其妙被 markStaleOffline。
+	if isPermanentDTNAckError(ack.Error) {
+		_, _ = admin.dtnManager.Remove(bundle.ID)
+		printer.Fail("\r\n[*] DTN bundle %s dropped (permanent error from %s): %s",
+			shortID(bundle.ID), shortID(bundle.Target), ack.Error)
+		return
+	}
 	now := time.Now()
 	if !bundle.DeliverBy.IsZero() {
 		if !bundle.DeliverBy.After(now) {
