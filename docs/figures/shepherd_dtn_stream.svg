@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="620" viewBox="0 0 1000 620">
+<defs>
+  <marker id="arrow_stream" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+    <path d="M 0 0 L 10 5 L 0 10 z" fill="#c2410c"/>
+  </marker>
+</defs>
+<style>
+  .bg { fill: #ffffff; }
+  .frame { fill: none; stroke: #94a3b8; stroke-width: 1.2; }
+  .panel { fill: #ffffff; stroke: #64748b; stroke-width: 1.2; }
+  .layer1 { fill: #fff7ed; stroke: #fdba74; stroke-width: 1.1; }
+  .layer2 { fill: #fffbeb; stroke: #fcd34d; stroke-width: 1.1; }
+  .layer3 { fill: #f8fafc; stroke: #cbd5e1; stroke-width: 1.1; }
+  .title { fill: #0f172a; font: 700 24px "Times New Roman", "Songti SC", "Noto Serif CJK SC", serif; }
+  .subtitle { fill: #334155; font: 14px "Times New Roman", "Songti SC", "Noto Serif CJK SC", serif; }
+  .h1 { fill: #0f172a; font: 700 18px "Times New Roman", "Songti SC", "Noto Serif CJK SC", serif; }
+  .h2 { fill: #0f172a; font: 700 15px "Times New Roman", "Songti SC", "Noto Serif CJK SC", serif; }
+  .text { fill: #334155; font: 13px "Times New Roman", "Songti SC", "Noto Serif CJK SC", serif; }
+  .small { fill: #475569; font: 12px "Times New Roman", "Songti SC", "Noto Serif CJK SC", serif; }
+</style>
+
+<rect class="bg" x="0" y="0" width="1000" height="620"/>
+<rect class="frame" x="30" y="26" width="940" height="568"/>
+
+<text class="title" x="54" y="58">Layering of DTN and DTN-Stream</text>
+<text class="subtitle" x="54" y="84">A byte stream is not injected as a raw socket into DTN. Shepherd first frames the stream, and then lets DTN provide eventual delivery under disruption.</text>
+
+<rect class="panel" x="58" y="126" width="492" height="410"/>
+<text class="h1" x="78" y="158">Protocol stack</text>
+
+<rect class="layer1" x="92" y="196" width="390" height="56"/>
+<text class="h2" x="112" y="220">Application</text>
+<text class="text" x="112" y="240">interactive shell, file transfer, port forwarding</text>
+
+<rect class="layer2" x="110" y="282" width="390" height="56"/>
+<text class="h2" x="130" y="306">Dataplane session</text>
+<text class="text" x="130" y="326">target binding and capability token</text>
+
+<rect class="layer2" x="128" y="368" width="390" height="56"/>
+<text class="h2" x="148" y="392">DTN-Stream</text>
+<text class="text" x="148" y="412">OPEN / DATA / ACK / CLOSE framing</text>
+
+<rect class="layer3" x="146" y="454" width="390" height="56"/>
+<text class="h2" x="166" y="478">DTN queue and scheduler</text>
+<text class="text" x="166" y="498">priority, hold_until, retry, carry-forward</text>
+
+<path d="M 286 252 C 312 266, 330 274, 348 282" fill="none" stroke="#c2410c" stroke-width="1.9" marker-end="url(#arrow_stream)"/>
+<path d="M 304 338 C 330 352, 348 360, 366 368" fill="none" stroke="#c2410c" stroke-width="1.9" marker-end="url(#arrow_stream)"/>
+<path d="M 322 424 C 348 438, 366 446, 384 454" fill="none" stroke="#c2410c" stroke-width="1.9" marker-end="url(#arrow_stream)"/>
+
+<rect class="panel" x="604" y="126" width="338" height="410"/>
+<text class="h1" x="626" y="158">Why a stream layer is needed</text>
+
+<text class="h2" x="626" y="212">Without stream framing</text>
+<text class="text" x="626" y="238">Discrete DTN messages are sufficient for one-shot commands,</text>
+<text class="text" x="626" y="258">state reports and delayed diagnostics.</text>
+
+<text class="h2" x="626" y="314">With DTN-Stream</text>
+<text class="text" x="626" y="340">Long-lived shell I/O and file chunks are segmented into frames,</text>
+<text class="text" x="626" y="360">then acknowledged and rescheduled by the DTN layer.</text>
+
+<text class="h2" x="626" y="424">Key statement</text>
+<text class="text" x="626" y="450">The network carries DTN-framed stream units,</text>
+<text class="text" x="626" y="470">rather than a raw TCP byte stream.</text>
+
+<text class="small" x="58" y="566">Interpretation: DTN contributes eventual delivery semantics; DTN-Stream contributes ordered, reliable byte-stream behavior for interactive workloads.</text>
+</svg>

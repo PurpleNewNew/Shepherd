@@ -57,11 +57,15 @@ constexpr quint8 kFrameOpen = 1;
 constexpr quint8 kFrameData = 2;
 constexpr quint8 kFrameClose = 3;
 
-std::unique_ptr<grpc::ClientContext> makeContextFromOptions(const StockmanNamespace::Grpc::ConnectionOptions& options)
+std::unique_ptr<grpc::ClientContext> makeContextFromOptions(const StockmanNamespace::Grpc::ConnectionOptions& options,
+                                                           bool applyDeadline = true)
 {
     auto ctx = std::make_unique<grpc::ClientContext>();
-    const auto timeout = options.Timeout.count() > 0 ? options.Timeout : std::chrono::milliseconds(kDefaultGrpcDeadlineMs);
-    ctx->set_deadline(std::chrono::system_clock::now() + timeout);
+    if (applyDeadline)
+    {
+        const auto timeout = options.Timeout.count() > 0 ? options.Timeout : std::chrono::milliseconds(kDefaultGrpcDeadlineMs);
+        ctx->set_deadline(std::chrono::system_clock::now() + timeout);
+    }
     // Keep auth metadata aligned with StockmanNamespace::Grpc::Client::attachAuth.
     if (!options.Token.empty()) {
         const std::string header = "Bearer " + options.Token;
@@ -2016,7 +2020,10 @@ bool KelpieController::invokeUnary(QString& errorMessage,
             return nullptr;
         }
         auto stub = kelpieui::v1::KelpieUIService::NewStub(rpc->channel);
-        auto ctx = makeContextFromOptions(rpc->options);
+        // ProxyStream carries long-lived interactive sessions such as shell / SSH / SOCKS.
+        // Applying the regular unary RPC deadline here causes the stream to be closed by gRPC
+        // after only a few seconds with "Deadline Exceeded".
+        auto ctx = makeContextFromOptions(rpc->options, false);
         ctx->set_wait_for_ready(true);
         auto context = std::shared_ptr<grpc::ClientContext>(ctx.release());
         auto stream = stub->ProxyStream(context.get());

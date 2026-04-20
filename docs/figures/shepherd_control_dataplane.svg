@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="620" viewBox="0 0 1000 620">
+<defs>
+  <marker id="arrow_blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+    <path d="M 0 0 L 10 5 L 0 10 z" fill="#1d4ed8"/>
+  </marker>
+  <marker id="arrow_orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+    <path d="M 0 0 L 10 5 L 0 10 z" fill="#c2410c"/>
+  </marker>
+</defs>
+<style>
+  .bg { fill: #ffffff; }
+  .frame { fill: none; stroke: #94a3b8; stroke-width: 1.2; }
+  .laneA { fill: #f8fbff; stroke: #93c5fd; stroke-width: 1.1; }
+  .laneB { fill: #fffaf5; stroke: #fdba74; stroke-width: 1.1; }
+  .box { fill: #ffffff; stroke: #64748b; stroke-width: 1.1; }
+  .dashed { stroke: #94a3b8; stroke-width: 1.0; stroke-dasharray: 6 4; }
+  .title { fill: #0f172a; font: 700 24px "Times New Roman", "Songti SC", "Noto Serif CJK SC", serif; }
+  .subtitle { fill: #334155; font: 14px "Times New Roman", "Songti SC", "Noto Serif CJK SC", serif; }
+  .h1 { fill: #0f172a; font: 700 18px "Times New Roman", "Songti SC", "Noto Serif CJK SC", serif; }
+  .h2 { fill: #0f172a; font: 700 15px "Times New Roman", "Songti SC", "Noto Serif CJK SC", serif; }
+  .text { fill: #334155; font: 13px "Times New Roman", "Songti SC", "Noto Serif CJK SC", serif; }
+  .small { fill: #475569; font: 12px "Times New Roman", "Songti SC", "Noto Serif CJK SC", serif; }
+</style>
+
+<rect class="bg" x="0" y="0" width="1000" height="620"/>
+<rect class="frame" x="30" y="26" width="940" height="568"/>
+
+<text class="title" x="54" y="58">Separation between control plane and data plane</text>
+<text class="subtitle" x="54" y="84">The same topology state is shared, but control RPCs and business byte streams are carried by different protocol paths.</text>
+
+<rect class="laneA" x="58" y="128" width="884" height="184"/>
+<text class="h1" x="78" y="158">Control plane</text>
+
+<rect class="box" x="84" y="190" width="146" height="64"/>
+<text class="h2" x="100" y="215">Stockman</text>
+<text class="text" x="100" y="236">snapshot / admin</text>
+
+<rect class="box" x="298" y="176" width="170" height="72"/>
+<text class="h2" x="316" y="202">Kelpie gRPC UI</text>
+<text class="text" x="316" y="224">auth and API endpoint</text>
+
+<rect class="box" x="540" y="176" width="190" height="72"/>
+<text class="h2" x="558" y="202">Topology + planner</text>
+<text class="text" x="558" y="224">routing / repair / listeners</text>
+
+<rect class="box" x="794" y="190" width="118" height="64"/>
+<text class="h2" x="814" y="215">Flock</text>
+<text class="text" x="814" y="236">gossip state</text>
+
+<path d="M 230 222 C 255 206, 273 196, 298 194" fill="none" stroke="#1d4ed8" stroke-width="1.9" marker-end="url(#arrow_blue)"/>
+<path d="M 468 212 C 497 202, 515 196, 540 198" fill="none" stroke="#1d4ed8" stroke-width="1.9" marker-end="url(#arrow_blue)"/>
+<path d="M 730 210 C 757 210, 774 216, 794 222" fill="none" stroke="#1d4ed8" stroke-width="1.9" marker-end="url(#arrow_blue)"/>
+
+<text class="small" x="257" y="186">gRPC</text>
+<text class="small" x="495" y="182">snapshot / control RPC</text>
+<text class="small" x="755" y="196">protocol messages</text>
+
+<rect class="laneB" x="58" y="352" width="884" height="184"/>
+<text class="h1" x="78" y="382">Data plane</text>
+
+<rect class="box" x="84" y="424" width="146" height="64"/>
+<text class="h2" x="100" y="449">Stockman</text>
+<text class="text" x="100" y="470">shell / file / proxy</text>
+
+<rect class="box" x="270" y="410" width="162" height="72"/>
+<text class="h2" x="288" y="436">Dataplane token</text>
+<text class="text" x="288" y="458">session binding</text>
+
+<rect class="box" x="500" y="410" width="176" height="72"/>
+<text class="h2" x="518" y="436">DTN-Stream</text>
+<text class="text" x="518" y="458">OPEN / DATA / ACK / CLOSE</text>
+
+<rect class="box" x="742" y="410" width="176" height="72"/>
+<text class="h2" x="760" y="436">DTN queue</text>
+<text class="text" x="760" y="458">hold, retry, carry-forward</text>
+
+<path d="M 230 456 C 244 446, 255 440, 270 440" fill="none" stroke="#c2410c" stroke-width="1.9" marker-end="url(#arrow_orange)"/>
+<path d="M 432 446 C 459 442, 476 442, 500 446" fill="none" stroke="#c2410c" stroke-width="1.9" marker-end="url(#arrow_orange)"/>
+<path d="M 676 446 C 705 442, 720 442, 742 446" fill="none" stroke="#c2410c" stroke-width="1.9" marker-end="url(#arrow_orange)"/>
+<path d="M 640 248 C 614 290, 606 332, 606 410" fill="none" class="dashed"/>
+<text class="small" x="620" y="330">shared topology state</text>
+
+<text class="small" x="58" y="568">Interpretation: control decisions are centralized at Kelpie, whereas interactive workloads are translated into DTN-carried stream frames for eventual delivery.</text>
+</svg>

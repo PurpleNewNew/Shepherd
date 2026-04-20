@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="620" viewBox="0 0 1000 620">
+<defs>
+  <marker id="arrow_dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+    <path d="M 0 0 L 10 5 L 0 10 z" fill="#334155"/>
+  </marker>
+  <marker id="arrow_green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+    <path d="M 0 0 L 10 5 L 0 10 z" fill="#15803d"/>
+  </marker>
+</defs>
+<style>
+  .bg { fill: #ffffff; }
+  .frame { fill: none; stroke: #94a3b8; stroke-width: 1.2; }
+  .panel { fill: #ffffff; stroke: #64748b; stroke-width: 1.2; }
+  .node { fill: #ffffff; stroke: #64748b; stroke-width: 1.1; }
+  .nodeOff { fill: #fef2f2; stroke: #dc2626; stroke-width: 1.1; }
+  .title { fill: #0f172a; font: 700 24px "Times New Roman", "Songti SC", "Noto Serif CJK SC", serif; }
+  .subtitle { fill: #334155; font: 14px "Times New Roman", "Songti SC", "Noto Serif CJK SC", serif; }
+  .h1 { fill: #0f172a; font: 700 18px "Times New Roman", "Songti SC", "Noto Serif CJK SC", serif; }
+  .h2 { fill: #0f172a; font: 700 15px "Times New Roman", "Songti SC", "Noto Serif CJK SC", serif; }
+  .text { fill: #334155; font: 13px "Times New Roman", "Songti SC", "Noto Serif CJK SC", serif; }
+  .small { fill: #475569; font: 12px "Times New Roman", "Songti SC", "Noto Serif CJK SC", serif; }
+  .step { fill: #0f172a; }
+</style>
+
+<rect class="bg" x="0" y="0" width="1000" height="620"/>
+<rect class="frame" x="30" y="26" width="940" height="568"/>
+
+<text class="title" x="54" y="58">Chain failure and supplemental failover</text>
+<text class="subtitle" x="54" y="84">Demonstration scenario: Kelpie → root → mid → leaf. After the middle node fails, the leaf is reparented through a pre-built supplemental edge.</text>
+
+<rect class="panel" x="58" y="128" width="406" height="406"/>
+<text class="h1" x="78" y="158">(a) Normal chain</text>
+
+<rect class="node" x="92" y="212" width="110" height="54"/>
+<text class="h2" x="118" y="236">Kelpie</text>
+<text class="text" x="118" y="254">controller</text>
+
+<rect class="node" x="264" y="184" width="110" height="54"/>
+<text class="h2" x="294" y="208">root</text>
+<text class="text" x="286" y="226">online</text>
+
+<rect class="node" x="206" y="332" width="110" height="54"/>
+<text class="h2" x="238" y="356">mid</text>
+<text class="text" x="228" y="374">online</text>
+
+<rect class="node" x="326" y="450" width="110" height="54"/>
+<text class="h2" x="357" y="474">leaf</text>
+<text class="text" x="348" y="492">online</text>
+
+<path d="M 202 236 C 222 226, 238 216, 264 210" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow_dark)"/>
+<path d="M 311 238 C 302 270, 287 300, 258 332" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow_dark)"/>
+<path d="M 316 380 C 344 405, 360 423, 381 450" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow_dark)"/>
+<path d="M 349 236 C 410 282, 418 376, 394 450" fill="none" stroke="#1d4ed8" stroke-width="1.8" stroke-dasharray="7 5" marker-end="url(#arrow_green)"/>
+<text class="small" x="422" y="350" transform="rotate(84 422 350)">supplemental edge</text>
+
+<rect class="panel" x="536" y="128" width="406" height="406"/>
+<text class="h1" x="556" y="158">(b) After mid failure</text>
+
+<rect class="node" x="570" y="212" width="110" height="54"/>
+<text class="h2" x="596" y="236">Kelpie</text>
+<text class="text" x="596" y="254">detects failure</text>
+
+<rect class="node" x="742" y="184" width="110" height="54"/>
+<text class="h2" x="772" y="208">root</text>
+<text class="text" x="764" y="226">still online</text>
+
+<rect class="nodeOff" x="684" y="332" width="110" height="54"/>
+<text class="h2" x="716" y="356">mid</text>
+<text class="text" x="708" y="374">stopped</text>
+<line x1="698" y1="344" x2="780" y2="374" stroke="#dc2626" stroke-width="3.0"/>
+<line x1="780" y1="344" x2="698" y2="374" stroke="#dc2626" stroke-width="3.0"/>
+
+<rect class="node" x="804" y="450" width="110" height="54"/>
+<text class="h2" x="835" y="474">leaf</text>
+<text class="text" x="820" y="492">reparented</text>
+
+<path d="M 680 236 C 700 226, 716 216, 742 210" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow_dark)"/>
+<path d="M 789 238 C 780 270, 765 300, 736 332" fill="none" stroke="#dc2626" stroke-width="1.8" stroke-dasharray="7 5"/>
+<path d="M 827 236 C 890 288, 903 376, 860 450" fill="none" stroke="#15803d" stroke-width="2.0" marker-end="url(#arrow_green)"/>
+
+<circle class="step" cx="610" cy="300" r="13"/>
+<text x="610" y="305" fill="#ffffff" font="700 12px Times New Roman, serif" text-anchor="middle">1</text>
+<text class="small" x="630" y="304">mid disappears from the primary chain</text>
+
+<circle class="step" cx="640" cy="420" r="13"/>
+<text x="640" y="425" fill="#ffffff" font="700 12px Times New Roman, serif" text-anchor="middle">2</text>
+<text class="small" x="660" y="424">leaf reconnect to mid fails</text>
+
+<circle class="step" cx="744" cy="430" r="13"/>
+<text x="744" y="435" fill="#ffffff" font="700 12px Times New Roman, serif" text-anchor="middle">3</text>
+<text class="small" x="764" y="434">Kelpie promotes the supplemental link</text>
+
+<text class="small" x="58" y="566">Interpretation: the leaf does not reconnect directly to Kelpie. It first loses its parent, then is redirected to another online Flock selected by the failover logic.</text>
+</svg>

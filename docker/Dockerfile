@@ -1,5 +1,3 @@
-# syntax=docker/dockerfile:1
-
 FROM golang:1.22-bookworm AS build
 
 WORKDIR /src
@@ -15,12 +13,9 @@ ARG TARGETOS=linux
 ARG TARGETARCH
 ENV CGO_ENABLED=0
 
-RUN --mount=type=cache,target=/root/.cache/go-build \
-    GOOS=$TARGETOS GOARCH=$TARGETARCH go build -trimpath -ldflags="-s -w" -o /out/kelpie ./cmd/kelpie
-RUN --mount=type=cache,target=/root/.cache/go-build \
-    GOOS=$TARGETOS GOARCH=$TARGETARCH go build -trimpath -ldflags="-s -w" -o /out/flock ./cmd/flock
-RUN --mount=type=cache,target=/root/.cache/go-build \
-    GOOS=$TARGETOS GOARCH=$TARGETARCH go build -trimpath -ldflags="-s -w" -o /out/shepherd-lab-bootstrap ./cmd/lab/bootstrap
+RUN GOOS=$TARGETOS GOARCH=$TARGETARCH go build -trimpath -ldflags="-s -w" -o /out/kelpie ./cmd/kelpie
+RUN GOOS=$TARGETOS GOARCH=$TARGETARCH go build -trimpath -ldflags="-s -w" -o /out/flock ./cmd/flock
+RUN GOOS=$TARGETOS GOARCH=$TARGETARCH go build -trimpath -ldflags="-s -w" -o /out/shepherd-lab-bootstrap ./cmd/lab/bootstrap
 
 FROM debian:bookworm-slim AS runtime
 

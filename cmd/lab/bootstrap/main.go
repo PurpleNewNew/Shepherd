@@ -33,7 +33,14 @@ func main() {
 	}
 
 	controllerBind := envString("KELPIE_CONTROLLER_BIND", defaultControllerBind)
-	pivotBind := envString("ROOT_PIVOT_BIND", defaultPivotBind)
+	pivotBinds := envCSV("PIVOT_BINDS")
+	if len(pivotBinds) == 0 {
+		pivotBind := envString("ROOT_PIVOT_BIND", defaultPivotBind)
+		if pivotBind != "" {
+			pivotBinds = []string{pivotBind}
+		}
+	}
+	expectedOnlineNodes := envInt("EXPECTED_ONLINE_NODES", 0)
 
 	timeout := envDuration("BOOTSTRAP_TIMEOUT", 5*time.Minute)
 
@@ -57,11 +64,39 @@ func main() {
 		fatalf("wait for root node: %v", err)
 	}
 
-	if err := ensurePivotListener(rpcCtx, conn, rootUUID, pivotBind); err != nil {
-		fatalf("ensure pivot listener: %v", err)
+	known := map[string]struct{}{
+		rootUUID: {},
+	}
+	currentParent := rootUUID
+	for idx, bind := range pivotBinds {
+		if err := ensurePivotListener(rpcCtx, conn, currentParent, bind); err != nil {
+			fatalf("ensure pivot listener for %s on %s: %v", currentParent, bind, err)
+		}
+		fmt.Printf("pivot_ok index=%d target_uuid=%s bind=%s\n", idx, currentParent, bind)
+		if idx == len(pivotBinds)-1 {
+			break
+		}
+		childUUID, err := waitForDirectChildNode(rpcCtx, conn, currentParent, known, 200*time.Millisecond, 2*time.Second)
+		if err != nil {
+			fatalf("wait for child node of %s: %v", currentParent, err)
+		}
+		known[childUUID] = struct{}{}
+		currentParent = childUUID
 	}
 
-	fmt.Printf("bootstrap_ok root_uuid=%s controller_bind=%s pivot_bind=%s\n", rootUUID, controllerBind, pivotBind)
+	onlineNodes := []string{rootUUID}
+	if expectedOnlineNodes > 0 {
+		onlineNodes, err = waitForOnlineNodes(rpcCtx, conn, expectedOnlineNodes, 200*time.Millisecond, 2*time.Second)
+		if err != nil {
+			fatalf("wait for %d online nodes: %v", expectedOnlineNodes, err)
+		}
+	}
+
+	fmt.Printf("bootstrap_ok root_uuid=%s controller_bind=%s pivot_binds=%s online_nodes=%s\n",
+		rootUUID,
+		controllerBind,
+		strings.Join(pivotBinds, ","),
+		strings.Join(onlineNodes, ","))
 }
 
 func ensureControllerListener(ctx context.Context, conn *grpc.ClientConn, bind string) error {
@@ -109,6 +144,80 @@ func waitForRootNode(ctx context.Context, conn *grpc.ClientConn, baseDelay, maxD
 					strings.EqualFold(strings.TrimSpace(node.GetStatus()), "online") {
 					return node.GetUuid(), nil
 				}
+			}
+		}
+
+		time.Sleep(delay)
+		delay *= 2
+		if delay > maxDelay {
+			delay = maxDelay
+		}
+	}
+}
+
+func waitForDirectChildNode(ctx context.Context, conn *grpc.ClientConn, parentUUID string, known map[string]struct{}, baseDelay, maxDelay time.Duration) (string, error) {
+	client := uipb.NewKelpieUIServiceClient(conn)
+	delay := baseDelay
+	for {
+		select {
+		case <-ctx.Done():
+			return "", ctx.Err()
+		default:
+		}
+
+		resp, err := client.GetSnapshot(ctx, &uipb.SnapshotRequest{})
+		if err == nil && resp != nil && resp.GetSnapshot() != nil {
+			for _, node := range resp.GetSnapshot().GetNodes() {
+				uuid := strings.TrimSpace(node.GetUuid())
+				if uuid == "" {
+					continue
+				}
+				if _, exists := known[uuid]; exists {
+					continue
+				}
+				if strings.TrimSpace(node.GetParentUuid()) != parentUUID {
+					continue
+				}
+				if !strings.EqualFold(strings.TrimSpace(node.GetStatus()), "online") {
+					continue
+				}
+				return uuid, nil
+			}
+		}
+
+		time.Sleep(delay)
+		delay *= 2
+		if delay > maxDelay {
+			delay = maxDelay
+		}
+	}
+}
+
+func waitForOnlineNodes(ctx context.Context, conn *grpc.ClientConn, expected int, baseDelay, maxDelay time.Duration) ([]string, error) {
+	client := uipb.NewKelpieUIServiceClient(conn)
+	delay := baseDelay
+	for {
+		select {
+		case <-ctx.Done():
+			return nil, ctx.Err()
+		default:
+		}
+
+		resp, err := client.GetSnapshot(ctx, &uipb.SnapshotRequest{})
+		if err == nil && resp != nil && resp.GetSnapshot() != nil {
+			nodes := make([]string, 0, expected)
+			for _, node := range resp.GetSnapshot().GetNodes() {
+				uuid := strings.TrimSpace(node.GetUuid())
+				if uuid == "" {
+					continue
+				}
+				if !strings.EqualFold(strings.TrimSpace(node.GetStatus()), "online") {
+					continue
+				}
+				nodes = append(nodes, uuid)
+			}
+			if len(nodes) >= expected {
+				return nodes, nil
 			}
 		}
 
@@ -216,6 +325,34 @@ func envString(key, def string) string {
 		return def
 	}
 	return val
+}
+
+func envCSV(key string) []string {
+	val := strings.TrimSpace(os.Getenv(key))
+	if val == "" {
+		return nil
+	}
+	parts := strings.Split(val, ",")
+	out := make([]string, 0, len(parts))
+	for _, part := range parts {
+		part = strings.TrimSpace(part)
+		if part != "" {
+			out = append(out, part)
+		}
+	}
+	return out
+}
+
+func envInt(key string, def int) int {
+	val := strings.TrimSpace(os.Getenv(key))
+	if val == "" {
+		return def
+	}
+	n, err := strconv.Atoi(val)
+	if err != nil {
+		return def
+	}
+	return n
 }
 
 func envDuration(key string, def time.Duration) time.Duration {

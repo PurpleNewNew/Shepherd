@@ -15,13 +15,15 @@ services:
       - "0.0.0.0:50061"
       - "--ui-grpc-token"
       - "${SHEPHERD_UI_TOKEN:-stockman-dev-token}"
+      - "--ui-grpc-rate"
+      - "0"
       - "--dataplane-listen"
       - "0.0.0.0:60080"
     ports:
-      - "50061:50061"
-      - "60080:60080"
+      - "127.0.0.1:${SHEPHERD_UI_PORT:-50061}:50061"
+      - "127.0.0.1:${SHEPHERD_DATAPLANE_PORT:-60080}:60080"
     volumes:
-      - kelpie-db:/app/db
+      - kelpie-demo-db:/app/db
     restart: unless-stopped
 
   flock-root:
@@ -36,11 +38,11 @@ services:
       - "kelpie:40100"
       - "--reconnect"
       - "${FLOCK_RECONNECT_SECONDS:-2}"
+      - "--repair-port"
+      - "43100"
     restart: unless-stopped
 
-  # Additional nodes that will attach to the root pivot listener once bootstrap completes.
-  # Scale with: docker compose -f docker/docker-compose.yml up -d --scale flock=5
-  flock:
+  flock-mid:
     <<: *shepherd_image
     depends_on:
       - flock-root
@@ -52,23 +54,43 @@ services:
       - "flock-root:41000"
       - "--reconnect"
       - "${FLOCK_RECONNECT_SECONDS:-2}"
+      - "--repair-port"
+      - "43200"
     restart: unless-stopped
 
-  # One-shot bootstrap: create Kelpie controller listener (40100) and root pivot listener (41000).
-  bootstrap:
+  flock-leaf:
+    <<: *shepherd_image
+    depends_on:
+      - flock-mid
+    command:
+      - "flock"
+      - "-s"
+      - "${SHEPHERD_SECRET:-Shepherd1234}"
+      - "-c"
+      - "flock-mid:42000"
+      - "--reconnect"
+      - "${FLOCK_RECONNECT_SECONDS:-2}"
+      - "--repair-port"
+      - "43300"
+    restart: unless-stopped
+
+  bootstrap-chain:
     <<: *shepherd_image
     depends_on:
       - kelpie
       - flock-root
+      - flock-mid
+      - flock-leaf
     command:
       - "shepherd-lab-bootstrap"
     environment:
       KELPIE_GRPC_ADDR: "kelpie:50061"
       KELPIE_GRPC_TOKEN: "${SHEPHERD_UI_TOKEN:-stockman-dev-token}"
       KELPIE_CONTROLLER_BIND: "0.0.0.0:40100"
-      ROOT_PIVOT_BIND: "0.0.0.0:41000"
+      PIVOT_BINDS: "0.0.0.0:41000,0.0.0.0:42000"
+      EXPECTED_ONLINE_NODES: "3"
       BOOTSTRAP_TIMEOUT: "300s"
     restart: "no"
 
 volumes:
-  kelpie-db: {}
+  kelpie-demo-db: {}
