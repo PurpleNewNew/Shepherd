@@ -351,10 +351,21 @@ func (topology *Topology) findChildrenNodesVisited(ready *[]int, idNum int, visi
 
 func (topology *Topology) reonlineNode(task *TopoTask) {
 	parentUUID := topology.resolveParentUUID(task.Target.uuid, task.ParentUUID, task.IsFirst)
+	// Reonline 源自节点重新握手/上线，是一次物理事实声明。若当前内存/持久化
+	// 状态里遗留了反向边（常见原因：历史 supplemental failover，或旧版
+	// admin.db 残留），应优先信任新声明，主动断开导致环的那条反向边，
+	// 而不是把新节点悄悄挂到 ADMIN 下造成"孤立节点"的 UI 假象。
 	if topology.createsParentCycle(task.Target.uuid, parentUUID) {
-		printer.Warning("\r\n[*] Reonline cycle guard: reject parent %s for %s, fallback to ADMIN\r\n",
-			parentUUID, task.Target.uuid)
-		parentUUID = protocol.ADMIN_UUID
+		broken := topology.breakParentCycleTowardsLocked(task.Target.uuid, parentUUID)
+		if topology.createsParentCycle(task.Target.uuid, parentUUID) {
+			// 破环失败的极端情况下仍保留旧兜底：fallback 到 ADMIN。
+			printer.Warning("\r\n[*] Reonline cycle guard: break failed (parent=%s child=%s broken=%d), fallback to ADMIN\r\n",
+				parentUUID, task.Target.uuid, broken)
+			parentUUID = protocol.ADMIN_UUID
+		} else {
+			printer.Warning("\r\n[*] Reonline cycle guard: broke %d stale reverse edge(s) before reparenting %s under %s\r\n",
+				broken, task.Target.uuid, parentUUID)
+		}
 	}
 	now := time.Now()
 

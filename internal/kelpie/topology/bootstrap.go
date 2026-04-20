@@ -3,6 +3,7 @@ package topology
 import (
 	"time"
 
+	"codeberg.org/agnoie/shepherd/internal/kelpie/printer"
 	"codeberg.org/agnoie/shepherd/protocol"
 )
 
@@ -103,6 +104,14 @@ func (topology *Topology) ApplySnapshot(snapshot *Snapshot) {
 		topology.edgeTypes[edge.To][edge.From] = edge.Type
 	}
 
+	// 快照里可能含有损坏的父子链（例如上一轮运行中 supplemental failover
+	// 写出的反向边、或旧版没有 cycle guard 的代码路径）。还原完基础关系
+	// 后主动扫一次，遇到环就断开引入环的那条边，保证后续 reonline/reparent
+	// 不会被历史负担污染。
+	if fixed := topology.sanitizeParentCyclesLocked(); fixed > 0 {
+		printer.Warning("\r\n[*] Bootstrap sanitize: broke %d stale reverse edge(s) loaded from snapshot\r\n", fixed)
+	}
+
 	// 基于复原后的拓扑重新计算路由。此时拓扑调度器尚未启动，
 	// 因此将 ResultChan 切换到静默通道，避免 calculate 中的通知写阻塞。
 	originalResultChan := topology.ResultChan
@@ -110,4 +119,27 @@ func (topology *Topology) ApplySnapshot(snapshot *Snapshot) {
 	topology.ResultChan = silentResultChan
 	topology.calculate()
 	topology.ResultChan = originalResultChan
+}
+
+// sanitizeParentCyclesLocked 扫描当前父子关系映射，对每个节点向上走父链，
+// 若遇到环就断开触发环的那条反向边。返回断开的边数。
+// 仅在 topology.mu 锁内调用。
+func (topology *Topology) sanitizeParentCyclesLocked() int {
+	if topology == nil || len(topology.parentByChild) == 0 {
+		return 0
+	}
+	// 先快照出所有 child，避免在删除过程中迭代同一 map。
+	candidates := make([]string, 0, len(topology.parentByChild))
+	for child := range topology.parentByChild {
+		candidates = append(candidates, child)
+	}
+	broken := 0
+	for _, child := range candidates {
+		parent := topology.parentOfUnlocked(child)
+		if parent == "" || parent == protocol.ADMIN_UUID {
+			continue
+		}
+		broken += topology.breakParentCycleTowardsLocked(child, parent)
+	}
+	return broken
 }
