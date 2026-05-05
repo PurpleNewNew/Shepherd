@@ -163,6 +163,60 @@ func TestDispatchGossipUpdateRefreshesCarrierLiveness(t *testing.T) {
 	}
 }
 
+func TestSupplementalHeartbeatRefreshesEndpointLiveness(t *testing.T) {
+	topo := topology.NewTopology()
+	go topo.Run()
+	t.Cleanup(topo.Stop)
+
+	addNode(t, topo, "NODE-ROOT", protocol.ADMIN_UUID, "10.0.0.1", true)
+	addNode(t, topo, "NODE-LEAF", "NODE-ROOT", "10.0.0.2", false)
+	requestTopo(t, topo, &topology.TopoTask{Mode: topology.MARKNODEOFFLINE, UUID: "NODE-LEAF"})
+	if aliveInSnapshot(topo, "NODE-LEAF") {
+		t.Fatalf("expected leaf to start offline")
+	}
+
+	core := &routerCore{topo: topo}
+	handler := core.dispatchSuppLinkHeartbeat()
+	err := handler(context.Background(), &protocol.Header{Sender: "NODE-LEAF"}, &protocol.SuppLinkHeartbeat{
+		LinkUUID:  "supp-link",
+		PeerUUID:  "NODE-ROOT",
+		Status:    1,
+		Timestamp: time.Now().Unix(),
+	})
+	if err != nil {
+		t.Fatalf("dispatch supplemental heartbeat: %v", err)
+	}
+	if !aliveInSnapshot(topo, "NODE-LEAF") {
+		t.Fatalf("expected supplemental heartbeat sender to be marked alive")
+	}
+}
+
+func TestDTNAckRefreshesSenderLiveness(t *testing.T) {
+	topo := topology.NewTopology()
+	go topo.Run()
+	t.Cleanup(topo.Stop)
+
+	addNode(t, topo, "NODE-ROOT", protocol.ADMIN_UUID, "10.0.0.1", true)
+	addNode(t, topo, "NODE-LEAF", "NODE-ROOT", "10.0.0.2", false)
+	requestTopo(t, topo, &topology.TopoTask{Mode: topology.MARKNODEOFFLINE, UUID: "NODE-LEAF"})
+	if aliveInSnapshot(topo, "NODE-LEAF") {
+		t.Fatalf("expected leaf to start offline")
+	}
+
+	core := &routerCore{topo: topo}
+	handler := core.dispatchDTNAck()
+	err := handler(context.Background(), &protocol.Header{Sender: "NODE-LEAF"}, &protocol.DTNAck{
+		BundleID: "bundle-1",
+		OK:       1,
+	})
+	if err != nil {
+		t.Fatalf("dispatch DTN ack: %v", err)
+	}
+	if !aliveInSnapshot(topo, "NODE-LEAF") {
+		t.Fatalf("expected DTN ack sender to be marked alive")
+	}
+}
+
 func aliveInSnapshot(topo *topology.Topology, uuid string) bool {
 	if topo == nil || uuid == "" {
 		return false

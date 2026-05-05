@@ -131,6 +131,9 @@ func (core *routerCore) dispatchSuppLinkResponse() bus.Handler {
 		if !ok {
 			return fmt.Errorf("expected *protocol.SuppLinkResponse, got %T", payload)
 		}
+		if resp != nil {
+			markTopologyNodeAlive(core.topo, resp.AgentUUID)
+		}
 		supp.HandleSuppLinkResponse(core.topo, core.manager, resp)
 		return nil
 	}
@@ -146,6 +149,9 @@ func (core *routerCore) dispatchSuppLinkHeartbeat() bus.Handler {
 		if header != nil {
 			sender = header.Sender
 		}
+		if hb != nil && hb.Status != 0 {
+			markTopologyNodeAlive(core.topo, sender)
+		}
 		supp.HandleSuppLinkHeartbeat(core.topo, core.manager, sender, hb)
 		return nil
 	}
@@ -156,6 +162,11 @@ func (core *routerCore) dispatchRuntimeLog() bus.Handler {
 		logPayload, ok := payload.(*protocol.RuntimeLog)
 		if !ok {
 			return fmt.Errorf("expected *protocol.RuntimeLog, got %T", payload)
+		}
+		if logPayload != nil && logPayload.UUID != "" {
+			markTopologyNodeAlive(core.topo, logPayload.UUID)
+		} else {
+			core.markSenderAlive(header)
 		}
 		entry := ""
 		if core.topo != nil && logPayload != nil && logPayload.UUID != "" {
@@ -191,6 +202,7 @@ func (core *routerCore) dispatchDTNAck() bus.Handler {
 		if ack == nil {
 			return nil
 		}
+		core.markSenderAlive(header)
 		status := "OK"
 		if ack.OK == 0 {
 			status = "ERR"
@@ -247,6 +259,7 @@ func (core *routerCore) dispatchStreamOpen() bus.Handler {
 		if !ok {
 			return fmt.Errorf("expected *protocol.StreamOpen, got %T", payload)
 		}
+		core.markSenderAlive(header)
 		if core.streamOpen != nil {
 			core.streamOpen(header, msg)
 		}
@@ -260,6 +273,7 @@ func (core *routerCore) dispatchStreamData() bus.Handler {
 		if !ok {
 			return fmt.Errorf("expected *protocol.StreamData, got %T", payload)
 		}
+		core.markSenderAlive(header)
 		if core.streamData != nil {
 			core.streamData(header, msg)
 		}
@@ -273,6 +287,7 @@ func (core *routerCore) dispatchStreamAck() bus.Handler {
 		if !ok {
 			return fmt.Errorf("expected *protocol.StreamAck, got %T", payload)
 		}
+		core.markSenderAlive(header)
 		if core.streamAck != nil {
 			core.streamAck(header, msg)
 		}
@@ -286,6 +301,7 @@ func (core *routerCore) dispatchStreamClose() bus.Handler {
 		if !ok {
 			return fmt.Errorf("expected *protocol.StreamClose, got %T", payload)
 		}
+		core.markSenderAlive(header)
 		if core.streamClose != nil {
 			core.streamClose(header, msg)
 		}
@@ -299,6 +315,7 @@ func (core *routerCore) dispatchSleepUpdateAck() bus.Handler {
 		if !ok {
 			return fmt.Errorf("expected *protocol.SleepUpdateAck, got %T", payload)
 		}
+		core.markSenderAlive(header)
 		target := "node"
 		if header != nil && header.Sender != "" {
 			target = shortID(header.Sender)

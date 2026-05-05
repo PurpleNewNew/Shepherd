@@ -119,6 +119,9 @@ func (admin *Admin) decorateSupplementalHooks() {
 		admin.handleLinkPromoted(linkUUID, parentUUID, childUUID)
 	}))
 	admin.hookCancelers = append(admin.hookCancelers, supp.RegisterSuppHeartbeatHook(func(linkUUID, endpoint string, status supp.SuppLinkHealth, ts time.Time) {
+		if status == supp.SuppLinkHealthAlive {
+			admin.markNodeAlive(endpoint)
+		}
 		if admin.suppPlanner == nil {
 			return
 		}
