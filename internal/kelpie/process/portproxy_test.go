@@ -134,6 +134,28 @@ func TestPortProxyStopAllForwards(t *testing.T) {
 	}
 }
 
+func TestPortProxyStartForwardOutlivesRequestContext(t *testing.T) {
+	lifeCtx, lifeCancel := context.WithCancel(context.Background())
+	defer lifeCancel()
+	ctxFn := func() context.Context { return lifeCtx }
+	mgr := newPortProxyManager(ctxFn, func(ctx context.Context, target, sessionID string, meta map[string]string) (io.ReadWriteCloser, error) {
+		server, _ := net.Pipe()
+		return server, nil
+	})
+	reqCtx, reqCancel := context.WithCancel(context.Background())
+	desc, err := mgr.StartForward(reqCtx, "node-1", "127.0.0.1:0", "10.0.0.1:80")
+	if err != nil {
+		t.Fatalf("start forward failed: %v", err)
+	}
+	reqCancel()
+	conn, err := net.Dial("tcp", desc.Options()["bind"])
+	if err != nil {
+		t.Fatalf("forward listener should outlive request context: %v", err)
+	}
+	conn.Close()
+	mgr.StopForward("node-1", desc.ID())
+}
+
 func TestPortProxyValidationErrors(t *testing.T) {
 	ctxFn := func() context.Context { return context.Background() }
 	mgr := newPortProxyManager(ctxFn, func(ctx context.Context, target, sessionID string, meta map[string]string) (io.ReadWriteCloser, error) {

@@ -95,6 +95,12 @@ func (manager *shellManager) SetStreamForSession(sessionID string, streamID uint
 	if manager.streamBySessionID == nil {
 		manager.streamBySessionID = make(map[string]uint32)
 	}
+	if manager.seqBySessionID == nil {
+		manager.seqBySessionID = make(map[string]uint32)
+	}
+	if prev := manager.streamBySessionID[sessionID]; prev != streamID {
+		manager.seqBySessionID[sessionID] = 0
+	}
 	manager.streamBySessionID[sessionID] = streamID
 	manager.sessionMu.Unlock()
 }

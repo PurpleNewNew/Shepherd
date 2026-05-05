@@ -351,17 +351,18 @@ func streamShellOutput(mgr *manager.Manager, session *manager.ShellSession) {
 	}
 
 	buffer := make([]byte, 4096)
-	// 若该 session 绑定了 streamID，则输出走 STREAM_DATA。
-	var streamID uint32
-	if mgr != nil && mgr.ShellManager != nil {
-		streamID = mgr.ShellManager.StreamForSession(session.ID)
-	}
 	for {
 		count, err := reader.Read(buffer)
 		if count > 0 {
 			result := string(buffer[:count])
 			if strings.EqualFold(session.Charset, "gbk") {
 				result = utils.ConvertGBK2Str(result)
+			}
+			// Shell tab 关闭后再打开会复用同一个 shell session，但 streamID 会变化。
+			// 每次发送前取当前映射，避免输出继续写入已关闭的旧 stream。
+			var streamID uint32
+			if mgr != nil && mgr.ShellManager != nil {
+				streamID = mgr.ShellManager.StreamForSession(session.ID)
 			}
 			if streamID != 0 {
 				// 发送按序自增的帧
@@ -384,8 +385,12 @@ func streamShellOutput(mgr *manager.Manager, session *manager.ShellSession) {
 			} else {
 				session.CloseReason = err.Error()
 			}
-			if streamID != 0 {
-				sendStreamClose(mgr, streamID, 0, "ok")
+			var closingStreamID uint32
+			if mgr != nil && mgr.ShellManager != nil {
+				closingStreamID = mgr.ShellManager.StreamForSession(session.ID)
+			}
+			if closingStreamID != 0 {
+				sendStreamClose(mgr, closingStreamID, 0, "ok")
 				if mgr != nil && mgr.ShellManager != nil {
 					mgr.ShellManager.ClearStreamForSession(session.ID)
 				}

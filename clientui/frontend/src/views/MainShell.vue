@@ -52,13 +52,13 @@ const activeMenu = ref<MenuKey | ''>('');
 const targetTabs = ref<string[]>([]);
 const targetMode = ref<TargetMode>('overview');
 const commandLine = ref('');
-const dtnPayload = ref('memo:demo from Stockman');
+const dtnPayload = ref('memo:');
 const dtnPriority = ref<'low' | 'normal' | 'high'>('normal');
 const sleepSeconds = ref(15);
 const workSeconds = ref(5);
 const jitter = ref(10);
 const shellInput = ref('');
-const filePath = ref('');
+const filePath = ref('/');
 const proxyLocalBind = ref('127.0.0.1:1080');
 const proxyRemoteAddr = ref('127.0.0.1:80');
 const socksUsername = ref('');
@@ -66,6 +66,8 @@ const socksPassword = ref('');
 const shellHandles = reactive<Record<string, StreamHandle>>({});
 const shellLines = reactive<Record<string, string[]>>({});
 const fileListings = reactive<Record<string, RemoteFileListing>>({});
+const fileErrors = reactive<Record<string, string>>({});
+const fileLoading = reactive<Record<string, boolean>>({});
 const proxyResults = reactive<Record<string, StartForwardProxyResult[]>>({});
 
 const action = reactive({
@@ -142,6 +144,16 @@ const activeShellLines = computed(() => {
 const activeFileListing = computed(() => {
   const uuid = activeTargetUUID.value;
   return uuid ? fileListings[uuid] : undefined;
+});
+
+const activeFileError = computed(() => {
+  const uuid = activeTargetUUID.value;
+  return uuid ? fileErrors[uuid] : '';
+});
+
+const activeFileLoading = computed(() => {
+  const uuid = activeTargetUUID.value;
+  return uuid ? fileLoading[uuid] : false;
 });
 
 const activeProxyResults = computed(() => {
@@ -448,16 +460,8 @@ async function ensureShell(uuid = activeTargetUUID.value) {
     shellHandles[uuid] = handle;
     shellLines[uuid].push(`[shell requested] ${handle.sessionId || handle.handleId}`);
   } catch (err: any) {
-    const handle = {
-      handleId: `preview-shell-${uuid}`,
-      targetUuid: uuid,
-      sessionId: `preview-${uuid.slice(0, 8)}`,
-      kind: 'shell',
-      status: 'preview',
-    };
-    shellHandles[uuid] = handle;
-    shellLines[uuid].push('[preview shell] Wails runtime unavailable; commands are echoed locally.');
-    shellLines[uuid].push(`operator@${labelForNode(topo.nodeMap.get(uuid) || { uuid, depth: 0, activeStreams: 0 })}:~$`);
+    action.error = err?.message ?? String(err);
+    shellLines[uuid].push(`[error] ${action.error}`);
   }
 }
 
@@ -471,8 +475,9 @@ async function submitShellCommand() {
   shellInput.value = '';
   try {
     await sendStreamData({ handleId: handle.handleId, data: `${cmd}\n` });
-  } catch {
-    shellLines[uuid].push(`preview> staged command: ${cmd}`);
+  } catch (err: any) {
+    action.error = err?.message ?? String(err);
+    shellLines[uuid].push(`[error] ${action.error}`);
   }
 }
 
@@ -482,8 +487,8 @@ async function closeActiveShell() {
   if (!uuid || !handle) return;
   try {
     await closeInteractiveStream({ handleId: handle.handleId, reason: 'operator closed shell' });
-  } catch {
-    shellLines[uuid]?.push('[preview shell closed]');
+  } catch (err: any) {
+    action.error = err?.message ?? String(err);
   }
   delete shellHandles[uuid];
 }
@@ -491,26 +496,19 @@ async function closeActiveShell() {
 async function loadFiles(uuid = activeTargetUUID.value, path = filePath.value) {
   if (!uuid) return;
   targetMode.value = 'files';
+  const requestedPath = path.trim() || '/';
+  fileLoading[uuid] = true;
+  fileErrors[uuid] = '';
   try {
-    const listing = await listRemoteFiles({ target: uuid, path });
+    const listing = await listRemoteFiles({ target: uuid, path: requestedPath });
     fileListings[uuid] = listing;
-    filePath.value = listing.displayPath || listing.resolvedPath || path;
-  } catch {
-    const base = path || '/';
-    fileListings[uuid] = {
-      requestedPath: base,
-      resolvedPath: base,
-      displayPath: base,
-      rootPath: '/',
-      parentPath: base === '/' ? '' : '/',
-      canGoUp: base !== '/',
-      virtualRoot: false,
-      entries: [
-        { name: 'Users', path: '/Users', isDir: true, mode: 'drwxr-xr-x' },
-        { name: 'tmp', path: '/tmp', isDir: true, mode: 'drwxrwxrwt' },
-        { name: 'agent.log', path: '/tmp/agent.log', isDir: false, size: 18432, mode: '-rw-r--r--' },
-      ],
-    };
+    filePath.value = listing.displayPath || listing.resolvedPath || requestedPath;
+  } catch (err: any) {
+    const message = err?.message ?? String(err);
+    fileErrors[uuid] = message;
+    action.error = message;
+  } finally {
+    fileLoading[uuid] = false;
   }
 }
 
@@ -532,8 +530,8 @@ async function collectFile(entry: RemoteFileEntry) {
       tags: ['stockman'],
     });
     action.message = `Collected ${result.item.name || entry.name}`;
-  } catch {
-    action.message = `Preview collect staged: ${entry.path}`;
+  } catch (err: any) {
+    action.error = err?.message ?? String(err);
   }
 }
 
@@ -549,19 +547,8 @@ async function startForwardForActive() {
       remoteAddr: proxyRemoteAddr.value,
     });
     proxyResults[uuid].push(result);
-  } catch {
-    proxyResults[uuid].push({
-      proxyId: `preview-${Date.now()}`,
-      bind: proxyLocalBind.value,
-      remoteAddr: proxyRemoteAddr.value,
-      handle: {
-        handleId: `preview-proxy-${uuid}`,
-        targetUuid: uuid,
-        sessionId: '',
-        kind: 'proxy',
-        status: 'preview',
-      },
-    });
+  } catch (err: any) {
+    action.error = err?.message ?? String(err);
   }
 }
 
@@ -570,8 +557,9 @@ async function stopForwardForActive(proxyId: string) {
   if (!uuid) return;
   try {
     await stopForwardProxy({ target: uuid, proxyId });
-  } catch {
-    action.message = `Preview proxy stopped: ${proxyId}`;
+  } catch (err: any) {
+    action.error = err?.message ?? String(err);
+    return;
   }
   proxyResults[uuid] = (proxyResults[uuid] || []).filter((p) => p.proxyId !== proxyId);
 }
@@ -588,8 +576,8 @@ async function startSocksForActive() {
       password: socksPassword.value,
     });
     action.message = `SOCKS stream opened: ${handle.handleId}`;
-  } catch {
-    action.message = `Preview SOCKS staged for ${labelForNode(topo.nodeMap.get(uuid) || { uuid, depth: 0, activeStreams: 0 })}`;
+  } catch (err: any) {
+    action.error = err?.message ?? String(err);
   }
 }
 
@@ -609,8 +597,8 @@ async function pingActiveStream() {
   try {
     await streamPing({ target: uuid, count: 3, payloadSize: 32 });
     action.message = `Stream ping queued for ${uuid.slice(0, 8)}.`;
-  } catch {
-    action.message = `Preview stream ping staged for ${uuid.slice(0, 8)}.`;
+  } catch (err: any) {
+    action.error = err?.message ?? String(err);
   }
 }
 
@@ -1031,16 +1019,17 @@ function normalizeDTNPayload(raw: string): string {
           <div v-else-if="targetMode === 'files'" class="files-workspace">
             <form class="file-path" @submit.prevent="loadFiles(activeTargetUUID, filePath)">
               <input v-model="filePath" class="sf-mono" placeholder="/" />
-              <button>List</button>
+              <button :disabled="activeFileLoading">{{ activeFileLoading ? 'Listing' : 'List' }}</button>
               <button
                 type="button"
-                :disabled="!activeFileListing?.canGoUp"
+                :disabled="activeFileLoading || !activeFileListing?.canGoUp"
                 @click="loadFiles(activeTargetUUID, activeFileListing?.parentPath || '/')"
               >
                 Up
               </button>
             </form>
             <div class="file-table">
+              <p v-if="activeFileError" class="empty error-text">{{ activeFileError }}</p>
               <button
                 v-for="entry in activeFileListing?.entries || []"
                 :key="entry.path"
@@ -1053,7 +1042,9 @@ function normalizeDTNPayload(raw: string): string {
                 <small>{{ entry.size || '' }}</small>
                 <small>{{ entry.modifiedAt || '' }}</small>
               </button>
-              <p v-if="!(activeFileListing?.entries || []).length" class="empty">No file listing loaded.</p>
+              <p v-if="!activeFileError && !(activeFileListing?.entries || []).length" class="empty">
+                {{ activeFileLoading ? 'Loading remote directory...' : 'No file listing loaded.' }}
+              </p>
             </div>
           </div>
           <div v-else-if="targetMode === 'proxy'" class="proxy-workspace">
@@ -2277,6 +2268,10 @@ select {
   margin: 12px;
   color: var(--ops-faint);
   font-size: 0.82rem;
+}
+
+.error-text {
+  color: var(--ops-bad);
 }
 
 .table-empty {

@@ -105,9 +105,11 @@ func newPortProxyManager(ctxFn func() context.Context, opener streamOpenFunc) *p
 	}
 }
 
-func contextOrBackground(ctx context.Context) context.Context {
-	if ctx != nil {
-		return ctx
+func (m *portProxyManager) lifecycleContext() context.Context {
+	if m != nil && m.ctxFn != nil {
+		if ctx := m.ctxFn(); ctx != nil {
+			return ctx
+		}
 	}
 	return context.Background()
 }
@@ -133,7 +135,7 @@ func (m *portProxyManager) StartForward(ctx context.Context, target, bind, remot
 		return nil, err
 	}
 	actualBind := ln.Addr().String()
-	entryCtx, cancel := context.WithCancel(contextOrBackground(ctx))
+	entryCtx, cancel := context.WithCancel(m.lifecycleContext())
 	entry := &forwardEntry{
 		target:     strings.ToLower(target),
 		bind:       actualBind,
@@ -232,7 +234,7 @@ func (m *portProxyManager) StartBackward(ctx context.Context, target, remotePort
 	if err != nil {
 		return nil, err
 	}
-	entryCtx, cancel := context.WithCancel(contextOrBackground(ctx))
+	entryCtx, cancel := context.WithCancel(m.lifecycleContext())
 	opts := map[string]string{
 		"kind":  kindBackwardProxy,
 		"rport": rport,
