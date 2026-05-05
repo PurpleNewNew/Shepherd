@@ -381,6 +381,7 @@ func (admin *Admin) dispatchGossipRequest() bus.Handler {
 		if !ok {
 			return fmt.Errorf("expected *protocol.GossipRequest, got %T", payload)
 		}
+		admin.markGossipCarrierAlive(header)
 		admin.handleGossipRequest(header, req)
 		return nil
 	}
@@ -392,6 +393,7 @@ func (admin *Admin) dispatchGossipResponse() bus.Handler {
 		if !ok {
 			return fmt.Errorf("expected *protocol.GossipResponse, got %T", payload)
 		}
+		admin.markGossipCarrierAlive(header)
 		admin.handleGossipResponse(resp)
 		return nil
 	}

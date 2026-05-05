@@ -114,6 +114,7 @@ func (core *routerCore) mailboxHandler(name string, enqueue func(context.Context
 		if header == nil {
 			return bus.ErrNoHandler
 		}
+		core.markSenderAlive(header)
 		dropped, err := enqueue(ctx, payload)
 		if err != nil && !errors.Is(err, utils.ErrMailboxClosed) {
 			return err
@@ -185,6 +186,10 @@ func (core *routerCore) dispatchRescueResponse() bus.Handler {
 		resp, ok := payload.(*protocol.RescueResponse)
 		if !ok {
 			return fmt.Errorf("expected *protocol.RescueResponse, got %T", payload)
+		}
+		core.markSenderAlive(header)
+		if resp != nil && resp.RescuerUUID != "" {
+			markTopologyNodeAlive(core.topo, resp.RescuerUUID)
 		}
 		if core.planner != nil {
 			core.planner.HandleRescueResponse(resp)
@@ -358,7 +363,11 @@ func (core *routerCore) dispatchNodeConnInfo() bus.Handler {
 			TlsEnabled:   info.TlsEnabled != 0,
 		}
 		_, err := core.topo.Execute(task)
-		return err
+		if err != nil {
+			return err
+		}
+		markTopologyNodeAlive(core.topo, info.UUID)
+		return nil
 	}
 }
 
@@ -415,6 +424,7 @@ func (core *routerCore) handleFromDownstream(admin *Admin) {
 		if !admin.messageAllowed(header) {
 			continue
 		}
+		core.markSenderAlive(header)
 		if err := core.bus.Dispatch(ctx, header, message); err != nil {
 			switch {
 			case errors.Is(err, bus.ErrNoHandler):

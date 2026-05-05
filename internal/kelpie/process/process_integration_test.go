@@ -217,6 +217,62 @@ func TestDTNAckRefreshesSenderLiveness(t *testing.T) {
 	}
 }
 
+func TestRescueResponseRefreshesSenderLiveness(t *testing.T) {
+	topo := topology.NewTopology()
+	go topo.Run()
+	t.Cleanup(topo.Stop)
+
+	addNode(t, topo, "NODE-ROOT", protocol.ADMIN_UUID, "10.0.0.1", true)
+	addNode(t, topo, "NODE-LEAF", "NODE-ROOT", "10.0.0.2", false)
+	requestTopo(t, topo, &topology.TopoTask{Mode: topology.MARKNODEOFFLINE, UUID: "NODE-LEAF"})
+	if aliveInSnapshot(topo, "NODE-LEAF") {
+		t.Fatalf("expected leaf to start offline")
+	}
+
+	core := &routerCore{topo: topo}
+	handler := core.dispatchRescueResponse()
+	err := handler(context.Background(), &protocol.Header{Sender: "NODE-LEAF"}, &protocol.RescueResponse{
+		TargetUUID:  "NODE-ROOT",
+		RescuerUUID: "NODE-LEAF",
+		Status:      1,
+	})
+	if err != nil {
+		t.Fatalf("dispatch rescue response: %v", err)
+	}
+	if !aliveInSnapshot(topo, "NODE-LEAF") {
+		t.Fatalf("expected rescue response sender to be marked alive")
+	}
+}
+
+func TestNodeConnInfoRefreshesPayloadLiveness(t *testing.T) {
+	topo := topology.NewTopology()
+	go topo.Run()
+	t.Cleanup(topo.Stop)
+
+	addNode(t, topo, "NODE-ROOT", protocol.ADMIN_UUID, "10.0.0.1", true)
+	addNode(t, topo, "NODE-LEAF", "NODE-ROOT", "10.0.0.2", false)
+	requestTopo(t, topo, &topology.TopoTask{Mode: topology.MARKNODEOFFLINE, UUID: "NODE-LEAF"})
+	if aliveInSnapshot(topo, "NODE-LEAF") {
+		t.Fatalf("expected leaf to start offline")
+	}
+
+	core := &routerCore{topo: topo}
+	handler := core.dispatchNodeConnInfo()
+	err := handler(context.Background(), &protocol.Header{Sender: "NODE-ROOT"}, &protocol.NodeConnInfo{
+		UUID:            "NODE-LEAF",
+		DialAddress:     "10.0.0.2:42000",
+		ListenPort:      42000,
+		Transport:       "raw",
+		LastSuccessUnix: time.Now().Unix(),
+	})
+	if err != nil {
+		t.Fatalf("dispatch node conn info: %v", err)
+	}
+	if !aliveInSnapshot(topo, "NODE-LEAF") {
+		t.Fatalf("expected node connection info payload uuid to be marked alive")
+	}
+}
+
 func aliveInSnapshot(topo *topology.Topology, uuid string) bool {
 	if topo == nil || uuid == "" {
 		return false
