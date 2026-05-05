@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"strings"
 	"sync"
 	"time"
@@ -31,22 +32,34 @@ type API struct {
 	ringMu     sync.Mutex
 	eventRing  []kelpie.Event
 	eventRingN int
+
+	streamMu    sync.Mutex
+	streamSeq   uint64
+	interactive map[string]*interactiveStream
 }
 
 const (
-	eventTopic       = "kelpie:event"
-	statusTopic      = "kelpie:status"
-	eventRingCap     = 300
-	defaultDialTime  = 6 * time.Second
-	snapshotTimeout  = 8 * time.Second
+	eventTopic      = "kelpie:event"
+	statusTopic     = "kelpie:status"
+	streamTopic     = "kelpie:stream"
+	eventRingCap    = 300
+	defaultDialTime = 6 * time.Second
+	snapshotTimeout = 8 * time.Second
 )
+
+type interactiveStream struct {
+	handle StreamHandleDTO
+	client uipb.KelpieUIService_ProxyStreamClient
+	cancel context.CancelFunc
+}
 
 // New 创建 API；store 不可为 nil。
 func New(store *config.Store) *API {
 	return &API{
-		store:     store,
-		status:    ConnectionStatus{Phase: PhaseDisconnected},
-		eventRing: make([]kelpie.Event, eventRingCap),
+		store:       store,
+		status:      ConnectionStatus{Phase: PhaseDisconnected},
+		eventRing:   make([]kelpie.Event, eventRingCap),
+		interactive: make(map[string]*interactiveStream),
 	}
 }
 
@@ -234,6 +247,7 @@ func (a *API) Disconnect() error {
 	if client != nil {
 		_ = client.Close()
 	}
+	a.closeAllInteractiveStreams("disconnect")
 	a.emitStatus()
 	return nil
 }
@@ -462,6 +476,191 @@ func (a *API) PruneOffline() (PruneOfflineResult, error) {
 	return PruneOfflineResult{Removed: n}, nil
 }
 
+func (a *API) StartShell(req StartShellRequest) (StreamHandleDTO, error) {
+	client, err := a.mustClient()
+	if err != nil {
+		return StreamHandleDTO{}, err
+	}
+	if strings.TrimSpace(req.Target) == "" {
+		return StreamHandleDTO{}, errors.New("target uuid required")
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), snapshotTimeout)
+	defer cancel()
+	handle, err := client.StartShell(ctx, req.Target, req.Mode, req.ResumeSessionID)
+	if err != nil {
+		return StreamHandleDTO{}, err
+	}
+	return a.openInteractiveStream(client, handle)
+}
+
+func (a *API) StartSocksProxy(req StartSocksProxyRequest) (StreamHandleDTO, error) {
+	client, err := a.mustClient()
+	if err != nil {
+		return StreamHandleDTO{}, err
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), snapshotTimeout)
+	defer cancel()
+	handle, err := client.StartSocksProxy(ctx, req.Target, req.Auth, req.Username, req.Password)
+	if err != nil {
+		return StreamHandleDTO{}, err
+	}
+	return a.openInteractiveStream(client, handle)
+}
+
+func (a *API) StartForwardProxy(req StartForwardProxyRequest) (StartForwardProxyResult, error) {
+	client, err := a.mustClient()
+	if err != nil {
+		return StartForwardProxyResult{}, err
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), snapshotTimeout)
+	defer cancel()
+	resp, err := client.StartForwardProxy(ctx, req.Target, req.LocalBind, req.RemoteAddr)
+	if err != nil {
+		return StartForwardProxyResult{}, err
+	}
+	return StartForwardProxyResult{
+		Handle:     streamHandleFromPB(resp.GetHandle(), ""),
+		ProxyID:    resp.GetProxyId(),
+		Bind:       resp.GetBind(),
+		RemoteAddr: resp.GetRemoteAddr(),
+	}, nil
+}
+
+func (a *API) StopForwardProxy(req StopForwardProxyRequest) (StopForwardProxyResult, error) {
+	client, err := a.mustClient()
+	if err != nil {
+		return StopForwardProxyResult{}, err
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), snapshotTimeout)
+	defer cancel()
+	stopped, err := client.StopForwardProxy(ctx, req.Target, req.ProxyID)
+	if err != nil {
+		return StopForwardProxyResult{}, err
+	}
+	return StopForwardProxyResult{Stopped: stopped}, nil
+}
+
+func (a *API) SendStreamData(req StreamDataRequest) error {
+	st, err := a.getInteractiveStream(req.HandleID)
+	if err != nil {
+		return err
+	}
+	return st.client.Send(&uipb.StreamRequest{
+		SessionId:  st.handle.SessionID,
+		TargetUuid: st.handle.TargetUUID,
+		Data:       []byte(req.Data),
+	})
+}
+
+func (a *API) ResizeStream(req StreamResizeRequest) error {
+	st, err := a.getInteractiveStream(req.HandleID)
+	if err != nil {
+		return err
+	}
+	return st.client.Send(&uipb.StreamRequest{
+		SessionId:  st.handle.SessionID,
+		TargetUuid: st.handle.TargetUUID,
+		Control: &uipb.StreamControl{
+			Kind: uipb.StreamControl_RESIZE,
+			Rows: req.Rows,
+			Cols: req.Cols,
+		},
+	})
+}
+
+func (a *API) CloseInteractiveStream(req CloseInteractiveStreamRequest) error {
+	st, err := a.removeInteractiveStream(req.HandleID)
+	if err != nil {
+		return err
+	}
+	_ = st.client.Send(&uipb.StreamRequest{
+		SessionId:  st.handle.SessionID,
+		TargetUuid: st.handle.TargetUUID,
+		Control: &uipb.StreamControl{
+			Kind: uipb.StreamControl_CLOSE,
+		},
+	})
+	st.cancel()
+	a.emitStreamEvent(StreamEventDTO{
+		HandleID:   st.handle.HandleID,
+		TargetUUID: st.handle.TargetUUID,
+		SessionID:  st.handle.SessionID,
+		Kind:       st.handle.Kind,
+		StreamID:   st.handle.StreamID,
+		Type:       "closed",
+	})
+	return nil
+}
+
+func (a *API) CloseStreamByID(req CloseStreamByIDRequest) error {
+	client, err := a.mustClient()
+	if err != nil {
+		return err
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), snapshotTimeout)
+	defer cancel()
+	return client.CloseStream(ctx, req.StreamID, req.Reason)
+}
+
+func (a *API) StreamDiagnostics() ([]StreamDiagDTO, error) {
+	client, err := a.mustClient()
+	if err != nil {
+		return nil, err
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), snapshotTimeout)
+	defer cancel()
+	diags, err := client.StreamDiagnostics(ctx)
+	if err != nil {
+		return nil, err
+	}
+	out := make([]StreamDiagDTO, 0, len(diags))
+	for _, s := range diags {
+		out = append(out, streamFromPB(s))
+	}
+	return out, nil
+}
+
+func (a *API) StreamPing(req StreamPingRequest) error {
+	client, err := a.mustClient()
+	if err != nil {
+		return err
+	}
+	if req.Count <= 0 {
+		req.Count = 3
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), snapshotTimeout)
+	defer cancel()
+	return client.StreamPing(ctx, req.Target, req.Count, req.PayloadSize)
+}
+
+func (a *API) ListRemoteFiles(req ListRemoteFilesRequest) (RemoteFileListingDTO, error) {
+	client, err := a.mustClient()
+	if err != nil {
+		return RemoteFileListingDTO{}, err
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+	resp, err := client.ListRemoteFiles(ctx, req.Target, req.Path)
+	if err != nil {
+		return RemoteFileListingDTO{}, err
+	}
+	return remoteListingFromPB(resp), nil
+}
+
+func (a *API) CollectRemoteFile(req CollectRemoteFileRequest) (CollectRemoteFileResult, error) {
+	client, err := a.mustClient()
+	if err != nil {
+		return CollectRemoteFileResult{}, err
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	defer cancel()
+	resp, err := client.CollectLootFile(ctx, req.Target, req.RemotePath, req.Tags)
+	if err != nil {
+		return CollectRemoteFileResult{}, err
+	}
+	return CollectRemoteFileResult{Item: lootItemFromPB(resp.GetItem())}, nil
+}
+
 // RecentEvents 供前端在首次进入时拉一段历史（ring buffer，最多 eventRingCap 条）。
 func (a *API) RecentEvents(limit int) []kelpie.Event {
 	a.ringMu.Lock()
@@ -544,6 +743,168 @@ func (a *API) pushEventRing(ev kelpie.Event) {
 	a.eventRingN++
 }
 
+func (a *API) openInteractiveStream(client *kelpie.Client, handle *uipb.ProxyStreamHandle) (StreamHandleDTO, error) {
+	if handle == nil {
+		return StreamHandleDTO{}, errors.New("missing stream handle")
+	}
+	streamCtx, cancel := context.WithCancel(context.Background())
+	stream, err := client.ProxyStream(streamCtx)
+	if err != nil {
+		cancel()
+		return StreamHandleDTO{}, err
+	}
+	dto := streamHandleFromPB(handle, a.nextStreamHandleID())
+	if dto.Status == "" {
+		dto.Status = "opening"
+	}
+	if err := stream.Send(&uipb.StreamRequest{
+		SessionId:  handle.GetSessionId(),
+		TargetUuid: handle.GetTargetUuid(),
+		Options:    handle.GetOptions(),
+	}); err != nil {
+		cancel()
+		return StreamHandleDTO{}, err
+	}
+	st := &interactiveStream{handle: dto, client: stream, cancel: cancel}
+	a.streamMu.Lock()
+	a.interactive[dto.HandleID] = st
+	a.streamMu.Unlock()
+	go a.pumpInteractiveStream(st)
+	return dto, nil
+}
+
+func (a *API) pumpInteractiveStream(st *interactiveStream) {
+	for {
+		resp, err := st.client.Recv()
+		if err != nil {
+			if err != io.EOF {
+				a.emitStreamEvent(StreamEventDTO{
+					HandleID:   st.handle.HandleID,
+					TargetUUID: st.handle.TargetUUID,
+					SessionID:  st.handle.SessionID,
+					Kind:       st.handle.Kind,
+					StreamID:   st.handle.StreamID,
+					Type:       "error",
+					Error:      err.Error(),
+				})
+			}
+			_, _ = a.removeInteractiveStream(st.handle.HandleID)
+			return
+		}
+		ev := StreamEventDTO{
+			HandleID:   st.handle.HandleID,
+			TargetUUID: resp.GetTargetUuid(),
+			SessionID:  resp.GetSessionId(),
+			Kind:       st.handle.Kind,
+			Type:       "data",
+			Data:       string(resp.GetData()),
+		}
+		if ev.TargetUUID == "" {
+			ev.TargetUUID = st.handle.TargetUUID
+		}
+		if ev.SessionID == "" {
+			ev.SessionID = st.handle.SessionID
+		}
+		if ctrl := resp.GetControl(); ctrl != nil {
+			ev.StreamID = ctrl.GetStreamId()
+			switch ctrl.GetKind() {
+			case uipb.StreamControl_OPEN:
+				ev.Type = "open"
+				if ctrl.GetStreamKind() != "" {
+					ev.Kind = ctrl.GetStreamKind()
+				}
+				a.updateInteractiveStreamID(st.handle.HandleID, ctrl.GetStreamId())
+			case uipb.StreamControl_CLOSE:
+				ev.Type = "closed"
+				a.emitStreamEvent(ev)
+				_, _ = a.removeInteractiveStream(st.handle.HandleID)
+				return
+			case uipb.StreamControl_ERROR:
+				ev.Type = "error"
+				ev.Error = ctrl.GetError()
+			default:
+				ev.Type = "control"
+			}
+		} else {
+			ev.StreamID = st.handle.StreamID
+		}
+		a.emitStreamEvent(ev)
+	}
+}
+
+func (a *API) emitStreamEvent(ev StreamEventDTO) {
+	if a.ctx == nil {
+		return
+	}
+	wruntime.EventsEmit(a.ctx, streamTopic, ev)
+}
+
+func (a *API) nextStreamHandleID() string {
+	a.streamMu.Lock()
+	defer a.streamMu.Unlock()
+	a.streamSeq++
+	return fmt.Sprintf("stream-%d", a.streamSeq)
+}
+
+func (a *API) getInteractiveStream(handleID string) (*interactiveStream, error) {
+	handleID = strings.TrimSpace(handleID)
+	if handleID == "" {
+		return nil, errors.New("handle id required")
+	}
+	a.streamMu.Lock()
+	defer a.streamMu.Unlock()
+	st := a.interactive[handleID]
+	if st == nil {
+		return nil, fmt.Errorf("stream handle not found: %s", handleID)
+	}
+	return st, nil
+}
+
+func (a *API) removeInteractiveStream(handleID string) (*interactiveStream, error) {
+	handleID = strings.TrimSpace(handleID)
+	if handleID == "" {
+		return nil, errors.New("handle id required")
+	}
+	a.streamMu.Lock()
+	defer a.streamMu.Unlock()
+	st := a.interactive[handleID]
+	if st == nil {
+		return nil, fmt.Errorf("stream handle not found: %s", handleID)
+	}
+	delete(a.interactive, handleID)
+	return st, nil
+}
+
+func (a *API) updateInteractiveStreamID(handleID string, streamID uint32) {
+	a.streamMu.Lock()
+	defer a.streamMu.Unlock()
+	if st := a.interactive[handleID]; st != nil {
+		st.handle.StreamID = streamID
+		st.handle.Status = "open"
+	}
+}
+
+func (a *API) closeAllInteractiveStreams(reason string) {
+	a.streamMu.Lock()
+	items := make([]*interactiveStream, 0, len(a.interactive))
+	for _, st := range a.interactive {
+		items = append(items, st)
+	}
+	a.interactive = make(map[string]*interactiveStream)
+	a.streamMu.Unlock()
+	for _, st := range items {
+		_ = st.client.Send(&uipb.StreamRequest{
+			SessionId:  st.handle.SessionID,
+			TargetUuid: st.handle.TargetUUID,
+			Control: &uipb.StreamControl{
+				Kind:  uipb.StreamControl_CLOSE,
+				Error: reason,
+			},
+		})
+		st.cancel()
+	}
+}
+
 func nodeFromPB(n *uipb.NodeInfo) NodeSummary {
 	if n == nil {
 		return NodeSummary{}
@@ -617,6 +978,84 @@ func sleepFromPB(p *uipb.SleepProfile) SleepProfileDTO {
 		LastUpdated:  p.GetLastUpdated(),
 		NextWakeAt:   p.GetNextWakeAt(),
 		Status:       p.GetStatus(),
+	}
+}
+
+func streamHandleFromPB(h *uipb.ProxyStreamHandle, handleID string) StreamHandleDTO {
+	if h == nil {
+		return StreamHandleDTO{HandleID: handleID, Status: "missing"}
+	}
+	if strings.TrimSpace(handleID) == "" {
+		handleID = fmt.Sprintf("%s:%s:%s", h.GetKind(), h.GetTargetUuid(), h.GetSessionId())
+	}
+	opts := map[string]string{}
+	for k, v := range h.GetOptions() {
+		opts[k] = v
+	}
+	return StreamHandleDTO{
+		HandleID:   handleID,
+		TargetUUID: h.GetTargetUuid(),
+		SessionID:  h.GetSessionId(),
+		Kind:       h.GetKind(),
+		Options:    opts,
+		Status:     "ready",
+	}
+}
+
+func remoteListingFromPB(resp *uipb.ListRemoteFilesResponse) RemoteFileListingDTO {
+	if resp == nil {
+		return RemoteFileListingDTO{}
+	}
+	out := RemoteFileListingDTO{
+		RequestedPath: resp.GetRequestedPath(),
+		ResolvedPath:  resp.GetResolvedPath(),
+		DisplayPath:   resp.GetDisplayPath(),
+		RootPath:      resp.GetRootPath(),
+		ParentPath:    resp.GetParentPath(),
+		CanGoUp:       resp.GetCanGoUp(),
+		VirtualRoot:   resp.GetVirtualRoot(),
+	}
+	for _, entry := range resp.GetEntries() {
+		if entry == nil {
+			continue
+		}
+		out.Entries = append(out.Entries, RemoteFileEntryDTO{
+			Name:       entry.GetName(),
+			Path:       entry.GetPath(),
+			IsDir:      entry.GetIsDir(),
+			IsDrive:    entry.GetIsDrive(),
+			IsSymlink:  entry.GetIsSymlink(),
+			Size:       entry.GetSize(),
+			Mode:       entry.GetMode(),
+			ModifiedAt: entry.GetModifiedAt(),
+			Hidden:     entry.GetHidden(),
+		})
+	}
+	return out
+}
+
+func lootItemFromPB(item *uipb.LootItem) LootItemDTO {
+	if item == nil {
+		return LootItemDTO{}
+	}
+	meta := map[string]string{}
+	for k, v := range item.GetMetadata() {
+		meta[k] = v
+	}
+	return LootItemDTO{
+		LootID:     item.GetLootId(),
+		TargetUUID: item.GetTargetUuid(),
+		Operator:   item.GetOperator(),
+		Category:   item.GetCategory().String(),
+		Name:       item.GetName(),
+		StorageRef: item.GetStorageRef(),
+		OriginPath: item.GetOriginPath(),
+		Hash:       item.GetHash(),
+		Size:       item.GetSize(),
+		Mime:       item.GetMime(),
+		Metadata:   meta,
+		Tags:       append([]string(nil), item.GetTags()...),
+		CreatedAt:  item.GetCreatedAt(),
 	}
 }
 

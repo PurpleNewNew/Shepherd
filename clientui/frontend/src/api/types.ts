@@ -200,6 +200,143 @@ export interface PruneOfflineResult {
   removed: number;
 }
 
+export interface StreamHandle {
+  handleId: string;
+  targetUuid: string;
+  sessionId: string;
+  kind: string;
+  streamId?: number;
+  options?: Record<string, string>;
+  status: string;
+}
+
+export interface StartShellRequest {
+  target: string;
+  mode?: 'pipe' | 'pty';
+  resumeSessionId?: string;
+}
+
+export interface StartSocksProxyRequest {
+  target: string;
+  auth?: 'none' | 'userpass';
+  username?: string;
+  password?: string;
+}
+
+export interface StartForwardProxyRequest {
+  target: string;
+  localBind: string;
+  remoteAddr: string;
+}
+
+export interface StartForwardProxyResult {
+  handle: StreamHandle;
+  proxyId: string;
+  bind: string;
+  remoteAddr: string;
+}
+
+export interface StopForwardProxyRequest {
+  target: string;
+  proxyId: string;
+}
+
+export interface StopForwardProxyResult {
+  stopped: number;
+}
+
+export interface StreamDataRequest {
+  handleId: string;
+  data: string;
+}
+
+export interface StreamResizeRequest {
+  handleId: string;
+  rows: number;
+  cols: number;
+}
+
+export interface CloseInteractiveStreamRequest {
+  handleId: string;
+  reason?: string;
+}
+
+export interface CloseStreamByIDRequest {
+  streamId: number;
+  reason?: string;
+}
+
+export interface StreamPingRequest {
+  target: string;
+  count: number;
+  payloadSize: number;
+}
+
+export interface StreamEventDTO {
+  handleId: string;
+  targetUuid?: string;
+  sessionId?: string;
+  kind?: string;
+  streamId?: number;
+  type: 'open' | 'data' | 'control' | 'closed' | 'error';
+  data?: string;
+  error?: string;
+}
+
+export interface RemoteFileEntry {
+  name: string;
+  path: string;
+  isDir: boolean;
+  isDrive?: boolean;
+  isSymlink?: boolean;
+  size?: number;
+  mode?: string;
+  modifiedAt?: string;
+  hidden?: boolean;
+}
+
+export interface RemoteFileListing {
+  requestedPath?: string;
+  resolvedPath?: string;
+  displayPath?: string;
+  rootPath?: string;
+  parentPath?: string;
+  canGoUp: boolean;
+  virtualRoot: boolean;
+  entries?: RemoteFileEntry[];
+}
+
+export interface ListRemoteFilesRequest {
+  target: string;
+  path?: string;
+}
+
+export interface CollectRemoteFileRequest {
+  target: string;
+  remotePath: string;
+  tags?: string[];
+}
+
+export interface LootItem {
+  lootId: string;
+  targetUuid?: string;
+  operator?: string;
+  category?: string;
+  name?: string;
+  storageRef?: string;
+  originPath?: string;
+  hash?: string;
+  size?: number;
+  mime?: string;
+  metadata?: Record<string, string>;
+  tags?: string[];
+  createdAt?: string;
+}
+
+export interface CollectRemoteFileResult {
+  item: LootItem;
+}
+
 export interface SupplementalEventDTO {
   seq: number;
   kind: string;

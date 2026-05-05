@@ -11,14 +11,18 @@ const conn = useConnectionStore();
 const topo = useTopologyStore();
 const events = useEventsStore();
 const metrics = useMetricsStore();
+const previewMode = new URLSearchParams(window.location.search).has('preview');
 
 const stage = computed<'connect' | 'main'>(() =>
-  conn.isConnected ? 'main' : 'connect',
+  conn.isConnected || previewMode ? 'main' : 'connect',
 );
 
 onMounted(() => {
-  seedPreviewIfRequested();
-  conn.bootstrap();
+  if (previewMode) {
+    seedPreviewIfRequested();
+  } else {
+    conn.bootstrap();
+  }
 });
 
 onBeforeUnmount(() => {
@@ -30,7 +34,6 @@ onBeforeUnmount(() => {
 
 function seedPreviewIfRequested() {
   if (!(import.meta as any).env?.DEV) return;
-  if (conn.bindingsReady) return;
   if (!new URLSearchParams(window.location.search).has('preview')) return;
 
   conn.phase = 'connected';

@@ -38,6 +38,7 @@ type Client struct {
 	supp         uipb.SupplementalAdminServiceClient
 	sleepAdmin   uipb.SleepAdminServiceClient
 	connectAdmin uipb.ConnectAdminServiceClient
+	proxyAdmin   uipb.ProxyAdminServiceClient
 	pivot        uipb.PivotListenerAdminServiceClient
 	controller   uipb.ControllerListenerAdminServiceClient
 
@@ -95,6 +96,7 @@ func Dial(ctx context.Context, opts ConnectOptions) (*Client, *TOFUVerifier, err
 		supp:         uipb.NewSupplementalAdminServiceClient(conn),
 		sleepAdmin:   uipb.NewSleepAdminServiceClient(conn),
 		connectAdmin: uipb.NewConnectAdminServiceClient(conn),
+		proxyAdmin:   uipb.NewProxyAdminServiceClient(conn),
 		pivot:        uipb.NewPivotListenerAdminServiceClient(conn),
 		controller:   uipb.NewControllerListenerAdminServiceClient(conn),
 	}
@@ -233,6 +235,102 @@ func (c *Client) PruneOffline(ctx context.Context) (int32, error) {
 		return 0, err
 	}
 	return resp.GetRemoved(), nil
+}
+
+func (c *Client) StartShell(ctx context.Context, target, mode, resumeSessionID string) (*uipb.ProxyStreamHandle, error) {
+	reqMode := uipb.ShellMode_SHELL_MODE_PIPE
+	if strings.EqualFold(strings.TrimSpace(mode), "pty") {
+		reqMode = uipb.ShellMode_SHELL_MODE_PTY
+	}
+	resp, err := c.uiClient.StartShell(c.attachAuth(ctx), &uipb.StartShellRequest{
+		TargetUuid:      strings.TrimSpace(target),
+		Mode:            reqMode,
+		ResumeSessionId: strings.TrimSpace(resumeSessionID),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return resp.GetHandle(), nil
+}
+
+func (c *Client) StartSocksProxy(ctx context.Context, target, auth, username, password string) (*uipb.ProxyStreamHandle, error) {
+	reqAuth := uipb.SocksProxyAuth_SOCKS_PROXY_AUTH_NONE
+	if strings.EqualFold(strings.TrimSpace(auth), "userpass") {
+		reqAuth = uipb.SocksProxyAuth_SOCKS_PROXY_AUTH_USERPASS
+	}
+	resp, err := c.uiClient.StartSocksProxy(c.attachAuth(ctx), &uipb.StartSocksProxyRequest{
+		TargetUuid: strings.TrimSpace(target),
+		Auth:       reqAuth,
+		Username:   strings.TrimSpace(username),
+		Password:   password,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return resp.GetHandle(), nil
+}
+
+func (c *Client) ProxyStream(ctx context.Context) (uipb.KelpieUIService_ProxyStreamClient, error) {
+	return c.uiClient.ProxyStream(c.attachAuth(ctx))
+}
+
+func (c *Client) ListRemoteFiles(ctx context.Context, target, path string) (*uipb.ListRemoteFilesResponse, error) {
+	return c.uiClient.ListRemoteFiles(c.attachAuth(ctx), &uipb.ListRemoteFilesRequest{
+		TargetUuid: strings.TrimSpace(target),
+		Path:       path,
+	})
+}
+
+func (c *Client) CollectLootFile(ctx context.Context, target, remotePath string, tags []string) (*uipb.CollectLootFileResponse, error) {
+	return c.uiClient.CollectLootFile(c.attachAuth(ctx), &uipb.CollectLootFileRequest{
+		TargetUuid: strings.TrimSpace(target),
+		RemotePath: strings.TrimSpace(remotePath),
+		Tags:       tags,
+	})
+}
+
+func (c *Client) CloseStream(ctx context.Context, streamID uint32, reason string) error {
+	_, err := c.uiClient.CloseStream(c.attachAuth(ctx), &uipb.CloseStreamRequest{
+		StreamId: streamID,
+		Reason:   strings.TrimSpace(reason),
+	})
+	return err
+}
+
+func (c *Client) StreamDiagnostics(ctx context.Context) ([]*uipb.StreamDiag, error) {
+	resp, err := c.uiClient.StreamDiagnostics(c.attachAuth(ctx), &uipb.StreamDiagnosticsRequest{})
+	if err != nil {
+		return nil, err
+	}
+	return resp.GetStreams(), nil
+}
+
+func (c *Client) StreamPing(ctx context.Context, target string, count, payloadSize int32) error {
+	_, err := c.uiClient.StreamPing(c.attachAuth(ctx), &uipb.StreamPingRequest{
+		TargetUuid:  strings.TrimSpace(target),
+		Count:       count,
+		PayloadSize: payloadSize,
+	})
+	return err
+}
+
+func (c *Client) StartForwardProxy(ctx context.Context, target, localBind, remoteAddr string) (*uipb.StartForwardProxyResponse, error) {
+	return c.proxyAdmin.StartForwardProxy(c.attachAuth(ctx), &uipb.StartForwardProxyRequest{
+		TargetUuid: strings.TrimSpace(target),
+		LocalBind:  strings.TrimSpace(localBind),
+		RemoteAddr: strings.TrimSpace(remoteAddr),
+	})
+}
+
+func (c *Client) StopForwardProxy(ctx context.Context, target, proxyID string) (int32, error) {
+	resp, err := c.proxyAdmin.StopForwardProxy(c.attachAuth(ctx), &uipb.StopForwardProxyRequest{
+		TargetUuid: strings.TrimSpace(target),
+		ProxyId:    strings.TrimSpace(proxyID),
+	})
+	if err != nil {
+		return 0, err
+	}
+	return resp.GetStopped(), nil
 }
 
 // SupplementalStatus 返回补链调度器状态。

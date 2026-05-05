@@ -87,12 +87,12 @@ type EdgeSummary struct {
 
 // Snapshot 是 UI 初始化需要的一整份拓扑。
 type Snapshot struct {
-	Nodes        []NodeSummary         `json:"nodes"`
-	Edges        []EdgeSummary         `json:"edges"`
-	Streams      []StreamDiagDTO       `json:"streams"`
-	Sessions     []SessionSummary      `json:"sessions"`
-	SleepProfiles []SleepProfileDTO    `json:"sleepProfiles,omitempty"`
-	FetchedAt    time.Time             `json:"fetchedAt"`
+	Nodes         []NodeSummary     `json:"nodes"`
+	Edges         []EdgeSummary     `json:"edges"`
+	Streams       []StreamDiagDTO   `json:"streams"`
+	Sessions      []SessionSummary  `json:"sessions"`
+	SleepProfiles []SleepProfileDTO `json:"sleepProfiles,omitempty"`
+	FetchedAt     time.Time         `json:"fetchedAt"`
 }
 
 // StreamDiagDTO 用于节点详情的"活跃流"小视图。
@@ -113,18 +113,18 @@ type StreamDiagDTO struct {
 
 // SessionSummary 会话的 UI 投影。
 type SessionSummary struct {
-	TargetUUID   string  `json:"targetUuid"`
-	Status       string  `json:"status"`
-	Active       bool    `json:"active"`
-	Connected    bool    `json:"connected"`
-	RemoteAddr   string  `json:"remoteAddr,omitempty"`
-	Upstream     string  `json:"upstream,omitempty"`
-	Downstream   string  `json:"downstream,omitempty"`
-	NetworkID    string  `json:"networkId,omitempty"`
-	LastSeen     string  `json:"lastSeen,omitempty"`
-	LastError    string  `json:"lastError,omitempty"`
-	SleepSeconds *int32  `json:"sleepSeconds,omitempty"`
-	WorkSeconds  *int32  `json:"workSeconds,omitempty"`
+	TargetUUID   string   `json:"targetUuid"`
+	Status       string   `json:"status"`
+	Active       bool     `json:"active"`
+	Connected    bool     `json:"connected"`
+	RemoteAddr   string   `json:"remoteAddr,omitempty"`
+	Upstream     string   `json:"upstream,omitempty"`
+	Downstream   string   `json:"downstream,omitempty"`
+	NetworkID    string   `json:"networkId,omitempty"`
+	LastSeen     string   `json:"lastSeen,omitempty"`
+	LastError    string   `json:"lastError,omitempty"`
+	SleepSeconds *int32   `json:"sleepSeconds,omitempty"`
+	WorkSeconds  *int32   `json:"workSeconds,omitempty"`
 	Jitter       *float64 `json:"jitter,omitempty"`
 }
 
@@ -191,12 +191,12 @@ type SupplementalSnapshot struct {
 
 // NodeDetail 节点详情面板的数据。
 type NodeDetail struct {
-	Node           NodeSummary         `json:"node"`
-	Sessions       []SessionSummary    `json:"sessions"`
-	Streams        []StreamDiagDTO     `json:"streams"`
-	PivotListeners []PivotListenerDTO  `json:"pivotListeners,omitempty"`
-	Sleep          *SleepProfileDTO    `json:"sleep,omitempty"`
-	FetchedAt      time.Time           `json:"fetchedAt"`
+	Node           NodeSummary        `json:"node"`
+	Sessions       []SessionSummary   `json:"sessions"`
+	Streams        []StreamDiagDTO    `json:"streams"`
+	PivotListeners []PivotListenerDTO `json:"pivotListeners,omitempty"`
+	Sleep          *SleepProfileDTO   `json:"sleep,omitempty"`
+	FetchedAt      time.Time          `json:"fetchedAt"`
 }
 
 // PivotListenerDTO 节点上的 pivot 监听器。
@@ -210,8 +210,8 @@ type PivotListenerDTO struct {
 
 // EnqueueDTNRequest 答辩控制台发一条 DTN payload 的参数。
 type EnqueueDTNRequest struct {
-	Target     string `json:"target"`
-	Payload    string `json:"payload"`
+	Target  string `json:"target"`
+	Payload string `json:"payload"`
 	// Priority ∈ {"low","normal","high"}，默认 normal。
 	Priority   string `json:"priority"`
 	TTLSeconds int64  `json:"ttlSeconds"`
@@ -219,7 +219,7 @@ type EnqueueDTNRequest struct {
 
 // EnqueueDTNResult 返回 DTN 入队结果。
 type EnqueueDTNResult struct {
-	BundleID  string    `json:"bundleId"`
+	BundleID   string    `json:"bundleId"`
 	EnqueuedAt time.Time `json:"enqueuedAt"`
 }
 
@@ -235,6 +235,143 @@ type UpdateSleepRequest struct {
 // PruneOfflineResult 返回清理结果。
 type PruneOfflineResult struct {
 	Removed int32 `json:"removed"`
+}
+
+type StreamHandleDTO struct {
+	HandleID   string            `json:"handleId"`
+	TargetUUID string            `json:"targetUuid"`
+	SessionID  string            `json:"sessionId"`
+	Kind       string            `json:"kind"`
+	StreamID   uint32            `json:"streamId,omitempty"`
+	Options    map[string]string `json:"options,omitempty"`
+	Status     string            `json:"status"`
+}
+
+type StartShellRequest struct {
+	Target          string `json:"target"`
+	Mode            string `json:"mode,omitempty"`
+	ResumeSessionID string `json:"resumeSessionId,omitempty"`
+}
+
+type StartSocksProxyRequest struct {
+	Target   string `json:"target"`
+	Auth     string `json:"auth,omitempty"`
+	Username string `json:"username,omitempty"`
+	Password string `json:"password,omitempty"`
+}
+
+type StartForwardProxyRequest struct {
+	Target     string `json:"target"`
+	LocalBind  string `json:"localBind"`
+	RemoteAddr string `json:"remoteAddr"`
+}
+
+type StartForwardProxyResult struct {
+	Handle     StreamHandleDTO `json:"handle"`
+	ProxyID    string          `json:"proxyId"`
+	Bind       string          `json:"bind"`
+	RemoteAddr string          `json:"remoteAddr"`
+}
+
+type StopForwardProxyRequest struct {
+	Target  string `json:"target"`
+	ProxyID string `json:"proxyId"`
+}
+
+type StopForwardProxyResult struct {
+	Stopped int32 `json:"stopped"`
+}
+
+type StreamDataRequest struct {
+	HandleID string `json:"handleId"`
+	Data     string `json:"data"`
+}
+
+type StreamResizeRequest struct {
+	HandleID string `json:"handleId"`
+	Rows     uint32 `json:"rows"`
+	Cols     uint32 `json:"cols"`
+}
+
+type CloseInteractiveStreamRequest struct {
+	HandleID string `json:"handleId"`
+	Reason   string `json:"reason,omitempty"`
+}
+
+type CloseStreamByIDRequest struct {
+	StreamID uint32 `json:"streamId"`
+	Reason   string `json:"reason,omitempty"`
+}
+
+type StreamPingRequest struct {
+	Target      string `json:"target"`
+	Count       int32  `json:"count"`
+	PayloadSize int32  `json:"payloadSize"`
+}
+
+type StreamEventDTO struct {
+	HandleID   string `json:"handleId"`
+	TargetUUID string `json:"targetUuid,omitempty"`
+	SessionID  string `json:"sessionId,omitempty"`
+	Kind       string `json:"kind,omitempty"`
+	StreamID   uint32 `json:"streamId,omitempty"`
+	Type       string `json:"type"`
+	Data       string `json:"data,omitempty"`
+	Error      string `json:"error,omitempty"`
+}
+
+type RemoteFileEntryDTO struct {
+	Name       string `json:"name"`
+	Path       string `json:"path"`
+	IsDir      bool   `json:"isDir"`
+	IsDrive    bool   `json:"isDrive,omitempty"`
+	IsSymlink  bool   `json:"isSymlink,omitempty"`
+	Size       uint64 `json:"size,omitempty"`
+	Mode       string `json:"mode,omitempty"`
+	ModifiedAt string `json:"modifiedAt,omitempty"`
+	Hidden     bool   `json:"hidden,omitempty"`
+}
+
+type RemoteFileListingDTO struct {
+	RequestedPath string               `json:"requestedPath,omitempty"`
+	ResolvedPath  string               `json:"resolvedPath,omitempty"`
+	DisplayPath   string               `json:"displayPath,omitempty"`
+	RootPath      string               `json:"rootPath,omitempty"`
+	ParentPath    string               `json:"parentPath,omitempty"`
+	CanGoUp       bool                 `json:"canGoUp"`
+	VirtualRoot   bool                 `json:"virtualRoot"`
+	Entries       []RemoteFileEntryDTO `json:"entries,omitempty"`
+}
+
+type ListRemoteFilesRequest struct {
+	Target string `json:"target"`
+	Path   string `json:"path,omitempty"`
+}
+
+type CollectRemoteFileRequest struct {
+	Target     string   `json:"target"`
+	RemotePath string   `json:"remotePath"`
+	Tags       []string `json:"tags,omitempty"`
+}
+
+type LootItemDTO struct {
+	LootID     string            `json:"lootId"`
+	TargetUUID string            `json:"targetUuid,omitempty"`
+	Operator   string            `json:"operator,omitempty"`
+	Category   string            `json:"category,omitempty"`
+	Name       string            `json:"name,omitempty"`
+	StorageRef string            `json:"storageRef,omitempty"`
+	OriginPath string            `json:"originPath,omitempty"`
+	Hash       string            `json:"hash,omitempty"`
+	Size       uint64            `json:"size,omitempty"`
+	Mime       string            `json:"mime,omitempty"`
+	Metadata   map[string]string `json:"metadata,omitempty"`
+	Tags       []string          `json:"tags,omitempty"`
+	CreatedAt  string            `json:"createdAt,omitempty"`
+}
+
+type CollectRemoteFileResult struct {
+	Item LootItemDTO `json:"item"`
 }
 
 // SupplementalEventDTO 补链事件的简单投影。

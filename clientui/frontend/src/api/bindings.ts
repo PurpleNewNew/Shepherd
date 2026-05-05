@@ -14,6 +14,24 @@ import type {
   EnqueueDTNResult,
   UpdateSleepRequest,
   PruneOfflineResult,
+  StartShellRequest,
+  StreamHandle,
+  StartSocksProxyRequest,
+  StartForwardProxyRequest,
+  StartForwardProxyResult,
+  StopForwardProxyRequest,
+  StopForwardProxyResult,
+  StreamDataRequest,
+  StreamResizeRequest,
+  CloseInteractiveStreamRequest,
+  CloseStreamByIDRequest,
+  StreamPingRequest,
+  StreamDiag,
+  ListRemoteFilesRequest,
+  RemoteFileListing,
+  CollectRemoteFileRequest,
+  CollectRemoteFileResult,
+  StreamEventDTO,
   SupplementalEventDTO,
   TimelineEvent,
 } from './types';
@@ -92,6 +110,44 @@ export const updateSleep = (req: UpdateSleepRequest) =>
 
 export const pruneOffline = () => call<PruneOfflineResult>('PruneOffline');
 
+/* ---------- 目标交互能力 ---------- */
+
+export const startShell = (req: StartShellRequest) =>
+  call<StreamHandle>('StartShell', req);
+
+export const startSocksProxy = (req: StartSocksProxyRequest) =>
+  call<StreamHandle>('StartSocksProxy', req);
+
+export const startForwardProxy = (req: StartForwardProxyRequest) =>
+  call<StartForwardProxyResult>('StartForwardProxy', req);
+
+export const stopForwardProxy = (req: StopForwardProxyRequest) =>
+  call<StopForwardProxyResult>('StopForwardProxy', req);
+
+export const sendStreamData = (req: StreamDataRequest) =>
+  call<void>('SendStreamData', req);
+
+export const resizeStream = (req: StreamResizeRequest) =>
+  call<void>('ResizeStream', req);
+
+export const closeInteractiveStream = (req: CloseInteractiveStreamRequest) =>
+  call<void>('CloseInteractiveStream', req);
+
+export const closeStreamByID = (req: CloseStreamByIDRequest) =>
+  call<void>('CloseStreamByID', req);
+
+export const streamDiagnostics = () =>
+  call<StreamDiag[]>('StreamDiagnostics');
+
+export const streamPing = (req: StreamPingRequest) =>
+  call<void>('StreamPing', req);
+
+export const listRemoteFiles = (req: ListRemoteFilesRequest) =>
+  call<RemoteFileListing>('ListRemoteFiles', req);
+
+export const collectRemoteFile = (req: CollectRemoteFileRequest) =>
+  call<CollectRemoteFileResult>('CollectRemoteFile', req);
+
 /* ---------- 事件订阅（Wails runtime） ---------- */
 
 type EventsRuntime = {
@@ -118,4 +174,10 @@ export function onConnectionStatus(
   const rt = eventsRuntime();
   if (!rt) return () => undefined;
   return rt.EventsOn('kelpie:status', (raw) => cb(raw as ConnectionStatus));
+}
+
+export function onStreamEvent(cb: (ev: StreamEventDTO) => void): () => void {
+  const rt = eventsRuntime();
+  if (!rt) return () => undefined;
+  return rt.EventsOn('kelpie:stream', (raw) => cb(raw as StreamEventDTO));
 }

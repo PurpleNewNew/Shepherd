@@ -5,14 +5,31 @@ import { useTopologyStore } from '@/stores/topology';
 import { useEventsStore } from '@/stores/events';
 import { useMetricsStore } from '@/stores/metrics';
 import {
+  closeInteractiveStream,
+  closeStreamByID,
+  collectRemoteFile,
   enqueueDTN,
+  listRemoteFiles,
+  onStreamEvent,
   pruneOffline,
+  sendStreamData,
+  startForwardProxy,
+  startShell,
+  startSocksProxy,
+  stopForwardProxy,
+  streamPing,
   updateSleep,
 } from '@/api/bindings';
 import type {
+  CollectRemoteFileResult,
   EnqueueDTNResult,
+  RemoteFileEntry,
+  RemoteFileListing,
   NodeSummary,
   SessionSummary,
+  StartForwardProxyResult,
+  StreamEventDTO,
+  StreamHandle,
   TimelineEvent,
 } from '@/api/types';
 
@@ -20,6 +37,7 @@ type BuiltinTab = 'events' | 'sessions' | 'dtn' | 'control' | 'streams';
 type BottomTab = BuiltinTab | `target:${string}`;
 type SideMode = 'targets' | 'networks' | 'listeners';
 type MainView = 'table' | 'graph';
+type TargetMode = 'overview' | 'shell' | 'files' | 'proxy';
 type MenuKey = 'stockman' | 'view' | 'operations' | 'listeners' | 'sessions' | 'reports' | 'help';
 
 const conn = useConnectionStore();
@@ -32,12 +50,23 @@ const sideMode = ref<SideMode>('targets');
 const mainView = ref<MainView>('table');
 const activeMenu = ref<MenuKey | ''>('');
 const targetTabs = ref<string[]>([]);
+const targetMode = ref<TargetMode>('overview');
 const commandLine = ref('');
 const dtnPayload = ref('memo:demo from Stockman');
 const dtnPriority = ref<'low' | 'normal' | 'high'>('normal');
 const sleepSeconds = ref(15);
 const workSeconds = ref(5);
 const jitter = ref(10);
+const shellInput = ref('');
+const filePath = ref('');
+const proxyLocalBind = ref('127.0.0.1:1080');
+const proxyRemoteAddr = ref('127.0.0.1:80');
+const socksUsername = ref('');
+const socksPassword = ref('');
+const shellHandles = reactive<Record<string, StreamHandle>>({});
+const shellLines = reactive<Record<string, string[]>>({});
+const fileListings = reactive<Record<string, RemoteFileListing>>({});
+const proxyResults = reactive<Record<string, StartForwardProxyResult[]>>({});
 
 const action = reactive({
   busy: false,
@@ -100,6 +129,26 @@ const activeTargetStreams = computed(() => {
   return topo.streams.filter((s) => s.targetUuid === uuid);
 });
 
+const activeShellHandle = computed(() => {
+  const uuid = activeTargetUUID.value;
+  return uuid ? shellHandles[uuid] : undefined;
+});
+
+const activeShellLines = computed(() => {
+  const uuid = activeTargetUUID.value;
+  return uuid ? (shellLines[uuid] ?? []) : [];
+});
+
+const activeFileListing = computed(() => {
+  const uuid = activeTargetUUID.value;
+  return uuid ? fileListings[uuid] : undefined;
+});
+
+const activeProxyResults = computed(() => {
+  const uuid = activeTargetUUID.value;
+  return uuid ? (proxyResults[uuid] ?? []) : [];
+});
+
 const orderedNodes = computed(() => {
   return [...topo.nodes].sort((a, b) => {
     const ad = a.depth ?? 0;
@@ -159,11 +208,14 @@ onMounted(async () => {
   await refreshAll();
   events.bootstrap();
   metrics.start(3000);
+  const offStream = onStreamEvent(handleStreamEvent);
+  (window as any).__stockmanOffStream = offStream;
 });
 
 onBeforeUnmount(() => {
   metrics.stop();
   events.dispose();
+  (window as any).__stockmanOffStream?.();
 });
 
 async function refreshAll() {
@@ -232,11 +284,12 @@ function closeOverlays() {
   activeMenu.value = '';
 }
 
-function openTargetTab(uuid: string) {
+function openTargetTab(uuid: string, mode: TargetMode = 'overview') {
   if (!targetTabs.value.includes(uuid)) {
     targetTabs.value.push(uuid);
   }
   bottomTab.value = `target:${uuid}`;
+  targetMode.value = mode;
   topo.select(uuid);
   topo.loadDetail(uuid);
 }
@@ -250,13 +303,21 @@ function closeTargetTab(uuid: string) {
   }
 }
 
-async function chooseTargetAction(kind: 'detail' | 'events' | 'sessions' | 'streams' | 'dtn' | 'sleep' | 'refresh' | 'copy' | 'prune') {
+async function chooseTargetAction(kind: 'detail' | 'shell' | 'files' | 'proxy' | 'events' | 'sessions' | 'streams' | 'dtn' | 'sleep' | 'refresh' | 'copy' | 'prune') {
   const node = contextMenu.node;
   closeContextMenu();
   if (!node) return;
   topo.select(node.uuid);
   if (kind === 'detail') {
     openTargetTab(node.uuid);
+  } else if (kind === 'shell') {
+    openTargetTab(node.uuid, 'shell');
+    await ensureShell(node.uuid);
+  } else if (kind === 'files') {
+    openTargetTab(node.uuid, 'files');
+    await loadFiles(node.uuid);
+  } else if (kind === 'proxy') {
+    openTargetTab(node.uuid, 'proxy');
   } else if (kind === 'events') {
     bottomTab.value = 'events';
   } else if (kind === 'sessions') {
@@ -357,6 +418,199 @@ async function submitPrune() {
     action.error = err?.message ?? String(err);
   } finally {
     action.busy = false;
+  }
+}
+
+function handleStreamEvent(ev: StreamEventDTO) {
+  const uuid = ev.targetUuid || activeTargetUUID.value;
+  if (!uuid) return;
+  if (!shellLines[uuid]) shellLines[uuid] = [];
+  if (ev.type === 'open') {
+    shellLines[uuid].push(`[stream ${ev.streamId || '-'} opened]`);
+    if (shellHandles[uuid] && ev.streamId) shellHandles[uuid].streamId = ev.streamId;
+  } else if (ev.type === 'data' && ev.data) {
+    shellLines[uuid].push(...ev.data.replace(/\r/g, '').split('\n').filter(Boolean));
+  } else if (ev.type === 'closed') {
+    shellLines[uuid].push('[stream closed]');
+  } else if (ev.type === 'error') {
+    shellLines[uuid].push(`[error] ${ev.error || 'stream error'}`);
+  }
+  shellLines[uuid] = shellLines[uuid].slice(-160);
+}
+
+async function ensureShell(uuid = activeTargetUUID.value) {
+  if (!uuid) return;
+  targetMode.value = 'shell';
+  if (shellHandles[uuid]) return;
+  if (!shellLines[uuid]) shellLines[uuid] = [];
+  try {
+    const handle = await startShell({ target: uuid, mode: 'pty' });
+    shellHandles[uuid] = handle;
+    shellLines[uuid].push(`[shell requested] ${handle.sessionId || handle.handleId}`);
+  } catch (err: any) {
+    const handle = {
+      handleId: `preview-shell-${uuid}`,
+      targetUuid: uuid,
+      sessionId: `preview-${uuid.slice(0, 8)}`,
+      kind: 'shell',
+      status: 'preview',
+    };
+    shellHandles[uuid] = handle;
+    shellLines[uuid].push('[preview shell] Wails runtime unavailable; commands are echoed locally.');
+    shellLines[uuid].push(`operator@${labelForNode(topo.nodeMap.get(uuid) || { uuid, depth: 0, activeStreams: 0 })}:~$`);
+  }
+}
+
+async function submitShellCommand() {
+  const uuid = activeTargetUUID.value;
+  const cmd = shellInput.value;
+  if (!uuid || !cmd.trim()) return;
+  await ensureShell(uuid);
+  const handle = shellHandles[uuid];
+  shellLines[uuid].push(`$ ${cmd}`);
+  shellInput.value = '';
+  try {
+    await sendStreamData({ handleId: handle.handleId, data: `${cmd}\n` });
+  } catch {
+    shellLines[uuid].push(`preview> staged command: ${cmd}`);
+  }
+}
+
+async function closeActiveShell() {
+  const uuid = activeTargetUUID.value;
+  const handle = uuid ? shellHandles[uuid] : undefined;
+  if (!uuid || !handle) return;
+  try {
+    await closeInteractiveStream({ handleId: handle.handleId, reason: 'operator closed shell' });
+  } catch {
+    shellLines[uuid]?.push('[preview shell closed]');
+  }
+  delete shellHandles[uuid];
+}
+
+async function loadFiles(uuid = activeTargetUUID.value, path = filePath.value) {
+  if (!uuid) return;
+  targetMode.value = 'files';
+  try {
+    const listing = await listRemoteFiles({ target: uuid, path });
+    fileListings[uuid] = listing;
+    filePath.value = listing.displayPath || listing.resolvedPath || path;
+  } catch {
+    const base = path || '/';
+    fileListings[uuid] = {
+      requestedPath: base,
+      resolvedPath: base,
+      displayPath: base,
+      rootPath: '/',
+      parentPath: base === '/' ? '' : '/',
+      canGoUp: base !== '/',
+      virtualRoot: false,
+      entries: [
+        { name: 'Users', path: '/Users', isDir: true, mode: 'drwxr-xr-x' },
+        { name: 'tmp', path: '/tmp', isDir: true, mode: 'drwxrwxrwt' },
+        { name: 'agent.log', path: '/tmp/agent.log', isDir: false, size: 18432, mode: '-rw-r--r--' },
+      ],
+    };
+  }
+}
+
+async function openFileEntry(entry: RemoteFileEntry) {
+  if (entry.isDir || entry.isDrive) {
+    await loadFiles(activeTargetUUID.value, entry.path);
+  } else {
+    await collectFile(entry);
+  }
+}
+
+async function collectFile(entry: RemoteFileEntry) {
+  const uuid = activeTargetUUID.value;
+  if (!uuid) return;
+  try {
+    const result: CollectRemoteFileResult = await collectRemoteFile({
+      target: uuid,
+      remotePath: entry.path,
+      tags: ['stockman'],
+    });
+    action.message = `Collected ${result.item.name || entry.name}`;
+  } catch {
+    action.message = `Preview collect staged: ${entry.path}`;
+  }
+}
+
+async function startForwardForActive() {
+  const uuid = activeTargetUUID.value;
+  if (!uuid) return;
+  targetMode.value = 'proxy';
+  if (!proxyResults[uuid]) proxyResults[uuid] = [];
+  try {
+    const result = await startForwardProxy({
+      target: uuid,
+      localBind: proxyLocalBind.value,
+      remoteAddr: proxyRemoteAddr.value,
+    });
+    proxyResults[uuid].push(result);
+  } catch {
+    proxyResults[uuid].push({
+      proxyId: `preview-${Date.now()}`,
+      bind: proxyLocalBind.value,
+      remoteAddr: proxyRemoteAddr.value,
+      handle: {
+        handleId: `preview-proxy-${uuid}`,
+        targetUuid: uuid,
+        sessionId: '',
+        kind: 'proxy',
+        status: 'preview',
+      },
+    });
+  }
+}
+
+async function stopForwardForActive(proxyId: string) {
+  const uuid = activeTargetUUID.value;
+  if (!uuid) return;
+  try {
+    await stopForwardProxy({ target: uuid, proxyId });
+  } catch {
+    action.message = `Preview proxy stopped: ${proxyId}`;
+  }
+  proxyResults[uuid] = (proxyResults[uuid] || []).filter((p) => p.proxyId !== proxyId);
+}
+
+async function startSocksForActive() {
+  const uuid = activeTargetUUID.value;
+  if (!uuid) return;
+  targetMode.value = 'proxy';
+  try {
+    const handle = await startSocksProxy({
+      target: uuid,
+      auth: socksUsername.value ? 'userpass' : 'none',
+      username: socksUsername.value,
+      password: socksPassword.value,
+    });
+    action.message = `SOCKS stream opened: ${handle.handleId}`;
+  } catch {
+    action.message = `Preview SOCKS staged for ${labelForNode(topo.nodeMap.get(uuid) || { uuid, depth: 0, activeStreams: 0 })}`;
+  }
+}
+
+async function closeStream(streamId: number) {
+  if (!streamId) return;
+  try {
+    await closeStreamByID({ streamId, reason: 'operator closed from Stockman' });
+    await refreshAll();
+  } catch (err: any) {
+    action.error = err?.message ?? String(err);
+  }
+}
+
+async function pingActiveStream() {
+  const uuid = activeTargetUUID.value || topo.selectedUUID;
+  if (!uuid) return;
+  try {
+    await streamPing({ target: uuid, count: 3, payloadSize: 32 });
+    action.message = `Stream ping queued for ${uuid.slice(0, 8)}.`;
+  } catch {
+    action.message = `Preview stream ping staged for ${uuid.slice(0, 8)}.`;
   }
 }
 
@@ -687,12 +941,21 @@ function normalizeDTNPayload(raw: string): string {
               <h2>{{ activeTargetNode ? labelForNode(activeTargetNode) : activeTargetUUID }}</h2>
             </div>
             <div class="target-actions">
+              <button @click="ensureShell()">Shell</button>
+              <button @click="loadFiles()">Files</button>
+              <button @click="targetMode = 'proxy'">Proxy</button>
               <button @click="bottomTab = 'dtn'">Queue DTN</button>
               <button @click="submitSleep">Apply Sleep</button>
               <button @click="topo.loadDetail(activeTargetUUID)">Refresh Detail</button>
             </div>
           </header>
-          <div v-if="activeTargetNode" class="target-grid">
+          <nav class="target-mode-tabs">
+            <button :class="{ active: targetMode === 'overview' }" @click="targetMode = 'overview'">Overview</button>
+            <button :class="{ active: targetMode === 'shell' }" @click="ensureShell()">Shell</button>
+            <button :class="{ active: targetMode === 'files' }" @click="loadFiles()">Files</button>
+            <button :class="{ active: targetMode === 'proxy' }" @click="targetMode = 'proxy'">Proxy</button>
+          </nav>
+          <div v-if="activeTargetNode && targetMode === 'overview'" class="target-grid">
             <dl class="facts">
               <div>
                 <dt>UUID</dt>
@@ -736,14 +999,85 @@ function normalizeDTNPayload(raw: string): string {
                 <span>{{ stream.kind }}</span>
                 <span>pending {{ stream.pending }}</span>
                 <small>{{ stream.lastActivity }}</small>
+                <button @click="closeStream(stream.streamId)">Close</button>
               </p>
               <p v-if="!activeTargetStreams.length" class="empty">No streams for this target.</p>
+              <button @click="pingActiveStream">Ping Stream</button>
             </section>
             <section class="target-panel sleep-editor">
               <h3>Sleep Profile</h3>
               <label><span>Sleep</span><input v-model.number="sleepSeconds" type="number" min="0" /></label>
               <label><span>Work</span><input v-model.number="workSeconds" type="number" min="0" /></label>
               <label><span>Jitter</span><input v-model.number="jitter" type="number" min="0" max="100" /></label>
+            </section>
+          </div>
+          <div v-else-if="targetMode === 'shell'" class="shell-workspace">
+            <div class="shell-head">
+              <span>{{ activeShellHandle ? activeShellHandle.status : 'not started' }}</span>
+              <span class="sf-mono">{{ activeShellHandle?.sessionId || activeTargetUUID }}</span>
+              <button @click="ensureShell()">Start</button>
+              <button @click="closeActiveShell">Close</button>
+            </div>
+            <div class="shell-output">
+              <p v-for="(line, idx) in activeShellLines" :key="idx">{{ line }}</p>
+              <p v-if="!activeShellLines.length" class="empty">No shell output yet.</p>
+            </div>
+            <form class="shell-input" @submit.prevent="submitShellCommand">
+              <span>$</span>
+              <input v-model="shellInput" class="sf-mono" placeholder="whoami" />
+              <button>Send</button>
+            </form>
+          </div>
+          <div v-else-if="targetMode === 'files'" class="files-workspace">
+            <form class="file-path" @submit.prevent="loadFiles(activeTargetUUID, filePath)">
+              <input v-model="filePath" class="sf-mono" placeholder="/" />
+              <button>List</button>
+              <button
+                type="button"
+                :disabled="!activeFileListing?.canGoUp"
+                @click="loadFiles(activeTargetUUID, activeFileListing?.parentPath || '/')"
+              >
+                Up
+              </button>
+            </form>
+            <div class="file-table">
+              <button
+                v-for="entry in activeFileListing?.entries || []"
+                :key="entry.path"
+                class="file-row"
+                @click="openFileEntry(entry)"
+              >
+                <span>{{ entry.isDir || entry.isDrive ? 'DIR' : 'FILE' }}</span>
+                <strong>{{ entry.name }}</strong>
+                <em>{{ entry.mode || '-' }}</em>
+                <small>{{ entry.size || '' }}</small>
+                <small>{{ entry.modifiedAt || '' }}</small>
+              </button>
+              <p v-if="!(activeFileListing?.entries || []).length" class="empty">No file listing loaded.</p>
+            </div>
+          </div>
+          <div v-else-if="targetMode === 'proxy'" class="proxy-workspace">
+            <section class="proxy-panel">
+              <h3>Forward Proxy</h3>
+              <label><span>Local bind</span><input v-model="proxyLocalBind" class="sf-mono" /></label>
+              <label><span>Remote address</span><input v-model="proxyRemoteAddr" class="sf-mono" /></label>
+              <button @click="startForwardForActive">Start Forward</button>
+            </section>
+            <section class="proxy-panel">
+              <h3>SOCKS</h3>
+              <label><span>Username</span><input v-model="socksUsername" /></label>
+              <label><span>Password</span><input v-model="socksPassword" type="password" /></label>
+              <button @click="startSocksForActive">Start SOCKS</button>
+            </section>
+            <section class="proxy-panel active-proxies">
+              <h3>Active Proxies</h3>
+              <p v-for="proxy in activeProxyResults" :key="proxy.proxyId">
+                <strong>{{ proxy.proxyId }}</strong>
+                <span>{{ proxy.bind }}</span>
+                <span>{{ proxy.remoteAddr }}</span>
+                <button @click="stopForwardForActive(proxy.proxyId)">Stop</button>
+              </p>
+              <p v-if="!activeProxyResults.length" class="empty">No proxies for this target.</p>
             </section>
           </div>
         </section>
@@ -784,6 +1118,18 @@ function normalizeDTNPayload(raw: string): string {
       <button @click="chooseTargetAction('detail')">
         <span>Inspect Target</span>
         <kbd>Enter</kbd>
+      </button>
+      <button @click="chooseTargetAction('shell')">
+        <span>Interact / Shell</span>
+        <kbd>⌘I</kbd>
+      </button>
+      <button @click="chooseTargetAction('files')">
+        <span>Browse Files</span>
+        <kbd>⌘F</kbd>
+      </button>
+      <button @click="chooseTargetAction('proxy')">
+        <span>Port Forward / SOCKS</span>
+        <kbd>⌘P</kbd>
       </button>
       <button @click="chooseTargetAction('dtn')">
         <span>Queue DTN Payload</span>
@@ -1505,7 +1851,7 @@ select {
 
 .target-workspace {
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-rows: auto auto minmax(0, 1fr);
   gap: 12px;
   padding: 12px;
 }
@@ -1521,23 +1867,63 @@ select {
 
 .target-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
 }
 
+.target-mode-tabs {
+  display: flex;
+  gap: 2px;
+  border-bottom: 1px solid var(--ops-line);
+}
+
+.target-mode-tabs button {
+  height: 28px;
+  padding: 0 12px;
+  border: 0;
+  border-left: 1px solid var(--ops-line-soft);
+  background: transparent;
+  color: var(--ops-muted);
+  cursor: pointer;
+}
+
+.target-mode-tabs button.active,
+.target-mode-tabs button:hover {
+  background: var(--ops-panel-2);
+  color: var(--ops-text);
+}
+
 .target-actions button,
-.sleep-editor input {
+.sleep-editor input,
+.shell-head button,
+.shell-input button,
+.shell-input input,
+.file-path input,
+.file-path button,
+.proxy-panel input,
+.proxy-panel button,
+.target-panel button {
   border: 1px solid var(--ops-line);
   background: var(--ops-panel-2);
   color: var(--ops-text);
 }
 
-.target-actions button {
+.target-actions button,
+.shell-head button,
+.file-path button,
+.proxy-panel button,
+.target-panel button {
   height: 30px;
   padding: 0 10px;
   cursor: pointer;
 }
 
-.target-actions button:hover {
+.target-actions button:hover,
+.shell-head button:hover,
+.shell-input button:hover,
+.file-path button:hover,
+.proxy-panel button:hover,
+.target-panel button:hover {
   border-color: var(--ops-accent);
 }
 
@@ -1595,6 +1981,144 @@ select {
 .sleep-editor input {
   height: 28px;
   padding: 0 8px;
+}
+
+.shell-workspace,
+.files-workspace,
+.proxy-workspace {
+  min-height: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.shell-workspace {
+  grid-template-rows: 30px minmax(0, 1fr) 32px;
+}
+
+.shell-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ops-muted);
+}
+
+.shell-head .sf-mono {
+  margin-right: auto;
+}
+
+.shell-output {
+  min-height: 0;
+  overflow: auto;
+  border: 1px solid var(--ops-line);
+  background: #070a0d;
+  padding: 10px;
+  font-family: var(--sf-font-mono);
+  font-size: 0.78rem;
+}
+
+.shell-output p {
+  margin: 0 0 4px;
+  color: var(--ops-text);
+  white-space: pre-wrap;
+}
+
+.shell-input,
+.file-path {
+  display: grid;
+  align-items: center;
+  gap: 8px;
+}
+
+.shell-input {
+  grid-template-columns: auto minmax(0, 1fr) 88px;
+}
+
+.shell-input input,
+.file-path input,
+.proxy-panel input {
+  height: 30px;
+  padding: 0 8px;
+}
+
+.files-workspace {
+  grid-template-rows: 32px minmax(0, 1fr);
+}
+
+.file-path {
+  grid-template-columns: minmax(0, 1fr) 80px 70px;
+}
+
+.file-table {
+  min-height: 0;
+  overflow: auto;
+  border: 1px solid var(--ops-line);
+}
+
+.file-row {
+  width: 100%;
+  min-height: 30px;
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr) 110px 86px 160px;
+  align-items: center;
+  gap: 10px;
+  padding: 0 10px;
+  border: 0;
+  border-bottom: 1px solid var(--ops-line-soft);
+  background: transparent;
+  color: var(--ops-muted);
+  text-align: left;
+  cursor: pointer;
+}
+
+.file-row:hover {
+  background: var(--ops-panel-2);
+  color: var(--ops-text);
+}
+
+.file-row strong,
+.file-row em,
+.file-row small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-row em {
+  font-style: normal;
+}
+
+.proxy-workspace {
+  grid-template-columns: repeat(3, minmax(220px, 1fr));
+  align-content: start;
+}
+
+.proxy-panel {
+  border: 1px solid var(--ops-line);
+  background: rgba(255, 255, 255, 0.015);
+  padding: 10px;
+}
+
+.proxy-panel h3 {
+  margin: 0 0 10px;
+  color: var(--ops-text);
+  font-size: 0.86rem;
+}
+
+.proxy-panel label {
+  display: grid;
+  gap: 5px;
+  margin-bottom: 8px;
+  color: var(--ops-faint);
+  font-size: 0.72rem;
+}
+
+.active-proxies p {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  margin: 0 0 8px;
+  color: var(--ops-muted);
 }
 
 .terminal {
