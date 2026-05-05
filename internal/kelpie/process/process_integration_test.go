@@ -122,3 +122,55 @@ func TestApplyGossipUpdateReconcilesTopology(t *testing.T) {
 		t.Fatalf("expected weight %d for NODE-ROOT->NODE-CHILD, got %d", info.Health+1, weights["NODE-ROOT"]["NODE-CHILD"])
 	}
 }
+
+func TestDispatchGossipUpdateRefreshesCarrierLiveness(t *testing.T) {
+	topo := topology.NewTopology()
+	go topo.Run()
+	t.Cleanup(topo.Stop)
+
+	addNode(t, topo, "NODE-ROOT", protocol.ADMIN_UUID, "10.0.0.1", true)
+	addNode(t, topo, "NODE-CHILD", "NODE-ROOT", "10.0.0.2", false)
+
+	requestTopo(t, topo, &topology.TopoTask{Mode: topology.MARKNODEOFFLINE, UUID: "NODE-ROOT"})
+	if aliveInSnapshot(topo, "NODE-ROOT") {
+		t.Fatalf("expected root to start offline")
+	}
+
+	store := global.NewStoreWithTransports(nil)
+	if err := store.SetPreAuthToken("test-preauth-token"); err != nil {
+		t.Fatalf("set preauth token: %v", err)
+	}
+	admin := NewAdmin(context.Background(), &initial.Options{PreAuthToken: "test-preauth-token"}, topo, store, nil, topology.PlannerMetricsSnapshot{}, nil, nil, nil, nil, nil)
+
+	info := &protocol.NodeInfo{UUID: "NODE-CHILD", LastSeen: time.Now().Unix()}
+	body, err := json.Marshal(info)
+	if err != nil {
+		t.Fatalf("marshal node info: %v", err)
+	}
+	update := &protocol.GossipUpdate{
+		TTL:        3,
+		NodeData:   body,
+		SenderUUID: "NODE-CHILD",
+		Timestamp:  time.Now().UnixNano(),
+	}
+	handler := admin.dispatchGossipUpdate()
+	if err := handler(context.Background(), &protocol.Header{Sender: "NODE-ROOT", MessageType: uint16(protocol.GOSSIP_UPDATE)}, update); err != nil {
+		t.Fatalf("dispatch gossip update: %v", err)
+	}
+
+	if !aliveInSnapshot(topo, "NODE-ROOT") {
+		t.Fatalf("expected gossip carrier root to be marked alive")
+	}
+}
+
+func aliveInSnapshot(topo *topology.Topology, uuid string) bool {
+	if topo == nil || uuid == "" {
+		return false
+	}
+	for _, node := range topo.UISnapshot("", "").Nodes {
+		if node.UUID == uuid {
+			return node.IsAlive
+		}
+	}
+	return false
+}

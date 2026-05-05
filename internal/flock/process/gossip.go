@@ -791,6 +791,10 @@ func (agent *Agent) sendGossipToParent(update *protocol.GossipUpdate) {
 	if update == nil || parent == "" {
 		return
 	}
+	if parent == protocol.ADMIN_UUID {
+		agent.sendUpdateDirectToAdmin(update)
+		return
+	}
 	if sess := agent.currentSession(); sess == nil || sess.Conn() == nil {
 		return
 	}

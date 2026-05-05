@@ -12,8 +12,11 @@ const topo = useTopologyStore();
 const events = useEventsStore();
 const metrics = useMetricsStore();
 
+const opsPreview =
+  new URLSearchParams(window.location.search).get('preview') === 'ops';
+
 const stage = computed<'connect' | 'main'>(() =>
-  conn.isConnected ? 'main' : 'connect',
+  opsPreview || conn.isConnected ? 'main' : 'connect',
 );
 
 onMounted(() => {

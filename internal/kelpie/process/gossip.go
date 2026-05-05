@@ -363,8 +363,28 @@ func (admin *Admin) dispatchGossipUpdate() bus.Handler {
 		if !ok {
 			return fmt.Errorf("expected *protocol.GossipUpdate, got %T", payload)
 		}
+		admin.markGossipCarrierAlive(header)
 		admin.enqueueGossipUpdate(update)
 		return nil
+	}
+}
+
+func (admin *Admin) markGossipCarrierAlive(header *protocol.Header) {
+	if admin == nil || admin.topology == nil || header == nil {
+		return
+	}
+	sender := strings.TrimSpace(header.Sender)
+	if sender == "" || sender == protocol.ADMIN_UUID || sender == protocol.TEMP_UUID {
+		return
+	}
+	_, err := admin.topoRequest(&topology.TopoTask{
+		Mode:         topology.UPDATEDETAIL,
+		UUID:         sender,
+		SleepSeconds: -1,
+		WorkSeconds:  -1,
+	})
+	if err != nil {
+		printer.Warning("\r\n[*] Failed to refresh gossip carrier liveness for %s: %v\r\n", shortID(sender), err)
 	}
 }
 

@@ -39,6 +39,7 @@ type SideMode = 'targets' | 'networks' | 'listeners';
 type MainView = 'table' | 'graph';
 type TargetMode = 'overview' | 'shell' | 'files' | 'proxy';
 type MenuKey = 'stockman' | 'view' | 'operations' | 'listeners' | 'sessions' | 'reports' | 'help';
+type ResizePane = 'left' | 'bottom';
 
 const conn = useConnectionStore();
 const topo = useTopologyStore();
@@ -69,6 +70,16 @@ const fileListings = reactive<Record<string, RemoteFileListing>>({});
 const fileErrors = reactive<Record<string, string>>({});
 const fileLoading = reactive<Record<string, boolean>>({});
 const proxyResults = reactive<Record<string, StartForwardProxyResult[]>>({});
+const opsShellRef = ref<HTMLElement | null>(null);
+const leftPaneWidth = ref(readLayoutSize('stockman:leftPaneWidth', 250, 190, 460));
+const bottomPaneHeight = ref(readLayoutSize('stockman:bottomPaneHeight', 246, 160, 540));
+const resizingPane = ref<ResizePane | ''>('');
+const resizeStart = reactive({
+  x: 0,
+  y: 0,
+  left: 0,
+  bottom: 0,
+});
 
 const action = reactive({
   busy: false,
@@ -87,6 +98,11 @@ const contextMenu = reactive<{
   y: 0,
   node: null,
 });
+
+const layoutStyle = computed(() => ({
+  '--left-pane-width': `${leftPaneWidth.value}px`,
+  '--bottom-pane-height': `${bottomPaneHeight.value}px`,
+}));
 
 const connectedDisplay = computed(() => {
   const prefix = conn.useTLS ? 'TLS ' : '';
@@ -225,10 +241,112 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(() => {
+  stopResize();
   metrics.stop();
   events.dispose();
   (window as any).__stockmanOffStream?.();
 });
+
+function readLayoutSize(key: string, fallback: number, min: number, max: number): number {
+  const raw = window.localStorage.getItem(key);
+  const value = raw ? Number.parseInt(raw, 10) : fallback;
+  return clamp(Number.isFinite(value) ? value : fallback, min, max);
+}
+
+function clamp(value: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, value));
+}
+
+function shellRect() {
+  return opsShellRef.value?.getBoundingClientRect();
+}
+
+function leftPaneBounds() {
+  const width = shellRect()?.width ?? window.innerWidth;
+  return {
+    min: 190,
+    max: Math.min(520, Math.max(220, width - 560)),
+  };
+}
+
+function bottomPaneBounds() {
+  const height = shellRect()?.height ?? window.innerHeight;
+  return {
+    min: 160,
+    max: Math.min(620, Math.max(190, height - 292)),
+  };
+}
+
+function persistLayoutSize(pane: ResizePane) {
+  if (pane === 'left') {
+    window.localStorage.setItem('stockman:leftPaneWidth', String(leftPaneWidth.value));
+  } else {
+    window.localStorage.setItem('stockman:bottomPaneHeight', String(bottomPaneHeight.value));
+  }
+}
+
+function startResize(pane: ResizePane, ev: PointerEvent) {
+  ev.preventDefault();
+  ev.stopPropagation();
+  closeOverlays();
+  if (resizingPane.value) stopResize();
+  resizingPane.value = pane;
+  resizeStart.x = ev.clientX;
+  resizeStart.y = ev.clientY;
+  resizeStart.left = leftPaneWidth.value;
+  resizeStart.bottom = bottomPaneHeight.value;
+  document.body.style.cursor = pane === 'left' ? 'col-resize' : 'row-resize';
+  document.body.style.userSelect = 'none';
+  try {
+    (ev.currentTarget as HTMLElement | null)?.setPointerCapture?.(ev.pointerId);
+  } catch {
+    // Some embedded webviews do not allow capture after synthetic pointer events.
+  }
+  window.addEventListener('pointermove', handleResize);
+  window.addEventListener('pointerup', stopResize);
+  window.addEventListener('pointercancel', stopResize);
+  handleResize(ev);
+}
+
+function handleResize(ev: PointerEvent) {
+  if (resizingPane.value === 'left') {
+    const bounds = leftPaneBounds();
+    leftPaneWidth.value = clamp(resizeStart.left + ev.clientX - resizeStart.x, bounds.min, bounds.max);
+  } else if (resizingPane.value === 'bottom') {
+    const bounds = bottomPaneBounds();
+    bottomPaneHeight.value = clamp(resizeStart.bottom + resizeStart.y - ev.clientY, bounds.min, bounds.max);
+  }
+}
+
+function stopResize() {
+  if (resizingPane.value) persistLayoutSize(resizingPane.value);
+  resizingPane.value = '';
+  document.body.style.cursor = '';
+  document.body.style.userSelect = '';
+  window.removeEventListener('pointermove', handleResize);
+  window.removeEventListener('pointerup', stopResize);
+  window.removeEventListener('pointercancel', stopResize);
+}
+
+function nudgePane(pane: ResizePane, delta: number) {
+  if (pane === 'left') {
+    const bounds = leftPaneBounds();
+    leftPaneWidth.value = clamp(leftPaneWidth.value + delta, bounds.min, bounds.max);
+  } else {
+    const bounds = bottomPaneBounds();
+    bottomPaneHeight.value = clamp(bottomPaneHeight.value + delta, bounds.min, bounds.max);
+  }
+  persistLayoutSize(pane);
+}
+
+function resetPane(pane: ResizePane) {
+  if (pane === 'left') {
+    leftPaneWidth.value = 250;
+  } else {
+    bottomPaneHeight.value = 246;
+  }
+  persistLayoutSize(pane);
+}
 
 async function refreshAll() {
   await Promise.all([topo.refresh(), metrics.refresh()]);
@@ -628,7 +746,17 @@ function normalizeDTNPayload(raw: string): string {
 </script>
 
 <template>
-  <section class="ops-shell" @click="closeOverlays" @keydown.esc="closeOverlays">
+  <section
+    ref="opsShellRef"
+    class="ops-shell"
+    :class="{
+      'is-resizing-left': resizingPane === 'left',
+      'is-resizing-bottom': resizingPane === 'bottom',
+    }"
+    :style="layoutStyle"
+    @click="closeOverlays"
+    @keydown.esc="closeOverlays"
+  >
     <header class="menubar">
       <nav class="menus" aria-label="Application menu">
         <div class="menu-item" @click.stop>
@@ -760,6 +888,24 @@ function normalizeDTNPayload(raw: string): string {
         </section>
       </aside>
 
+      <button
+        type="button"
+        class="vertical-splitter"
+        role="separator"
+        aria-orientation="vertical"
+        aria-label="Resize target tree"
+        :aria-valuenow="leftPaneWidth"
+        aria-valuemin="190"
+        aria-valuemax="520"
+        tabindex="0"
+        title="Drag to resize target tree"
+        @click.stop
+        @dblclick.stop="resetPane('left')"
+        @pointerdown="startResize('left', $event)"
+        @keydown.left.prevent="nudgePane('left', -18)"
+        @keydown.right.prevent="nudgePane('left', 18)"
+      ></button>
+
       <section class="center-pane">
         <header class="table-head">
           <div>
@@ -846,6 +992,24 @@ function normalizeDTNPayload(raw: string): string {
         </div>
       </section>
     </main>
+
+    <button
+      type="button"
+      class="horizontal-splitter"
+      role="separator"
+      aria-orientation="horizontal"
+      aria-label="Resize bottom workspace"
+      :aria-valuenow="bottomPaneHeight"
+      aria-valuemin="160"
+      aria-valuemax="620"
+      tabindex="0"
+      title="Drag to resize bottom workspace"
+      @click.stop
+      @dblclick.stop="resetPane('bottom')"
+      @pointerdown="startResize('bottom', $event)"
+      @keydown.up.prevent="nudgePane('bottom', 18)"
+      @keydown.down.prevent="nudgePane('bottom', -18)"
+    ></button>
 
     <section class="bottom-pane">
       <nav class="bottom-tabs">
@@ -1174,13 +1338,25 @@ function normalizeDTNPayload(raw: string): string {
   --ops-idle: #7c8792;
 
   display: grid;
-  grid-template-rows: 36px 42px minmax(0, 1fr) 246px 28px;
+  grid-template-rows: 36px 42px minmax(180px, 1fr) 8px var(--bottom-pane-height) 28px;
   height: 100vh;
   width: 100vw;
   overflow: hidden;
   background: var(--ops-bg);
   color: var(--ops-text);
   font-family: var(--sf-font-sans);
+}
+
+.ops-shell.is-resizing-left,
+.ops-shell.is-resizing-left * {
+  cursor: col-resize !important;
+  user-select: none;
+}
+
+.ops-shell.is-resizing-bottom,
+.ops-shell.is-resizing-bottom * {
+  cursor: row-resize !important;
+  user-select: none;
 }
 
 button,
@@ -1358,7 +1534,7 @@ select {
 
 .ops-grid {
   display: grid;
-  grid-template-columns: 250px minmax(0, 1fr);
+  grid-template-columns: var(--left-pane-width) 8px minmax(0, 1fr);
   min-height: 0;
 }
 
@@ -1370,7 +1546,75 @@ select {
 }
 
 .left-pane {
-  border-right: 1px solid var(--ops-line);
+  border-right: 0;
+}
+
+.vertical-splitter,
+.horizontal-splitter {
+  position: relative;
+  z-index: 12;
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: #151a20;
+  outline: none;
+  appearance: none;
+  touch-action: none;
+}
+
+.vertical-splitter {
+  cursor: col-resize;
+  border-left: 1px solid var(--ops-line-soft);
+  border-right: 1px solid var(--ops-line-soft);
+}
+
+.horizontal-splitter {
+  cursor: row-resize;
+  border-top: 1px solid var(--ops-line-soft);
+  border-bottom: 1px solid var(--ops-line-soft);
+}
+
+.vertical-splitter::before,
+.horizontal-splitter::before {
+  content: '';
+  position: absolute;
+  background: var(--ops-line);
+}
+
+.vertical-splitter::before {
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  transform: translateX(-50%);
+}
+
+.horizontal-splitter::before {
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  transform: translateY(-50%);
+}
+
+.vertical-splitter:hover,
+.vertical-splitter:focus-visible,
+.horizontal-splitter:hover,
+.horizontal-splitter:focus-visible,
+.ops-shell.is-resizing-left .vertical-splitter,
+.ops-shell.is-resizing-bottom .horizontal-splitter {
+  background: #1f2830;
+}
+
+.vertical-splitter:hover::before,
+.vertical-splitter:focus-visible::before,
+.horizontal-splitter:hover::before,
+.horizontal-splitter:focus-visible::before,
+.ops-shell.is-resizing-left .vertical-splitter::before,
+.ops-shell.is-resizing-bottom .horizontal-splitter::before {
+  background: var(--ops-accent);
 }
 
 .pane-tabs {
@@ -1707,7 +1951,6 @@ select {
 
 .bottom-pane {
   min-height: 0;
-  border-top: 1px solid var(--ops-line);
   background: #0b0e11;
   display: grid;
   grid-template-rows: 36px minmax(0, 1fr);
@@ -2300,7 +2543,7 @@ select {
 
 @media (max-width: 1180px) {
   .ops-grid {
-    grid-template-columns: 210px minmax(0, 1fr);
+    grid-template-columns: minmax(190px, var(--left-pane-width)) 8px minmax(0, 1fr);
   }
 
   .toolbar-stats {

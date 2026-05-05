@@ -243,6 +243,84 @@ func TestHandleIncomingGossipWithoutParentSendsToAdmin(t *testing.T) {
 	}
 }
 
+func TestHandleIncomingGossipWithAdminParentSendsDirectToAdmin(t *testing.T) {
+	prevUp, prevDown := protocol.DefaultTransports().Upstream(), protocol.DefaultTransports().Downstream()
+	protocol.SetDefaultTransports("raw", "raw")
+	defer protocol.SetDefaultTransports(prevUp, prevDown)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	t.Cleanup(cancel)
+	store := global.NewStoreWithTransports(nil)
+	if err := store.SetPreAuthToken("test-preauth-token"); err != nil {
+		t.Fatalf("set preauth token: %v", err)
+	}
+
+	agent := NewAgent(ctx, &initial.Options{PreAuthToken: "test-preauth-token"}, store, nil)
+	agent.UUID = "ROOTNODE"
+	agent.setParentUUID(protocol.ADMIN_UUID)
+
+	upConn, upPeer := net.Pipe()
+	defer upPeer.Close()
+	defer upConn.Close()
+
+	store.Reset()
+	t.Cleanup(store.Reset)
+	store.InitializeComponent(upConn, "secret", agent.UUID, "raw", "raw")
+	agent.BindSession(store.ActiveSession())
+
+	nodeInfo := &protocol.NodeInfo{UUID: "LEAFNODE", Memo: "memo-via-admin-parent"}
+	nodeData, err := json.Marshal(nodeInfo)
+	if err != nil {
+		t.Fatalf("marshal node info: %v", err)
+	}
+	update := &protocol.GossipUpdate{
+		TTL:           6,
+		NodeDataLen:   uint64(len(nodeData)),
+		NodeData:      nodeData,
+		SenderUUIDLen: uint16(len("LEAFNODE")),
+		SenderUUID:    "LEAFNODE",
+		Timestamp:     time.Now().Unix(),
+	}
+
+	done := make(chan struct{})
+	go func() {
+		agent.handleIncomingGossip(update, "LEAFNODE")
+		close(done)
+	}()
+
+	_ = upPeer.SetReadDeadline(time.Now().Add(2 * time.Second))
+	rMessage := protocol.NewDownMsg(upPeer, "secret", protocol.ADMIN_UUID)
+	header, payload, err := protocol.DestructMessage(rMessage)
+	if err != nil {
+		t.Fatalf("read forwarded gossip update: %v", err)
+	}
+	if header.MessageType != uint16(protocol.GOSSIP_UPDATE) {
+		t.Fatalf("expected gossip update message, got type=%d", header.MessageType)
+	}
+	if header.Accepter != protocol.ADMIN_UUID {
+		t.Fatalf("expected accepter=%s, got %s", protocol.ADMIN_UUID, header.Accepter)
+	}
+	if header.Route != protocol.TEMP_ROUTE {
+		t.Fatalf("expected direct admin route=%s, got %q", protocol.TEMP_ROUTE, header.Route)
+	}
+	got, ok := payload.(*protocol.GossipUpdate)
+	if !ok {
+		t.Fatalf("expected *protocol.GossipUpdate payload, got %T", payload)
+	}
+	if got.SenderUUID != "LEAFNODE" {
+		t.Fatalf("expected sender uuid LEAFNODE, got %s", got.SenderUUID)
+	}
+	if string(got.NodeData) != string(nodeData) {
+		t.Fatalf("forwarded gossip payload mismatch")
+	}
+
+	select {
+	case <-done:
+	case <-time.After(2 * time.Second):
+		t.Fatalf("handleIncomingGossip did not return")
+	}
+}
+
 func TestMemoUpdateHandlerTriggersDeferredPropagationWithoutSession(t *testing.T) {
 	agent := &Agent{
 		gossipTrigger: make(chan struct{}, 1),

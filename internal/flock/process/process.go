@@ -320,7 +320,9 @@ func (agent *Agent) newUpMsg() (protocol.Message, session.Session, bool) {
 	if conn == nil {
 		return nil, sess, false
 	}
-	return protocol.NewUpMsg(conn, sess.Secret(), sess.UUID()), sess, true
+	msg := protocol.NewUpMsg(conn, sess.Secret(), sess.UUID())
+	protocol.SetMessageMeta(msg, sess.ProtocolFlags())
+	return msg, sess, true
 }
 
 func (agent *Agent) recordDTNMessage(msg *protocol.DTNData) {
