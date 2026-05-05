@@ -387,6 +387,16 @@ function eventTone(ev: TimelineEvent): 'ok' | 'warn' | 'bad' | 'idle' {
   return 'idle';
 }
 
+function compactEventTime(timestamp: string): string {
+  const value = timestamp.trim();
+  if (!value) return '--:--:--';
+  const isoTime = value.match(/T(\d{2}:\d{2}:\d{2})(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})?$/);
+  if (isoTime) return isoTime[1];
+  const clockTime = value.match(/\b(\d{2}:\d{2}:\d{2})(?:\.\d+)?\b/);
+  if (clockTime) return clockTime[1];
+  return value.length > 12 ? value.slice(0, 12) : value;
+}
+
 function selectNode(uuid: string) {
   topo.select(uuid);
 }
@@ -1039,10 +1049,10 @@ function normalizeDTNPayload(raw: string): string {
             :key="ev.seq"
             :class="['event-line', eventTone(ev)]"
           >
-            <span class="time">{{ ev.timestamp }}</span>
-            <span class="kind">{{ ev.kind }}</span>
-            <span class="action">{{ ev.action }}</span>
-            <span class="summary">{{ ev.summary }}</span>
+            <span class="time" :title="ev.timestamp">[{{ compactEventTime(ev.timestamp) }}]</span>
+            <span class="kind" :title="ev.kind">{{ ev.kind }}</span>
+            <span class="action" :title="ev.action">{{ ev.action }}</span>
+            <span class="summary" :title="ev.summary">{{ ev.summary }}</span>
           </p>
           <p v-if="!recentEvents.length" class="empty">No events yet.</p>
         </section>
@@ -2017,19 +2027,29 @@ select {
 .event-console,
 .terminal {
   height: 100%;
-  padding: 8px 10px;
+  padding: 6px 0;
   font-family: var(--sf-font-mono);
-  font-size: 0.78rem;
+  font-size: 0.76rem;
+  line-height: 20px;
 }
 
 .event-line {
   display: grid;
-  grid-template-columns: 150px 90px 120px minmax(0, 1fr);
-  gap: 10px;
+  grid-template-columns: 92px 82px minmax(220px, 32%) minmax(280px, 1fr);
+  gap: 12px;
   margin: 0;
-  min-height: 24px;
+  min-height: 22px;
+  padding: 0 10px;
   align-items: center;
   color: var(--ops-muted);
+  border-bottom: 1px solid rgba(42, 50, 59, 0.38);
+}
+
+.event-line > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .event-line.ok .summary,
@@ -2050,6 +2070,10 @@ select {
 .event-line .time,
 .event-line .kind {
   color: var(--ops-faint);
+}
+
+.event-line .time {
+  font-variant-numeric: tabular-nums;
 }
 
 .data-list {
