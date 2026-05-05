@@ -34,9 +34,6 @@ func New(baseDir string) (*Store, error) {
 
 // Store 将内容写入磁盘，并返回存储引用（绝对路径）、大小和 sha256。
 func (s *Store) Store(lootID string, data []byte, mimeType string) (string, uint64, string, error) {
-	if len(data) == 0 {
-		return "", 0, "", fmt.Errorf("lootfs: empty content")
-	}
 	return s.StoreStream(lootID, bytes.NewReader(data), mimeType)
 }
 
@@ -69,9 +66,6 @@ func (s *Store) StoreStream(lootID string, r io.Reader, mimeType string) (string
 	written, err := io.Copy(io.MultiWriter(tmpFile, hasher), r)
 	if err != nil {
 		return "", 0, "", fmt.Errorf("lootfs: write stream: %w", err)
-	}
-	if written <= 0 {
-		return "", 0, "", fmt.Errorf("lootfs: empty content")
 	}
 	if err := tmpFile.Chmod(0o644); err != nil {
 		return "", 0, "", fmt.Errorf("lootfs: chmod temp file: %w", err)
