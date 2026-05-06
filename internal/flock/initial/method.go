@@ -166,7 +166,7 @@ func NormalActive(ctx context.Context, userOptions *Options, proxy share.Proxy) 
 		err := fmt.Errorf("unexpected message type %d", fHeader.MessageType)
 		trace.Record(handshake.CodeExchange, err)
 		conn.Close()
-		return nil, "", nil, trace.Annotate(runtimeerr.New("AGENT_ILLEGAL_ADMIN", runtimeerr.SeverityWarn, false, err.Error()))
+		return nil, "", nil, trace.Annotate(runtimeerr.New("AGENT_ILLEGAL_ADMIN", runtimeerr.SeverityWarn, false, "%s", err.Error()))
 	}
 
 	mmess := fMessage.(*protocol.HIMess)
@@ -174,14 +174,14 @@ func NormalActive(ctx context.Context, userOptions *Options, proxy share.Proxy) 
 		err := fmt.Errorf("admin greeting mismatch")
 		trace.Record(handshake.CodeExchange, err)
 		conn.Close()
-		return nil, "", nil, trace.Annotate(runtimeerr.New("AGENT_ILLEGAL_ADMIN", runtimeerr.SeverityWarn, false, err.Error()))
+		return nil, "", nil, trace.Annotate(runtimeerr.New("AGENT_ILLEGAL_ADMIN", runtimeerr.SeverityWarn, false, "%s", err.Error()))
 	}
 	meta := protocol.ResolveProtocolMeta(localFlags, mmess.ProtoFlags)
 	if strings.ToLower(userOptions.Upstream) == "http" && meta.Flags&protocol.FlagSupportChunked == 0 {
 		err := fmt.Errorf("admin does not support HTTP chunked transfer")
 		trace.Record(handshake.CodeNegotiate, err)
 		conn.Close()
-		return nil, "", nil, trace.Annotate(runtimeerr.New("AGENT_HTTP_CHUNKED", runtimeerr.SeverityError, false, err.Error()))
+		return nil, "", nil, trace.Annotate(runtimeerr.New("AGENT_HTTP_CHUNKED", runtimeerr.SeverityError, false, "%s", err.Error()))
 	}
 	userOptions.Secret = handshake.SessionSecret(baseSecret, userOptions.TlsEnable)
 

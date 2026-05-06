@@ -14,10 +14,13 @@ const metrics = useMetricsStore();
 
 const opsPreview =
   new URLSearchParams(window.location.search).get('preview') === 'ops';
+const windowRole = new URLSearchParams(window.location.search).get('window');
 
-const stage = computed<'connect' | 'main'>(() =>
-  opsPreview || conn.isConnected ? 'main' : 'connect',
-);
+const stage = computed<'connect' | 'main'>(() => {
+  if (opsPreview || windowRole === 'main') return 'main';
+  if (windowRole === 'connect') return 'connect';
+  return conn.isConnected ? 'main' : 'connect';
+});
 
 onMounted(() => {
   conn.bootstrap();

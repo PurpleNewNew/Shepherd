@@ -1,16 +1,16 @@
 # Stockman Next（答辩演示客户端）
 
-面向**毕业答辩演示**的 Shepherd 桌面客户端，技术栈：**Wails v2 + Vue 3 + Vite + TypeScript**。
+面向**毕业答辩演示**的 Shepherd 桌面客户端，技术栈：**Wails v3.0.0-alpha.85 + Vue 3 + Vite + TypeScript**。
 
-第一版聚焦演示效果，不复刻旧版 Qt Stockman 的全部功能。功能范围：
+当前版本已从单窗口 Wails v2 迁移到 Wails v3 多窗口架构：启动时先打开紧凑连接窗口，连接成功后切换到主控制台窗口。功能范围：
 
 - 连接管理（TLS TOFU + 最近连接历史）
 - 拓扑总览（力导向图 / 树状图 双视图切换）
-- 节点详情面板
+- 节点详情与会话管理（mark / repair / reconnect / terminate / diagnostics）
 - 事件时间线（Kelpie `WatchEvents` 流实时订阅）
-- 演示控制台（DTN 入队 / Sleep 参数 / 修剪离线节点）
-
-**不实现**：shell、文件传输、SOCKS 代理、chat、audit、loot 等。如需这些功能，请使用旧版 Qt Stockman（已归档在 git 历史 `academic` 分支之前）。
+- 交互式 shell、文件列表/下载/上传、loot 导出
+- SOCKS、正向/反向端口转发、SSH Session / SSH Tunnel
+- Listener 创建、修改、删除与启停入口
 
 ## 目录结构
 
@@ -37,42 +37,42 @@ clientui/
 
 ### 依赖
 
-- Go >= 1.22
+- Go >= 1.25（Wails `v3.0.0-alpha.85` 的最低要求；本仓库在 Go 1.26 上验证）
 - Node.js >= 20（推荐 24 LTS）
-- Wails CLI（可选，用于 `wails dev` 热重载）：
+- Wails v3 CLI（可选，用于 `wails3 dev` 热重载与 bindings 生成）：
 
 ```sh
-go install github.com/wailsapp/wails/v2/cmd/wails@latest
+go install github.com/wailsapp/wails/v3/cmd/wails3@v3.0.0-alpha.85
 ```
 
 ### 运行（dev 模式）
 
 ```sh
-# 终端 1：拉起一个 Kelpie 提供 gRPC UI（默认 :9090）
-./build/kelpie -listen :4444 -ui-listen :9090 -ui-auth-token demo-token ...
+# 终端 1：拉起一个 Kelpie 提供 gRPC UI（默认 :50061）
+./build/kelpie -listen :4444 --ui-grpc-listen 127.0.0.1:50061 --ui-grpc-token demo-token ...
 
 # 终端 2：Wails dev（自动热重载前端 + Go）
-cd clientui && wails dev
+cd clientui && wails3 dev
 ```
 
 如果未安装 Wails CLI，可分开跑：
 
 ```sh
 cd clientui/frontend && npm install && npm run dev    # 终端 1
-cd clientui && go run -tags dev .                     # 终端 2：注意必须带 -tags dev
+cd clientui && go run -tags dev,desktop .             # 终端 2
 ```
 
-Wails 不允许裸 `go run` / `go build`；它用 build tag（`dev` / `production` / `bindings`）决定运行时行为，缺失会直接 `CreateApp` 失败。
+浏览器预览只适合调 CSS/布局；后端 API、事件流和窗口切换必须通过 Wails 桌面运行时测试。
 
 ### 构建
 
 ```sh
 make stockman
-# 或（官方 CLI，自动处理 build tags 和 CGO_LDFLAGS）：
-cd clientui && wails build
+# 如修改了 Go facade 方法，先重生成 TS bindings：
+make stockman-bindings
 ```
 
-手工构建时必须自己带上 build tags 和（macOS）UTType framework 链接，否则启动时 Wails 会报 "will not build without the correct build tags" 或 linker 找不到 `_OBJC_CLASS_$_UTType`：
+手工构建时必须自己带上 build tags 和（macOS）UTType framework 链接：
 
 ```sh
 cd clientui/frontend && npm run build && cd ..
@@ -94,9 +94,9 @@ CGO_ENABLED=1 go build -tags production,desktop -o ../build/stockman .
 
 ## 答辩演示流程（建议）
 
-1. 启动 Kelpie（`build/kelpie -listen :4444 -ui-listen :9090 -ui-auth-token demo-token`）
+1. 启动 Kelpie（`build/kelpie -listen :4444 --ui-grpc-listen 127.0.0.1:50061 --ui-grpc-token demo-token`）
 2. 启动 trace_replay mini-cluster（或手动拉 Flock）
-3. 打开 Stockman Next → 连接页输入 `127.0.0.1:9090` + token，回车
+3. 打开 Stockman Next → 连接窗口输入 `127.0.0.1:50061` + token，回车
 4. 切到拓扑视图，讲 Gossip 收敛过程
 5. 切到事件时间线，讲 `WatchEvents` 是 Kelpie 推给 UI 的统一事件流
 6. 控制台：向某节点发 DTN 消息 → 返回时间线看 DTN 事件

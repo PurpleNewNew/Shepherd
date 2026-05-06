@@ -226,7 +226,7 @@
 >
 > 但到了答辩阶段，目标变成了三件事：**稳定**、**好看**、**便于讲解**。原 Qt 客户端功能面广，反而带来几个风险：一是页面多、状态多，演示时不容易聚焦；二是 C++/Qt 动画和过渡效果要做精良代价高；三是前端表现层要贴合毕业设计答辩的审美也不是 Qt Widgets 的长项。  
 >
-> 因此在 `academic` 分支上我把 Stockman 重写成了 **Wails v2 + Vue 3 + Vite + TypeScript**。这个选型带来三个直接好处：  
+> 因此在 `academic` 分支上我把 Stockman 重写成了 **Wails v3 + Vue 3 + Vite + TypeScript**。这个选型带来三个直接好处：
 > - **和 Kelpie 同 module**：`clientui/` 直接 import 主仓库的 `internal/kelpie/uipb`，不再维护一套独立的 C++ protobuf 生成产物。  
 > - **表现层更轻、动画更稳**：Vue3 + CSS 变量做暗色主题、过渡动画、指纹 TOFU 弹窗、力导向拓扑图（d3-force）都是成熟方案。  
 > - **只保留答辩必须的五个面板**：连接管理、拓扑总览（力导向+树状双视图切换）、节点详情、事件时间线、演示控制台。Shell / 文件传输 / SOCKS / Chat / Audit / Loot 被刻意省略，让演示聚焦在 Gossip / 补链 / DTN / Sleep 这条主线上。

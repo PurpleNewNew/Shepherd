@@ -14,7 +14,7 @@
 
 受限网络广泛存在于灾害应急、野外科研、低功耗物联网、临时组网和隔离运维等场景中。这类网络通常具有高时延、间歇连接、节点周期睡眠、链路质量波动和拓扑频繁变化等特征。传统远程运维系统大多假设管理端与被管理节点之间存在持续在线的链路，并依赖中心化会话、即时请求响应和稳定路由。当节点进入睡眠窗口、父链路断开或多跳拓扑发生变化时，这类系统容易出现控制面视图陈旧、子树失联、消息丢失和长流中断等问题。
 
-针对上述问题，本文设计并实现了 Shepherd 原型系统。系统由管理端 Kelpie、代理端 Flock 和桌面客户端 Stockman 三部分构成。Kelpie 负责维护全局拓扑、调度补链、管理延迟容忍网络（Delay-Tolerant Networking, DTN）队列、提供可靠流式传输能力并向客户端暴露 gRPC 控制面；Flock 运行在受限网络节点上，负责接入、Gossip 信息传播、多跳转发、睡眠状态上报、链路自愈和本地 carry-forward；Stockman 作为 Wails v2 + Vue 3 实现的演示客户端，用于展示拓扑、节点详情、事件时间线和 DTN/Sleep 控制台。
+针对上述问题，本文设计并实现了 Shepherd 原型系统。系统由管理端 Kelpie、代理端 Flock 和桌面客户端 Stockman 三部分构成。Kelpie 负责维护全局拓扑、调度补链、管理延迟容忍网络（Delay-Tolerant Networking, DTN）队列、提供可靠流式传输能力并向客户端暴露 gRPC 控制面；Flock 运行在受限网络节点上，负责接入、Gossip 信息传播、多跳转发、睡眠状态上报、链路自愈和本地 carry-forward；Stockman 作为 Wails v3 + Vue 3 实现的演示客户端，用于展示拓扑、节点详情、事件时间线和 DTN/Sleep 控制台。
 
 本文的核心设计是将 Gossip 拓扑维护、补链自愈、DTN store-carry-forward 队列和 DTN 上的可靠 STREAM 传输层组合起来，使系统在节点 duty-cycling 和多跳链路下仍能维持控制面收敛与消息最终交付。实现上，Flock 使用自适应 fanout/TTL 的 Gossip 机制传播节点视图；Kelpie 维护带父子关系和补链边的拓扑图，并基于睡眠预算估计投递时机；DTN 管理器按目标节点维护优先级队列、TTL、HoldUntil、ACK 和重试；STREAM 层在 DTN 之上实现分片、ACK、RTO、AIMD 窗口和重传；补链调度器根据节点质量、路径重叠、睡眠预算、深度和冗余度选择候选节点。
 
@@ -30,7 +30,7 @@
 
 Challenged networks are common in emergency response, field research, low-power IoT deployments, temporary ad hoc networks, and isolated maintenance environments. Such networks often exhibit high latency, intermittent connectivity, duty-cycled nodes, volatile link quality, and frequently changing topologies. Conventional remote operations systems usually assume continuously available links between a controller and managed nodes. They rely on centralized sessions, immediate request-response interactions, and stable routes. Once a node enters a sleep window, an upstream link fails, or a multi-hop topology changes, these systems can suffer from stale control-plane views, disconnected subtrees, message loss, and interrupted long-lived streams.
 
-This thesis presents Shepherd, a prototype system for delay-tolerant remote operations in challenged networks. Shepherd consists of three components: Kelpie, Flock, and Stockman. Kelpie is the management server that maintains the global topology, schedules supplemental links, manages DTN queues, provides reliable stream transport, and exposes a gRPC control plane. Flock runs on network nodes and handles connection establishment, gossip propagation, multi-hop relay, sleep reporting, failover, repair, and local carry-forward. Stockman is a Wails v2 and Vue 3 desktop client used to visualize topology, inspect node details, observe UI events, and trigger demonstration actions such as DTN enqueue and sleep-profile updates.
+This thesis presents Shepherd, a prototype system for delay-tolerant remote operations in challenged networks. Shepherd consists of three components: Kelpie, Flock, and Stockman. Kelpie is the management server that maintains the global topology, schedules supplemental links, manages DTN queues, provides reliable stream transport, and exposes a gRPC control plane. Flock runs on network nodes and handles connection establishment, gossip propagation, multi-hop relay, sleep reporting, failover, repair, and local carry-forward. Stockman is a Wails v3 and Vue 3 desktop client used to visualize topology, inspect node details, observe UI events, and trigger demonstration actions such as DTN enqueue and sleep-profile updates.
 
 The main design of Shepherd combines gossip-based topology maintenance, supplemental self-healing links, DTN store-carry-forward queues, and a reliable STREAM layer over DTN. Flock propagates node views with adaptive fanout and TTL. Kelpie maintains a topology graph with both tree edges and supplemental edges, estimates delivery opportunities using sleep budgets, and dispatches queued bundles accordingly. The DTN manager maintains per-target priority queues with TTL, HoldUntil, ACK tracking, and retry logic. The STREAM layer implements fragmentation, ACKs, RTO estimation, AIMD window adjustment, and retransmission over DTN. The supplemental planner selects candidates based on node quality, path overlap, sleep budget, depth, and redundancy.
 
@@ -229,7 +229,7 @@ Shepherd 的总体架构如图 3-1 所示。
 
 系统分为三层：
 
-1. **客户端展示层**：Stockman 通过 Wails v2 + Vue 3 实现，调用本地 Go facade，再由 facade 连接 Kelpie gRPC UI。
+1. **客户端展示层**：Stockman 通过 Wails v3 + Vue 3 实现，调用本地 Go facade，再由 facade 连接 Kelpie gRPC UI。
 2. **管理控制层**：Kelpie 维护拓扑、会话、DTN、STREAM、补链、controller listener、pivot listener、dataplane token 和 SQLite 持久化。
 3. **代理执行层**：Flock 运行在节点上，处理连接、转发、Gossip、sleep、repair、carry-forward 和流式数据。
 

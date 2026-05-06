@@ -1,7 +1,5 @@
-// Wails v2 通过 Bind 把 Go 方法挂在 window.go.<pkg>.<Struct>.<Method> 下。
-// 对 *service.API，路径是 window.go.service.API.XXX。
-// 此处做一层薄封装，便于类型化与 mock。
-
+import { Events } from '@wailsio/runtime';
+import * as ServiceAPI from '../../bindings/codeberg.org/agnoie/shepherd/clientui/backend/service/api';
 import type {
   ConnectRequest,
   ConnectResult,
@@ -54,34 +52,26 @@ import type {
   TimelineEvent,
 } from './types';
 
-type WailsGo = Record<string, Record<string, Record<string, (...args: any[]) => Promise<any>>>>;
-
-function goAPI() {
-  const raw = (window as any).go as WailsGo | undefined;
-  if (!raw || !raw.service || !raw.service.API) {
-    return null;
-  }
-  return raw.service.API;
-}
+type GeneratedAPI = Record<string, (...args: any[]) => Promise<any>>;
+const serviceAPI = ServiceAPI as unknown as GeneratedAPI;
 
 function notAvailable<T>(method: string): Promise<T> {
   return Promise.reject(
     new Error(
-      `Wails binding service.API.${method} is not available; Stockman must be launched through the Wails runtime.`,
+      `Wails binding service.API.${method} is not available; Stockman must be launched through the Wails desktop runtime.`,
     ),
   );
 }
 
 function call<T>(method: string, ...args: unknown[]): Promise<T> {
-  const api = goAPI();
-  if (!api || typeof api[method] !== 'function') {
+  if (!hasBindings() || typeof serviceAPI[method] !== 'function') {
     return notAvailable<T>(method);
   }
-  return api[method](...args) as Promise<T>;
+  return serviceAPI[method](...args) as Promise<T>;
 }
 
 export function hasBindings(): boolean {
-  return goAPI() !== null;
+  return !!(window as any)._wails?.environment;
 }
 
 /* ---------- 连接管理 ---------- */
@@ -225,34 +215,32 @@ export const deleteControllerListener = (req: ListenerSpecRequest) =>
 
 /* ---------- 事件订阅（Wails runtime） ---------- */
 
-type EventsRuntime = {
-  EventsOn: (name: string, cb: (data: unknown) => void) => () => void;
-  EventsOff?: (name: string) => void;
-  EventsEmit?: (name: string, ...data: unknown[]) => void;
-};
+type WailsEventLike<T> = { data?: T };
 
-function eventsRuntime(): EventsRuntime | null {
-  const rt = (window as any).runtime;
-  if (rt && typeof rt.EventsOn === 'function') return rt as EventsRuntime;
-  return null;
+function eventPayload<T>(ev: WailsEventLike<T> | T): T {
+  if (ev && typeof ev === 'object' && 'data' in ev) {
+    return (ev as WailsEventLike<T>).data as T;
+  }
+  return ev as T;
 }
 
 export function onKelpieEvent(cb: (ev: TimelineEvent) => void): () => void {
-  const rt = eventsRuntime();
-  if (!rt) return () => undefined;
-  return rt.EventsOn('kelpie:event', (raw) => cb(raw as TimelineEvent));
+  if (!hasBindings()) return () => undefined;
+  return Events.On('kelpie:event', (ev) => cb(eventPayload<TimelineEvent>(ev)));
 }
 
 export function onConnectionStatus(
   cb: (status: ConnectionStatus) => void,
 ): () => void {
-  const rt = eventsRuntime();
-  if (!rt) return () => undefined;
-  return rt.EventsOn('kelpie:status', (raw) => cb(raw as ConnectionStatus));
+  if (!hasBindings()) return () => undefined;
+  return Events.On('kelpie:status', (ev) =>
+    cb(eventPayload<ConnectionStatus>(ev)),
+  );
 }
 
 export function onStreamEvent(cb: (ev: StreamEventDTO) => void): () => void {
-  const rt = eventsRuntime();
-  if (!rt) return () => undefined;
-  return rt.EventsOn('kelpie:stream', (raw) => cb(raw as StreamEventDTO));
+  if (!hasBindings()) return () => undefined;
+  return Events.On('kelpie:stream', (ev) =>
+    cb(eventPayload<StreamEventDTO>(ev)),
+  );
 }

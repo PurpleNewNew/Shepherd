@@ -30,7 +30,7 @@ Shepherd 是一个面向受限网络的延迟容忍远程运维原型系统，�
 
 > 我的课题要解决的问题，不是普通局域网里的远程控制，而是受限网络里的控制面稳定性问题。这里的“受限网络”包括高时延、链路频繁中断、节点会睡眠、拓扑会不断变化。  
 >
-> 因此，系统设计不能依赖“所有节点持续在线”这个前提。我的方案是把系统拆成三个角色：Kelpie 是管理端，负责维护拓扑、调度补链、管理 DTN 队列和 STREAM 引擎，并通过 gRPC 向 GUI 暴露统一控制面；Flock 是部署在网络中的代理节点，负责接入、gossip、转发、sleep/failover 和 carry-forward；Stockman 是桌面客户端（在 `academic` 分支上用 Wails v2 + Vue 3 重写为轻量演示客户端），负责观测和操作。  
+> 因此，系统设计不能依赖“所有节点持续在线”这个前提。我的方案是把系统拆成三个角色：Kelpie 是管理端，负责维护拓扑、调度补链、管理 DTN 队列和 STREAM 引擎，并通过 gRPC 向 GUI 暴露统一控制面；Flock 是部署在网络中的代理节点，负责接入、gossip、转发、sleep/failover 和 carry-forward；Stockman 是桌面客户端（在 `academic` 分支上用 Wails v3 + Vue 3 重写为轻量演示客户端），负责观测和操作。
 >
 > 从机制上看，这个系统有四个核心点。第一，Gossip 用来维护节点视图和拓扑快照，解决大规模和动态拓扑下的状态同步问题。第二，补链机制在父链路断开或者节点离线时创建冗余连接，提高自愈能力。第三，DTN 队列采用 store-carry-forward，在目标节点离线时先把消息保存在内存中，等目标重新接触后再投递，解决“断续连接下消息丢失”的问题。第四，我在 DTN 之上做了一个可靠流传输层 STREAM，通过窗口、ACK、RTO 和重传机制，让系统不只是发离散指令，还能做更稳定的数据通道。  
 >
@@ -50,7 +50,7 @@ Shepherd 是一个面向受限网络的延迟容忍远程运维原型系统，�
 
 ```mermaid
 flowchart LR
-    UI["Stockman (Wails v2 + Vue 3)"] <-->|"gRPC UI / Dataplane"| K["Kelpie"]
+    UI["Stockman (Wails v3 + Vue 3)"] <-->|"gRPC UI / Dataplane"| K["Kelpie"]
     K --> CORE["Topology / DTN / Stream / Supplemental Planner"]
     K --> DB["SQLite: topology, DTN, auth, audit, chat"]
     K -->|"Controller Listener"| ROOT["Root Flock"]
@@ -214,4 +214,4 @@ flowchart LR
 
 如果老师追问客户端技术路线，可以补一句：
 
-> 早期版本的 Stockman 使用 `Qt Widgets + C++20`，覆盖了 shell、文件传输、SOCKS 代理、chat、audit、loot 等完整运维交互；`academic` 分支出于答辩演示需要，重写为 **Wails v2 + Vue 3 + TypeScript + Vite** 的轻量客户端，只保留连接管理、拓扑总览（力导向+树状双视图）、节点详情、事件时间线和演示控制台五个面板。重写的好处是：一是和 `Kelpie` 直接复用同一份 Go 侧的 `uipb` protobuf 代码，避免 C++/Go 双套生成；二是把演示需要的动画、切换、指纹 TOFU 等表现层逻辑用 Vue3 做轻，稳定性和审美都更适合答辩；三是 Go + WebView 体积比 Qt 小一个数量级，方便分发。
+> 早期版本的 Stockman 使用 `Qt Widgets + C++20`，覆盖了 shell、文件传输、SOCKS 代理、chat、audit、loot 等完整运维交互；`academic` 分支出于答辩演示需要，重写为 **Wails v3 + Vue 3 + TypeScript + Vite** 的轻量客户端，只保留连接管理、拓扑总览（力导向+树状双视图）、节点详情、事件时间线和演示控制台五个面板。重写的好处是：一是和 `Kelpie` 直接复用同一份 Go 侧的 `uipb` protobuf 代码，避免 C++/Go 双套生成；二是把演示需要的动画、切换、指纹 TOFU 等表现层逻辑用 Vue3 做轻，稳定性和审美都更适合答辩；三是 Go + WebView 体积比 Qt 小一个数量级，方便分发。

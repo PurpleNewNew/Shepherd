@@ -6,11 +6,11 @@ Shepherd 是一个面向**受限网络**（高时延、间歇连接、拓扑频�
 
 - **Kelpie**（管理端/服务端）：`cmd/kelpie`，核心逻辑在 `internal/kelpie/`
 - **Flock**（代理端）：`cmd/flock`，核心逻辑在 `internal/flock/`
-- **Stockman**（答辩演示客户端，Wails v2 + Vue3 + Vite）：`clientui/`
+- **Stockman**（答辩演示客户端，Wails v3 + Vue3 + Vite）：`clientui/`
 
 > 说明：本项目用于课程/科研场景下的系统原型与实验复现，请仅在**已授权**的环境中使用。
 >
-> **关于客户端**：`academic` 分支已经把 Stockman 从旧版 Qt6 C++ 客户端重写为基于 Wails v2 + Vue 3 + Vite 的轻量级答辩演示客户端，只覆盖答辩必须的五类视图（连接管理、拓扑总览、节点详情、事件时间线、演示控制台），不再实现 shell、文件传输、SOCKS、chat、audit、loot。旧版客户端位于 `academic` 分支之前的 git 历史中。
+> **关于客户端**：`academic` 分支已经把 Stockman 从旧版 Qt6 C++ 客户端重写为基于 Wails v3 + Vue 3 + Vite 的桌面控制台。当前客户端采用多窗口启动流程，并接入 shell、文件传输、SOCKS/端口转发、SSH、会话管理与 Listener 管理等演示路径。旧版 Qt 客户端位于 `academic` 分支之前的 git 历史中。
 
 ## 构建与测试
 

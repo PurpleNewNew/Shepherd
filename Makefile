@@ -7,12 +7,13 @@ OUT ?= build
 ADMIN_PKG := ./cmd/kelpie
 AGENT_PKG := ./cmd/flock
 
-# Stockman（Wails v2 + Vue3 答辩演示客户端）
+# Stockman（Wails v3 + Vue3 答辩演示客户端）
 CLIENTUI_DIR ?= clientui
 FRONTEND_DIR ?= $(CLIENTUI_DIR)/frontend
 NPM ?= npm
+WAILS3_VERSION ?= v3.0.0-alpha.85
 
-.PHONY: all admin agent stockman stockman-frontend stockman-deps trace_replay regress soak check test clean clean-frontend
+.PHONY: all admin agent stockman stockman-frontend stockman-deps stockman-bindings trace_replay regress soak check test clean clean-frontend
 
 SOAK_REPEAT ?= 10
 SOAK_TOPOS ?= star,chain
@@ -42,7 +43,7 @@ check:
 	$(GO) test -race ./...
 	$(MAKE) regress
 
-# ------- Stockman（Wails v2 + Vue3）------
+# ------- Stockman（Wails v3 + Vue3）------
 # 1) 安装前端依赖（如果 node_modules 不存在则 install）
 stockman-deps:
 	@if [ ! -d $(FRONTEND_DIR)/node_modules ]; then \
@@ -50,14 +51,16 @@ stockman-deps:
 		cd $(FRONTEND_DIR) && $(NPM) install; \
 	fi
 
+# 1.5) 生成 Wails v3 TS bindings。通常只在 Go facade 方法变化后需要手动运行。
+stockman-bindings:
+	$(GO) run github.com/wailsapp/wails/v3/cmd/wails3@$(WAILS3_VERSION) generate bindings -d $(FRONTEND_DIR)/bindings -ts ./$(CLIENTUI_DIR)
+
 # 2) 构建前端到 frontend/dist（Go embed 源）
 stockman-frontend: stockman-deps
 	cd $(FRONTEND_DIR) && $(NPM) run build
 
 # 3) 打包 Go 二进制（Wails 需要 CGO + production build tags）
-#    注：Wails v2 在 app_default_unix.go 里要求 build tag 必须有 `dev`/`production`/`bindings` 之一，
-#    否则 CreateApp 会直接返回 "Wails applications will not build without the correct build tags."
-#    生产构建统一使用 `-tags production,desktop`，与官方 `wails build` 行为一致。
+#    生产构建统一使用 `-tags production,desktop`，与 Wails 桌面运行时行为保持一致。
 STOCKMAN_TAGS ?= production,desktop
 
 # Wails 需要的 CGO_LDFLAGS 与官方 `wails build` 对齐：

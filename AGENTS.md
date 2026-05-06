@@ -1,7 +1,7 @@
 # Repository Guidelines
 
 ## 项目结构与模块组织
-`cmd/kelpie` 和 `cmd/flock` 是两个 Go 入口程序。服务端与代理端核心逻辑分别位于 `internal/kelpie/` 与 `internal/flock/`；可复用公共库位于 `pkg/`；协议与消息格式定义位于 `protocol/` 和 `proto/`。桌面客户端 **Stockman** 位于 `clientui/`，在 `academic` 分支上已由旧版 Qt6 C++ 实现整体重写为 **Wails v2 + Vue 3 + Vite + TypeScript**：Go 入口与后端位于 `clientui/*.go` 与 `clientui/backend/`，前端位于 `clientui/frontend/`，前端构建产物位于 `clientui/frontend/dist/`（gitignore）。`clientui/` 是主 Go module 的子目录（**没有**独立的 `go.mod`），这样 Go 侧可以直接复用 `internal/kelpie/uipb` 等 internal 包。实验脚本与回放 trace 位于 `experiments/`，可复现实验报告与图表位于 `docs/`，形式化模型位于 `formal/`。`internal/dataplanepb/` 与 `internal/kelpie/uipb/` 下的 protobuf 生成文件不要手动修改。
+`cmd/kelpie` 和 `cmd/flock` 是两个 Go 入口程序。服务端与代理端核心逻辑分别位于 `internal/kelpie/` 与 `internal/flock/`；可复用公共库位于 `pkg/`；协议与消息格式定义位于 `protocol/` 和 `proto/`。桌面客户端 **Stockman** 位于 `clientui/`，在 `academic` 分支上已由旧版 Qt6 C++ 实现整体重写为 **Wails v3 + Vue 3 + Vite + TypeScript**：Go 入口与后端位于 `clientui/*.go` 与 `clientui/backend/`，前端位于 `clientui/frontend/`，前端构建产物位于 `clientui/frontend/dist/`（gitignore）。`clientui/` 是主 Go module 的子目录（**没有**独立的 `go.mod`），这样 Go 侧可以直接复用 `internal/kelpie/uipb` 等 internal 包。实验脚本与回放 trace 位于 `experiments/`，可复现实验报告与图表位于 `docs/`，形式化模型位于 `formal/`。`internal/dataplanepb/` 与 `internal/kelpie/uipb/` 下的 protobuf 生成文件不要手动修改。
 
 ## 构建、测试与开发命令
 统一从仓库根目录使用 `make`。

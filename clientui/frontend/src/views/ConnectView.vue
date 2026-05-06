@@ -14,7 +14,7 @@ interface FormState {
 }
 
 const form = reactive<FormState>({
-  endpoint: '127.0.0.1:9090',
+  endpoint: '127.0.0.1:50061',
   token: '',
   useTLS: false,
   label: '',
@@ -32,13 +32,6 @@ const canSubmit = computed(
 const fingerprintDisplay = computed(() =>
   formatFingerprint(conn.pendingFingerprint),
 );
-
-// hero 左栏底部的 "Session" 时间戳：仅在组件首次挂载时求一次，无需实时。
-const sessionStamp = computed(() => {
-  const d = new Date();
-  const pad = (n: number) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} · ${pad(d.getHours())}:${pad(d.getMinutes())}`;
-});
 
 function formatFingerprint(raw?: string): string {
   if (!raw) return '';
@@ -75,7 +68,7 @@ async function submit() {
       showMismatch.value = true;
     }
   } catch (_err) {
-    // 错误会写回 conn.lastError，不单独处理
+    // 错误会写回 conn.lastError，不单独处理。
   } finally {
     submitting.value = false;
   }
@@ -98,7 +91,6 @@ async function trustAndRetry() {
 }
 
 function rejectTrust() {
-  // 用户不信任，直接关闭提示并断开。
   conn.disconnect();
 }
 
@@ -119,213 +111,143 @@ watch(
 
 <template>
   <section class="connect-view">
-    <!-- 左侧 hero：深紫渐变带，Cohere "enterprise command deck" 的戏剧入口。 -->
-    <aside class="hero sf-hero-violet">
-      <div class="hero-top">
-        <div class="brand-row">
-          <div class="brand-mark" aria-hidden="true">
-            <span class="brand-serif">S</span>
-          </div>
-          <div class="brand-wordmark">
-            <span class="sf-label">Shepherd · Stockman</span>
-            <span class="brand-caption">
-              Defense-grade control plane companion
-            </span>
-          </div>
+    <form class="connect-dialog" @submit.prevent="submit">
+      <header class="dialog-titlebar">
+        <div>
+          <span class="eyebrow">TEAM SERVER</span>
+          <h1>Connect</h1>
         </div>
-      </div>
+        <span class="build-tag">Wails v3</span>
+      </header>
 
-      <div class="hero-center">
-        <p class="sf-label hero-eyebrow">
-          Control plane for constrained networks
-        </p>
-        <h1 class="hero-title">
-          One admin console.<br />
-          <em>Many unreachable edges.</em>
-        </h1>
-        <p class="hero-lede">
-          Stockman 是 Shepherd 的毕业设计演示客户端——面向答辩的平静、排印化的
-          Kelpie 控制面视口。它不是生产运维台；它只做一件事：把 Gossip、补链、
-          DTN 和 sleep-aware 这些机制，讲清楚。
-        </p>
-      </div>
-
-      <footer class="hero-bottom">
-        <div class="hero-meta">
-          <span class="sf-label">Build</span>
-          <span class="hero-meta-value">Wails v2 · Vue 3 · Vite · Go</span>
-        </div>
-        <div class="hero-meta">
-          <span class="sf-label">Session</span>
-          <span class="hero-meta-value">{{ sessionStamp }}</span>
-        </div>
-      </footer>
-    </aside>
-
-    <!-- 右侧：白底连接表单 + 最近连接 -->
-    <div class="panel">
-      <div class="panel-head">
-        <p class="sf-label sf-label--strong">Step 01 — Connect</p>
-        <h2 class="sf-h2 panel-title">Sign in to a Kelpie control plane</h2>
-        <p class="sf-body-lg panel-lede">
-          填入 Kelpie 的 gRPC UI 端点与 <code class="sf-mono">-ui-auth-token</code>。
-          TLS 为可选；若启用，首次连接会要求你确认 SHA-256 证书指纹（TOFU）。
-        </p>
-      </div>
-
-      <form class="form" @submit.prevent="submit">
-        <label class="field">
-          <span class="sf-label sf-label--strong">gRPC Endpoint</span>
+      <div class="form-grid">
+        <label class="field span-2">
+          <span>Host</span>
           <input
             v-model="form.endpoint"
-            class="sf-input sf-mono"
+            class="mono"
             autocomplete="off"
-            placeholder="127.0.0.1:9090"
+            placeholder="127.0.0.1:50061"
             :disabled="submitting"
           />
         </label>
 
-        <label class="field">
-          <span class="sf-label sf-label--strong">Teamserver Token</span>
+        <label class="field span-2">
+          <span>Token</span>
           <input
             v-model="form.token"
-            class="sf-input sf-mono"
+            class="mono"
             type="password"
             autocomplete="off"
-            placeholder="-ui-auth-token"
+            placeholder="-ui-grpc-token"
             :disabled="submitting"
           />
         </label>
 
-        <label class="field">
-          <span class="sf-label sf-label--strong">Label · Optional</span>
+        <label class="field span-2">
+          <span>Alias</span>
           <input
             v-model="form.label"
-            class="sf-input"
-            placeholder="e.g. star-6 · thesis-demo"
+            autocomplete="off"
+            placeholder="thesis-demo"
             :disabled="submitting"
           />
         </label>
 
-        <div class="options-row">
-          <label class="toggle">
-            <input
-              type="checkbox"
-              v-model="form.useTLS"
-              :disabled="submitting"
-            />
-            <span>启用 TLS（TOFU pin）</span>
-          </label>
-          <label class="toggle">
-            <input
-              type="checkbox"
-              v-model="form.remember"
-              :disabled="submitting"
-            />
-            <span>记住此端点</span>
-          </label>
-        </div>
+        <label class="check-field">
+          <input type="checkbox" v-model="form.useTLS" :disabled="submitting" />
+          <span>TLS</span>
+        </label>
 
-        <button
-          class="sf-btn primary submit"
-          :disabled="!canSubmit"
-          type="submit"
-        >
-          <span v-if="submitting">Connecting…</span>
-          <span v-else>Connect to Kelpie →</span>
-        </button>
+        <label class="check-field">
+          <input
+            type="checkbox"
+            v-model="form.remember"
+            :disabled="submitting"
+          />
+          <span>Remember</span>
+        </label>
+      </div>
 
-        <p v-if="conn.lastError" class="error-text">
-          {{ conn.lastError }}
-        </p>
-      </form>
-
-      <section class="recent" v-if="conn.recent.length">
-        <header class="recent-head">
-          <p class="sf-label sf-label--strong">Recent endpoints</p>
-          <span class="sf-small sf-muted">{{ conn.recent.length }} saved</span>
+      <section class="recent-panel">
+        <header>
+          <span>Recent</span>
+          <small>{{ conn.recent.length }}</small>
         </header>
-        <ul>
-          <li
+        <div class="recent-list" v-if="conn.recent.length">
+          <button
             v-for="r in conn.recent"
             :key="r.id"
-            :class="['recent-item', { active: activeRecentId === r.id }]"
+            type="button"
+            :class="['recent-row', { active: activeRecentId === r.id }]"
             @click="pickRecent(r)"
           >
-            <div class="recent-title">
-              <span class="recent-label">{{ r.label || r.endpoint }}</span>
-              <span class="sf-chip" :class="r.useTLS ? 'info' : ''">
-                {{ r.useTLS ? 'TLS' : 'Plain' }}
-              </span>
-            </div>
-            <div class="recent-meta sf-mono">{{ r.endpoint }}</div>
-            <button
-              class="remove-btn"
-              @click.stop="removeRecent(r.id)"
+            <span class="recent-main">
+              <b>{{ r.label || r.endpoint }}</b>
+              <em>{{ r.endpoint }}</em>
+            </span>
+            <span class="recent-mode">{{ r.useTLS ? 'TLS' : 'PLAIN' }}</span>
+            <span
+              class="remove-recent"
               title="Remove"
-              aria-label="Remove this endpoint"
+              @click.stop="removeRecent(r.id)"
             >
               ×
-            </button>
-          </li>
-        </ul>
+            </span>
+          </button>
+        </div>
+        <div v-else class="empty-recent">No saved endpoints</div>
       </section>
-    </div>
 
-    <!-- TOFU 首次指纹确认 -->
+      <p v-if="conn.lastError" class="error-text">
+        {{ conn.lastError }}
+      </p>
+
+      <footer class="actions">
+        <span class="status-text">
+          {{ submitting ? 'CONNECTING' : conn.phase.toUpperCase() }}
+        </span>
+        <button class="connect-btn" :disabled="!canSubmit" type="submit">
+          {{ submitting ? 'Connecting...' : 'Connect' }}
+        </button>
+      </footer>
+    </form>
+
     <Teleport to="body">
-      <Transition name="sf-fade-up">
+      <Transition name="modal-pop">
         <div v-if="conn.awaitingTrust" class="modal-mask">
-          <div class="modal sf-panel">
-            <p class="sf-label sf-label--strong">Trust on first use</p>
-            <h3 class="sf-h3 modal-title">Confirm server fingerprint</h3>
-            <p class="modal-lede">
-              You are connecting to
-              <b class="sf-mono">{{ form.endpoint }}</b> over TLS for the first
-              time. 请对照 Kelpie 启动日志中打印的 SHA-256 指纹，确认一致后再信任。
-            </p>
-            <pre class="fingerprint sf-mono">{{ fingerprintDisplay }}</pre>
+          <div class="modal">
+            <header>
+              <span class="eyebrow">TOFU PIN</span>
+              <h2>Confirm fingerprint</h2>
+            </header>
+            <pre class="fingerprint mono">{{ fingerprintDisplay }}</pre>
             <div class="modal-actions">
-              <button class="sf-btn ghost" @click="rejectTrust">Cancel</button>
-              <button
-                class="sf-btn primary"
-                :disabled="submitting"
-                @click="trustAndRetry"
-              >
-                {{ submitting ? 'Trusting…' : 'Trust & connect' }}
+              <button type="button" @click="rejectTrust">Cancel</button>
+              <button type="button" :disabled="submitting" @click="trustAndRetry">
+                Trust
               </button>
             </div>
           </div>
         </div>
       </Transition>
 
-      <Transition name="sf-fade-up">
+      <Transition name="modal-pop">
         <div v-if="showMismatch && conn.pendingMismatch" class="modal-mask">
-          <div class="modal sf-panel danger">
-            <p class="sf-label sf-label--strong danger-label">
-              Fingerprint mismatch
-            </p>
-            <h3 class="sf-h3 modal-title">The server identity changed</h3>
-            <p class="modal-lede">
+          <div class="modal danger">
+            <header>
+              <span class="eyebrow">IDENTITY</span>
+              <h2>Fingerprint changed</h2>
+            </header>
+            <p>
               Pinned
-              <code class="sf-mono">{{
-                formatFingerprint(conn.pendingMismatch)
-              }}</code>，但实际得到
-              <code class="sf-mono">{{
-                formatFingerprint(conn.pendingFingerprint)
-              }}</code>。
-            </p>
-            <p class="sf-small sf-muted">
-              只有在你主动轮换了 Kelpie 证书时才选择“忘记旧指纹并重试”。
-              否则请终止连接并排查中间人。
+              <code class="mono">{{ formatFingerprint(conn.pendingMismatch) }}</code>
+              but got
+              <code class="mono">{{ formatFingerprint(conn.pendingFingerprint) }}</code>.
             </p>
             <div class="modal-actions">
-              <button class="sf-btn ghost" @click="showMismatch = false">
-                Close
-              </button>
-              <button class="sf-btn danger" @click="forgetAndRetry">
-                Forget old pin & retry
-              </button>
+              <button type="button" @click="showMismatch = false">Close</button>
+              <button type="button" @click="forgetAndRetry">Forget & retry</button>
             </div>
           </div>
         </div>
@@ -335,370 +257,326 @@ watch(
 </template>
 
 <style scoped>
-/*
- * ConnectView：Cohere 式的"左紫右白"分屏入口。
- *   - 左：深紫 hero band（sf-hero-violet），承载品牌 + display serif 标题；
- *   - 右：纯白画布 + 表单 + 最近连接卡片。
- * 主窗口无外边距、无圆角，让两端直接贴到 Wails 窗口边缘，营造 "page" 而非 "card".
- */
-
 .connect-view {
-  flex: 1;
   min-height: 100vh;
-  width: 100%;
+  width: 100vw;
   display: grid;
-  grid-template-columns: minmax(360px, 0.85fr) minmax(420px, 1fr);
-  background: var(--sf-bg-0);
+  place-items: stretch;
+  background: #121821;
+  color: #d8e0ea;
+  font-family:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    'PingFang SC',
+    sans-serif;
 }
 
-/* ---------- Hero（左栏） ---------- */
-.hero {
-  position: relative;
+.connect-dialog {
+  height: 100vh;
+  display: grid;
+  grid-template-rows: auto auto minmax(74px, 1fr) auto auto;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid #263343;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 38%),
+    #141b25;
+}
+
+.dialog-titlebar {
   display: flex;
-  flex-direction: column;
+  align-items: center;
   justify-content: space-between;
-  padding: 56px 64px 48px;
-  overflow: hidden;
-  min-height: 100vh;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #2b394a;
 }
 
-.hero::after {
-  /* 在 hero 底部加一道极细的深紫→透明分割，营造"section 收尾" */
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.08) 0%,
-    rgba(255, 255, 255, 0.02) 100%
-  );
+.eyebrow,
+.build-tag,
+.status-text,
+.recent-panel header,
+.field span,
+.check-field,
+.recent-mode {
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8ea0b6;
 }
 
-/* 品牌：22px 圆角的 dark solid 方块 + uppercase wordmark */
-.brand-row {
+h1,
+h2 {
+  margin: 3px 0 0;
+  color: #f4f7fb;
+  font-size: 18px;
+  font-weight: 650;
+  letter-spacing: 0;
+}
+
+.build-tag {
+  color: #6fd2a1;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 10px;
+}
+
+.span-2 {
+  grid-column: 1 / -1;
+}
+
+.field {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+}
+
+.field input {
+  min-width: 0;
+  height: 28px;
+  padding: 0 8px;
+  border: 1px solid #334358;
+  border-radius: 0;
+  outline: none;
+  background: #0d1219;
+  color: #edf3fb;
+  font-size: 12px;
+}
+
+.field input:focus {
+  border-color: #68b7ff;
+  box-shadow: inset 0 0 0 1px rgba(104, 183, 255, 0.25);
+}
+
+.field input:disabled {
+  opacity: 0.55;
+}
+
+.mono {
+  font-family:
+    'IBM Plex Mono',
+    'SF Mono',
+    Menlo,
+    Consolas,
+    monospace;
+}
+
+.check-field {
+  height: 24px;
   display: inline-flex;
   align-items: center;
-  gap: 14px;
+  gap: 7px;
+  color: #c1cad6;
 }
-.brand-mark {
-  width: 48px;
-  height: 48px;
-  border-radius: var(--sf-r-xl); /* 签名 22px */
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+
+.check-field input {
+  width: 13px;
+  height: 13px;
+  margin: 0;
+  accent-color: #6fd2a1;
+}
+
+.recent-panel {
+  min-height: 0;
+  border: 1px solid #283646;
+  background: #101720;
   display: grid;
-  place-items: center;
-  backdrop-filter: blur(6px);
+  grid-template-rows: auto 1fr;
 }
-.brand-serif {
-  font-family: var(--sf-font-display);
-  font-size: 26px;
-  line-height: 1;
-  color: var(--sf-fg-on-violet);
-  letter-spacing: -0.5px;
-  transform: translateY(-1px);
+
+.recent-panel header {
+  display: flex;
+  justify-content: space-between;
+  padding: 7px 8px;
+  border-bottom: 1px solid #283646;
+  background: #172130;
 }
-.brand-wordmark {
+
+.recent-panel small {
+  color: #6fd2a1;
+}
+
+.recent-list {
+  min-height: 0;
+  overflow: auto;
+}
+
+.recent-row {
+  width: 100%;
+  height: 38px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto 22px;
+  align-items: center;
+  gap: 8px;
+  padding: 0 0 0 8px;
+  border: 0;
+  border-bottom: 1px solid #202c3b;
+  border-radius: 0;
+  background: transparent;
+  color: #d7e0ec;
+  text-align: left;
+  cursor: default;
+}
+
+.recent-row:hover,
+.recent-row.active {
+  background: #1c2d40;
+}
+
+.recent-main {
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
-.brand-wordmark .sf-label {
-  color: var(--sf-fg-on-violet);
-}
-.brand-caption {
-  font-size: 0.8rem;
-  color: var(--sf-fg-on-violet-dim);
+
+.recent-main b,
+.recent-main em {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-style: normal;
 }
 
-/* 居中区块：display serif hero */
-.hero-center {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  max-width: 520px;
-}
-.hero-eyebrow {
-  color: var(--sf-fg-on-violet-dim);
-}
-.hero-title {
-  margin: 0;
-  font-family: var(--sf-font-display);
-  font-weight: 400;
-  font-size: clamp(44px, 5.2vw, 64px);
-  line-height: 1.02;
-  letter-spacing: -1.2px;
-  color: var(--sf-fg-on-violet);
-}
-.hero-title em {
-  font-style: italic;
-  color: rgba(255, 255, 255, 0.72);
-}
-.hero-lede {
-  margin: 0;
-  font-family: var(--sf-font-sans);
-  font-size: 1rem;
-  line-height: 1.55;
-  color: var(--sf-fg-on-violet-dim);
-  max-width: 460px;
+.recent-main b {
+  color: #eef5ff;
+  font-size: 12px;
+  font-weight: 600;
 }
 
-/* 底部 meta：uppercase label + body value */
-.hero-bottom {
-  display: flex;
-  gap: 48px;
-  padding-top: 22px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-.hero-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.hero-meta-value {
-  font-family: var(--sf-font-mono);
-  font-size: 0.85rem;
-  color: var(--sf-fg-on-violet);
-  letter-spacing: 0.1px;
+.recent-main em {
+  color: #7e8fa4;
+  font-size: 10px;
 }
 
-/* ---------- Panel（右栏） ---------- */
-.panel {
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
-  padding: 72px 64px 48px;
-  overflow-y: auto;
-  min-height: 100vh;
+.recent-mode {
+  color: #6fd2a1;
 }
 
-.panel-head {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.panel-title {
-  margin: 0;
-}
-.panel-lede {
-  margin: 4px 0 0;
-  max-width: 46ch;
-  color: var(--sf-fg-2);
-}
-.panel-lede code {
-  background: var(--sf-bg-3);
-  padding: 1px 6px;
-  border-radius: var(--sf-r-xs);
-  font-size: 0.88em;
+.remove-recent {
+  height: 100%;
+  display: grid;
+  place-items: center;
+  color: #8394aa;
+  font-size: 16px;
 }
 
-/* 表单 */
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+.remove-recent:hover {
+  background: #42202a;
+  color: #ff9aa8;
 }
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+
+.empty-recent {
+  display: grid;
+  place-items: center;
+  color: #63758b;
+  font-size: 12px;
 }
-.options-row {
-  display: flex;
-  gap: 24px;
-  flex-wrap: wrap;
-  padding: 4px 0;
-  font-size: 0.875rem;
-  color: var(--sf-fg-1);
-}
-.toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-}
-.toggle input {
-  accent-color: var(--sf-fg-0);
-  width: 16px;
-  height: 16px;
-}
-.submit {
-  margin-top: 6px;
-  padding: 14px 22px;
-  font-size: 0.95rem;
-  letter-spacing: 0.1px;
-  align-self: flex-start;
-}
+
 .error-text {
-  margin: 4px 0 0;
-  padding: 10px 14px;
-  background: var(--sf-danger-bg);
-  border: 1px solid rgba(179, 0, 0, 0.18);
-  border-radius: var(--sf-r-sm);
-  color: var(--sf-danger);
-  font-size: 0.85rem;
-  line-height: 1.5;
-}
-
-/* 最近连接 */
-.recent {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  min-width: 0;
-  padding-top: 28px;
-  border-top: 1px solid var(--sf-border-1);
-}
-.recent-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.recent ul {
-  list-style: none;
-  padding: 0;
+  min-height: 18px;
   margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  max-height: 320px;
-  overflow: auto;
-}
-.recent-item {
-  position: relative;
-  padding: 14px 16px;
-  border-radius: var(--sf-r-md);
-  border: 1px solid var(--sf-border-1);
-  background: var(--sf-bg-0);
-  cursor: pointer;
-  transition: border-color var(--sf-dur-fast) var(--sf-ease),
-    background var(--sf-dur-fast) var(--sf-ease);
-}
-.recent-item:hover {
-  border-color: var(--sf-fg-0);
-  background: var(--sf-bg-1);
-}
-.recent-item.active {
-  border-color: var(--sf-fg-0);
-  background: var(--sf-bg-1);
-}
-.recent-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.recent-title .recent-label {
-  font-weight: 500;
-  color: var(--sf-fg-0);
-  font-size: 0.95rem;
-}
-.recent-meta {
-  margin-top: 4px;
-  font-size: 0.8rem;
-  color: var(--sf-fg-3);
-}
-.remove-btn {
-  position: absolute;
-  right: 8px;
-  top: 8px;
-  width: 24px;
-  height: 24px;
-  border-radius: var(--sf-r-pill);
-  background: transparent;
-  color: var(--sf-fg-3);
-  font-size: 1.15rem;
-  line-height: 1;
-  padding: 0;
-  opacity: 0;
-  transition: opacity var(--sf-dur-fast) var(--sf-ease),
-    background var(--sf-dur-fast) var(--sf-ease),
-    color var(--sf-dur-fast) var(--sf-ease);
-}
-.recent-item:hover .remove-btn,
-.recent-item.active .remove-btn {
-  opacity: 1;
-}
-.remove-btn:hover {
-  background: var(--sf-danger-bg);
-  color: var(--sf-danger);
+  color: #ff9aa8;
+  font-size: 11px;
+  line-height: 1.35;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-/* ---------- 模态（dialog radius 8px，不用签名 22px） ---------- */
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 2px;
+}
+
+.connect-btn,
+.modal-actions button {
+  min-width: 92px;
+  height: 30px;
+  border: 1px solid #50647c;
+  border-radius: 0;
+  background: #26364a;
+  color: #f3f8ff;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.connect-btn:hover:not(:disabled),
+.modal-actions button:hover:not(:disabled) {
+  border-color: #68b7ff;
+  background: #30506c;
+}
+
+.connect-btn:disabled,
+.modal-actions button:disabled {
+  opacity: 0.45;
+}
+
 .modal-mask {
   position: fixed;
   inset: 0;
-  background: rgba(17, 17, 28, 0.28);
-  backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  z-index: 1000;
-}
-.modal {
-  max-width: 540px;
-  width: 100%;
-  padding: 28px 32px;
-  border-radius: var(--sf-r-sm); /* dialog = 8px */
-  box-shadow: var(--sf-shadow-2);
-  animation: sf-fade-up var(--sf-dur) var(--sf-ease);
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.modal.danger {
-  border-color: rgba(179, 0, 0, 0.32);
-}
-.modal-title {
-  margin: 2px 0 4px;
-}
-.modal-lede {
-  margin: 4px 0 0;
-  color: var(--sf-fg-1);
-  font-size: 0.95rem;
-  line-height: 1.55;
-}
-.modal pre.fingerprint {
-  padding: 14px 16px;
-  margin: 14px 0 10px;
-  background: var(--sf-bg-1);
-  border-radius: var(--sf-r-sm);
-  border: 1px solid var(--sf-border-2);
-  color: var(--sf-fg-0);
-  font-size: 0.85rem;
-  line-height: 1.5;
-  word-break: break-all;
-  white-space: pre-wrap;
-  letter-spacing: 0.5px;
-}
-.modal-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-  margin-top: 12px;
-}
-.danger-label {
-  color: var(--sf-danger) !important;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(5, 8, 12, 0.72);
+  z-index: 10;
 }
 
-/* ---------- 响应式 ---------- */
-@media (max-width: 960px) {
-  .connect-view {
-    grid-template-columns: 1fr;
-  }
-  .hero {
-    min-height: 340px;
-    padding: 40px 32px 32px;
-  }
-  .hero-title {
-    font-size: 44px;
-  }
-  .panel {
-    padding: 36px 32px 48px;
-    min-height: auto;
-  }
+.modal {
+  width: min(380px, calc(100vw - 36px));
+  padding: 14px;
+  border: 1px solid #40536b;
+  border-radius: 0;
+  background: #151e2b;
+  color: #dce5f0;
+}
+
+.modal.danger {
+  border-color: #8d3d48;
+}
+
+.modal p {
+  margin: 10px 0 0;
+  color: #b5c2d1;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.fingerprint {
+  white-space: pre-wrap;
+  word-break: break-all;
+  margin: 12px 0 0;
+  padding: 10px;
+  border: 1px solid #2b3b4f;
+  background: #0c1118;
+  color: #9ce6bd;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.modal-pop-enter-active,
+.modal-pop-leave-active {
+  transition: opacity 140ms ease;
+}
+
+.modal-pop-enter-from,
+.modal-pop-leave-to {
+  opacity: 0;
 }
 </style>

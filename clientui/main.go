@@ -2,52 +2,133 @@ package main
 
 import (
 	"embed"
+	"io/fs"
 	"log"
+	"sync/atomic"
+	"time"
 
-	"github.com/wailsapp/wails/v2"
-	"github.com/wailsapp/wails/v2/pkg/options"
-	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
-	"github.com/wailsapp/wails/v2/pkg/options/mac"
+	"github.com/wailsapp/wails/v3/pkg/application"
+	"github.com/wailsapp/wails/v3/pkg/events"
+
+	"codeberg.org/agnoie/shepherd/clientui/backend/service"
 )
 
 //go:embed all:frontend/dist
 var assets embed.FS
 
 func main() {
-	app := NewApp()
-	err := wails.Run(&options.App{
-		Title:         "Stockman · Shepherd 答辩演示客户端",
-		Width:         1320,
-		Height:        860,
-		MinWidth:      1080,
-		MinHeight:     680,
-		Frameless:     false,
-		DisableResize: false,
-		// Cohere 风格：纯白画布（#ffffff）。WebView 不透明，避免桌面毛玻璃穿透。
-		BackgroundColour: &options.RGBA{R: 255, G: 255, B: 255, A: 255},
-		AssetServer: &assetserver.Options{
-			Assets: assets,
+	var wailsApp *application.App
+	var connectWindow application.Window
+	var mainWindow application.Window
+	var mainWindowActive atomic.Bool
+
+	showMainWindow := func() {
+		mainWindowActive.Store(true)
+		if mainWindow != nil {
+			mainWindow.Show()
+			mainWindow.Focus()
+		}
+		if connectWindow != nil {
+			connectWindow.Hide()
+		}
+	}
+
+	showConnectWindow := func() {
+		mainWindowActive.Store(false)
+		if connectWindow != nil {
+			connectWindow.Show()
+			connectWindow.Focus()
+		}
+		if mainWindow != nil {
+			mainWindow.Hide()
+		}
+	}
+
+	stockman := NewApp(service.Hooks{
+		Emit: func(topic string, payload any) {
+			if wailsApp != nil {
+				wailsApp.Event.Emit(topic, payload)
+			}
 		},
-		OnStartup:  app.Startup,
-		OnShutdown: app.Shutdown,
-		Bind: []interface{}{
-			app.API(),
+		ShowMainWindow:    showMainWindow,
+		ShowConnectWindow: showConnectWindow,
+	})
+	assetFS, err := fs.Sub(assets, "frontend/dist")
+	if err != nil {
+		log.Fatalf("stockman: prepare frontend assets: %v", err)
+	}
+
+	wailsApp = application.New(application.Options{
+		Name:        "Stockman",
+		Description: "Shepherd Stockman desktop console",
+		Assets: application.AssetOptions{
+			Handler: application.AssetFileServerFS(assetFS),
 		},
-		Mac: &mac.Options{
-			TitleBar: &mac.TitleBar{
-				TitlebarAppearsTransparent: true,
-				HideTitleBar:               false,
-				FullSizeContent:            true,
-				UseToolbar:                 false,
-				HideToolbarSeparator:       true,
-			},
-			// 明亮主题：切换 NSAppearance 为 Aqua，并关闭 WebView 透明，让白背景稳定呈现。
-			Appearance:           mac.NSAppearanceNameAqua,
-			WebviewIsTransparent: false,
-			WindowIsTranslucent:  false,
+		Services: []application.Service{
+			application.NewService(stockman.API()),
+		},
+		Mac: application.MacOptions{
+			ActivationPolicy: application.ActivationPolicyRegular,
+		},
+		OnShutdown: stockman.Shutdown,
+	})
+
+	connectWindow = wailsApp.Window.NewWithOptions(application.WebviewWindowOptions{
+		Name:            "connect",
+		Title:           "Stockman Connect",
+		Width:           460,
+		Height:          390,
+		MinWidth:        460,
+		MinHeight:       390,
+		MaxWidth:        520,
+		MaxHeight:       460,
+		DisableResize:   false,
+		URL:             "/?window=connect",
+		InitialPosition: application.WindowCentered,
+		BackgroundType:  application.BackgroundTypeSolid,
+		BackgroundColour: application.RGBA{
+			Red: 18, Green: 24, Blue: 33, Alpha: 255,
+		},
+		Mac: application.MacWindow{
+			Appearance: application.NSAppearanceNameDarkAqua,
+			TitleBar:   application.MacTitleBarDefault,
 		},
 	})
-	if err != nil {
+	connectWindow.OnWindowEvent(events.Mac.WebViewDidFinishNavigation, func(*application.WindowEvent) {
+		showConnectWindow()
+	})
+
+	mainWindow = wailsApp.Window.NewWithOptions(application.WebviewWindowOptions{
+		Name:            "main",
+		Title:           "Stockman · Shepherd 控制台",
+		Width:           1320,
+		Height:          860,
+		MinWidth:        1080,
+		MinHeight:       680,
+		Hidden:          true,
+		URL:             "/?window=main",
+		InitialPosition: application.WindowCentered,
+		BackgroundType:  application.BackgroundTypeSolid,
+		BackgroundColour: application.RGBA{
+			Red: 255, Green: 255, Blue: 255, Alpha: 255,
+		},
+		Mac: application.MacWindow{
+			Appearance: application.NSAppearanceNameAqua,
+			TitleBar:   application.MacTitleBarHiddenInset,
+		},
+	})
+
+	go func() {
+		for range 12 {
+			time.Sleep(250 * time.Millisecond)
+			if mainWindowActive.Load() {
+				return
+			}
+			showConnectWindow()
+		}
+	}()
+
+	if err := wailsApp.Run(); err != nil {
 		log.Fatalf("stockman: wails run: %v", err)
 	}
 }

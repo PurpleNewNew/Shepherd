@@ -11,7 +11,7 @@ import (
 	"sync"
 	"time"
 
-	wruntime "github.com/wailsapp/wails/v2/pkg/runtime"
+	"github.com/wailsapp/wails/v3/pkg/application"
 
 	"codeberg.org/agnoie/shepherd/clientui/backend/config"
 	"codeberg.org/agnoie/shepherd/clientui/backend/kelpie"
@@ -22,9 +22,10 @@ import (
 //
 // 线程模型：
 //   - Wails 可能在多个 goroutine 里调用方法，mu 用于保护 client/stream 字段。
-//   - EventStream goroutine 独立运行，通过 wruntime.EventsEmit 推送事件给前端。
+//   - EventStream goroutine 独立运行，通过 Hooks.Emit 推送事件给前端。
 type API struct {
 	store *config.Store
+	hooks Hooks
 	ctx   context.Context
 
 	mu         sync.Mutex
@@ -38,6 +39,13 @@ type API struct {
 	streamMu    sync.Mutex
 	streamSeq   uint64
 	interactive map[string]*interactiveStream
+}
+
+// Hooks 将 facade 与 Wails v3 application/window 解耦，便于后端逻辑继续保持可测。
+type Hooks struct {
+	Emit              func(topic string, payload any)
+	ShowMainWindow    func()
+	ShowConnectWindow func()
 }
 
 const (
@@ -56,21 +64,30 @@ type interactiveStream struct {
 }
 
 // New 创建 API；store 不可为 nil。
-func New(store *config.Store) *API {
+func New(store *config.Store, hooks Hooks) *API {
 	return &API{
 		store:       store,
+		hooks:       hooks,
 		status:      ConnectionStatus{Phase: PhaseDisconnected},
 		eventRing:   make([]kelpie.Event, eventRingCap),
 		interactive: make(map[string]*interactiveStream),
 	}
 }
 
-// BindContext 在 Wails.Startup 里调用，保存运行时上下文。
-func (a *API) BindContext(ctx context.Context) { a.ctx = ctx }
+// ServiceStartup 由 Wails v3 在服务注册后调用，保存应用生命周期 context。
+func (a *API) ServiceStartup(ctx context.Context, _ application.ServiceOptions) error {
+	a.ctx = ctx
+	return nil
+}
 
-// Shutdown 在 Wails OnBeforeClose / OnShutdown 里调用。
-func (a *API) Shutdown(context.Context) {
-	_ = a.Disconnect()
+// ServiceShutdown 由 Wails v3 在服务退出时调用。
+func (a *API) ServiceShutdown() error {
+	a.shutdown()
+	return nil
+}
+
+func (a *API) shutdown() {
+	_ = a.disconnect(false)
 }
 
 // ---------- 连接生命周期 ----------
@@ -225,6 +242,9 @@ func (a *API) Connect(req ConnectRequest) (ConnectResult, error) {
 	go a.pumpEvents(stream)
 
 	a.emitStatus()
+	if a.hooks.ShowMainWindow != nil {
+		a.hooks.ShowMainWindow()
+	}
 
 	return ConnectResult{
 		Phase:    PhaseConnected,
@@ -235,6 +255,10 @@ func (a *API) Connect(req ConnectRequest) (ConnectResult, error) {
 
 // Disconnect 主动断开，不删除 TOFU 指纹。
 func (a *API) Disconnect() error {
+	return a.disconnect(true)
+}
+
+func (a *API) disconnect(showConnectWindow bool) error {
 	a.mu.Lock()
 	stream := a.stream
 	client := a.client
@@ -251,6 +275,9 @@ func (a *API) Disconnect() error {
 	}
 	a.closeAllInteractiveStreams("disconnect")
 	a.emitStatus()
+	if showConnectWindow && a.hooks.ShowConnectWindow != nil {
+		a.hooks.ShowConnectWindow()
+	}
 	return nil
 }
 
@@ -987,21 +1014,16 @@ func (a *API) setPhase(p ConnectionPhase, errMsg string) {
 }
 
 func (a *API) emitStatus() {
-	if a.ctx == nil {
-		return
-	}
 	a.mu.Lock()
 	snapshot := a.status
 	a.mu.Unlock()
-	wruntime.EventsEmit(a.ctx, statusTopic, snapshot)
+	a.emit(statusTopic, snapshot)
 }
 
 func (a *API) pumpEvents(stream *kelpie.EventStream) {
 	for ev := range stream.Out() {
 		a.pushEventRing(ev)
-		if a.ctx != nil {
-			wruntime.EventsEmit(a.ctx, eventTopic, ev)
-		}
+		a.emit(eventTopic, ev)
 	}
 	// 流结束，若是异常，则向前端报告连接掉线。
 	if err := stream.Err(); err != nil {
@@ -1115,10 +1137,14 @@ func (a *API) pumpInteractiveStream(st *interactiveStream) {
 }
 
 func (a *API) emitStreamEvent(ev StreamEventDTO) {
-	if a.ctx == nil {
+	a.emit(streamTopic, ev)
+}
+
+func (a *API) emit(topic string, payload any) {
+	if a.hooks.Emit == nil {
 		return
 	}
-	wruntime.EventsEmit(a.ctx, streamTopic, ev)
+	a.hooks.Emit(topic, payload)
 }
 
 func (a *API) nextStreamHandleID() string {

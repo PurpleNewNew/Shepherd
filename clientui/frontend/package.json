@@ -10,6 +10,7 @@
     "type-check": "vue-tsc --noEmit"
   },
   "dependencies": {
+    "@wailsio/runtime": "3.0.0-alpha.79",
     "d3-force": "^3.0.0",
     "d3-hierarchy": "^3.1.2",
     "d3-scale": "^4.0.2",
