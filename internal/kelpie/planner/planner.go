@@ -105,14 +105,17 @@ type RepairStatusSnapshot struct {
 }
 
 type failureState struct {
-	attempts       int
-	next           time.Time
-	timer          *time.Timer
-	reason         string
-	repairAttempts int
-	repairNext     time.Time
-	repairTimer    *time.Timer
-	broken         bool
+	attempts              int
+	next                  time.Time
+	timer                 *time.Timer
+	reason                string
+	topologyBlocked       bool
+	topologyBlockedAt     time.Time
+	topologyBlockedReason string
+	repairAttempts        int
+	repairNext            time.Time
+	repairTimer           *time.Timer
+	broken                bool
 }
 
 type nodeLink struct {
@@ -705,8 +708,11 @@ func (p *SupplementalPlanner) planForNode(action PlanAction) {
 		return
 	}
 	if len(candidates) == 0 {
-		p.metricsRecordFailure(uuid, action.SourceUUID, "no candidates")
-		p.recordAndRetry(action, uuid, "no candidates available")
+		if p.markTopologyBlocked(uuid, "no candidates available") {
+			detail := "no candidates available; waiting for topology change"
+			p.recordPlannerEvent("planner", "topology-unsatisfied", eventSourcePlanner, uuid, detail)
+			printer.Warning("\r\n[*] Supplemental planner suspended %s: %s\r\n", short(uuid), detail)
+		}
 		return
 	}
 	p.sortCandidates(uuid, candidates)
@@ -1235,6 +1241,70 @@ func (p *SupplementalPlanner) clearFailure(uuid string) {
 	}
 }
 
+func (p *SupplementalPlanner) markTopologyBlocked(uuid, reason string) bool {
+	if p == nil || uuid == "" {
+		return false
+	}
+	if reason == "" {
+		reason = "topology currently unsatisfied"
+	}
+	p.failuresMu.Lock()
+	defer p.failuresMu.Unlock()
+	if p.failures == nil {
+		p.failures = make(map[string]*failureState)
+	}
+	state := p.failures[uuid]
+	if state == nil {
+		state = &failureState{}
+		p.failures[uuid] = state
+	}
+	if state.topologyBlocked && state.topologyBlockedReason == reason {
+		return false
+	}
+	if state.timer != nil {
+		state.timer.Stop()
+		state.timer = nil
+	}
+	state.attempts = 0
+	state.next = time.Time{}
+	state.reason = reason
+	state.topologyBlocked = true
+	state.topologyBlockedAt = time.Now()
+	state.topologyBlockedReason = reason
+	return true
+}
+
+func (p *SupplementalPlanner) isTopologyBlocked(uuid string) bool {
+	if p == nil || uuid == "" {
+		return false
+	}
+	p.failuresMu.Lock()
+	defer p.failuresMu.Unlock()
+	state := p.failures[uuid]
+	return state != nil && state.topologyBlocked
+}
+
+func (p *SupplementalPlanner) clearTopologyBlocks() {
+	if p == nil {
+		return
+	}
+	p.failuresMu.Lock()
+	defer p.failuresMu.Unlock()
+	for uuid, state := range p.failures {
+		if state == nil || !state.topologyBlocked {
+			continue
+		}
+		state.topologyBlocked = false
+		state.topologyBlockedReason = ""
+		state.topologyBlockedAt = time.Time{}
+		if state.attempts == 0 && state.next.IsZero() && state.timer == nil &&
+			state.repairAttempts == 0 && state.repairNext.IsZero() && state.repairTimer == nil &&
+			!state.broken {
+			delete(p.failures, uuid)
+		}
+	}
+}
+
 func (p *SupplementalPlanner) debugDispatchError(src, dst string, err error) {
 	if err == nil {
 		return
@@ -1261,13 +1331,18 @@ func (p *SupplementalPlanner) shouldDelay(action PlanAction) (bool, time.Duratio
 	state, ok := p.failures[key]
 	timer := (*time.Timer)(nil)
 	next := time.Time{}
+	topologyBlocked := false
 	if ok && state != nil {
 		timer = state.timer
 		next = state.next
+		topologyBlocked = state.topologyBlocked
 	}
 	p.failuresMu.Unlock()
 	if !ok || state == nil {
 		return false, 0
+	}
+	if topologyBlocked && action.Reason != reasonManual {
+		return true, 0
 	}
 	if action.Reason != reasonRetry && timer != nil {
 		return true, 0
@@ -1323,9 +1398,13 @@ func (p *SupplementalPlanner) inspectTopology() {
 		}
 		existing := len(supp.GetActiveSuppNeighbors(uuid))
 		if existing >= desired {
+			p.clearFailure(uuid)
 			continue
 		}
 		if policy.MaxLinksPerNode > 0 && existing >= policy.MaxLinksPerNode {
+			continue
+		}
+		if p.isTopologyBlocked(uuid) {
 			continue
 		}
 		reportCandidates = append(reportCandidates, uuid)
@@ -1371,11 +1450,13 @@ func (p *SupplementalPlanner) generateRedundancyReport(nodes []string, desired i
 			deficit:     maxInt(0, desired-existing),
 			sleepBudget: p.topo.PathSleepBudget(uuid),
 		}
-		if cands, err := p.candidatesFor(uuid, 1); err == nil && len(cands) > 0 {
-			entry.bestPeer = cands[0].UUID
-			entry.bestScore = p.candidateScore(uuid, cands[0])
-			entry.bestOverlap = cands[0].Overlap
+		cands, err := p.candidatesFor(uuid, 1)
+		if err != nil || len(cands) == 0 {
+			continue
 		}
+		entry.bestPeer = cands[0].UUID
+		entry.bestScore = p.candidateScore(uuid, cands[0])
+		entry.bestOverlap = cands[0].Overlap
 		entries = append(entries, entry)
 	}
 	if len(entries) == 0 {

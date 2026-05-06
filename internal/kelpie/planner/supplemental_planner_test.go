@@ -7,6 +7,8 @@ import (
 	"time"
 
 	"codeberg.org/agnoie/shepherd/internal/kelpie/supp"
+	"codeberg.org/agnoie/shepherd/internal/kelpie/topology"
+	"codeberg.org/agnoie/shepherd/protocol"
 )
 
 func TestBackoffDuration(t *testing.T) {
@@ -63,6 +65,74 @@ func TestApplyRemovalRespectsPeerQuota(t *testing.T) {
 	}
 }
 
+func TestTopologyBlockSkipsPeriodicUntilTopologyChanges(t *testing.T) {
+	planner := NewSupplementalPlanner(nil, nil, nil, nil)
+
+	if !planner.markTopologyBlocked("node-a", "no candidates available") {
+		t.Fatalf("expected first topology block to be recorded")
+	}
+	if planner.markTopologyBlocked("node-a", "no candidates available") {
+		t.Fatalf("expected duplicate topology block to be suppressed")
+	}
+
+	skip, wait := planner.shouldDelay(PlanAction{Reason: reasonPeriodic, TargetUUID: "node-a"})
+	if !skip || wait != 0 {
+		t.Fatalf("expected periodic action to be skipped while topology-blocked, skip=%v wait=%s", skip, wait)
+	}
+	skip, _ = planner.shouldDelay(PlanAction{Reason: reasonManual, TargetUUID: "node-a"})
+	if skip {
+		t.Fatalf("manual repair should bypass topology block")
+	}
+
+	planner.clearTopologyBlocks()
+	skip, wait = planner.shouldDelay(PlanAction{Reason: reasonPeriodic, TargetUUID: "node-a"})
+	if skip || wait != 0 {
+		t.Fatalf("expected periodic action after topology change to proceed, skip=%v wait=%s", skip, wait)
+	}
+}
+
+func TestPlanForNodeSuspendsUnsatisfiableNoCandidateTopology(t *testing.T) {
+	supp.TestOnlyResetSupplementalController()
+	t.Cleanup(supp.TestOnlyResetSupplementalController)
+
+	topo := topology.NewTopology()
+	go topo.Run()
+	t.Cleanup(topo.Stop)
+
+	addPlannerTestNode(t, topo, "NODE-ROOT", protocol.ADMIN_UUID, "10.0.0.1", true)
+	addPlannerTestNode(t, topo, "NODE-MID", "NODE-ROOT", "10.0.0.2", false)
+	addPlannerTestNode(t, topo, "NODE-LEAF", "NODE-MID", "10.0.0.3", false)
+	mustTopo(t, topo, &topology.TopoTask{
+		Mode:         topology.ADDEDGE,
+		UUID:         "NODE-ROOT",
+		NeighborUUID: "NODE-LEAF",
+		EdgeType:     topology.SupplementalEdge,
+	})
+	mustTopo(t, topo, &topology.TopoTask{Mode: topology.CALCULATE})
+
+	supp.TestOnlyRegisterSupplementalLink("link-root-leaf", "NODE-ROOT", "NODE-LEAF", "10.0.0.1")
+	supp.TestOnlyMarkSupplementalReady("link-root-leaf")
+
+	planner := NewSupplementalPlanner(topo, topo.Service(), nil, nil)
+	planner.planForNode(PlanAction{Reason: reasonPeriodic, TargetUUID: "NODE-MID"})
+
+	if !planner.isTopologyBlocked("NODE-MID") {
+		t.Fatalf("expected middle node to be blocked as topology-unsatisfiable")
+	}
+	planner.failuresMu.Lock()
+	state := planner.failures["NODE-MID"]
+	if state == nil || state.timer != nil || state.attempts != 0 {
+		planner.failuresMu.Unlock()
+		t.Fatalf("expected topology block without retry timer, state=%+v", state)
+	}
+	planner.failuresMu.Unlock()
+
+	planner.inspectTopology()
+	if got := len(planner.queue); got != 0 {
+		t.Fatalf("expected periodic inspect to skip topology-blocked node, queued=%d", got)
+	}
+}
+
 func TestMetricsSnapshotDefaults(t *testing.T) {
 	planner := NewSupplementalPlanner(nil, nil, nil, nil)
 	snapshot := planner.MetricsSnapshot()
@@ -72,6 +142,33 @@ func TestMetricsSnapshotDefaults(t *testing.T) {
 	if snapshot.QueueDepth != 0 || snapshot.QueueHigh != 0 {
 		t.Fatalf("expected zero queue depth, got %+v", snapshot)
 	}
+}
+
+func addPlannerTestNode(t *testing.T, topo *topology.Topology, uuid, parent, ip string, isFirst bool) {
+	t.Helper()
+	mustTopo(t, topo, &topology.TopoTask{
+		Mode:       topology.ADDNODE,
+		Target:     topology.NewNode(uuid, ip),
+		ParentUUID: parent,
+		IsFirst:    isFirst,
+	})
+	if parent != "" && parent != protocol.TEMP_UUID {
+		mustTopo(t, topo, &topology.TopoTask{
+			Mode:         topology.ADDEDGE,
+			UUID:         parent,
+			NeighborUUID: uuid,
+			EdgeType:     topology.TreeEdge,
+		})
+	}
+}
+
+func mustTopo(t *testing.T, topo *topology.Topology, task *topology.TopoTask) *topology.Result {
+	t.Helper()
+	result, err := topo.Execute(task)
+	if err != nil {
+		t.Fatalf("topology task %d failed: %v", task.Mode, err)
+	}
+	return result
 }
 
 func TestRepairMetricsSnapshot(t *testing.T) {

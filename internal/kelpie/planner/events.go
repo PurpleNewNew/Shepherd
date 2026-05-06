@@ -212,9 +212,11 @@ func (p *SupplementalPlanner) OnNodeAdded(uuid string) {
 		return
 	}
 	p.cancelOfflineProbe(uuid)
-	// 在过于简单的拓扑上跳过规划（此时还没有可用的对等节点）。
+	p.clearTopologyBlocks()
+	// 在过于简单的拓扑上跳过规划：补链候选不能是自身或直接邻居，
+	// 因此两个节点的拓扑天然不可满足，不应产生启动期噪音。
 	if nodes, err := p.allNodeUUIDs(); err == nil {
-		if len(nodes) < 2 {
+		if len(nodes) < 3 {
 			return
 		}
 	}
@@ -232,6 +234,7 @@ func (p *SupplementalPlanner) OnLinkFailed(linkUUID string, endpoints []string) 
 		return
 	}
 	now := time.Now()
+	p.clearTopologyBlocks()
 	p.recordPlannerEvent("link", "failed", linkUUID, strings.Join(endpoints, ","), "")
 	if len(endpoints) == 0 {
 		return
@@ -272,6 +275,7 @@ func (p *SupplementalPlanner) OnLinkRetired(linkUUID string, endpoints []string,
 	if reason == "" {
 		reason = "retired"
 	}
+	p.clearTopologyBlocks()
 	p.recordPlannerEvent("link", reason, linkUUID, strings.Join(endpoints, ","), "")
 	if !p.Enabled() {
 		return
@@ -294,6 +298,7 @@ func (p *SupplementalPlanner) OnLinkPromoted(linkUUID, parentUUID, childUUID str
 	if p == nil || linkUUID == "" {
 		return
 	}
+	p.clearTopologyBlocks()
 	detail := fmt.Sprintf("parent=%s child=%s", short(parentUUID), short(childUUID))
 	p.recordPlannerEvent("link", "promoted", linkUUID, parentUUID, detail)
 	if !p.Enabled() {
@@ -317,6 +322,7 @@ func (p *SupplementalPlanner) OnNodeRemoved(uuid string) {
 	if p == nil || uuid == "" {
 		return
 	}
+	p.clearTopologyBlocks()
 	p.recordPlannerEvent("node", "removed", eventSourceSystem, uuid, "")
 	// 对常在线节点（sleepSeconds=0）而言，“offline”通常意味着硬故障（kill/crash）。
 	// 因此这里主动将其 supplemental 链路判为失效，让路由尽快停止使用过期的
