@@ -4,6 +4,7 @@ import { useConnectionStore } from '@/stores/connection';
 import { useTopologyStore } from '@/stores/topology';
 import { useEventsStore } from '@/stores/events';
 import { useMetricsStore } from '@/stores/metrics';
+import ForceGraph from '@/components/topology/ForceGraph.vue';
 import {
   closeInteractiveStream,
   closeStreamByID,
@@ -311,6 +312,12 @@ const stats = computed(() => {
     suppActive: supp.activeLinks,
     failures: dtn.failed + supp.failures,
   };
+});
+
+const graphSummary = computed(() => {
+  const primary = topo.edges.filter((edge) => !edge.supplemental).length;
+  const supplemental = topo.edges.filter((edge) => edge.supplemental).length;
+  return { primary, supplemental };
 });
 
 onMounted(async () => {
@@ -1372,19 +1379,19 @@ function normalizeDTNPayload(raw: string): string {
         </div>
 
         <div v-else class="session-graph">
-          <div
-            v-for="node in orderedNodes"
-            :key="node.uuid"
-            :class="['graph-node', { selected: topo.selectedUUID === node.uuid }]"
-            :style="{ marginLeft: `${Math.max(0, node.depth) * 54}px` }"
-            @click="selectNode(node.uuid)"
-            @dblclick="openTargetTab(node.uuid)"
-            @contextmenu="openTargetMenu($event, node)"
-          >
-            <span :class="['dot', statusTone(node.status)]"></span>
-            <strong>{{ labelForNode(node) }}</strong>
-            <small>{{ node.network || 'default' }}</small>
-            <em>{{ node.parentUuid ? `via ${node.parentUuid.slice(0, 8)}` : 'root session' }}</em>
+          <ForceGraph
+            v-if="orderedNodes.length"
+            :nodes="topo.nodes"
+            :edges="topo.edges"
+            :selected="topo.selectedUUID"
+            @select="selectNode"
+            @open="openTargetTab"
+            @target-menu="openTargetMenu"
+          />
+          <div v-if="orderedNodes.length" class="graph-legend">
+            <span><i class="legend-line primary"></i>Primary {{ graphSummary.primary }}</span>
+            <span><i class="legend-line supplemental"></i>Supplemental {{ graphSummary.supplemental }}</span>
+            <span><i class="legend-dot online"></i>Online {{ stats.online }}</span>
           </div>
           <p v-if="!orderedNodes.length" class="empty table-empty">
             Waiting for graph data.
@@ -2399,65 +2406,49 @@ select {
 }
 
 .session-graph {
+  position: relative;
   min-height: 0;
-  overflow: auto;
-  padding: 18px 18px 36px;
-  background:
-    linear-gradient(var(--ops-line-soft) 1px, transparent 1px),
-    linear-gradient(90deg, var(--ops-line-soft) 1px, transparent 1px);
-  background-size: 28px 28px;
+  overflow: hidden;
   background-color: #101419;
 }
 
-.graph-node {
-  position: relative;
-  width: min(440px, calc(100% - 18px));
-  min-height: 46px;
-  display: grid;
-  grid-template-columns: auto 120px 110px minmax(0, 1fr);
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 12px;
-  padding: 0 12px;
-  border: 1px solid var(--ops-line);
-  background: rgba(24, 29, 34, 0.96);
-  color: var(--ops-muted);
-  cursor: pointer;
-}
-
-.graph-node::before {
-  content: '';
+.graph-legend {
   position: absolute;
-  left: -54px;
-  top: 22px;
-  width: 54px;
-  height: 1px;
-  background: var(--ops-line);
+  left: 14px;
+  bottom: 12px;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 6px 8px;
+  border: 1px solid rgba(133, 151, 170, 0.34);
+  background: rgba(16, 20, 25, 0.82);
+  color: #cad6e2;
+  font-size: 0.72rem;
 }
 
-.graph-node:first-child::before {
-  display: none;
+.graph-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.graph-node:hover,
-.graph-node.selected {
-  border-color: var(--ops-accent);
-  color: var(--ops-text);
-  background: rgba(32, 38, 45, 0.98);
+.legend-line {
+  width: 26px;
+  height: 0;
+  border-top: 2px solid rgba(205, 215, 226, 0.72);
 }
 
-.graph-node strong {
-  color: var(--ops-text);
+.legend-line.supplemental {
+  border-top-color: #67d6ff;
+  border-top-style: dashed;
 }
 
-.graph-node small,
-.graph-node em {
-  overflow: hidden;
-  color: var(--ops-faint);
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-style: normal;
-  font-size: 0.74rem;
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  background: #1863dc;
+  border: 1px solid #ffffff;
 }
 
 .facts {

@@ -28,6 +28,8 @@ interface Props {
 const props = defineProps<Props>();
 const emit = defineEmits<{
   (e: 'select', uuid: string): void;
+  (e: 'open', uuid: string): void;
+  (e: 'target-menu', event: MouseEvent, node: NodeSummary): void;
 }>();
 
 interface ForceNode extends SimulationNodeDatum {
@@ -193,6 +195,12 @@ function onNodeClick(uuid: string) {
   emit('select', uuid);
 }
 
+function onNodeContext(event: MouseEvent, node: ForceNode) {
+  event.preventDefault();
+  emit('select', node.uuid);
+  emit('target-menu', event, node.data);
+}
+
 /*
  * 节点拖拽：
  *   - 使用 Pointer Events + setPointerCapture，保证拖出 SVG 边界也能收到 move。
@@ -202,6 +210,7 @@ function onNodeClick(uuid: string) {
  *     高频到来只是更新 fx/fy 的两个字段，极廉价。
  */
 function onPointerDown(event: PointerEvent, node: ForceNode) {
+  if (event.button !== 0) return;
   event.preventDefault();
   event.stopPropagation();
   if (!simulation.value || !svgRef.value) return;
@@ -242,10 +251,23 @@ function onPointerDown(event: PointerEvent, node: ForceNode) {
   target?.addEventListener('pointercancel', up);
 }
 
-function onNodeDouble(node: ForceNode) {
-  node.fx = null;
-  node.fy = null;
-  simulation.value?.alpha(0.3).restart();
+function onNodeDouble(event: MouseEvent, node: ForceNode) {
+  if (event.altKey) {
+    node.fx = null;
+    node.fy = null;
+    simulation.value?.alpha(0.3).restart();
+    return;
+  }
+  emit('open', node.uuid);
+}
+
+function resetGraph() {
+  for (const node of forceNodes.value) {
+    node.fx = null;
+    node.fy = null;
+  }
+  resetZoom();
+  simulation.value?.alpha(0.55).restart();
 }
 
 // observer：容器大小变化时重算 simulation center
@@ -340,9 +362,11 @@ onBeforeUnmount(() => {
           :class="['node', { selected: selected === node.uuid }]"
           :data-uuid="node.uuid"
           transform="translate(0,0)"
+          :aria-label="aliasOf(node.data)"
           @pointerdown="onPointerDown($event, node)"
           @click.stop="onNodeClick(node.uuid)"
-          @dblclick.stop="onNodeDouble(node)"
+          @dblclick.stop="onNodeDouble($event, node)"
+          @contextmenu.stop.prevent="onNodeContext($event, node)"
         >
           <!-- halo：仅 selected / hover 时出现（hover 由 CSS :hover 驱动，零 JS 开销） -->
           <circle
@@ -367,8 +391,8 @@ onBeforeUnmount(() => {
     </svg>
 
     <div class="ctrls">
-      <button class="sf-btn ghost" @click="resetZoom" title="Reset view">
-        ⟲ Reset
+      <button class="graph-control" @click="resetGraph" title="Reset graph layout">
+        ⟲
       </button>
     </div>
   </div>
@@ -380,6 +404,11 @@ onBeforeUnmount(() => {
   width: 100%;
   height: 100%;
   min-height: 0;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    #101419;
+  background-size: 32px 32px;
 }
 svg {
   width: 100%;
@@ -393,15 +422,15 @@ svg:active {
 
 /* 边：默认 Muted Slate 冷灰极细线，补链 = Focus Purple 虚线。 */
 .edge {
-  stroke: rgba(17, 17, 28, 0.22);
-  stroke-width: 1.2;
+  stroke: rgba(205, 215, 226, 0.42);
+  stroke-width: 1.35;
   pointer-events: none; /* 不响应鼠标，避免拖拽时命中 */
 }
 .edge.supp {
-  stroke: var(--sf-focus-purple);
-  stroke-opacity: 0.55;
-  stroke-dasharray: 6 4;
-  stroke-width: 1.4;
+  stroke: #67d6ff;
+  stroke-opacity: 0.85;
+  stroke-dasharray: 7 5;
+  stroke-width: 1.55;
 }
 
 .node {
@@ -424,24 +453,24 @@ svg:active {
 
 /* 选中态：主圆外加深色描边，让"被选"非常明确 */
 .node.selected .dot {
-  stroke: var(--sf-fg-0);
-  stroke-width: 2;
+  stroke: #f7fbff;
+  stroke-width: 2.4;
 }
 
 .node-label {
-  fill: var(--sf-fg-1);
+  fill: #dce7f3;
   font-size: 10px;
   text-anchor: middle;
   pointer-events: none;
   font-family: var(--sf-font-mono);
-  letter-spacing: 0.2px;
+  letter-spacing: 0;
   paint-order: stroke;
-  stroke: #ffffff;      /* 给 label 一圈白描边，避免和 edge 冲突难读 */
+  stroke: #101419;      /* 给 label 一圈深描边，避免和 edge 冲突难读 */
   stroke-width: 3;
 }
 .node.selected .node-label,
 .node:hover .node-label {
-  fill: var(--sf-fg-0);
+  fill: #ffffff;
 }
 
 .ctrls {
@@ -450,5 +479,19 @@ svg:active {
   right: 14px;
   display: flex;
   gap: 6px;
+}
+
+.graph-control {
+  width: 28px;
+  height: 26px;
+  border: 1px solid rgba(133, 151, 170, 0.45);
+  background: rgba(16, 20, 25, 0.88);
+  color: #dce7f3;
+  cursor: pointer;
+}
+
+.graph-control:hover {
+  border-color: #67d6ff;
+  color: #ffffff;
 }
 </style>
