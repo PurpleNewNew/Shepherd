@@ -191,16 +191,6 @@ type SupplementalSnapshot struct {
 	LastFailure    string `json:"lastFailure,omitempty"`
 }
 
-// NodeDetail 节点详情面板的数据。
-type NodeDetail struct {
-	Node           NodeSummary        `json:"node"`
-	Sessions       []SessionSummary   `json:"sessions"`
-	Streams        []StreamDiagDTO    `json:"streams"`
-	PivotListeners []PivotListenerDTO `json:"pivotListeners,omitempty"`
-	Sleep          *SleepProfileDTO   `json:"sleep,omitempty"`
-	FetchedAt      time.Time          `json:"fetchedAt"`
-}
-
 // PivotListenerDTO 节点上的 pivot 监听器。
 type PivotListenerDTO struct {
 	ListenerID string            `json:"listenerId"`

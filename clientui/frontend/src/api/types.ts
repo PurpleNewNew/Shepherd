@@ -141,15 +141,6 @@ export interface ControllerListenerDTO {
   updatedAt?: string;
 }
 
-export interface NodeDetail {
-  node: NodeSummary;
-  sessions: SessionSummary[];
-  streams: StreamDiag[];
-  pivotListeners?: PivotListenerDTO[];
-  sleep?: SleepProfile;
-  fetchedAt: string;
-}
-
 export interface DTNMetrics {
   enqueued: number;
   delivered: number;

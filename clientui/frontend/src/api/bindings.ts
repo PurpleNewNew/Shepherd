@@ -8,7 +8,6 @@ import type {
   ConnectionStatus,
   RecentConnection,
   Snapshot,
-  NodeDetail,
   MetricsBundle,
   EnqueueDTNRequest,
   EnqueueDTNResult,
@@ -107,9 +106,6 @@ export const forgetFingerprint = (endpoint: string) =>
 /* ---------- 拓扑 / 节点 / 指标 ---------- */
 
 export const getSnapshot = () => call<Snapshot>('GetSnapshot');
-
-export const getNodeDetail = (uuid: string) =>
-  call<NodeDetail>('GetNodeDetail', uuid);
 
 export const getMetrics = () => call<MetricsBundle>('GetMetrics');
 

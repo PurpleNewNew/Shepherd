@@ -4,14 +4,12 @@ import type {
   EdgeSummary,
   NodeSummary,
   SessionSummary,
-  SleepProfile,
   StreamDiag,
   Snapshot,
-  NodeDetail,
   PivotListenerDTO,
   ControllerListenerDTO,
 } from '@/api/types';
-import { getSnapshot, getNodeDetail } from '@/api/bindings';
+import { getSnapshot } from '@/api/bindings';
 
 export const useTopologyStore = defineStore('topology', () => {
   const nodes = ref<NodeSummary[]>([]);
@@ -20,41 +18,16 @@ export const useTopologyStore = defineStore('topology', () => {
   const sessions = ref<SessionSummary[]>([]);
   const pivotListeners = ref<PivotListenerDTO[]>([]);
   const controllerListeners = ref<ControllerListenerDTO[]>([]);
-  const sleepProfiles = ref<SleepProfile[]>([]);
-  const fetchedAt = ref<string>('');
 
   const loading = ref(false);
   const error = ref<string>('');
 
   const selectedUUID = ref<string>('');
-  const detail = ref<NodeDetail | null>(null);
-  const detailLoading = ref(false);
-  const detailError = ref<string>('');
 
   const nodeMap = computed(() => {
     const m = new Map<string, NodeSummary>();
     for (const n of nodes.value) m.set(n.uuid, n);
     return m;
-  });
-
-  const childrenByParent = computed(() => {
-    const m = new Map<string, string[]>();
-    for (const e of edges.value) {
-      if (e.supplemental) continue;
-      const arr = m.get(e.parentUuid) ?? [];
-      arr.push(e.childUuid);
-      m.set(e.parentUuid, arr);
-    }
-    return m;
-  });
-
-  const rootUUIDs = computed(() => {
-    const present = new Set(nodes.value.map((n) => n.uuid));
-    const parents = new Set<string>();
-    for (const e of edges.value) parents.add(e.childUuid);
-    return nodes.value
-      .filter((n) => !parents.has(n.uuid) || !present.has(n.parentUuid ?? ''))
-      .map((n) => n.uuid);
   });
 
   function applySnapshot(s: Snapshot) {
@@ -64,8 +37,6 @@ export const useTopologyStore = defineStore('topology', () => {
     sessions.value = s.sessions ?? [];
     pivotListeners.value = s.pivotListeners ?? [];
     controllerListeners.value = s.controllerListeners ?? [];
-    sleepProfiles.value = s.sleepProfiles ?? [];
-    fetchedAt.value = s.fetchedAt;
   }
 
   async function refresh() {
@@ -83,24 +54,6 @@ export const useTopologyStore = defineStore('topology', () => {
 
   function select(uuid: string) {
     selectedUUID.value = uuid;
-    if (uuid) loadDetail(uuid);
-  }
-
-  async function loadDetail(uuid: string) {
-    if (!uuid) {
-      detail.value = null;
-      return;
-    }
-    detailLoading.value = true;
-    detailError.value = '';
-    try {
-      detail.value = await getNodeDetail(uuid);
-    } catch (err: any) {
-      detail.value = null;
-      detailError.value = err?.message ?? String(err);
-    } finally {
-      detailLoading.value = false;
-    }
   }
 
   function clear() {
@@ -110,9 +63,6 @@ export const useTopologyStore = defineStore('topology', () => {
     sessions.value = [];
     pivotListeners.value = [];
     controllerListeners.value = [];
-    sleepProfiles.value = [];
-    fetchedAt.value = '';
-    detail.value = null;
     selectedUUID.value = '';
     error.value = '';
   }
@@ -124,21 +74,13 @@ export const useTopologyStore = defineStore('topology', () => {
     sessions,
     pivotListeners,
     controllerListeners,
-    sleepProfiles,
-    fetchedAt,
     loading,
     error,
     selectedUUID,
-    detail,
-    detailLoading,
-    detailError,
     nodeMap,
-    childrenByParent,
-    rootUUIDs,
     refresh,
     applySnapshot,
     select,
-    loadDetail,
     clear,
   };
 });

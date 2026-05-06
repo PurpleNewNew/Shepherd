@@ -307,46 +307,6 @@ func (a *API) GetSnapshot() (Snapshot, error) {
 	return out, nil
 }
 
-// GetNodeDetail 返回某个节点的详情视图。
-func (a *API) GetNodeDetail(uuid string) (NodeDetail, error) {
-	client, err := a.mustClient()
-	if err != nil {
-		return NodeDetail{}, err
-	}
-	if strings.TrimSpace(uuid) == "" {
-		return NodeDetail{}, errors.New("uuid required")
-	}
-	ctx, cancel := context.WithTimeout(context.Background(), snapshotTimeout)
-	defer cancel()
-
-	resp, err := client.NodeStatus(ctx, uuid)
-	if err != nil {
-		return NodeDetail{}, err
-	}
-	detail := NodeDetail{FetchedAt: time.Now()}
-	if node := resp.GetNode(); node != nil {
-		detail.Node = nodeFromPB(node)
-	} else {
-		detail.Node.UUID = uuid
-	}
-	for _, s := range resp.GetStreams() {
-		detail.Streams = append(detail.Streams, streamFromPB(s))
-	}
-	for _, l := range resp.GetPivotListeners() {
-		detail.PivotListeners = append(detail.PivotListeners, pivotListenerFromPB(l))
-	}
-	// sleep 配置单独查一次，避免全量 ListSleepProfiles。
-	profiles, _ := client.ListSleepProfiles(ctx)
-	for _, p := range profiles {
-		if p.GetTargetUuid() == uuid {
-			sp := sleepFromPB(p)
-			detail.Sleep = &sp
-			break
-		}
-	}
-	return detail, nil
-}
-
 // GetMetrics 取聚合指标。
 func (a *API) GetMetrics() (MetricsDTO, error) {
 	client, err := a.mustClient()

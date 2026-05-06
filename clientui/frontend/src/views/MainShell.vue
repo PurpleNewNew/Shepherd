@@ -64,7 +64,7 @@ import type {
 
 type BuiltinTab = 'events' | 'sessions' | 'dtn' | 'control' | 'streams' | 'listeners';
 type BottomTab = BuiltinTab | `target:${string}`;
-type SideMode = 'targets' | 'networks' | 'listeners';
+type SideMode = 'networks' | 'listeners';
 type MainView = 'table' | 'graph';
 type TargetMode = 'overview' | 'shell' | 'files' | 'proxy' | 'ssh' | 'listeners';
 type MenuKey = 'stockman' | 'view' | 'operations' | 'listeners' | 'sessions' | 'reports' | 'help';
@@ -77,7 +77,7 @@ const events = useEventsStore();
 const metrics = useMetricsStore();
 
 const bottomTab = ref<BottomTab>('events');
-const sideMode = ref<SideMode>('targets');
+const sideMode = ref<SideMode>('networks');
 const mainView = ref<MainView>('table');
 const activeMenu = ref<MenuKey | ''>('');
 const targetTabs = ref<string[]>([]);
@@ -441,9 +441,6 @@ async function refreshAll() {
   pivotListeners.value = [...(topo.pivotListeners ?? [])];
   controllerListeners.value = [...(topo.controllerListeners ?? [])];
   await refreshListeners();
-  if (topo.selectedUUID) {
-    await topo.loadDetail(topo.selectedUUID);
-  }
 }
 
 async function logout() {
@@ -528,7 +525,6 @@ function openTargetTab(uuid: string, mode: TargetMode = 'overview') {
   bottomTab.value = `target:${uuid}`;
   targetMode.value = mode;
   topo.select(uuid);
-  topo.loadDetail(uuid);
 }
 
 async function refreshListeners() {
@@ -1192,7 +1188,7 @@ function normalizeDTNPayload(raw: string): string {
           <button :class="{ active: activeMenu === 'listeners' }" @click="toggleMenu('listeners')">Listeners</button>
           <div v-if="activeMenu === 'listeners'" class="app-menu">
             <button @click="chooseMenuAction('listeners')"><span>Listener Manager</span><kbd>⌘L</kbd></button>
-            <button @click="sideMode = 'listeners'; activeMenu = ''"><span>Show Listener Tree</span><kbd>⌘⇧L</kbd></button>
+            <button @click="sideMode = 'listeners'; activeMenu = ''"><span>Show Listener Groups</span><kbd>⌘⇧L</kbd></button>
           </div>
         </div>
         <div class="menu-item" @click.stop>
@@ -1248,29 +1244,11 @@ function normalizeDTNPayload(raw: string): string {
     <main class="ops-grid">
       <aside class="left-pane">
         <div class="pane-tabs">
-          <button :class="{ active: sideMode === 'targets' }" @click="sideMode = 'targets'">Targets</button>
           <button :class="{ active: sideMode === 'networks' }" @click="sideMode = 'networks'">Networks</button>
           <button :class="{ active: sideMode === 'listeners' }" @click="sideMode = 'listeners'">Listeners</button>
         </div>
 
-        <section v-if="sideMode === 'targets'" class="tree-list">
-          <button
-            v-for="node in orderedNodes"
-            :key="node.uuid"
-            :class="['tree-row', { active: topo.selectedUUID === node.uuid }]"
-            :style="{ paddingLeft: `${10 + Math.max(0, node.depth) * 14}px` }"
-            :title="`Right-click ${labelForNode(node)} for target actions`"
-            @click="selectNode(node.uuid)"
-            @contextmenu="openTargetMenu($event, node)"
-          >
-            <span :class="['dot', statusTone(node.status)]"></span>
-            <span class="tree-main">{{ labelForNode(node) }}</span>
-            <span class="tree-meta">{{ node.activeStreams }}</span>
-          </button>
-          <p v-if="!orderedNodes.length" class="empty">No nodes reported.</p>
-        </section>
-
-        <section v-else-if="sideMode === 'networks'" class="side-groups">
+        <section v-if="sideMode === 'networks'" class="side-groups">
           <button
             v-for="[network, nodes] in networkGroups"
             :key="network"
@@ -1300,12 +1278,12 @@ function normalizeDTNPayload(raw: string): string {
         class="vertical-splitter"
         role="separator"
         aria-orientation="vertical"
-        aria-label="Resize target tree"
+        aria-label="Resize side pane"
         :aria-valuenow="leftPaneWidth"
         aria-valuemin="190"
         aria-valuemax="520"
         tabindex="0"
-        title="Drag to resize target tree"
+        title="Drag to resize side pane"
         @click.stop
         @dblclick.stop="resetPane('left')"
         @pointerdown="startResize('left', $event)"
@@ -1562,7 +1540,6 @@ function normalizeDTNPayload(raw: string): string {
               <button @click="targetMode = 'listeners'; refreshListeners()">Listeners</button>
               <button @click="bottomTab = 'dtn'">Queue DTN</button>
               <button @click="submitSleep">Apply Sleep</button>
-              <button @click="topo.loadDetail(activeTargetUUID)">Refresh Detail</button>
             </div>
           </header>
           <nav class="target-mode-tabs">
@@ -2235,14 +2212,12 @@ select {
   box-shadow: inset 0 -2px 0 var(--ops-accent);
 }
 
-.tree-list,
 .side-groups {
   height: 100%;
   overflow: auto;
   padding: 8px;
 }
 
-.tree-row,
 .group-row {
   width: 100%;
   min-height: 30px;
@@ -2257,23 +2232,10 @@ select {
   cursor: pointer;
 }
 
-.tree-row:hover,
-.tree-row.active,
 .group-row:hover {
   background: var(--ops-panel-2);
   border-color: var(--ops-line);
   color: var(--ops-text);
-}
-
-.tree-main {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.tree-meta {
-  color: var(--ops-faint);
-  font-size: 0.72rem;
 }
 
 .group-row {
