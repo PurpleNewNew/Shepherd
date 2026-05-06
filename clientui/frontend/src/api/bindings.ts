@@ -17,10 +17,16 @@ import type {
   StartShellRequest,
   StreamHandle,
   StartSocksProxyRequest,
+  StartSshSessionRequest,
+  StartSshTunnelRequest,
   StartForwardProxyRequest,
   StartForwardProxyResult,
   StopForwardProxyRequest,
   StopForwardProxyResult,
+  StartBackwardProxyRequest,
+  StartBackwardProxyResult,
+  StopBackwardProxyRequest,
+  StopBackwardProxyResult,
   StreamDataRequest,
   StreamResizeRequest,
   CloseInteractiveStreamRequest,
@@ -31,6 +37,19 @@ import type {
   RemoteFileListing,
   CollectRemoteFileRequest,
   CollectRemoteFileResult,
+  UploadRemoteFileRequest,
+  UploadRemoteFileResult,
+  ListLootRequest,
+  ListLootResult,
+  ExportLootRequest,
+  ExportLootResult,
+  SessionActionRequest,
+  SessionActionResult,
+  SessionDiagnosticsDTO,
+  ListenerSpecRequest,
+  ListPivotListenersRequest,
+  PivotListenerDTO,
+  ControllerListenerDTO,
   StreamEventDTO,
   SupplementalEventDTO,
   TimelineEvent,
@@ -118,11 +137,23 @@ export const startShell = (req: StartShellRequest) =>
 export const startSocksProxy = (req: StartSocksProxyRequest) =>
   call<StreamHandle>('StartSocksProxy', req);
 
+export const startSshSession = (req: StartSshSessionRequest) =>
+  call<StreamHandle>('StartSshSession', req);
+
+export const startSshTunnel = (req: StartSshTunnelRequest) =>
+  call<void>('StartSshTunnel', req);
+
 export const startForwardProxy = (req: StartForwardProxyRequest) =>
   call<StartForwardProxyResult>('StartForwardProxy', req);
 
 export const stopForwardProxy = (req: StopForwardProxyRequest) =>
   call<StopForwardProxyResult>('StopForwardProxy', req);
+
+export const startBackwardProxy = (req: StartBackwardProxyRequest) =>
+  call<StartBackwardProxyResult>('StartBackwardProxy', req);
+
+export const stopBackwardProxy = (req: StopBackwardProxyRequest) =>
+  call<StopBackwardProxyResult>('StopBackwardProxy', req);
 
 export const sendStreamData = (req: StreamDataRequest) =>
   call<void>('SendStreamData', req);
@@ -147,6 +178,54 @@ export const listRemoteFiles = (req: ListRemoteFilesRequest) =>
 
 export const collectRemoteFile = (req: CollectRemoteFileRequest) =>
   call<CollectRemoteFileResult>('CollectRemoteFile', req);
+
+export const uploadRemoteFile = (req: UploadRemoteFileRequest) =>
+  call<UploadRemoteFileResult>('UploadRemoteFile', req);
+
+export const listLoot = (req: ListLootRequest) =>
+  call<ListLootResult>('ListLoot', req);
+
+export const exportLoot = (req: ExportLootRequest) =>
+  call<ExportLootResult>('ExportLoot', req);
+
+export const markSession = (req: SessionActionRequest) =>
+  call<SessionActionResult>('MarkSession', req);
+
+export const repairSession = (req: SessionActionRequest) =>
+  call<SessionActionResult>('RepairSession', req);
+
+export const reconnectSession = (req: SessionActionRequest) =>
+  call<SessionActionResult>('ReconnectSession', req);
+
+export const terminateSession = (req: SessionActionRequest) =>
+  call<SessionActionResult>('TerminateSession', req);
+
+export const getSessionDiagnostics = (req: SessionActionRequest) =>
+  call<SessionDiagnosticsDTO>('GetSessionDiagnostics', req);
+
+export const listPivotListeners = (req: ListPivotListenersRequest = {}) =>
+  call<PivotListenerDTO[]>('ListPivotListeners', req);
+
+export const createPivotListener = (req: ListenerSpecRequest) =>
+  call<PivotListenerDTO>('CreatePivotListener', req);
+
+export const updatePivotListener = (req: ListenerSpecRequest) =>
+  call<PivotListenerDTO>('UpdatePivotListener', req);
+
+export const deletePivotListener = (req: ListenerSpecRequest) =>
+  call<void>('DeletePivotListener', req);
+
+export const listControllerListeners = () =>
+  call<ControllerListenerDTO[]>('ListControllerListeners');
+
+export const createControllerListener = (req: ListenerSpecRequest) =>
+  call<ControllerListenerDTO>('CreateControllerListener', req);
+
+export const updateControllerListener = (req: ListenerSpecRequest) =>
+  call<ControllerListenerDTO>('UpdateControllerListener', req);
+
+export const deleteControllerListener = (req: ListenerSpecRequest) =>
+  call<ControllerListenerDTO>('DeleteControllerListener', req);
 
 /* ---------- 事件订阅（Wails runtime） ---------- */
 

@@ -87,12 +87,14 @@ type EdgeSummary struct {
 
 // Snapshot 是 UI 初始化需要的一整份拓扑。
 type Snapshot struct {
-	Nodes         []NodeSummary     `json:"nodes"`
-	Edges         []EdgeSummary     `json:"edges"`
-	Streams       []StreamDiagDTO   `json:"streams"`
-	Sessions      []SessionSummary  `json:"sessions"`
-	SleepProfiles []SleepProfileDTO `json:"sleepProfiles,omitempty"`
-	FetchedAt     time.Time         `json:"fetchedAt"`
+	Nodes               []NodeSummary           `json:"nodes"`
+	Edges               []EdgeSummary           `json:"edges"`
+	Streams             []StreamDiagDTO         `json:"streams"`
+	Sessions            []SessionSummary        `json:"sessions"`
+	PivotListeners      []PivotListenerDTO      `json:"pivotListeners,omitempty"`
+	ControllerListeners []ControllerListenerDTO `json:"controllerListeners,omitempty"`
+	SleepProfiles       []SleepProfileDTO       `json:"sleepProfiles,omitempty"`
+	FetchedAt           time.Time               `json:"fetchedAt"`
 }
 
 // StreamDiagDTO 用于节点详情的"活跃流"小视图。
@@ -201,11 +203,27 @@ type NodeDetail struct {
 
 // PivotListenerDTO 节点上的 pivot 监听器。
 type PivotListenerDTO struct {
+	ListenerID string            `json:"listenerId"`
+	TargetUUID string            `json:"targetUuid,omitempty"`
+	Route      string            `json:"route,omitempty"`
+	Protocol   string            `json:"protocol"`
+	Bind       string            `json:"bind"`
+	Status     string            `json:"status"`
+	Mode       string            `json:"mode"`
+	LastError  string            `json:"lastError,omitempty"`
+	Metadata   map[string]string `json:"metadata,omitempty"`
+	CreatedAt  string            `json:"createdAt,omitempty"`
+	UpdatedAt  string            `json:"updatedAt,omitempty"`
+}
+
+type ControllerListenerDTO struct {
 	ListenerID string `json:"listenerId"`
 	Protocol   string `json:"protocol"`
 	Bind       string `json:"bind"`
 	Status     string `json:"status"`
-	Mode       string `json:"mode"`
+	LastError  string `json:"lastError,omitempty"`
+	CreatedAt  string `json:"createdAt,omitempty"`
+	UpdatedAt  string `json:"updatedAt,omitempty"`
 }
 
 // EnqueueDTNRequest 答辩控制台发一条 DTN payload 的参数。
@@ -260,6 +278,23 @@ type StartSocksProxyRequest struct {
 	Password string `json:"password,omitempty"`
 }
 
+type StartSshSessionRequest struct {
+	Target     string `json:"target"`
+	ServerAddr string `json:"serverAddr"`
+	Username   string `json:"username"`
+	Password   string `json:"password"`
+}
+
+type StartSshTunnelRequest struct {
+	Target     string `json:"target"`
+	ServerAddr string `json:"serverAddr"`
+	AgentPort  string `json:"agentPort"`
+	AuthMethod string `json:"authMethod,omitempty"`
+	Username   string `json:"username"`
+	Password   string `json:"password,omitempty"`
+	PrivateKey string `json:"privateKey,omitempty"`
+}
+
 type StartForwardProxyRequest struct {
 	Target     string `json:"target"`
 	LocalBind  string `json:"localBind"`
@@ -269,6 +304,7 @@ type StartForwardProxyRequest struct {
 type StartForwardProxyResult struct {
 	Handle     StreamHandleDTO `json:"handle"`
 	ProxyID    string          `json:"proxyId"`
+	Kind       string          `json:"kind,omitempty"`
 	Bind       string          `json:"bind"`
 	RemoteAddr string          `json:"remoteAddr"`
 }
@@ -279,6 +315,29 @@ type StopForwardProxyRequest struct {
 }
 
 type StopForwardProxyResult struct {
+	Stopped int32 `json:"stopped"`
+}
+
+type StartBackwardProxyRequest struct {
+	Target     string `json:"target"`
+	RemotePort string `json:"remotePort"`
+	LocalPort  string `json:"localPort"`
+}
+
+type StartBackwardProxyResult struct {
+	Handle     StreamHandleDTO `json:"handle"`
+	ProxyID    string          `json:"proxyId"`
+	Kind       string          `json:"kind,omitempty"`
+	RemotePort string          `json:"remotePort"`
+	LocalPort  string          `json:"localPort"`
+}
+
+type StopBackwardProxyRequest struct {
+	Target  string `json:"target"`
+	ProxyID string `json:"proxyId"`
+}
+
+type StopBackwardProxyResult struct {
 	Stopped int32 `json:"stopped"`
 }
 
@@ -354,6 +413,20 @@ type CollectRemoteFileRequest struct {
 	Tags       []string `json:"tags,omitempty"`
 }
 
+type UploadRemoteFileRequest struct {
+	Target     string `json:"target"`
+	LocalPath  string `json:"localPath"`
+	RemotePath string `json:"remotePath"`
+}
+
+type UploadRemoteFileResult struct {
+	RemotePath string `json:"remotePath"`
+	Size       uint64 `json:"size,omitempty"`
+	Sha256     string `json:"sha256,omitempty"`
+	Mime       string `json:"mime,omitempty"`
+	Message    string `json:"message,omitempty"`
+}
+
 type LootItemDTO struct {
 	LootID     string            `json:"lootId"`
 	TargetUUID string            `json:"targetUuid,omitempty"`
@@ -372,6 +445,81 @@ type LootItemDTO struct {
 
 type CollectRemoteFileResult struct {
 	Item LootItemDTO `json:"item"`
+}
+
+type ListLootRequest struct {
+	Target string `json:"target,omitempty"`
+	Limit  int32  `json:"limit,omitempty"`
+}
+
+type ListLootResult struct {
+	Items []LootItemDTO `json:"items"`
+}
+
+type ExportLootRequest struct {
+	LootID    string `json:"lootId"`
+	LocalPath string `json:"localPath,omitempty"`
+}
+
+type ExportLootResult struct {
+	Item      LootItemDTO `json:"item"`
+	LocalPath string      `json:"localPath"`
+	Bytes     uint64      `json:"bytes"`
+}
+
+type SessionActionRequest struct {
+	Target string `json:"target"`
+	Action string `json:"action,omitempty"`
+	Force  bool   `json:"force,omitempty"`
+	Reason string `json:"reason,omitempty"`
+}
+
+type SessionActionResult struct {
+	Session    SessionSummary `json:"session,omitempty"`
+	Accepted   bool           `json:"accepted,omitempty"`
+	Terminated bool           `json:"terminated,omitempty"`
+	Message    string         `json:"message,omitempty"`
+}
+
+type SessionMetricDTO struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
+}
+
+type SessionIssueDTO struct {
+	Code    string `json:"code"`
+	Message string `json:"message"`
+	Detail  string `json:"detail,omitempty"`
+}
+
+type SessionProcessDTO struct {
+	PID       string `json:"pid"`
+	Name      string `json:"name"`
+	User      string `json:"user,omitempty"`
+	Status    string `json:"status,omitempty"`
+	Path      string `json:"path,omitempty"`
+	StartedAt string `json:"startedAt,omitempty"`
+}
+
+type SessionDiagnosticsDTO struct {
+	Session   SessionSummary      `json:"session"`
+	Metrics   []SessionMetricDTO  `json:"metrics,omitempty"`
+	Issues    []SessionIssueDTO   `json:"issues,omitempty"`
+	Processes []SessionProcessDTO `json:"processes,omitempty"`
+}
+
+type ListenerSpecRequest struct {
+	ListenerID    string `json:"listenerId,omitempty"`
+	Target        string `json:"target,omitempty"`
+	Protocol      string `json:"protocol,omitempty"`
+	Bind          string `json:"bind,omitempty"`
+	Mode          string `json:"mode,omitempty"`
+	DesiredStatus string `json:"desiredStatus,omitempty"`
+	IncludeSpec   bool   `json:"includeSpec,omitempty"`
+}
+
+type ListPivotListenersRequest struct {
+	Target string `json:"target,omitempty"`
 }
 
 // SupplementalEventDTO 补链事件的简单投影。

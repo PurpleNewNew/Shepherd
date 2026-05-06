@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	"codeberg.org/agnoie/shepherd/internal/kelpie/printer"
 )
@@ -245,6 +246,11 @@ func (m *portProxyManager) StartBackward(ctx context.Context, target, remotePort
 		cancel()
 		return nil, err
 	}
+	if err := waitBackwardReady(ctx, stream); err != nil {
+		_ = stream.Close()
+		cancel()
+		return nil, err
+	}
 	entry := &backwardEntry{
 		target: strings.ToLower(target),
 		remote: rport,
@@ -264,6 +270,40 @@ func (m *portProxyManager) StartBackward(ctx context.Context, target, remotePort
 		"local_port":  lport,
 	}
 	return newProxyDescriptor(entry.id, entry.target, kindBackwardProxy, options), nil
+}
+
+func waitBackwardReady(ctx context.Context, stream io.ReadWriteCloser) error {
+	if stream == nil {
+		return fmt.Errorf("backward proxy stream unavailable")
+	}
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	waitCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	result := make(chan error, 1)
+	go func() {
+		buf := make([]byte, 256)
+		n, err := stream.Read(buf)
+		if err != nil {
+			result <- fmt.Errorf("backward proxy readiness failed: %w", err)
+			return
+		}
+		msg := strings.TrimSpace(string(buf[:n]))
+		if !strings.HasPrefix(strings.ToLower(msg), "ready") {
+			result <- fmt.Errorf("unexpected backward proxy readiness response: %s", msg)
+			return
+		}
+		result <- nil
+	}()
+
+	select {
+	case err := <-result:
+		return err
+	case <-waitCtx.Done():
+		return fmt.Errorf("backward proxy readiness timeout: %w", waitCtx.Err())
+	}
 }
 
 func (m *portProxyManager) StopBackward(target, id string) ([]*ProxyDescriptor, error) {

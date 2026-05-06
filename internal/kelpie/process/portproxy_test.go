@@ -84,6 +84,9 @@ func TestPortProxyStartBackwardAndStop(t *testing.T) {
 		if meta["rport"] != "9000" || meta["lport"] != "8080" {
 			t.Fatalf("unexpected ports: %v", meta)
 		}
+		go func() {
+			_, _ = client.Write([]byte("ready 0.0.0.0:9000"))
+		}()
 		return server, nil
 	}
 	mgr := newPortProxyManager(ctxFn, opener)
@@ -185,7 +188,12 @@ func TestPortProxyValidationErrors(t *testing.T) {
 func TestPortProxyList(t *testing.T) {
 	ctxFn := func() context.Context { return context.Background() }
 	stream := func(ctx context.Context, target, sessionID string, meta map[string]string) (io.ReadWriteCloser, error) {
-		server, _ := net.Pipe()
+		server, client := net.Pipe()
+		if meta["kind"] == kindBackwardProxy {
+			go func() {
+				_, _ = client.Write([]byte("ready 0.0.0.0:" + meta["rport"]))
+			}()
+		}
 		return server, nil
 	}
 	mgr := newPortProxyManager(ctxFn, stream)

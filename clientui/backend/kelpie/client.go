@@ -2,8 +2,12 @@ package kelpie
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"errors"
 	"fmt"
+	"io"
+	"os"
 	"strings"
 	"sync"
 	"time"
@@ -270,8 +274,87 @@ func (c *Client) StartSocksProxy(ctx context.Context, target, auth, username, pa
 	return resp.GetHandle(), nil
 }
 
+func (c *Client) StartSshSession(ctx context.Context, target, serverAddr, username, password string) (*uipb.ProxyStreamHandle, error) {
+	resp, err := c.uiClient.StartSshSession(c.attachAuth(ctx), &uipb.StartSshSessionRequest{
+		TargetUuid: strings.TrimSpace(target),
+		ServerAddr: strings.TrimSpace(serverAddr),
+		AuthMethod: uipb.SshSessionAuthMethod_SSH_SESSION_AUTH_METHOD_PASSWORD,
+		Username:   strings.TrimSpace(username),
+		Password:   password,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return resp.GetHandle(), nil
+}
+
+func (c *Client) StartSSHTunnel(ctx context.Context, target, serverAddr, agentPort, authMethod, username, password string, privateKey []byte) error {
+	method := uipb.SshTunnelAuthMethod_SSH_TUNNEL_AUTH_METHOD_PASSWORD
+	if strings.EqualFold(strings.TrimSpace(authMethod), "cert") {
+		method = uipb.SshTunnelAuthMethod_SSH_TUNNEL_AUTH_METHOD_CERT
+	}
+	_, err := c.uiClient.StartSshTunnel(c.attachAuth(ctx), &uipb.StartSshTunnelRequest{
+		TargetUuid: strings.TrimSpace(target),
+		ServerAddr: strings.TrimSpace(serverAddr),
+		AgentPort:  strings.TrimSpace(agentPort),
+		AuthMethod: method,
+		Username:   strings.TrimSpace(username),
+		Password:   password,
+		PrivateKey: privateKey,
+	})
+	return err
+}
+
 func (c *Client) ProxyStream(ctx context.Context) (uipb.KelpieUIService_ProxyStreamClient, error) {
 	return c.uiClient.ProxyStream(c.attachAuth(ctx))
+}
+
+func (c *Client) ListLoot(ctx context.Context, target string, limit int32) ([]*uipb.LootItem, error) {
+	resp, err := c.uiClient.ListLoot(c.attachAuth(ctx), &uipb.ListLootRequest{
+		TargetUuid: strings.TrimSpace(target),
+		Category:   uipb.LootCategory_LOOT_CATEGORY_FILE,
+		Limit:      limit,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return resp.GetItems(), nil
+}
+
+func (c *Client) SyncLoot(ctx context.Context, lootID string, w io.Writer) (*uipb.LootItem, uint64, error) {
+	if w == nil {
+		return nil, 0, errors.New("writer required")
+	}
+	stream, err := c.uiClient.SyncLoot(c.attachAuth(ctx), &uipb.SyncLootRequest{LootId: strings.TrimSpace(lootID)})
+	if err != nil {
+		return nil, 0, err
+	}
+	var (
+		item    *uipb.LootItem
+		written uint64
+	)
+	for {
+		chunk, err := stream.Recv()
+		if err != nil {
+			if err == io.EOF {
+				return item, written, nil
+			}
+			return item, written, err
+		}
+		if chunk.GetItem() != nil {
+			item = chunk.GetItem()
+		}
+		if data := chunk.GetData(); len(data) > 0 {
+			n, writeErr := w.Write(data)
+			written += uint64(n)
+			if writeErr != nil {
+				return item, written, writeErr
+			}
+			if n != len(data) {
+				return item, written, io.ErrShortWrite
+			}
+		}
+	}
 }
 
 func (c *Client) ListRemoteFiles(ctx context.Context, target, path string) (*uipb.ListRemoteFilesResponse, error) {
@@ -287,6 +370,69 @@ func (c *Client) CollectLootFile(ctx context.Context, target, remotePath string,
 		RemotePath: strings.TrimSpace(remotePath),
 		Tags:       tags,
 	})
+}
+
+func (c *Client) UploadRemoteFile(ctx context.Context, target, localPath, remotePath string) (*uipb.UploadRemoteFileResponse, error) {
+	localPath = strings.TrimSpace(localPath)
+	if localPath == "" {
+		return nil, errors.New("local path required")
+	}
+	f, err := os.Open(localPath)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+	info, err := f.Stat()
+	if err != nil {
+		return nil, err
+	}
+	if info.IsDir() {
+		return nil, errors.New("local path is a directory")
+	}
+	hasher := sha256.New()
+	if _, err := io.Copy(hasher, f); err != nil {
+		return nil, err
+	}
+	sum := hex.EncodeToString(hasher.Sum(nil))
+	if _, err := f.Seek(0, io.SeekStart); err != nil {
+		return nil, err
+	}
+	stream, err := c.uiClient.UploadRemoteFile(c.attachAuth(ctx))
+	if err != nil {
+		return nil, err
+	}
+	buf := make([]byte, 64*1024)
+	first := true
+	for {
+		n, readErr := f.Read(buf)
+		if n > 0 || first {
+			req := &uipb.UploadRemoteFileRequest{
+				TargetUuid: strings.TrimSpace(target),
+				RemotePath: strings.TrimSpace(remotePath),
+				Size:       uint64(info.Size()),
+				Sha256:     sum,
+			}
+			if n > 0 {
+				req.Data = append([]byte(nil), buf[:n]...)
+			}
+			if !first {
+				req.TargetUuid = ""
+				req.RemotePath = ""
+				req.Size = 0
+				req.Sha256 = ""
+			}
+			if err := stream.Send(req); err != nil {
+				return nil, err
+			}
+			first = false
+		}
+		if readErr != nil {
+			if readErr == io.EOF {
+				return stream.CloseAndRecv()
+			}
+			return nil, readErr
+		}
+	}
 }
 
 func (c *Client) CloseStream(ctx context.Context, streamID uint32, reason string) error {
@@ -331,6 +477,199 @@ func (c *Client) StopForwardProxy(ctx context.Context, target, proxyID string) (
 		return 0, err
 	}
 	return resp.GetStopped(), nil
+}
+
+func (c *Client) StartBackwardProxy(ctx context.Context, target, remotePort, localPort string) (*uipb.StartBackwardProxyResponse, error) {
+	return c.proxyAdmin.StartBackwardProxy(c.attachAuth(ctx), &uipb.StartBackwardProxyRequest{
+		TargetUuid: strings.TrimSpace(target),
+		RemotePort: strings.TrimSpace(remotePort),
+		LocalPort:  strings.TrimSpace(localPort),
+	})
+}
+
+func (c *Client) StopBackwardProxy(ctx context.Context, target, proxyID string) (int32, error) {
+	resp, err := c.proxyAdmin.StopBackwardProxy(c.attachAuth(ctx), &uipb.StopBackwardProxyRequest{
+		TargetUuid: strings.TrimSpace(target),
+		ProxyId:    strings.TrimSpace(proxyID),
+	})
+	if err != nil {
+		return 0, err
+	}
+	return resp.GetStopped(), nil
+}
+
+func (c *Client) MarkSession(ctx context.Context, target, action, reason string) (*uipb.SessionInfo, error) {
+	reqAction := uipb.SessionMarkAction_SESSION_MARK_ACTION_ALIVE
+	switch strings.ToLower(strings.TrimSpace(action)) {
+	case "dead":
+		reqAction = uipb.SessionMarkAction_SESSION_MARK_ACTION_DEAD
+	case "maintenance":
+		reqAction = uipb.SessionMarkAction_SESSION_MARK_ACTION_MAINTENANCE
+	}
+	resp, err := c.uiClient.MarkSession(c.attachAuth(ctx), &uipb.MarkSessionRequest{
+		TargetUuid: strings.TrimSpace(target),
+		Action:     reqAction,
+		Reason:     strings.TrimSpace(reason),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return resp.GetSession(), nil
+}
+
+func (c *Client) RepairSession(ctx context.Context, target string, force bool, reason string) (*uipb.RepairSessionResponse, error) {
+	return c.uiClient.RepairSession(c.attachAuth(ctx), &uipb.RepairSessionRequest{
+		TargetUuid: strings.TrimSpace(target),
+		Force:      force,
+		Reason:     strings.TrimSpace(reason),
+	})
+}
+
+func (c *Client) ReconnectSession(ctx context.Context, target, reason string) (*uipb.ReconnectSessionResponse, error) {
+	return c.uiClient.ReconnectSession(c.attachAuth(ctx), &uipb.ReconnectSessionRequest{
+		TargetUuid: strings.TrimSpace(target),
+		Reason:     strings.TrimSpace(reason),
+	})
+}
+
+func (c *Client) TerminateSession(ctx context.Context, target, reason string) (*uipb.TerminateSessionResponse, error) {
+	return c.uiClient.TerminateSession(c.attachAuth(ctx), &uipb.TerminateSessionRequest{
+		TargetUuid: strings.TrimSpace(target),
+		Reason:     strings.TrimSpace(reason),
+	})
+}
+
+func (c *Client) SessionDiagnostics(ctx context.Context, target string, includeProcesses, includeMetrics bool) (*uipb.SessionDiagnosticsResponse, error) {
+	return c.uiClient.GetSessionDiagnostics(c.attachAuth(ctx), &uipb.SessionDiagnosticsRequest{
+		TargetUuid:       strings.TrimSpace(target),
+		IncludeProcesses: includeProcesses,
+		IncludeMetrics:   includeMetrics,
+	})
+}
+
+func (c *Client) ListPivotListeners(ctx context.Context, target string) ([]*uipb.PivotListener, error) {
+	req := &uipb.ListPivotListenersRequest{}
+	if strings.TrimSpace(target) != "" {
+		req.TargetUuids = []string{strings.TrimSpace(target)}
+	}
+	resp, err := c.pivot.ListPivotListeners(c.attachAuth(ctx), req)
+	if err != nil {
+		return nil, err
+	}
+	return resp.GetListeners(), nil
+}
+
+func (c *Client) CreatePivotListener(ctx context.Context, target, protocol, bind, mode string) (*uipb.PivotListener, error) {
+	resp, err := c.pivot.CreatePivotListener(c.attachAuth(ctx), &uipb.CreatePivotListenerRequest{
+		TargetUuid: strings.TrimSpace(target),
+		Spec: &uipb.PivotListenerSpec{
+			Protocol: strings.TrimSpace(protocol),
+			Bind:     strings.TrimSpace(bind),
+			Mode:     pivotMode(mode),
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+	return resp.GetListener(), nil
+}
+
+func (c *Client) UpdatePivotListener(ctx context.Context, listenerID, target, protocol, bind, mode, desiredStatus string, includeSpec bool) (*uipb.PivotListener, error) {
+	req := &uipb.UpdatePivotListenerRequest{
+		ListenerId:    strings.TrimSpace(listenerID),
+		DesiredStatus: strings.TrimSpace(desiredStatus),
+	}
+	if includeSpec {
+		req.Spec = &uipb.PivotListenerSpec{
+			Protocol: strings.TrimSpace(protocol),
+			Bind:     strings.TrimSpace(bind),
+			Mode:     pivotMode(mode),
+		}
+		_ = target
+	}
+	resp, err := c.pivot.UpdatePivotListener(c.attachAuth(ctx), req)
+	if err != nil {
+		return nil, err
+	}
+	return resp.GetListener(), nil
+}
+
+func (c *Client) DeletePivotListener(ctx context.Context, listenerID string) error {
+	_, err := c.pivot.DeletePivotListener(c.attachAuth(ctx), &uipb.DeletePivotListenerRequest{ListenerId: strings.TrimSpace(listenerID)})
+	return err
+}
+
+func (c *Client) ListControllerListeners(ctx context.Context) ([]*uipb.ControllerListener, error) {
+	resp, err := c.controller.ListControllerListeners(c.attachAuth(ctx), &uipb.ListControllerListenersRequest{})
+	if err != nil {
+		return nil, err
+	}
+	return resp.GetListeners(), nil
+}
+
+func (c *Client) CreateControllerListener(ctx context.Context, protocol, bind string) (*uipb.ControllerListener, error) {
+	resp, err := c.controller.CreateControllerListener(c.attachAuth(ctx), &uipb.CreateControllerListenerRequest{
+		Spec: &uipb.ControllerListenerSpec{
+			Bind:     strings.TrimSpace(bind),
+			Protocol: strings.TrimSpace(protocol),
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+	return resp.GetListener(), nil
+}
+
+func (c *Client) UpdateControllerListener(ctx context.Context, listenerID, protocol, bind, desiredStatus string, includeSpec bool) (*uipb.ControllerListener, error) {
+	req := &uipb.UpdateControllerListenerRequest{
+		ListenerId:    strings.TrimSpace(listenerID),
+		DesiredStatus: controllerStatus(desiredStatus),
+	}
+	if includeSpec {
+		req.Spec = &uipb.ControllerListenerSpec{
+			Bind:     strings.TrimSpace(bind),
+			Protocol: strings.TrimSpace(protocol),
+		}
+	}
+	resp, err := c.controller.UpdateControllerListener(c.attachAuth(ctx), req)
+	if err != nil {
+		return nil, err
+	}
+	return resp.GetListener(), nil
+}
+
+func (c *Client) DeleteControllerListener(ctx context.Context, listenerID string) (*uipb.ControllerListener, error) {
+	resp, err := c.controller.DeleteControllerListener(c.attachAuth(ctx), &uipb.DeleteControllerListenerRequest{ListenerId: strings.TrimSpace(listenerID)})
+	if err != nil {
+		return nil, err
+	}
+	return resp.GetListener(), nil
+}
+
+func pivotMode(mode string) uipb.PivotListenerMode {
+	switch strings.ToLower(strings.TrimSpace(mode)) {
+	case "iptables":
+		return uipb.PivotListenerMode_PIVOT_LISTENER_MODE_IPTABLES
+	case "soreuse", "so_reuse", "so-reuse":
+		return uipb.PivotListenerMode_PIVOT_LISTENER_MODE_SOREUSE
+	default:
+		return uipb.PivotListenerMode_PIVOT_LISTENER_MODE_NORMAL
+	}
+}
+
+func controllerStatus(status string) uipb.ControllerListenerStatus {
+	switch strings.ToLower(strings.TrimSpace(status)) {
+	case "pending":
+		return uipb.ControllerListenerStatus_CONTROLLER_LISTENER_STATUS_PENDING
+	case "running", "resume", "start":
+		return uipb.ControllerListenerStatus_CONTROLLER_LISTENER_STATUS_RUNNING
+	case "failed":
+		return uipb.ControllerListenerStatus_CONTROLLER_LISTENER_STATUS_FAILED
+	case "stopped", "stop", "pause":
+		return uipb.ControllerListenerStatus_CONTROLLER_LISTENER_STATUS_STOPPED
+	default:
+		return uipb.ControllerListenerStatus_CONTROLLER_LISTENER_STATUS_UNSPECIFIED
+	}
 }
 
 // SupplementalStatus 返回补链调度器状态。

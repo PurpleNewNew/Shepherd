@@ -111,16 +111,34 @@ export interface Snapshot {
   edges: EdgeSummary[];
   streams: StreamDiag[];
   sessions: SessionSummary[];
+  pivotListeners?: PivotListenerDTO[];
+  controllerListeners?: ControllerListenerDTO[];
   sleepProfiles?: SleepProfile[];
   fetchedAt: string;
 }
 
 export interface PivotListenerDTO {
   listenerId: string;
+  targetUuid?: string;
+  route?: string;
   protocol: string;
   bind: string;
   status: string;
   mode: string;
+  lastError?: string;
+  metadata?: Record<string, string>;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface ControllerListenerDTO {
+  listenerId: string;
+  protocol: string;
+  bind: string;
+  status: string;
+  lastError?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface NodeDetail {
@@ -223,6 +241,23 @@ export interface StartSocksProxyRequest {
   password?: string;
 }
 
+export interface StartSshSessionRequest {
+  target: string;
+  serverAddr: string;
+  username: string;
+  password: string;
+}
+
+export interface StartSshTunnelRequest {
+  target: string;
+  serverAddr: string;
+  agentPort: string;
+  authMethod?: 'password' | 'cert';
+  username: string;
+  password?: string;
+  privateKey?: string;
+}
+
 export interface StartForwardProxyRequest {
   target: string;
   localBind: string;
@@ -232,6 +267,7 @@ export interface StartForwardProxyRequest {
 export interface StartForwardProxyResult {
   handle: StreamHandle;
   proxyId: string;
+  kind?: string;
   bind: string;
   remoteAddr: string;
 }
@@ -242,6 +278,29 @@ export interface StopForwardProxyRequest {
 }
 
 export interface StopForwardProxyResult {
+  stopped: number;
+}
+
+export interface StartBackwardProxyRequest {
+  target: string;
+  remotePort: string;
+  localPort: string;
+}
+
+export interface StartBackwardProxyResult {
+  handle: StreamHandle;
+  proxyId: string;
+  kind?: string;
+  remotePort: string;
+  localPort: string;
+}
+
+export interface StopBackwardProxyRequest {
+  target: string;
+  proxyId: string;
+}
+
+export interface StopBackwardProxyResult {
   stopped: number;
 }
 
@@ -317,6 +376,20 @@ export interface CollectRemoteFileRequest {
   tags?: string[];
 }
 
+export interface UploadRemoteFileRequest {
+  target: string;
+  localPath: string;
+  remotePath: string;
+}
+
+export interface UploadRemoteFileResult {
+  remotePath: string;
+  size?: number;
+  sha256?: string;
+  mime?: string;
+  message?: string;
+}
+
 export interface LootItem {
   lootId: string;
   targetUuid?: string;
@@ -335,6 +408,81 @@ export interface LootItem {
 
 export interface CollectRemoteFileResult {
   item: LootItem;
+}
+
+export interface ListLootRequest {
+  target?: string;
+  limit?: number;
+}
+
+export interface ListLootResult {
+  items: LootItem[];
+}
+
+export interface ExportLootRequest {
+  lootId: string;
+  localPath?: string;
+}
+
+export interface ExportLootResult {
+  item: LootItem;
+  localPath: string;
+  bytes: number;
+}
+
+export interface SessionActionRequest {
+  target: string;
+  action?: 'alive' | 'dead' | 'maintenance';
+  force?: boolean;
+  reason?: string;
+}
+
+export interface SessionActionResult {
+  session?: SessionSummary;
+  accepted?: boolean;
+  terminated?: boolean;
+  message?: string;
+}
+
+export interface SessionMetricDTO {
+  name: string;
+  value: string;
+}
+
+export interface SessionIssueDTO {
+  code: string;
+  message: string;
+  detail?: string;
+}
+
+export interface SessionProcessDTO {
+  pid: string;
+  name: string;
+  user?: string;
+  status?: string;
+  path?: string;
+  startedAt?: string;
+}
+
+export interface SessionDiagnosticsDTO {
+  session: SessionSummary;
+  metrics?: SessionMetricDTO[];
+  issues?: SessionIssueDTO[];
+  processes?: SessionProcessDTO[];
+}
+
+export interface ListenerSpecRequest {
+  listenerId?: string;
+  target?: string;
+  protocol?: string;
+  bind?: string;
+  mode?: 'normal' | 'iptables' | 'soreuse';
+  desiredStatus?: 'running' | 'stopped' | 'pending' | 'failed' | 'resume' | 'pause';
+  includeSpec?: boolean;
+}
+
+export interface ListPivotListenersRequest {
+  target?: string;
 }
 
 export interface SupplementalEventDTO {

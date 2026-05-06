@@ -8,6 +8,8 @@ import type {
   StreamDiag,
   Snapshot,
   NodeDetail,
+  PivotListenerDTO,
+  ControllerListenerDTO,
 } from '@/api/types';
 import { getSnapshot, getNodeDetail } from '@/api/bindings';
 
@@ -16,6 +18,8 @@ export const useTopologyStore = defineStore('topology', () => {
   const edges = ref<EdgeSummary[]>([]);
   const streams = ref<StreamDiag[]>([]);
   const sessions = ref<SessionSummary[]>([]);
+  const pivotListeners = ref<PivotListenerDTO[]>([]);
+  const controllerListeners = ref<ControllerListenerDTO[]>([]);
   const sleepProfiles = ref<SleepProfile[]>([]);
   const fetchedAt = ref<string>('');
 
@@ -58,6 +62,8 @@ export const useTopologyStore = defineStore('topology', () => {
     edges.value = s.edges ?? [];
     streams.value = s.streams ?? [];
     sessions.value = s.sessions ?? [];
+    pivotListeners.value = s.pivotListeners ?? [];
+    controllerListeners.value = s.controllerListeners ?? [];
     sleepProfiles.value = s.sleepProfiles ?? [];
     fetchedAt.value = s.fetchedAt;
   }
@@ -102,6 +108,8 @@ export const useTopologyStore = defineStore('topology', () => {
     edges.value = [];
     streams.value = [];
     sessions.value = [];
+    pivotListeners.value = [];
+    controllerListeners.value = [];
     sleepProfiles.value = [];
     fetchedAt.value = '';
     detail.value = null;
@@ -114,6 +122,8 @@ export const useTopologyStore = defineStore('topology', () => {
     edges,
     streams,
     sessions,
+    pivotListeners,
+    controllerListeners,
     sleepProfiles,
     fetchedAt,
     loading,

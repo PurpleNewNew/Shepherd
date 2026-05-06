@@ -72,6 +72,9 @@ type adminStreamState struct {
 	streamStats         streamStats
 	streamReasonMu      sync.Mutex
 	streamCloseReasons  map[uint32]string
+	streamKindMu        sync.Mutex
+	streamKinds         map[uint32]string
+	streamClosedAt      map[uint32]time.Time
 	shutdownOverride    func(route, uuid string)
 	routeOverride       func(uuid string) (string, bool)
 	enqueueDiagOverride func(target, data string, priority dtn.Priority, ttl time.Duration) (string, error)

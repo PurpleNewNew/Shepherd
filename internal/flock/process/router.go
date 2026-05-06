@@ -575,6 +575,8 @@ func (agent *Agent) streamOpenHandler() bus.Handler {
 			agent.fileOnOpen(open.StreamID, opts)
 		case "proxy":
 			agent.proxyOnOpen(open.StreamID, opts)
+		case streamKindBackwardProxy:
+			agent.backwardProxyOnOpen(open.StreamID, opts)
 		case "socks":
 			agent.socksOnOpen(open.StreamID, opts)
 		default:
@@ -709,6 +711,8 @@ func (agent *Agent) streamDataHandler() bus.Handler {
 					agent.fileOnData(data.StreamID, chunk)
 				case "proxy":
 					agent.proxyOnData(data.StreamID, chunk)
+				case streamKindBackwardConn:
+					agent.backwardConnOnData(data.StreamID, chunk)
 				case "socks":
 					agent.socksOnData(data.StreamID, chunk)
 				default:
@@ -773,6 +777,10 @@ func (agent *Agent) streamCloseHandler() bus.Handler {
 			agent.fileOnClose(closeMsg.StreamID)
 		case "proxy":
 			agent.proxyOnClose(closeMsg.StreamID)
+		case streamKindBackwardProxy:
+			agent.backwardProxyOnClose(closeMsg.StreamID)
+		case streamKindBackwardConn:
+			agent.backwardConnOnClose(closeMsg.StreamID)
 		case "socks":
 			agent.socksOnClose(closeMsg.StreamID)
 		}

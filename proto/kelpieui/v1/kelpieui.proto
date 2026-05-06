@@ -380,6 +380,22 @@ message ListRemoteFilesResponse {
   string display_path = 8;
 }
 
+message UploadRemoteFileRequest {
+  string target_uuid = 1;
+  string remote_path = 2;
+  uint64 size = 3;
+  string sha256 = 4;
+  bytes data = 5;
+}
+
+message UploadRemoteFileResponse {
+  string remote_path = 1;
+  uint64 size = 2;
+  string sha256 = 3;
+  string mime = 4;
+  string message = 5;
+}
+
 message CreatePivotListenerRequest {
   string target_uuid = 1;
   PivotListenerSpec spec = 2;
@@ -1143,6 +1159,7 @@ service KelpieUIService {
   rpc CollectLootFile(CollectLootFileRequest) returns (CollectLootFileResponse);
   rpc SyncLoot(SyncLootRequest) returns (stream SyncLootChunk);
   rpc ListRemoteFiles(ListRemoteFilesRequest) returns (ListRemoteFilesResponse);
+  rpc UploadRemoteFile(stream UploadRemoteFileRequest) returns (UploadRemoteFileResponse);
   rpc ProxyStream(stream StreamRequest) returns (stream StreamResponse);
   rpc StartShell(StartShellRequest) returns (StartShellResponse);
   rpc StartSocksProxy(StartSocksProxyRequest) returns (StartSocksProxyResponse);

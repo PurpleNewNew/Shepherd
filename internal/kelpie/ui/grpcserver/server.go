@@ -93,6 +93,7 @@ type LootAdmin interface {
 	OpenLootContent(lootID string) (process.LootRecord, io.ReadCloser, uint64, error)
 	CollectLootFile(ctx context.Context, targetUUID, remotePath, operator string, tags []string) (process.LootRecord, error)
 	ListRemoteFiles(ctx context.Context, targetUUID, remotePath string) (filebrowser.Listing, error)
+	UploadRemoteFile(ctx context.Context, targetUUID, remotePath string, r io.Reader, size uint64, sha256Hex string) (process.RemoteFileTransferResult, error)
 }
 
 type ProxyAdmin interface {

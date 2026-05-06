@@ -54,6 +54,61 @@ type StreamStat struct {
 	LastClosed time.Time
 }
 
+func (admin *Admin) rememberStreamKind(streamID uint32, kind string) {
+	if admin == nil || streamID == 0 {
+		return
+	}
+	kind = normalizeKind(kind)
+	admin.streamKindMu.Lock()
+	if admin.streamKinds == nil {
+		admin.streamKinds = make(map[uint32]string)
+	}
+	if admin.streamClosedAt == nil {
+		admin.streamClosedAt = make(map[uint32]time.Time)
+	}
+	admin.streamKinds[streamID] = kind
+	delete(admin.streamClosedAt, streamID)
+	admin.streamKindMu.Unlock()
+}
+
+func (admin *Admin) streamKindForClose(streamID uint32) (string, bool) {
+	if admin == nil || streamID == 0 {
+		return "", false
+	}
+	admin.streamKindMu.Lock()
+	defer admin.streamKindMu.Unlock()
+	kind := admin.streamKinds[streamID]
+	_, duplicate := admin.streamClosedAt[streamID]
+	return kind, duplicate
+}
+
+func (admin *Admin) markStreamClosed(streamID uint32, kind string) {
+	if admin == nil || streamID == 0 {
+		return
+	}
+	kind = normalizeKind(kind)
+	now := time.Now()
+	admin.streamKindMu.Lock()
+	if admin.streamKinds == nil {
+		admin.streamKinds = make(map[uint32]string)
+	}
+	if admin.streamClosedAt == nil {
+		admin.streamClosedAt = make(map[uint32]time.Time)
+	}
+	admin.streamKinds[streamID] = kind
+	admin.streamClosedAt[streamID] = now
+	if len(admin.streamClosedAt) > 1024 {
+		cutoff := now.Add(-10 * time.Minute)
+		for id, closedAt := range admin.streamClosedAt {
+			if closedAt.Before(cutoff) {
+				delete(admin.streamClosedAt, id)
+				delete(admin.streamKinds, id)
+			}
+		}
+	}
+	admin.streamKindMu.Unlock()
+}
+
 func (admin *Admin) initStreamEngine() {
 	if admin == nil {
 		return
@@ -196,6 +251,7 @@ func (admin *Admin) handleStreamOpen(header *protocol.Header, msg *protocol.Stre
 	if sessionStream == nil {
 		return
 	}
+	admin.rememberStreamKind(msg.StreamID, kind)
 	switch kind {
 	case "backward-conn":
 		lport := strings.TrimSpace(opts["lport"])
@@ -243,18 +299,25 @@ func (admin *Admin) handleStreamClose(hdr *protocol.Header, msg *protocol.Stream
 	}
 	meta := admin.streamEngine.SessionMeta(msg.StreamID)
 	kind := ""
+	duplicateClose := false
 	if meta != nil {
 		kind = meta["kind"]
 	}
-	admin.recordStreamClose(kind, msg.Reason)
+	if kind == "" {
+		kind, duplicateClose = admin.streamKindForClose(msg.StreamID)
+	}
 	admin.rememberStreamReason(msg.StreamID, msg.Reason)
 	if kind == "" {
 		kind = "unknown"
 	}
-	if msg.Reason != "" {
-		printer.Warning("\r\n[*] Stream(%s) closed: %s\r\n", kind, msg.Reason)
-	} else {
-		printer.Warning("\r\n[*] Stream(%s) closed.\r\n", kind)
+	if !duplicateClose {
+		admin.recordStreamClose(kind, msg.Reason)
+		admin.markStreamClosed(msg.StreamID, kind)
+		if msg.Reason != "" {
+			printer.Warning("\r\n[*] Stream(%s) closed: %s\r\n", kind, msg.Reason)
+		} else {
+			printer.Warning("\r\n[*] Stream(%s) closed.\r\n", kind)
+		}
 	}
 	admin.streamEngine.HandleClose(msg)
 }
@@ -313,6 +376,7 @@ func (admin *Admin) OpenStream(ctx context.Context, target, sessionID string, me
 		return nil, err
 	}
 	admin.recordStreamOpen(opts["kind"])
+	admin.rememberStreamKind(streamHandle.ID(), opts["kind"])
 	return streamHandle, nil
 }
 

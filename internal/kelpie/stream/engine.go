@@ -708,6 +708,7 @@ func (e *Engine) Accept(id uint32, opt Options) *Stream {
 	recvR, recvW := io.Pipe()
 	stream := &Stream{engine: e, session: sess, sendR: sendR, sendW: sendW, recvR: recvR, recvW: recvW}
 	sess.bindStream(stream)
+	go sess.run()
 	go stream.runSender()
 	return stream
 }

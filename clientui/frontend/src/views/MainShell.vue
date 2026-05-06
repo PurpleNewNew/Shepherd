@@ -8,38 +8,67 @@ import {
   closeInteractiveStream,
   closeStreamByID,
   collectRemoteFile,
+  createControllerListener,
+  createPivotListener,
+  deleteControllerListener,
+  deletePivotListener,
   enqueueDTN,
+  exportLoot,
+  getSessionDiagnostics,
+  listControllerListeners,
+  listLoot,
+  listPivotListeners,
   listRemoteFiles,
+  markSession,
   onStreamEvent,
   pruneOffline,
+  reconnectSession,
+  repairSession,
   sendStreamData,
+  startBackwardProxy,
   startForwardProxy,
   startShell,
   startSocksProxy,
+  startSshSession,
+  startSshTunnel,
+  stopBackwardProxy,
   stopForwardProxy,
   streamPing,
+  terminateSession,
+  updateControllerListener,
+  updatePivotListener,
   updateSleep,
+  uploadRemoteFile,
 } from '@/api/bindings';
 import type {
+  ControllerListenerDTO,
   CollectRemoteFileResult,
   EnqueueDTNResult,
+  ExportLootResult,
+  ListLootResult,
+  LootItem,
   RemoteFileEntry,
   RemoteFileListing,
   NodeSummary,
+  PivotListenerDTO,
   SessionSummary,
+  SessionDiagnosticsDTO,
+  StartBackwardProxyResult,
   StartForwardProxyResult,
   StreamEventDTO,
   StreamHandle,
   TimelineEvent,
+  UploadRemoteFileResult,
 } from '@/api/types';
 
-type BuiltinTab = 'events' | 'sessions' | 'dtn' | 'control' | 'streams';
+type BuiltinTab = 'events' | 'sessions' | 'dtn' | 'control' | 'streams' | 'listeners';
 type BottomTab = BuiltinTab | `target:${string}`;
 type SideMode = 'targets' | 'networks' | 'listeners';
 type MainView = 'table' | 'graph';
-type TargetMode = 'overview' | 'shell' | 'files' | 'proxy';
+type TargetMode = 'overview' | 'shell' | 'files' | 'proxy' | 'ssh' | 'listeners';
 type MenuKey = 'stockman' | 'view' | 'operations' | 'listeners' | 'sessions' | 'reports' | 'help';
 type ResizePane = 'left' | 'bottom';
+type ProxyResult = StartForwardProxyResult | StartBackwardProxyResult;
 
 const conn = useConnectionStore();
 const topo = useTopologyStore();
@@ -60,16 +89,39 @@ const workSeconds = ref(5);
 const jitter = ref(10);
 const shellInput = ref('');
 const filePath = ref('/');
+const uploadLocalPath = ref('');
+const uploadRemotePath = ref('/tmp/stockman-upload.bin');
+const lootExportPath = ref('');
 const proxyLocalBind = ref('127.0.0.1:1080');
 const proxyRemoteAddr = ref('127.0.0.1:80');
+const backwardRemotePort = ref('9001');
+const backwardLocalPort = ref('8080');
 const socksUsername = ref('');
 const socksPassword = ref('');
+const sshServerAddr = ref('127.0.0.1:22');
+const sshUsername = ref('');
+const sshPassword = ref('');
+const sshAgentPort = ref('2222');
+const sshPrivateKey = ref('');
+const sessionReason = ref('operator action');
+const pivotProtocol = ref('tcp');
+const pivotBind = ref('0.0.0.0:9001');
+const pivotMode = ref<'normal' | 'iptables' | 'soreuse'>('normal');
+const controllerProtocol = ref('tcp');
+const controllerBind = ref('0.0.0.0:50061');
 const shellHandles = reactive<Record<string, StreamHandle>>({});
 const shellLines = reactive<Record<string, string[]>>({});
+const sshHandles = reactive<Record<string, StreamHandle>>({});
+const sshLines = reactive<Record<string, string[]>>({});
+const sshInput = ref('');
 const fileListings = reactive<Record<string, RemoteFileListing>>({});
 const fileErrors = reactive<Record<string, string>>({});
 const fileLoading = reactive<Record<string, boolean>>({});
-const proxyResults = reactive<Record<string, StartForwardProxyResult[]>>({});
+const lootItems = reactive<Record<string, LootItem[]>>({});
+const proxyResults = reactive<Record<string, ProxyResult[]>>({});
+const sessionDiagnostics = reactive<Record<string, SessionDiagnosticsDTO>>({});
+const pivotListeners = ref<PivotListenerDTO[]>([]);
+const controllerListeners = ref<ControllerListenerDTO[]>([]);
 const opsShellRef = ref<HTMLElement | null>(null);
 const leftPaneWidth = ref(readLayoutSize('stockman:leftPaneWidth', 250, 190, 460));
 const bottomPaneHeight = ref(readLayoutSize('stockman:bottomPaneHeight', 246, 160, 540));
@@ -157,6 +209,16 @@ const activeShellLines = computed(() => {
   return uuid ? (shellLines[uuid] ?? []) : [];
 });
 
+const activeSshHandle = computed(() => {
+  const uuid = activeTargetUUID.value;
+  return uuid ? sshHandles[uuid] : undefined;
+});
+
+const activeSshLines = computed(() => {
+  const uuid = activeTargetUUID.value;
+  return uuid ? (sshLines[uuid] ?? []) : [];
+});
+
 const activeFileListing = computed(() => {
   const uuid = activeTargetUUID.value;
   return uuid ? fileListings[uuid] : undefined;
@@ -175,6 +237,21 @@ const activeFileLoading = computed(() => {
 const activeProxyResults = computed(() => {
   const uuid = activeTargetUUID.value;
   return uuid ? (proxyResults[uuid] ?? []) : [];
+});
+
+const activeLootItems = computed(() => {
+  const uuid = activeTargetUUID.value;
+  return uuid ? (lootItems[uuid] ?? []) : [];
+});
+
+const activeSessionDiagnostics = computed(() => {
+  const uuid = activeTargetUUID.value;
+  return uuid ? sessionDiagnostics[uuid] : undefined;
+});
+
+const activePivotListeners = computed(() => {
+  const uuid = activeTargetUUID.value;
+  return uuid ? pivotListeners.value.filter((l) => l.targetUuid === uuid) : [];
 });
 
 const orderedNodes = computed(() => {
@@ -196,15 +273,19 @@ const networkGroups = computed(() => {
 });
 
 const listeners = computed(() => {
-  const map = new Map<string, { key: string; count: number; nodes: string[] }>();
-  for (const node of topo.nodes) {
-    const key = node.workProfile || node.network || 'implicit';
-    const item = map.get(key) ?? { key, count: 0, nodes: [] };
-    item.count += 1;
-    item.nodes.push(labelForNode(node));
-    map.set(key, item);
-  }
-  return [...map.values()].sort((a, b) => a.key.localeCompare(b.key));
+  const groups = [
+    ...controllerListeners.value.map((l) => ({
+      key: `controller:${l.bind}`,
+      count: 1,
+      nodes: [l.status],
+    })),
+    ...pivotListeners.value.map((l) => ({
+      key: `pivot:${l.bind}`,
+      count: 1,
+      nodes: [labelForUUID(l.targetUuid || '')],
+    })),
+  ];
+  return groups.sort((a, b) => a.key.localeCompare(b.key));
 });
 
 const sessionByNode = computed(() => {
@@ -350,6 +431,9 @@ function resetPane(pane: ResizePane) {
 
 async function refreshAll() {
   await Promise.all([topo.refresh(), metrics.refresh()]);
+  pivotListeners.value = [...(topo.pivotListeners ?? [])];
+  controllerListeners.value = [...(topo.controllerListeners ?? [])];
+  await refreshListeners();
   if (topo.selectedUUID) {
     await topo.loadDetail(topo.selectedUUID);
   }
@@ -364,6 +448,12 @@ async function logout() {
 
 function labelForNode(node: NodeSummary): string {
   return node.alias || node.uuid.slice(0, 8);
+}
+
+function labelForUUID(uuid: string): string {
+  if (!uuid) return '-';
+  const node = topo.nodeMap.get(uuid);
+  return node ? labelForNode(node) : uuid.slice(0, 8);
 }
 
 function isOnline(status?: string): boolean {
@@ -412,7 +502,7 @@ function openTargetMenu(ev: MouseEvent, node: NodeSummary) {
   contextMenu.node = node;
   contextMenu.open = true;
   contextMenu.x = Math.min(ev.clientX, window.innerWidth - 248);
-  contextMenu.y = Math.min(ev.clientY, window.innerHeight - 302);
+  contextMenu.y = Math.min(ev.clientY, Math.max(12, window.innerHeight - 520));
 }
 
 function closeContextMenu() {
@@ -434,6 +524,19 @@ function openTargetTab(uuid: string, mode: TargetMode = 'overview') {
   topo.loadDetail(uuid);
 }
 
+async function refreshListeners() {
+  try {
+    const [pivots, controllers] = await Promise.all([
+      listPivotListeners({}),
+      listControllerListeners(),
+    ]);
+    pivotListeners.value = pivots;
+    controllerListeners.value = controllers;
+  } catch (err: any) {
+    action.error = err?.message ?? String(err);
+  }
+}
+
 function closeTargetTab(uuid: string) {
   targetTabs.value = targetTabs.value.filter((id) => id !== uuid);
   if (bottomTab.value === `target:${uuid}`) {
@@ -443,7 +546,7 @@ function closeTargetTab(uuid: string) {
   }
 }
 
-async function chooseTargetAction(kind: 'detail' | 'shell' | 'files' | 'proxy' | 'events' | 'sessions' | 'streams' | 'dtn' | 'sleep' | 'refresh' | 'copy' | 'prune') {
+async function chooseTargetAction(kind: 'detail' | 'shell' | 'files' | 'proxy' | 'ssh' | 'listeners' | 'events' | 'sessions' | 'streams' | 'dtn' | 'sleep' | 'refresh' | 'copy' | 'prune' | 'mark-alive' | 'mark-dead' | 'repair' | 'reconnect' | 'terminate' | 'diagnostics') {
   const node = contextMenu.node;
   closeContextMenu();
   if (!node) return;
@@ -458,6 +561,11 @@ async function chooseTargetAction(kind: 'detail' | 'shell' | 'files' | 'proxy' |
     await loadFiles(node.uuid);
   } else if (kind === 'proxy') {
     openTargetTab(node.uuid, 'proxy');
+  } else if (kind === 'ssh') {
+    openTargetTab(node.uuid, 'ssh');
+  } else if (kind === 'listeners') {
+    openTargetTab(node.uuid, 'listeners');
+    await refreshListeners();
   } else if (kind === 'events') {
     bottomTab.value = 'events';
   } else if (kind === 'sessions') {
@@ -470,6 +578,19 @@ async function chooseTargetAction(kind: 'detail' | 'shell' | 'files' | 'proxy' |
     bottomTab.value = 'control';
   } else if (kind === 'refresh') {
     await refreshAll();
+  } else if (kind === 'mark-alive') {
+    await runSessionAction('mark-alive', node.uuid);
+  } else if (kind === 'mark-dead') {
+    await runSessionAction('mark-dead', node.uuid);
+  } else if (kind === 'repair') {
+    await runSessionAction('repair', node.uuid);
+  } else if (kind === 'reconnect') {
+    await runSessionAction('reconnect', node.uuid);
+  } else if (kind === 'terminate') {
+    await runSessionAction('terminate', node.uuid);
+  } else if (kind === 'diagnostics') {
+    openTargetTab(node.uuid, 'overview');
+    await loadSessionDiagnostics(node.uuid);
   } else if (kind === 'copy') {
     await navigator.clipboard?.writeText(node.uuid);
     action.message = `Copied node UUID: ${node.uuid}`;
@@ -478,7 +599,7 @@ async function chooseTargetAction(kind: 'detail' | 'shell' | 'files' | 'proxy' |
   }
 }
 
-function chooseMenuAction(actionName: 'refresh' | 'table' | 'graph' | 'events' | 'sessions' | 'streams' | 'dtn' | 'sleep' | 'prune' | 'disconnect') {
+function chooseMenuAction(actionName: 'refresh' | 'table' | 'graph' | 'events' | 'sessions' | 'streams' | 'dtn' | 'sleep' | 'listeners' | 'prune' | 'disconnect') {
   activeMenu.value = '';
   if (actionName === 'refresh') refreshAll();
   else if (actionName === 'table') mainView.value = 'table';
@@ -488,6 +609,10 @@ function chooseMenuAction(actionName: 'refresh' | 'table' | 'graph' | 'events' |
   else if (actionName === 'streams') bottomTab.value = 'streams';
   else if (actionName === 'dtn') bottomTab.value = 'dtn';
   else if (actionName === 'sleep') bottomTab.value = 'control';
+  else if (actionName === 'listeners') {
+    bottomTab.value = 'listeners';
+    refreshListeners();
+  }
   else if (actionName === 'prune') submitPrune();
   else if (actionName === 'disconnect') logout();
 }
@@ -564,18 +689,21 @@ async function submitPrune() {
 function handleStreamEvent(ev: StreamEventDTO) {
   const uuid = ev.targetUuid || activeTargetUUID.value;
   if (!uuid) return;
-  if (!shellLines[uuid]) shellLines[uuid] = [];
+  const isSsh = ev.kind === 'ssh' || sshHandles[uuid]?.handleId === ev.handleId;
+  const lines = isSsh ? sshLines : shellLines;
+  if (!lines[uuid]) lines[uuid] = [];
   if (ev.type === 'open') {
-    shellLines[uuid].push(`[stream ${ev.streamId || '-'} opened]`);
-    if (shellHandles[uuid] && ev.streamId) shellHandles[uuid].streamId = ev.streamId;
+    lines[uuid].push(`[stream ${ev.streamId || '-'} opened]`);
+    const handles = isSsh ? sshHandles : shellHandles;
+    if (handles[uuid] && ev.streamId) handles[uuid].streamId = ev.streamId;
   } else if (ev.type === 'data' && ev.data) {
-    shellLines[uuid].push(...ev.data.replace(/\r/g, '').split('\n').filter(Boolean));
+    lines[uuid].push(...ev.data.replace(/\r/g, '').split('\n').filter(Boolean));
   } else if (ev.type === 'closed') {
-    shellLines[uuid].push('[stream closed]');
+    lines[uuid].push('[stream closed]');
   } else if (ev.type === 'error') {
-    shellLines[uuid].push(`[error] ${ev.error || 'stream error'}`);
+    lines[uuid].push(`[error] ${ev.error || 'stream error'}`);
   }
-  shellLines[uuid] = shellLines[uuid].slice(-160);
+  lines[uuid] = lines[uuid].slice(-160);
 }
 
 async function ensureShell(uuid = activeTargetUUID.value) {
@@ -621,6 +749,73 @@ async function closeActiveShell() {
   delete shellHandles[uuid];
 }
 
+async function ensureSsh(uuid = activeTargetUUID.value) {
+  if (!uuid) return;
+  targetMode.value = 'ssh';
+  if (sshHandles[uuid]) return;
+  if (!sshLines[uuid]) sshLines[uuid] = [];
+  try {
+    const handle = await startSshSession({
+      target: uuid,
+      serverAddr: sshServerAddr.value,
+      username: sshUsername.value,
+      password: sshPassword.value,
+    });
+    sshHandles[uuid] = handle;
+    sshLines[uuid].push(`[ssh requested] ${handle.sessionId || handle.handleId}`);
+  } catch (err: any) {
+    action.error = err?.message ?? String(err);
+    sshLines[uuid].push(`[error] ${action.error}`);
+  }
+}
+
+async function submitSshCommand() {
+  const uuid = activeTargetUUID.value;
+  const cmd = sshInput.value;
+  if (!uuid || !cmd.trim()) return;
+  await ensureSsh(uuid);
+  const handle = sshHandles[uuid];
+  sshLines[uuid].push(`$ ${cmd}`);
+  sshInput.value = '';
+  try {
+    await sendStreamData({ handleId: handle.handleId, data: `${cmd}\n` });
+  } catch (err: any) {
+    action.error = err?.message ?? String(err);
+    sshLines[uuid].push(`[error] ${action.error}`);
+  }
+}
+
+async function closeActiveSsh() {
+  const uuid = activeTargetUUID.value;
+  const handle = uuid ? sshHandles[uuid] : undefined;
+  if (!uuid || !handle) return;
+  try {
+    await closeInteractiveStream({ handleId: handle.handleId, reason: 'operator closed ssh' });
+  } catch (err: any) {
+    action.error = err?.message ?? String(err);
+  }
+  delete sshHandles[uuid];
+}
+
+async function submitSshTunnel() {
+  const uuid = activeTargetUUID.value;
+  if (!uuid) return;
+  try {
+    await startSshTunnel({
+      target: uuid,
+      serverAddr: sshServerAddr.value,
+      agentPort: sshAgentPort.value,
+      authMethod: sshPrivateKey.value.trim() ? 'cert' : 'password',
+      username: sshUsername.value,
+      password: sshPassword.value,
+      privateKey: sshPrivateKey.value,
+    });
+    action.message = `SSH tunnel requested for ${labelForUUID(uuid)}.`;
+  } catch (err: any) {
+    action.error = err?.message ?? String(err);
+  }
+}
+
 async function loadFiles(uuid = activeTargetUUID.value, path = filePath.value) {
   if (!uuid) return;
   targetMode.value = 'files';
@@ -663,6 +858,45 @@ async function collectFile(entry: RemoteFileEntry) {
   }
 }
 
+async function uploadFileForActive() {
+  const uuid = activeTargetUUID.value;
+  if (!uuid) return;
+  try {
+    const result: UploadRemoteFileResult = await uploadRemoteFile({
+      target: uuid,
+      localPath: uploadLocalPath.value,
+      remotePath: uploadRemotePath.value,
+    });
+    action.message = `Uploaded ${result.remotePath} (${result.size || 0} bytes)`;
+    await loadFiles(uuid, filePath.value);
+  } catch (err: any) {
+    action.error = err?.message ?? String(err);
+  }
+}
+
+async function loadLootForActive() {
+  const uuid = activeTargetUUID.value;
+  if (!uuid) return;
+  try {
+    const result: ListLootResult = await listLoot({ target: uuid, limit: 100 });
+    lootItems[uuid] = result.items || [];
+  } catch (err: any) {
+    action.error = err?.message ?? String(err);
+  }
+}
+
+async function exportLootItem(item: LootItem) {
+  try {
+    const result: ExportLootResult = await exportLoot({
+      lootId: item.lootId,
+      localPath: lootExportPath.value,
+    });
+    action.message = `Exported ${result.bytes} bytes to ${result.localPath}`;
+  } catch (err: any) {
+    action.error = err?.message ?? String(err);
+  }
+}
+
 async function startForwardForActive() {
   const uuid = activeTargetUUID.value;
   if (!uuid) return;
@@ -680,6 +914,23 @@ async function startForwardForActive() {
   }
 }
 
+async function startBackwardForActive() {
+  const uuid = activeTargetUUID.value;
+  if (!uuid) return;
+  targetMode.value = 'proxy';
+  if (!proxyResults[uuid]) proxyResults[uuid] = [];
+  try {
+    const result = await startBackwardProxy({
+      target: uuid,
+      remotePort: backwardRemotePort.value,
+      localPort: backwardLocalPort.value,
+    });
+    proxyResults[uuid].push(result);
+  } catch (err: any) {
+    action.error = err?.message ?? String(err);
+  }
+}
+
 async function stopForwardForActive(proxyId: string) {
   const uuid = activeTargetUUID.value;
   if (!uuid) return;
@@ -690,6 +941,22 @@ async function stopForwardForActive(proxyId: string) {
     return;
   }
   proxyResults[uuid] = (proxyResults[uuid] || []).filter((p) => p.proxyId !== proxyId);
+}
+
+async function stopProxyForActive(proxy: ProxyResult) {
+  const uuid = activeTargetUUID.value;
+  if (!uuid) return;
+  try {
+    if (proxy.kind === 'backward') {
+      await stopBackwardProxy({ target: uuid, proxyId: proxy.proxyId });
+    } else {
+      await stopForwardProxy({ target: uuid, proxyId: proxy.proxyId });
+    }
+  } catch (err: any) {
+    action.error = err?.message ?? String(err);
+    return;
+  }
+  proxyResults[uuid] = (proxyResults[uuid] || []).filter((p) => p.proxyId !== proxy.proxyId);
 }
 
 async function startSocksForActive() {
@@ -728,6 +995,128 @@ async function pingActiveStream() {
   } catch (err: any) {
     action.error = err?.message ?? String(err);
   }
+}
+
+async function runSessionAction(
+  kind: 'mark-alive' | 'mark-dead' | 'repair' | 'reconnect' | 'terminate',
+  uuid = activeTargetUUID.value || topo.selectedUUID,
+) {
+  if (!uuid) return;
+  try {
+    if (kind === 'mark-alive') {
+      await markSession({ target: uuid, action: 'alive', reason: sessionReason.value });
+      action.message = `Marked ${labelForUUID(uuid)} alive.`;
+    } else if (kind === 'mark-dead') {
+      await markSession({ target: uuid, action: 'dead', reason: sessionReason.value });
+      action.message = `Marked ${labelForUUID(uuid)} dead.`;
+    } else if (kind === 'repair') {
+      await repairSession({ target: uuid, force: true, reason: sessionReason.value });
+      action.message = `Repair queued for ${labelForUUID(uuid)}.`;
+    } else if (kind === 'reconnect') {
+      await reconnectSession({ target: uuid, reason: sessionReason.value });
+      action.message = `Reconnect triggered for ${labelForUUID(uuid)}.`;
+    } else if (kind === 'terminate') {
+      await terminateSession({ target: uuid, reason: sessionReason.value });
+      action.message = `Terminate requested for ${labelForUUID(uuid)}.`;
+    }
+    await refreshAll();
+  } catch (err: any) {
+    action.error = err?.message ?? String(err);
+  }
+}
+
+async function loadSessionDiagnostics(uuid = activeTargetUUID.value || topo.selectedUUID) {
+  if (!uuid) return;
+  try {
+    const diag = await getSessionDiagnostics({ target: uuid });
+    sessionDiagnostics[uuid] = diag;
+    action.message = `Diagnostics loaded for ${labelForUUID(uuid)}.`;
+  } catch (err: any) {
+    action.error = err?.message ?? String(err);
+  }
+}
+
+async function createPivotForActive() {
+  const uuid = activeTargetUUID.value || topo.selectedUUID;
+  if (!uuid) return;
+  try {
+    await createPivotListener({
+      target: uuid,
+      protocol: pivotProtocol.value,
+      bind: pivotBind.value,
+      mode: pivotMode.value,
+    });
+    action.message = `Pivot listener created on ${labelForUUID(uuid)}.`;
+    await refreshListeners();
+  } catch (err: any) {
+    action.error = err?.message ?? String(err);
+  }
+}
+
+async function setPivotStatus(listener: PivotListenerDTO, desiredStatus: 'resume' | 'pause') {
+  try {
+    await updatePivotListener({
+      listenerId: listener.listenerId,
+      desiredStatus,
+      includeSpec: false,
+    });
+    await refreshListeners();
+  } catch (err: any) {
+    action.error = err?.message ?? String(err);
+  }
+}
+
+async function removePivot(listener: PivotListenerDTO) {
+  try {
+    await deletePivotListener({ listenerId: listener.listenerId });
+    await refreshListeners();
+  } catch (err: any) {
+    action.error = err?.message ?? String(err);
+  }
+}
+
+async function createController() {
+  try {
+    await createControllerListener({
+      protocol: controllerProtocol.value,
+      bind: controllerBind.value,
+    });
+    action.message = 'Controller listener created.';
+    await refreshListeners();
+  } catch (err: any) {
+    action.error = err?.message ?? String(err);
+  }
+}
+
+async function setControllerStatus(listener: ControllerListenerDTO, desiredStatus: 'running' | 'stopped') {
+  try {
+    await updateControllerListener({
+      listenerId: listener.listenerId,
+      desiredStatus,
+      includeSpec: false,
+    });
+    await refreshListeners();
+  } catch (err: any) {
+    action.error = err?.message ?? String(err);
+  }
+}
+
+async function removeController(listener: ControllerListenerDTO) {
+  try {
+    await deleteControllerListener({ listenerId: listener.listenerId });
+    await refreshListeners();
+  } catch (err: any) {
+    action.error = err?.message ?? String(err);
+  }
+}
+
+function proxyDisplay(proxy: ProxyResult) {
+  if (proxy.kind === 'backward') {
+    const back = proxy as StartBackwardProxyResult;
+    return `${back.remotePort} -> 127.0.0.1:${back.localPort}`;
+  }
+  const fwd = proxy as StartForwardProxyResult;
+  return `${fwd.bind} -> ${fwd.remoteAddr}`;
 }
 
 function submitCommand() {
@@ -795,8 +1184,8 @@ function normalizeDTNPayload(raw: string): string {
         <div class="menu-item" @click.stop>
           <button :class="{ active: activeMenu === 'listeners' }" @click="toggleMenu('listeners')">Listeners</button>
           <div v-if="activeMenu === 'listeners'" class="app-menu">
-            <button @click="sideMode = 'listeners'; activeMenu = ''"><span>Show Listener Groups</span><kbd>⌘L</kbd></button>
-            <button @click="bottomTab = 'events'; activeMenu = ''"><span>Listener Events</span><kbd>⌘⇧L</kbd></button>
+            <button @click="chooseMenuAction('listeners')"><span>Listener Manager</span><kbd>⌘L</kbd></button>
+            <button @click="sideMode = 'listeners'; activeMenu = ''"><span>Show Listener Tree</span><kbd>⌘⇧L</kbd></button>
           </div>
         </div>
         <div class="menu-item" @click.stop>
@@ -839,6 +1228,7 @@ function normalizeDTNPayload(raw: string): string {
       <span class="tool-sep"></span>
       <button data-tip="Open event log" @click="bottomTab = 'events'">▤</button>
       <button data-tip="Open stream diagnostics" @click="bottomTab = 'streams'">≋</button>
+      <button data-tip="Open listener manager" @click="chooseMenuAction('listeners')">⌁</button>
       <button data-tip="Disconnect from Kelpie UI server" @click="logout">⏻</button>
       <div class="toolbar-stats">
         <span>Nodes: <strong>{{ stats.nodes }}</strong></span>
@@ -1027,6 +1417,7 @@ function normalizeDTNPayload(raw: string): string {
         <button data-tip="Session status, remote address, and errors" :class="{ active: bottomTab === 'sessions' }" @click="bottomTab = 'sessions'">Sessions</button>
         <button data-tip="Queue store-carry-forward payloads" :class="{ active: bottomTab === 'dtn' }" @click="bottomTab = 'dtn'">DTN Queue</button>
         <button data-tip="Active stream diagnostics and flow control" :class="{ active: bottomTab === 'streams' }" @click="bottomTab = 'streams'">Streams</button>
+        <button data-tip="Controller and pivot listener manager" :class="{ active: bottomTab === 'listeners' }" @click="chooseMenuAction('listeners')">Listeners</button>
         <button data-tip="Operator command scratchpad" :class="{ active: bottomTab === 'control' }" @click="bottomTab = 'control'">Console</button>
         <button
           v-for="uuid in targetTabs"
@@ -1064,6 +1455,10 @@ function normalizeDTNPayload(raw: string): string {
             <span>{{ session.status }}</span>
             <span>{{ session.remoteAddr || '-' }}</span>
             <span>{{ session.lastError || session.lastSeen || '-' }}</span>
+            <button @click="openTargetTab(session.targetUuid, 'overview')">Inspect</button>
+            <button @click="loadSessionDiagnostics(session.targetUuid)">Diag</button>
+            <button @click="runSessionAction('repair', session.targetUuid)">Repair</button>
+            <button @click="runSessionAction('reconnect', session.targetUuid)">Reconnect</button>
           </div>
           <p v-if="!topo.sessions.length" class="empty">No sessions.</p>
         </section>
@@ -1096,6 +1491,56 @@ function normalizeDTNPayload(raw: string): string {
           <p v-if="!topo.streams.length" class="empty">No active streams.</p>
         </section>
 
+        <section v-else-if="bottomTab === 'listeners'" class="listener-manager">
+          <div class="listener-create">
+            <section>
+              <h3>Controller Listener</h3>
+              <label><span>Protocol</span><input v-model="controllerProtocol" /></label>
+              <label><span>Bind</span><input v-model="controllerBind" class="sf-mono" /></label>
+              <button @click="createController">Create</button>
+            </section>
+            <section>
+              <h3>Pivot Listener</h3>
+              <label><span>Target</span><input :value="activeTargetUUID || topo.selectedUUID" class="sf-mono" readonly /></label>
+              <label><span>Protocol</span><input v-model="pivotProtocol" /></label>
+              <label><span>Bind</span><input v-model="pivotBind" class="sf-mono" /></label>
+              <label>
+                <span>Mode</span>
+                <select v-model="pivotMode">
+                  <option value="normal">normal</option>
+                  <option value="iptables">iptables</option>
+                  <option value="soreuse">soreuse</option>
+                </select>
+              </label>
+              <button :disabled="!(activeTargetUUID || topo.selectedUUID)" @click="createPivotForActive">Create</button>
+            </section>
+          </div>
+          <div class="listener-table">
+            <h3>Controller</h3>
+            <p v-for="listener in controllerListeners" :key="listener.listenerId" class="listener-row">
+              <strong>{{ listener.bind }}</strong>
+              <span>{{ listener.protocol }}</span>
+              <span>{{ listener.status }}</span>
+              <small>{{ listener.lastError || listener.listenerId }}</small>
+              <button @click="setControllerStatus(listener, 'running')">Start</button>
+              <button @click="setControllerStatus(listener, 'stopped')">Stop</button>
+              <button @click="removeController(listener)">Delete</button>
+            </p>
+            <p v-if="!controllerListeners.length" class="empty">No controller listeners.</p>
+            <h3>Pivot</h3>
+            <p v-for="listener in pivotListeners" :key="listener.listenerId" class="listener-row">
+              <strong>{{ listener.bind }}</strong>
+              <span>{{ labelForUUID(listener.targetUuid || '') }}</span>
+              <span>{{ listener.status }}</span>
+              <small>{{ listener.lastError || listener.listenerId }}</small>
+              <button @click="setPivotStatus(listener, 'resume')">Resume</button>
+              <button @click="setPivotStatus(listener, 'pause')">Pause</button>
+              <button @click="removePivot(listener)">Delete</button>
+            </p>
+            <p v-if="!pivotListeners.length" class="empty">No pivot listeners.</p>
+          </div>
+        </section>
+
         <section v-else-if="bottomTab.startsWith('target:')" class="target-workspace">
           <header>
             <div>
@@ -1106,6 +1551,8 @@ function normalizeDTNPayload(raw: string): string {
               <button @click="ensureShell()">Shell</button>
               <button @click="loadFiles()">Files</button>
               <button @click="targetMode = 'proxy'">Proxy</button>
+              <button @click="targetMode = 'ssh'">SSH</button>
+              <button @click="targetMode = 'listeners'; refreshListeners()">Listeners</button>
               <button @click="bottomTab = 'dtn'">Queue DTN</button>
               <button @click="submitSleep">Apply Sleep</button>
               <button @click="topo.loadDetail(activeTargetUUID)">Refresh Detail</button>
@@ -1116,6 +1563,8 @@ function normalizeDTNPayload(raw: string): string {
             <button :class="{ active: targetMode === 'shell' }" @click="ensureShell()">Shell</button>
             <button :class="{ active: targetMode === 'files' }" @click="loadFiles()">Files</button>
             <button :class="{ active: targetMode === 'proxy' }" @click="targetMode = 'proxy'">Proxy</button>
+            <button :class="{ active: targetMode === 'ssh' }" @click="targetMode = 'ssh'">SSH</button>
+            <button :class="{ active: targetMode === 'listeners' }" @click="targetMode = 'listeners'; refreshListeners()">Listeners</button>
           </nav>
           <div v-if="activeTargetNode && targetMode === 'overview'" class="target-grid">
             <dl class="facts">
@@ -1153,6 +1602,27 @@ function normalizeDTNPayload(raw: string): string {
                 <small>{{ session.lastError || session.lastSeen || '-' }}</small>
               </p>
               <p v-if="!activeTargetSessions.length" class="empty">No sessions for this target.</p>
+            </section>
+            <section class="target-panel session-tools">
+              <h3>Session Actions</h3>
+              <label><span>Reason</span><input v-model="sessionReason" /></label>
+              <div class="button-grid">
+                <button @click="runSessionAction('mark-alive')">Mark Alive</button>
+                <button @click="runSessionAction('mark-dead')">Mark Dead</button>
+                <button @click="runSessionAction('repair')">Repair</button>
+                <button @click="runSessionAction('reconnect')">Reconnect</button>
+                <button @click="runSessionAction('terminate')">Terminate</button>
+                <button @click="loadSessionDiagnostics()">Diagnostics</button>
+              </div>
+              <div v-if="activeSessionDiagnostics" class="diag-box">
+                <strong>Diagnostics</strong>
+                <p v-for="metric in activeSessionDiagnostics.metrics || []" :key="metric.name">
+                  <span>{{ metric.name }}</span><small>{{ metric.value }}</small>
+                </p>
+                <p v-for="issue in activeSessionDiagnostics.issues || []" :key="issue.code" class="error-text">
+                  <span>{{ issue.code }}</span><small>{{ issue.message }}</small>
+                </p>
+              </div>
             </section>
             <section class="target-panel">
               <h3>Streams</h3>
@@ -1202,6 +1672,12 @@ function normalizeDTNPayload(raw: string): string {
                 Up
               </button>
             </form>
+            <div class="file-transfer-row">
+              <input v-model="uploadLocalPath" class="sf-mono" placeholder="/local/path/payload.bin" />
+              <input v-model="uploadRemotePath" class="sf-mono" placeholder="/tmp/payload.bin" />
+              <button @click="uploadFileForActive">Upload</button>
+              <button @click="loadLootForActive">Loot</button>
+            </div>
             <div class="file-table">
               <p v-if="activeFileError" class="empty error-text">{{ activeFileError }}</p>
               <button
@@ -1220,6 +1696,18 @@ function normalizeDTNPayload(raw: string): string {
                 {{ activeFileLoading ? 'Loading remote directory...' : 'No file listing loaded.' }}
               </p>
             </div>
+            <div class="loot-table">
+              <div class="loot-export">
+                <input v-model="lootExportPath" class="sf-mono" placeholder="/local/export/path (optional)" />
+              </div>
+              <p v-for="item in activeLootItems" :key="item.lootId" class="loot-row">
+                <strong>{{ item.name || item.lootId }}</strong>
+                <span>{{ item.originPath || '-' }}</span>
+                <small>{{ item.size || 0 }} bytes</small>
+                <button @click="exportLootItem(item)">Export</button>
+              </p>
+              <p v-if="!activeLootItems.length" class="empty">No loot loaded for this target.</p>
+            </div>
           </div>
           <div v-else-if="targetMode === 'proxy'" class="proxy-workspace">
             <section class="proxy-panel">
@@ -1227,6 +1715,12 @@ function normalizeDTNPayload(raw: string): string {
               <label><span>Local bind</span><input v-model="proxyLocalBind" class="sf-mono" /></label>
               <label><span>Remote address</span><input v-model="proxyRemoteAddr" class="sf-mono" /></label>
               <button @click="startForwardForActive">Start Forward</button>
+            </section>
+            <section class="proxy-panel">
+              <h3>Backward Proxy</h3>
+              <label><span>Agent remote port</span><input v-model="backwardRemotePort" class="sf-mono" /></label>
+              <label><span>Kelpie local port</span><input v-model="backwardLocalPort" class="sf-mono" /></label>
+              <button @click="startBackwardForActive">Start Backward</button>
             </section>
             <section class="proxy-panel">
               <h3>SOCKS</h3>
@@ -1238,11 +1732,67 @@ function normalizeDTNPayload(raw: string): string {
               <h3>Active Proxies</h3>
               <p v-for="proxy in activeProxyResults" :key="proxy.proxyId">
                 <strong>{{ proxy.proxyId }}</strong>
-                <span>{{ proxy.bind }}</span>
-                <span>{{ proxy.remoteAddr }}</span>
-                <button @click="stopForwardForActive(proxy.proxyId)">Stop</button>
+                <span>{{ proxy.kind || 'forward' }}</span>
+                <span>{{ proxyDisplay(proxy) }}</span>
+                <button @click="stopProxyForActive(proxy)">Stop</button>
               </p>
               <p v-if="!activeProxyResults.length" class="empty">No proxies for this target.</p>
+            </section>
+          </div>
+          <div v-else-if="targetMode === 'ssh'" class="ssh-workspace">
+            <section class="ssh-config">
+              <label><span>SSH server</span><input v-model="sshServerAddr" class="sf-mono" /></label>
+              <label><span>Username</span><input v-model="sshUsername" /></label>
+              <label><span>Password</span><input v-model="sshPassword" type="password" /></label>
+              <label><span>Agent tunnel port</span><input v-model="sshAgentPort" class="sf-mono" /></label>
+              <button @click="ensureSsh()">Start Session</button>
+              <button @click="submitSshTunnel">Start Tunnel</button>
+              <button @click="closeActiveSsh">Close Session</button>
+            </section>
+            <textarea v-model="sshPrivateKey" class="ssh-key sf-mono" placeholder="private key for cert auth tunnel"></textarea>
+            <div class="shell-head">
+              <span>{{ activeSshHandle ? activeSshHandle.status : 'not started' }}</span>
+              <span class="sf-mono">{{ activeSshHandle?.sessionId || activeTargetUUID }}</span>
+            </div>
+            <div class="shell-output">
+              <p v-for="(line, idx) in activeSshLines" :key="idx">{{ line }}</p>
+              <p v-if="!activeSshLines.length" class="empty">No SSH output yet.</p>
+            </div>
+            <form class="shell-input" @submit.prevent="submitSshCommand">
+              <span>$</span>
+              <input v-model="sshInput" class="sf-mono" placeholder="hostname" />
+              <button>Send</button>
+            </form>
+          </div>
+          <div v-else-if="targetMode === 'listeners'" class="target-listener-workspace">
+            <section class="listener-create compact">
+              <section>
+                <h3>Pivot Listener</h3>
+                <label><span>Protocol</span><input v-model="pivotProtocol" /></label>
+                <label><span>Bind</span><input v-model="pivotBind" class="sf-mono" /></label>
+                <label>
+                  <span>Mode</span>
+                  <select v-model="pivotMode">
+                    <option value="normal">normal</option>
+                    <option value="iptables">iptables</option>
+                    <option value="soreuse">soreuse</option>
+                  </select>
+                </label>
+                <button @click="createPivotForActive">Create Pivot</button>
+              </section>
+            </section>
+            <section class="listener-table">
+              <h3>Target Pivot Listeners</h3>
+              <p v-for="listener in activePivotListeners" :key="listener.listenerId" class="listener-row">
+                <strong>{{ listener.bind }}</strong>
+                <span>{{ listener.protocol }}</span>
+                <span>{{ listener.status }}</span>
+                <small>{{ listener.lastError || listener.listenerId }}</small>
+                <button @click="setPivotStatus(listener, 'resume')">Resume</button>
+                <button @click="setPivotStatus(listener, 'pause')">Pause</button>
+                <button @click="removePivot(listener)">Delete</button>
+              </p>
+              <p v-if="!activePivotListeners.length" class="empty">No pivot listener on this target.</p>
             </section>
           </div>
         </section>
@@ -1296,6 +1846,14 @@ function normalizeDTNPayload(raw: string): string {
         <span>Port Forward / SOCKS</span>
         <kbd>⌘P</kbd>
       </button>
+      <button @click="chooseTargetAction('ssh')">
+        <span>SSH Session / Tunnel</span>
+        <kbd>SSH</kbd>
+      </button>
+      <button @click="chooseTargetAction('listeners')">
+        <span>Pivot Listener</span>
+        <kbd>L</kbd>
+      </button>
       <button @click="chooseTargetAction('dtn')">
         <span>Queue DTN Payload</span>
         <kbd>⇄</kbd>
@@ -1311,6 +1869,31 @@ function normalizeDTNPayload(raw: string): string {
       <button @click="chooseTargetAction('sessions')">
         <span>Session Details</span>
         <kbd>⌘S</kbd>
+      </button>
+      <hr />
+      <button @click="chooseTargetAction('diagnostics')">
+        <span>Diagnostics</span>
+        <kbd>D</kbd>
+      </button>
+      <button @click="chooseTargetAction('mark-alive')">
+        <span>Mark Alive</span>
+        <kbd>A</kbd>
+      </button>
+      <button @click="chooseTargetAction('mark-dead')">
+        <span>Mark Dead</span>
+        <kbd>X</kbd>
+      </button>
+      <button @click="chooseTargetAction('repair')">
+        <span>Repair Session</span>
+        <kbd>R</kbd>
+      </button>
+      <button @click="chooseTargetAction('reconnect')">
+        <span>Reconnect</span>
+        <kbd>C</kbd>
+      </button>
+      <button @click="chooseTargetAction('terminate')">
+        <span>Terminate</span>
+        <kbd>T</kbd>
       </button>
       <hr />
       <button @click="chooseTargetAction('refresh')">
@@ -2086,7 +2669,7 @@ select {
 .data-row {
   min-height: 30px;
   display: grid;
-  grid-template-columns: auto 110px 120px 160px minmax(0, 1fr);
+  grid-template-columns: auto 110px 120px 150px minmax(0, 1fr) repeat(4, auto);
   align-items: center;
   gap: 10px;
   padding: 0 8px;
@@ -2096,6 +2679,20 @@ select {
 }
 
 .data-row strong {
+  color: var(--ops-text);
+}
+
+.data-row button {
+  height: 26px;
+  padding: 0 8px;
+  border: 1px solid var(--ops-line);
+  background: var(--ops-panel-2);
+  color: var(--ops-muted);
+  cursor: pointer;
+}
+
+.data-row button:hover {
+  border-color: var(--ops-accent);
   color: var(--ops-text);
 }
 
@@ -2153,11 +2750,23 @@ select {
 
 .target-actions button,
 .sleep-editor input,
+.session-tools input,
 .shell-head button,
 .shell-input button,
 .shell-input input,
 .file-path input,
 .file-path button,
+.file-transfer-row input,
+.file-transfer-row button,
+.loot-export input,
+.loot-row button,
+.ssh-config input,
+.ssh-config button,
+.ssh-key,
+.listener-create input,
+.listener-create select,
+.listener-create button,
+.listener-row button,
 .proxy-panel input,
 .proxy-panel button,
 .target-panel button {
@@ -2169,6 +2778,11 @@ select {
 .target-actions button,
 .shell-head button,
 .file-path button,
+.file-transfer-row button,
+.loot-row button,
+.ssh-config button,
+.listener-create button,
+.listener-row button,
 .proxy-panel button,
 .target-panel button {
   height: 30px;
@@ -2180,6 +2794,11 @@ select {
 .shell-head button:hover,
 .shell-input button:hover,
 .file-path button:hover,
+.file-transfer-row button:hover,
+.loot-row button:hover,
+.ssh-config button:hover,
+.listener-create button:hover,
+.listener-row button:hover,
 .proxy-panel button:hover,
 .target-panel button:hover {
   border-color: var(--ops-accent);
@@ -2236,6 +2855,41 @@ select {
   font-size: 0.72rem;
 }
 
+.session-tools label,
+.listener-create label,
+.ssh-config label {
+  display: grid;
+  gap: 5px;
+  margin-bottom: 8px;
+  color: var(--ops-faint);
+  font-size: 0.72rem;
+}
+
+.session-tools input,
+.listener-create input,
+.listener-create select,
+.ssh-config input,
+.ssh-key {
+  min-height: 28px;
+  padding: 0 8px;
+}
+
+.button-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.diag-box {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--ops-line-soft);
+}
+
+.diag-box p {
+  grid-template-columns: minmax(0, 120px) minmax(0, 1fr);
+}
+
 .sleep-editor input {
   height: 28px;
   padding: 0 8px;
@@ -2243,7 +2897,9 @@ select {
 
 .shell-workspace,
 .files-workspace,
-.proxy-workspace {
+.proxy-workspace,
+.ssh-workspace,
+.target-listener-workspace {
   min-height: 0;
   display: grid;
   gap: 10px;
@@ -2299,11 +2955,23 @@ select {
 }
 
 .files-workspace {
-  grid-template-rows: 32px minmax(0, 1fr);
+  grid-template-rows: 32px 32px minmax(130px, 1fr) minmax(90px, 0.6fr);
 }
 
 .file-path {
   grid-template-columns: minmax(0, 1fr) 80px 70px;
+}
+
+.file-transfer-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.1fr) 86px 74px;
+  gap: 8px;
+}
+
+.file-transfer-row input,
+.loot-export input {
+  height: 30px;
+  padding: 0 8px;
 }
 
 .file-table {
@@ -2345,8 +3013,43 @@ select {
   font-style: normal;
 }
 
+.loot-table {
+  min-height: 0;
+  overflow: auto;
+  border: 1px solid var(--ops-line);
+}
+
+.loot-export {
+  padding: 8px;
+  border-bottom: 1px solid var(--ops-line-soft);
+}
+
+.loot-export input {
+  width: 100%;
+}
+
+.loot-row {
+  min-height: 30px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) 110px auto;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 0 10px;
+  border-bottom: 1px solid var(--ops-line-soft);
+  color: var(--ops-muted);
+}
+
+.loot-row strong,
+.loot-row span,
+.loot-row small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .proxy-workspace {
-  grid-template-columns: repeat(3, minmax(220px, 1fr));
+  grid-template-columns: repeat(4, minmax(210px, 1fr));
   align-content: start;
 }
 
@@ -2372,11 +3075,81 @@ select {
 
 .active-proxies p {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) 82px minmax(0, 1.2fr) auto;
   gap: 8px;
   align-items: center;
   margin: 0 0 8px;
   color: var(--ops-muted);
+}
+
+.ssh-workspace {
+  grid-template-rows: auto 70px 30px minmax(0, 1fr) 32px;
+}
+
+.ssh-config {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(150px, 1fr)) repeat(3, auto);
+  align-items: end;
+  gap: 8px;
+}
+
+.ssh-key {
+  width: 100%;
+  resize: vertical;
+  min-height: 64px;
+  background: #070a0d;
+}
+
+.listener-manager,
+.target-listener-workspace {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(260px, 0.8fr) minmax(0, 1.2fr);
+  gap: 12px;
+  padding: 12px;
+}
+
+.target-listener-workspace {
+  padding: 0;
+}
+
+.listener-create {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+}
+
+.listener-create > section,
+.listener-table {
+  border: 1px solid var(--ops-line);
+  background: rgba(255, 255, 255, 0.015);
+  padding: 10px;
+}
+
+.listener-create h3,
+.listener-table h3 {
+  margin: 0 0 10px;
+  font-size: 0.86rem;
+  color: var(--ops-text);
+}
+
+.listener-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 100px 90px minmax(0, 1.2fr) repeat(3, auto);
+  gap: 8px;
+  align-items: center;
+  min-height: 32px;
+  margin: 0 0 6px;
+  color: var(--ops-muted);
+}
+
+.listener-row strong,
+.listener-row span,
+.listener-row small {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .terminal {
@@ -2417,6 +3190,8 @@ select {
   position: fixed;
   z-index: 100;
   width: 244px;
+  max-height: calc(100vh - 24px);
+  overflow: auto;
   border: 1px solid var(--ops-line);
   background: #101419;
   color: var(--ops-text);

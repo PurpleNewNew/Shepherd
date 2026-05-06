@@ -107,6 +107,9 @@ type Agent struct {
 	// 代理流（CONNECT bridge）
 	fwdMu   sync.Mutex
 	fwdByID map[uint32]net.Conn
+	// 反向代理：backward-proxy 是远端监听控制流，backward-conn 是每条入站连接的数据流。
+	backwardByID     map[uint32]*backwardProxy
+	backwardConnByID map[uint32]net.Conn
 	// SOCKS 流（在 DTN-Stream 之上承载 SOCKS5 CONNECT）
 	socksByID map[uint32]*socksStream
 	// Sleep 控制器

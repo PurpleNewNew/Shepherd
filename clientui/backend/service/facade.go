@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 	"time"
@@ -292,6 +294,12 @@ func (a *API) GetSnapshot() (Snapshot, error) {
 		for _, ss := range raw.GetSessions() {
 			out.Sessions = append(out.Sessions, sessionFromPB(ss))
 		}
+		for _, l := range raw.GetPivotListeners() {
+			out.PivotListeners = append(out.PivotListeners, pivotListenerFromPB(l))
+		}
+		for _, l := range raw.GetControllerListeners() {
+			out.ControllerListeners = append(out.ControllerListeners, controllerListenerFromPB(l))
+		}
 	}
 	for _, p := range profiles {
 		out.SleepProfiles = append(out.SleepProfiles, sleepFromPB(p))
@@ -325,13 +333,7 @@ func (a *API) GetNodeDetail(uuid string) (NodeDetail, error) {
 		detail.Streams = append(detail.Streams, streamFromPB(s))
 	}
 	for _, l := range resp.GetPivotListeners() {
-		detail.PivotListeners = append(detail.PivotListeners, PivotListenerDTO{
-			ListenerID: l.GetListenerId(),
-			Protocol:   l.GetProtocol(),
-			Bind:       l.GetBind(),
-			Status:     l.GetStatus(),
-			Mode:       l.GetMode().String(),
-		})
+		detail.PivotListeners = append(detail.PivotListeners, pivotListenerFromPB(l))
 	}
 	// sleep 配置单独查一次，避免全量 ListSleepProfiles。
 	profiles, _ := client.ListSleepProfiles(ctx)
@@ -507,6 +509,30 @@ func (a *API) StartSocksProxy(req StartSocksProxyRequest) (StreamHandleDTO, erro
 	return a.openInteractiveStream(client, handle)
 }
 
+func (a *API) StartSshSession(req StartSshSessionRequest) (StreamHandleDTO, error) {
+	client, err := a.mustClient()
+	if err != nil {
+		return StreamHandleDTO{}, err
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), snapshotTimeout)
+	defer cancel()
+	handle, err := client.StartSshSession(ctx, req.Target, req.ServerAddr, req.Username, req.Password)
+	if err != nil {
+		return StreamHandleDTO{}, err
+	}
+	return a.openInteractiveStream(client, handle)
+}
+
+func (a *API) StartSshTunnel(req StartSshTunnelRequest) error {
+	client, err := a.mustClient()
+	if err != nil {
+		return err
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), snapshotTimeout)
+	defer cancel()
+	return client.StartSSHTunnel(ctx, req.Target, req.ServerAddr, req.AgentPort, req.AuthMethod, req.Username, req.Password, []byte(req.PrivateKey))
+}
+
 func (a *API) StartForwardProxy(req StartForwardProxyRequest) (StartForwardProxyResult, error) {
 	client, err := a.mustClient()
 	if err != nil {
@@ -521,6 +547,7 @@ func (a *API) StartForwardProxy(req StartForwardProxyRequest) (StartForwardProxy
 	return StartForwardProxyResult{
 		Handle:     streamHandleFromPB(resp.GetHandle(), ""),
 		ProxyID:    resp.GetProxyId(),
+		Kind:       "forward",
 		Bind:       resp.GetBind(),
 		RemoteAddr: resp.GetRemoteAddr(),
 	}, nil
@@ -538,6 +565,40 @@ func (a *API) StopForwardProxy(req StopForwardProxyRequest) (StopForwardProxyRes
 		return StopForwardProxyResult{}, err
 	}
 	return StopForwardProxyResult{Stopped: stopped}, nil
+}
+
+func (a *API) StartBackwardProxy(req StartBackwardProxyRequest) (StartBackwardProxyResult, error) {
+	client, err := a.mustClient()
+	if err != nil {
+		return StartBackwardProxyResult{}, err
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), snapshotTimeout)
+	defer cancel()
+	resp, err := client.StartBackwardProxy(ctx, req.Target, req.RemotePort, req.LocalPort)
+	if err != nil {
+		return StartBackwardProxyResult{}, err
+	}
+	return StartBackwardProxyResult{
+		Handle:     streamHandleFromPB(resp.GetHandle(), ""),
+		ProxyID:    resp.GetProxyId(),
+		Kind:       "backward",
+		RemotePort: resp.GetRemotePort(),
+		LocalPort:  resp.GetLocalPort(),
+	}, nil
+}
+
+func (a *API) StopBackwardProxy(req StopBackwardProxyRequest) (StopBackwardProxyResult, error) {
+	client, err := a.mustClient()
+	if err != nil {
+		return StopBackwardProxyResult{}, err
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), snapshotTimeout)
+	defer cancel()
+	stopped, err := client.StopBackwardProxy(ctx, req.Target, req.ProxyID)
+	if err != nil {
+		return StopBackwardProxyResult{}, err
+	}
+	return StopBackwardProxyResult{Stopped: stopped}, nil
 }
 
 func (a *API) SendStreamData(req StreamDataRequest) error {
@@ -659,6 +720,267 @@ func (a *API) CollectRemoteFile(req CollectRemoteFileRequest) (CollectRemoteFile
 		return CollectRemoteFileResult{}, err
 	}
 	return CollectRemoteFileResult{Item: lootItemFromPB(resp.GetItem())}, nil
+}
+
+func (a *API) UploadRemoteFile(req UploadRemoteFileRequest) (UploadRemoteFileResult, error) {
+	client, err := a.mustClient()
+	if err != nil {
+		return UploadRemoteFileResult{}, err
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Minute)
+	defer cancel()
+	resp, err := client.UploadRemoteFile(ctx, req.Target, req.LocalPath, req.RemotePath)
+	if err != nil {
+		return UploadRemoteFileResult{}, err
+	}
+	return UploadRemoteFileResult{
+		RemotePath: resp.GetRemotePath(),
+		Size:       resp.GetSize(),
+		Sha256:     resp.GetSha256(),
+		Mime:       resp.GetMime(),
+		Message:    resp.GetMessage(),
+	}, nil
+}
+
+func (a *API) ListLoot(req ListLootRequest) (ListLootResult, error) {
+	client, err := a.mustClient()
+	if err != nil {
+		return ListLootResult{}, err
+	}
+	if req.Limit <= 0 {
+		req.Limit = 100
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), snapshotTimeout)
+	defer cancel()
+	items, err := client.ListLoot(ctx, req.Target, req.Limit)
+	if err != nil {
+		return ListLootResult{}, err
+	}
+	out := ListLootResult{Items: make([]LootItemDTO, 0, len(items))}
+	for _, item := range items {
+		out.Items = append(out.Items, lootItemFromPB(item))
+	}
+	return out, nil
+}
+
+func (a *API) ExportLoot(req ExportLootRequest) (ExportLootResult, error) {
+	client, err := a.mustClient()
+	if err != nil {
+		return ExportLootResult{}, err
+	}
+	lootID := strings.TrimSpace(req.LootID)
+	if lootID == "" {
+		return ExportLootResult{}, errors.New("loot id required")
+	}
+	localPath := strings.TrimSpace(req.LocalPath)
+	if localPath == "" {
+		localPath = filepath.Join(os.TempDir(), lootID)
+	}
+	if err := os.MkdirAll(filepath.Dir(localPath), 0o755); err != nil {
+		return ExportLootResult{}, err
+	}
+	f, err := os.Create(localPath)
+	if err != nil {
+		return ExportLootResult{}, err
+	}
+	defer f.Close()
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Minute)
+	defer cancel()
+	item, written, err := client.SyncLoot(ctx, lootID, f)
+	if err != nil {
+		return ExportLootResult{}, err
+	}
+	return ExportLootResult{
+		Item:      lootItemFromPB(item),
+		LocalPath: localPath,
+		Bytes:     written,
+	}, nil
+}
+
+func (a *API) MarkSession(req SessionActionRequest) (SessionActionResult, error) {
+	client, err := a.mustClient()
+	if err != nil {
+		return SessionActionResult{}, err
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), snapshotTimeout)
+	defer cancel()
+	session, err := client.MarkSession(ctx, req.Target, req.Action, req.Reason)
+	if err != nil {
+		return SessionActionResult{}, err
+	}
+	return SessionActionResult{Session: sessionFromPB(session), Accepted: true, Message: "session marked"}, nil
+}
+
+func (a *API) RepairSession(req SessionActionRequest) (SessionActionResult, error) {
+	client, err := a.mustClient()
+	if err != nil {
+		return SessionActionResult{}, err
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), snapshotTimeout)
+	defer cancel()
+	resp, err := client.RepairSession(ctx, req.Target, req.Force, req.Reason)
+	if err != nil {
+		return SessionActionResult{}, err
+	}
+	return SessionActionResult{Accepted: resp.GetEnqueued(), Message: resp.GetMessage()}, nil
+}
+
+func (a *API) ReconnectSession(req SessionActionRequest) (SessionActionResult, error) {
+	client, err := a.mustClient()
+	if err != nil {
+		return SessionActionResult{}, err
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), snapshotTimeout)
+	defer cancel()
+	resp, err := client.ReconnectSession(ctx, req.Target, req.Reason)
+	if err != nil {
+		return SessionActionResult{}, err
+	}
+	return SessionActionResult{Accepted: resp.GetAccepted(), Message: resp.GetMessage()}, nil
+}
+
+func (a *API) TerminateSession(req SessionActionRequest) (SessionActionResult, error) {
+	client, err := a.mustClient()
+	if err != nil {
+		return SessionActionResult{}, err
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), snapshotTimeout)
+	defer cancel()
+	resp, err := client.TerminateSession(ctx, req.Target, req.Reason)
+	if err != nil {
+		return SessionActionResult{}, err
+	}
+	return SessionActionResult{Terminated: resp.GetTerminated(), Message: "session terminated"}, nil
+}
+
+func (a *API) GetSessionDiagnostics(req SessionActionRequest) (SessionDiagnosticsDTO, error) {
+	client, err := a.mustClient()
+	if err != nil {
+		return SessionDiagnosticsDTO{}, err
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), snapshotTimeout)
+	defer cancel()
+	resp, err := client.SessionDiagnostics(ctx, req.Target, true, true)
+	if err != nil {
+		return SessionDiagnosticsDTO{}, err
+	}
+	return sessionDiagnosticsFromPB(resp), nil
+}
+
+func (a *API) ListPivotListeners(req ListPivotListenersRequest) ([]PivotListenerDTO, error) {
+	client, err := a.mustClient()
+	if err != nil {
+		return nil, err
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), snapshotTimeout)
+	defer cancel()
+	items, err := client.ListPivotListeners(ctx, req.Target)
+	if err != nil {
+		return nil, err
+	}
+	out := make([]PivotListenerDTO, 0, len(items))
+	for _, item := range items {
+		out = append(out, pivotListenerFromPB(item))
+	}
+	return out, nil
+}
+
+func (a *API) CreatePivotListener(req ListenerSpecRequest) (PivotListenerDTO, error) {
+	client, err := a.mustClient()
+	if err != nil {
+		return PivotListenerDTO{}, err
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), snapshotTimeout)
+	defer cancel()
+	item, err := client.CreatePivotListener(ctx, req.Target, req.Protocol, req.Bind, req.Mode)
+	if err != nil {
+		return PivotListenerDTO{}, err
+	}
+	return pivotListenerFromPB(item), nil
+}
+
+func (a *API) UpdatePivotListener(req ListenerSpecRequest) (PivotListenerDTO, error) {
+	client, err := a.mustClient()
+	if err != nil {
+		return PivotListenerDTO{}, err
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), snapshotTimeout)
+	defer cancel()
+	item, err := client.UpdatePivotListener(ctx, req.ListenerID, req.Target, req.Protocol, req.Bind, req.Mode, req.DesiredStatus, req.IncludeSpec)
+	if err != nil {
+		return PivotListenerDTO{}, err
+	}
+	return pivotListenerFromPB(item), nil
+}
+
+func (a *API) DeletePivotListener(req ListenerSpecRequest) error {
+	client, err := a.mustClient()
+	if err != nil {
+		return err
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), snapshotTimeout)
+	defer cancel()
+	return client.DeletePivotListener(ctx, req.ListenerID)
+}
+
+func (a *API) ListControllerListeners() ([]ControllerListenerDTO, error) {
+	client, err := a.mustClient()
+	if err != nil {
+		return nil, err
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), snapshotTimeout)
+	defer cancel()
+	items, err := client.ListControllerListeners(ctx)
+	if err != nil {
+		return nil, err
+	}
+	out := make([]ControllerListenerDTO, 0, len(items))
+	for _, item := range items {
+		out = append(out, controllerListenerFromPB(item))
+	}
+	return out, nil
+}
+
+func (a *API) CreateControllerListener(req ListenerSpecRequest) (ControllerListenerDTO, error) {
+	client, err := a.mustClient()
+	if err != nil {
+		return ControllerListenerDTO{}, err
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), snapshotTimeout)
+	defer cancel()
+	item, err := client.CreateControllerListener(ctx, req.Protocol, req.Bind)
+	if err != nil {
+		return ControllerListenerDTO{}, err
+	}
+	return controllerListenerFromPB(item), nil
+}
+
+func (a *API) UpdateControllerListener(req ListenerSpecRequest) (ControllerListenerDTO, error) {
+	client, err := a.mustClient()
+	if err != nil {
+		return ControllerListenerDTO{}, err
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), snapshotTimeout)
+	defer cancel()
+	item, err := client.UpdateControllerListener(ctx, req.ListenerID, req.Protocol, req.Bind, req.DesiredStatus, req.IncludeSpec)
+	if err != nil {
+		return ControllerListenerDTO{}, err
+	}
+	return controllerListenerFromPB(item), nil
+}
+
+func (a *API) DeleteControllerListener(req ListenerSpecRequest) (ControllerListenerDTO, error) {
+	client, err := a.mustClient()
+	if err != nil {
+		return ControllerListenerDTO{}, err
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), snapshotTimeout)
+	defer cancel()
+	item, err := client.DeleteControllerListener(ctx, req.ListenerID)
+	if err != nil {
+		return ControllerListenerDTO{}, err
+	}
+	return controllerListenerFromPB(item), nil
 }
 
 // RecentEvents 供前端在首次进入时拉一段历史（ring buffer，最多 eventRingCap 条）。
@@ -979,6 +1301,100 @@ func sleepFromPB(p *uipb.SleepProfile) SleepProfileDTO {
 		NextWakeAt:   p.GetNextWakeAt(),
 		Status:       p.GetStatus(),
 	}
+}
+
+func pivotListenerFromPB(l *uipb.PivotListener) PivotListenerDTO {
+	if l == nil {
+		return PivotListenerDTO{}
+	}
+	meta := map[string]string{}
+	for k, v := range l.GetMetadata() {
+		meta[k] = v
+	}
+	return PivotListenerDTO{
+		ListenerID: l.GetListenerId(),
+		TargetUUID: l.GetTargetUuid(),
+		Route:      l.GetRoute(),
+		Protocol:   l.GetProtocol(),
+		Bind:       l.GetBind(),
+		Status:     l.GetStatus(),
+		Mode:       pivotModeString(l.GetMode()),
+		LastError:  l.GetLastError(),
+		Metadata:   meta,
+		CreatedAt:  l.GetCreatedAt(),
+		UpdatedAt:  l.GetUpdatedAt(),
+	}
+}
+
+func controllerListenerFromPB(l *uipb.ControllerListener) ControllerListenerDTO {
+	if l == nil {
+		return ControllerListenerDTO{}
+	}
+	return ControllerListenerDTO{
+		ListenerID: l.GetListenerId(),
+		Protocol:   l.GetProtocol(),
+		Bind:       l.GetBind(),
+		Status:     controllerStatusString(l.GetStatus()),
+		LastError:  l.GetLastError(),
+		CreatedAt:  l.GetCreatedAt(),
+		UpdatedAt:  l.GetUpdatedAt(),
+	}
+}
+
+func pivotModeString(mode uipb.PivotListenerMode) string {
+	switch mode {
+	case uipb.PivotListenerMode_PIVOT_LISTENER_MODE_IPTABLES:
+		return "iptables"
+	case uipb.PivotListenerMode_PIVOT_LISTENER_MODE_SOREUSE:
+		return "soreuse"
+	default:
+		return "normal"
+	}
+}
+
+func controllerStatusString(status uipb.ControllerListenerStatus) string {
+	switch status {
+	case uipb.ControllerListenerStatus_CONTROLLER_LISTENER_STATUS_PENDING:
+		return "pending"
+	case uipb.ControllerListenerStatus_CONTROLLER_LISTENER_STATUS_RUNNING:
+		return "running"
+	case uipb.ControllerListenerStatus_CONTROLLER_LISTENER_STATUS_FAILED:
+		return "failed"
+	case uipb.ControllerListenerStatus_CONTROLLER_LISTENER_STATUS_STOPPED:
+		return "stopped"
+	default:
+		return "unknown"
+	}
+}
+
+func sessionDiagnosticsFromPB(resp *uipb.SessionDiagnosticsResponse) SessionDiagnosticsDTO {
+	if resp == nil {
+		return SessionDiagnosticsDTO{}
+	}
+	out := SessionDiagnosticsDTO{
+		Session: sessionFromPB(resp.GetSession()),
+	}
+	for _, metric := range resp.GetMetrics() {
+		out.Metrics = append(out.Metrics, SessionMetricDTO{Name: metric.GetName(), Value: metric.GetValue()})
+	}
+	for _, issue := range resp.GetIssues() {
+		out.Issues = append(out.Issues, SessionIssueDTO{
+			Code:    issue.GetCode(),
+			Message: issue.GetMessage(),
+			Detail:  issue.GetDetail(),
+		})
+	}
+	for _, proc := range resp.GetProcesses() {
+		out.Processes = append(out.Processes, SessionProcessDTO{
+			PID:       proc.GetPid(),
+			Name:      proc.GetName(),
+			User:      proc.GetUser(),
+			Status:    proc.GetStatus(),
+			Path:      proc.GetPath(),
+			StartedAt: proc.GetStartedAt(),
+		})
+	}
+	return out
 }
 
 func streamHandleFromPB(h *uipb.ProxyStreamHandle, handleID string) StreamHandleDTO {

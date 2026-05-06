@@ -28,6 +28,7 @@ const (
 	KelpieUIService_CollectLootFile_FullMethodName       = "/kelpieui.v1.KelpieUIService/CollectLootFile"
 	KelpieUIService_SyncLoot_FullMethodName              = "/kelpieui.v1.KelpieUIService/SyncLoot"
 	KelpieUIService_ListRemoteFiles_FullMethodName       = "/kelpieui.v1.KelpieUIService/ListRemoteFiles"
+	KelpieUIService_UploadRemoteFile_FullMethodName      = "/kelpieui.v1.KelpieUIService/UploadRemoteFile"
 	KelpieUIService_ProxyStream_FullMethodName           = "/kelpieui.v1.KelpieUIService/ProxyStream"
 	KelpieUIService_StartShell_FullMethodName            = "/kelpieui.v1.KelpieUIService/StartShell"
 	KelpieUIService_StartSocksProxy_FullMethodName       = "/kelpieui.v1.KelpieUIService/StartSocksProxy"
@@ -73,6 +74,7 @@ type KelpieUIServiceClient interface {
 	CollectLootFile(ctx context.Context, in *CollectLootFileRequest, opts ...grpc.CallOption) (*CollectLootFileResponse, error)
 	SyncLoot(ctx context.Context, in *SyncLootRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[SyncLootChunk], error)
 	ListRemoteFiles(ctx context.Context, in *ListRemoteFilesRequest, opts ...grpc.CallOption) (*ListRemoteFilesResponse, error)
+	UploadRemoteFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[UploadRemoteFileRequest, UploadRemoteFileResponse], error)
 	ProxyStream(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[StreamRequest, StreamResponse], error)
 	StartShell(ctx context.Context, in *StartShellRequest, opts ...grpc.CallOption) (*StartShellResponse, error)
 	StartSocksProxy(ctx context.Context, in *StartSocksProxyRequest, opts ...grpc.CallOption) (*StartSocksProxyResponse, error)
@@ -221,9 +223,22 @@ func (c *kelpieUIServiceClient) ListRemoteFiles(ctx context.Context, in *ListRem
 	return out, nil
 }
 
+func (c *kelpieUIServiceClient) UploadRemoteFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[UploadRemoteFileRequest, UploadRemoteFileResponse], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &KelpieUIService_ServiceDesc.Streams[2], KelpieUIService_UploadRemoteFile_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[UploadRemoteFileRequest, UploadRemoteFileResponse]{ClientStream: stream}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type KelpieUIService_UploadRemoteFileClient = grpc.ClientStreamingClient[UploadRemoteFileRequest, UploadRemoteFileResponse]
+
 func (c *kelpieUIServiceClient) ProxyStream(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[StreamRequest, StreamResponse], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	stream, err := c.cc.NewStream(ctx, &KelpieUIService_ServiceDesc.Streams[2], KelpieUIService_ProxyStream_FullMethodName, cOpts...)
+	stream, err := c.cc.NewStream(ctx, &KelpieUIService_ServiceDesc.Streams[3], KelpieUIService_ProxyStream_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -537,6 +552,7 @@ type KelpieUIServiceServer interface {
 	CollectLootFile(context.Context, *CollectLootFileRequest) (*CollectLootFileResponse, error)
 	SyncLoot(*SyncLootRequest, grpc.ServerStreamingServer[SyncLootChunk]) error
 	ListRemoteFiles(context.Context, *ListRemoteFilesRequest) (*ListRemoteFilesResponse, error)
+	UploadRemoteFile(grpc.ClientStreamingServer[UploadRemoteFileRequest, UploadRemoteFileResponse]) error
 	ProxyStream(grpc.BidiStreamingServer[StreamRequest, StreamResponse]) error
 	StartShell(context.Context, *StartShellRequest) (*StartShellResponse, error)
 	StartSocksProxy(context.Context, *StartSocksProxyRequest) (*StartSocksProxyResponse, error)
@@ -603,6 +619,9 @@ func (UnimplementedKelpieUIServiceServer) SyncLoot(*SyncLootRequest, grpc.Server
 }
 func (UnimplementedKelpieUIServiceServer) ListRemoteFiles(context.Context, *ListRemoteFilesRequest) (*ListRemoteFilesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListRemoteFiles not implemented")
+}
+func (UnimplementedKelpieUIServiceServer) UploadRemoteFile(grpc.ClientStreamingServer[UploadRemoteFileRequest, UploadRemoteFileResponse]) error {
+	return status.Errorf(codes.Unimplemented, "method UploadRemoteFile not implemented")
 }
 func (UnimplementedKelpieUIServiceServer) ProxyStream(grpc.BidiStreamingServer[StreamRequest, StreamResponse]) error {
 	return status.Errorf(codes.Unimplemented, "method ProxyStream not implemented")
@@ -862,6 +881,13 @@ func _KelpieUIService_ListRemoteFiles_Handler(srv interface{}, ctx context.Conte
 	}
 	return interceptor(ctx, in, info, handler)
 }
+
+func _KelpieUIService_UploadRemoteFile_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(KelpieUIServiceServer).UploadRemoteFile(&grpc.GenericServerStream[UploadRemoteFileRequest, UploadRemoteFileResponse]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type KelpieUIService_UploadRemoteFileServer = grpc.ClientStreamingServer[UploadRemoteFileRequest, UploadRemoteFileResponse]
 
 func _KelpieUIService_ProxyStream_Handler(srv interface{}, stream grpc.ServerStream) error {
 	return srv.(KelpieUIServiceServer).ProxyStream(&grpc.GenericServerStream[StreamRequest, StreamResponse]{ServerStream: stream})
@@ -1554,6 +1580,11 @@ var KelpieUIService_ServiceDesc = grpc.ServiceDesc{
 			StreamName:    "SyncLoot",
 			Handler:       _KelpieUIService_SyncLoot_Handler,
 			ServerStreams: true,
+		},
+		{
+			StreamName:    "UploadRemoteFile",
+			Handler:       _KelpieUIService_UploadRemoteFile_Handler,
+			ClientStreams: true,
 		},
 		{
 			StreamName:    "ProxyStream",
