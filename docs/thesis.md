@@ -109,9 +109,9 @@ The thesis explicitly states the current limitations: the figure-producing exper
 
 DTN 的基本思想是 store-carry-forward，即节点在无法立即转发数据时先存储数据，等未来出现接触机会时再继续转发。本文在讨论理论机制时使用完整术语"store-carry-forward"，讨论工程实现时以“carry-forward”作为同一概念的简称（例如 Flock 端本地缓冲队列 `carryQueue`）；两者所指为同一事。Fall 在 SIGCOMM 2003 中提出面向 challenged internets 的 DTN 架构，指出传统 Internet 协议栈中关于端到端持续路径和低时延反馈的假设在深空通信、传感器网络、移动自组网等场景中并不成立 [4]。RFC 4838 进一步从体系结构角度总结了 DTN 的设计目标和网络模型 [5]。
 
-Bundle Protocol 是 DTN 领域的重要协议。RFC 9171 定义了 Bundle Protocol Version 7，强调 bundle 可以跨越不同区域、不同收敛层和间歇连接环境进行传递 [6]。RFC 9174 则定义了 TCP Convergence-Layer Protocol Version 4，为 Bundle Protocol 在 TCP 链路上的承载提供规范 [16]。Shepherd 没有直接实现 BPv7，而是借鉴了 DTN 的核心思想：管理端按目标维护 bundle 队列，代理端在链路恢复或主动 pull 时继续投递，系统用 ACK 和 TTL 保证控制面消息不会因短时不可达而立即丢失。
+Bundle Protocol 是 DTN 领域的重要协议。RFC 9171 定义了 Bundle Protocol Version 7，强调 bundle 可以跨越不同区域、不同收敛层和间歇连接环境进行传递 [6]。RFC 9174 则定义了 TCP Convergence-Layer Protocol Version 4，为 Bundle Protocol 在 TCP 链路上的承载提供规范 [16]。国内综述也把高延迟、易中断、存储-携带-转发和路由算法选择作为 DTN 体系结构的关键问题 [21]。Shepherd 没有直接实现 BPv7，而是借鉴了 DTN 的核心思想：管理端按目标维护 bundle 队列，代理端在链路恢复或主动 pull 时继续投递，系统用 ACK 和 TTL 保证控制面消息不会因短时不可达而立即丢失。
 
-DTN 路由方面，Vahdat 与 Becker 提出的 Epidemic Routing 通过泛洪式复制在部分连接网络中提升交付概率 [7]；PRoPHET 使用历史接触概率进行转发选择，后来被写入 RFC 6693 [8]；Spray and Wait 通过限制副本数量在交付概率与资源消耗之间折中 [9]；MaxProp 则在车辆网络中结合优先级、历史交付概率和 ACK 清理缓冲区 [10]。国内研究中，王翰林等 [17] 从概率角度分析了延迟容忍路由的时延与交付率关系，其结论与本文针对远程运维控制面的取舍方向一致。综合这些工作可以看到一个共同结论：在间歇连接环境中，单纯"失败即丢弃"的即时通信模型是不充分的，系统必须显式管理队列、副本、优先级、重试和过期策略。
+DTN 路由方面，Vahdat 与 Becker 提出的 Epidemic Routing 通过泛洪式复制在部分连接网络中提升交付概率 [7]；PRoPHET 使用历史接触概率进行转发选择，后来被写入 RFC 6693 [8]；Spray and Wait 通过限制副本数量在交付概率与资源消耗之间折中 [9]；MaxProp 则在车辆网络中结合优先级、历史交付概率和 ACK 清理缓冲区 [10]。综述研究中，Cao 与 Sun [17] 将 DTN 路由按单播、组播、任播以及复制/转发策略等维度进行整理，并指出 store-carry-forward 是间歇连接网络中的基本行为；肖明军与黄刘生 [22] 也从复制策略、转发策略以及主动/被动移动模型角度对容迟网络路由算法进行了分类。综合这些工作可以看到一个共同结论：在间歇连接环境中，单纯"失败即丢弃"的即时通信模型是不充分的，系统必须显式管理队列、副本、优先级、重试和过期策略。
 
 Shepherd 的 DTN 设计与上述研究的关系是：它不追求通用 DTN 路由最优，而是面向远程运维控制面做工程化裁剪。Kelpie 是管理中心，知道当前拓扑与目标路径，因此不需要完全分布式地在所有节点之间复制 bundle；但目标离线、父链路断开和睡眠窗口错过仍然会发生，因此必须实现 per-target 队列、HoldUntil、ACK、重试和 sleep-aware 发送时机。
 
@@ -119,13 +119,13 @@ Shepherd 的 DTN 设计与上述研究的关系是：它不追求通用 DTN 路�
 
 Gossip 协议常用于大规模分布式系统的状态传播、成员关系维护和故障检测。Demers 等人在 replicated database maintenance 中提出 epidemic algorithms，用随机传播方式同步副本状态 [1]。Jelasity 等人的 peer sampling 研究将 Gossip 用于构建非结构化 P2P 系统的随机邻居视图 [2]。SWIM 则将 infection-style 传播与故障检测结合，用于可扩展的弱一致成员关系维护 [3]。
 
-Gossip 适合本文场景的核心原因有两点。一是它不要求所有节点同时连接管理端，也不要求每次状态变化都通过中心广播——这两点恰好都不成立于受限网络。二是局部链路失败时 Gossip 仍能在剩下的节点子集中继续传播，被动等待"对方下次出现"即可，而不需要立即放弃整段路径。张曦等 [18] 在 P2P 资源发布场景下从实验上验证了 Gossip 对中心化调度瓶颈的缓解能力，进一步支持了在远程运维这种微型分布式场景中引入 Gossip 的可行性。代价是 Gossip 的收敛是概率性的：传播延迟同时受 fanout、TTL、周期、节点规模与链路质量影响，所以在资源受限环境中必须显式控制传播开销，这也是第 4.3 节自适应 fanout/TTL 设计的直接动因。
+Gossip 适合本文场景的核心原因有两点。一是它不要求所有节点同时连接管理端，也不要求每次状态变化都通过中心广播——这两点恰好都不成立于受限网络。二是局部链路失败时 Gossip 仍能在剩下的节点子集中继续传播，被动等待"对方下次出现"即可，而不需要立即放弃整段路径。Karp 等 [18] 对 randomized rumor spreading 的分析说明，随机推送/拉取机制能够用局部交互实现全局传播，这进一步支持了在远程运维这种微型分布式场景中引入 Gossip 的可行性。从机会网络研究看，节点接触机会、移动性和逐跳存储转发共同决定了消息是否能够在非连续路径上继续传播 [23]；移动机会网络路由综述也把机会转发机制、评价指标和转发策略作为核心问题 [24]。这些工作与本文的 Gossip 拓扑同步并不完全等价，但都强调同一个事实：间歇连接下的传播机制必须接受局部视图和概率收敛。代价是 Gossip 的收敛是概率性的：传播延迟同时受 fanout、TTL、周期、节点规模与链路质量影响，所以在资源受限环境中必须显式控制传播开销，这也是第 4.3 节自适应 fanout/TTL 设计的直接动因。
 
 Shepherd 使用 Gossip 的原因是：受限网络中的代理节点不一定能长期保持到 Kelpie 的直接连接；Flock 节点之间的局部视图可以逐步帮助系统发现节点和路径；同时，Gossip payload 可以携带 sleepSeconds、nextWake、health、queueDepth 等轻量信息，为 Kelpie 的拓扑判定和补链调度提供依据。
 
 ### 2.3 Duty Cycling 与睡眠网络
 
-Duty cycling 是低功耗网络中的常见策略。节点周期性进入睡眠状态以降低能耗，只在工作窗口内收发数据。X-MAC 等低功耗 MAC 协议通过短前导、低功耗监听等方式降低能耗并提高睡眠节点的通信效率 [11]；机会网络中的 duty cycling 研究也指出，节点睡眠会改变接触过程，从而影响延迟、交付概率和转发机会 [12]。针对多个周期性节点同时醒来时产生的碰撞问题，朱利军等 [19] 进一步提出哈希相位随机化方案，是本文第 4.3 节中"节点启动时随机 sleep 偏移"实现思路的学术参考之一。
+Duty cycling 是低功耗网络中的常见策略。节点周期性进入睡眠状态以降低能耗，只在工作窗口内收发数据。X-MAC 等低功耗 MAC 协议通过短前导、低功耗监听等方式降低能耗并提高睡眠节点的通信效率 [11]；机会网络中的 duty cycling 研究也指出，节点睡眠会改变接触过程，从而影响延迟、交付概率和转发机会 [12]。在低占空比无线传感器网络中，节点休眠调度本身就会在端到端延迟、链路质量和能耗之间形成折中 [25]。在异步 duty cycle 的 wake-up schedule 设计上，Lee 等 [19] 提出用哈希函数确定下一次唤醒时刻的 pseudo-random asynchronous MAC；本文第 4.3 节中"节点启动时随机 sleep 偏移"只是借鉴这种相位打散思路，而不是复现该 MAC 协议。
 
 对于远程运维系统而言，duty cycling 带来的关键问题不是节能本身，而是“睡眠”和“故障”在观测上相似：节点不响应既可能是永久离线，也可能只是处于睡眠窗口。如果控制面把短时睡眠误判为故障，就会错误删除节点或触发过度补链；如果系统完全忽略睡眠，则消息可能反复在错误时间投递，错过短暂工作窗口。
 
@@ -141,7 +141,7 @@ Shepherd 的 SupplementalPlanner 将补链选择建模为候选评分问题。�
 
 ### 2.5 认证握手与形式化验证
 
-远程运维系统涉及控制消息、节点接入和数据通道，因此握手和认证是基本安全要求。Bellare、Pointcheval 与 Rogaway 关于口令认证密钥交换的研究为预共享口令和抗字典攻击协议提供了理论基础 [13]；在预共享秘密这一子路径上，李晓光 [20] 从中文语境出发讨论了预共享口令认证协议的安全性与可能的强化方向，为本文第 8 章的工程取舍论证提供了补充参考。实际工程中，还需要结合随机 Nonce、HMAC、超时、复杂度校验和会话密钥派生等手段降低伪连接和重放风险。
+远程运维系统涉及控制消息、节点接入和数据通道，因此握手和认证是基本安全要求。Bellare、Pointcheval 与 Rogaway 关于口令认证密钥交换的研究为预共享口令和抗字典攻击协议提供了理论基础 [13]；国内关于 PAKE 的研究也从通用可组合安全等角度讨论了口令认证密钥交换协议在严格模型下的安全证明 [26]。在工程实现层面，RFC 5869 将 HKDF 规范化为基于 HMAC 的密钥派生函数 [20]，为本文第 8 章中从共享 secret 派生会话材料和进行域分离的取舍提供了补充依据。实际工程中，还需要结合随机 Nonce、HMAC、超时、复杂度校验和会话密钥派生等手段降低伪连接和重放风险。
 
 安全协议仅靠自然语言描述很难覆盖并发、重放和攻击者模型。Tamarin 和 ProVerif 是常用的符号模型验证工具。Tamarin 支持多集合重写规则和一阶逻辑引理，适合分析认证、保密和可达性性质 [14]；ProVerif 适合自动验证基于 Dolev-Yao 模型的加密协议性质 [15]。Shepherd 的形式化部分目前是骨架级：将预认证挑战应答和 HI/UUID 交换抽象出来，验证共享秘密保密性和基本对应性，为后续更强性质证明打基础。
 
@@ -747,7 +747,7 @@ $$
 
 握手状态机在 `pkg/share/handshake/handshake.go` 中以 `Transcript` + `Code` 的形式显式建模，覆盖 `start`、`dial`、`tls`、`negotiate`、`preauth`、`mfa`、`exchange`、`complete` 八个阶段，任一阶段失败时会把事件链以 `stage!error>stage>...` 的形式附加到错误上，便于后期审计和故障复现。
 
-密钥材料方面，本文采取"secret 复杂度约束 + HKDF 派生会话密钥"的组合。`ValidateSecretComplexity` 要求 secret 长度不少于 8 且同时包含字母与数字，`ValidateMFAPin` 要求可选 MFA PIN 为至少 4 位数字。上述约束只是熵底线，不能替代真正的口令管理方案。会话加密密钥由 `DeriveSessionSecret` 在 `pkg/share/secret.go` 中用 HKDF-SHA256 派生：
+密钥材料方面，本文采取"secret 复杂度约束 + HKDF 派生会话密钥"的组合。`ValidateSecretComplexity` 要求 secret 长度不少于 8 且同时包含字母与数字，`ValidateMFAPin` 要求可选 MFA PIN 为至少 4 位数字。上述约束只是熵底线，不能替代真正的口令管理方案。会话加密密钥由 `DeriveSessionSecret` 在 `pkg/share/secret.go` 中用 HKDF-SHA256 派生 [20]：
 
 $$
 \mathit{sessionSecret} = \mathrm{HKDF}\text{-}\mathrm{SHA256}\bigl(\mathit{secret},\ \text{salt}=\text{"shepherd/secret/v1"},\ \text{info}=\text{"shepherd/session/"} \parallel m\bigr)
@@ -862,13 +862,25 @@ docker compose -f formal/docker-compose.yml run --rm tamarin
 
 [16] Burleigh, S., Fall, K., Birrane, E. RFC 9174: Delay-Tolerant Networking TCP Convergence-Layer Protocol Version 4. IETF, 2022. https://www.rfc-editor.org/rfc/rfc9174  
 
-[17] 王翰林, 赵春江. 一种延迟容忍网络路由算法分析[J]. 通信学报, 2015, 36(增刊1): 88-93.  
+[17] Cao, Y., Sun, Z. Routing in Delay/Disruption Tolerant Networks: A Taxonomy, Survey and Challenges. IEEE Communications Surveys & Tutorials, 2013, 15(2): 654-677. https://doi.org/10.1109/SURV.2012.042512.00053  
 
-[18] 张曦, 李建强. 基于 Gossip 的 P2P 资源发布机制研究[J]. 计算机研究与发展, 2017, 54(7): 1438-1447.  
+[18] Karp, R., Schindelhauer, C., Shenker, S., Vöcking, B. Randomized Rumor Spreading. FOCS 2000: 565-574. https://doi.org/10.1109/SFCS.2000.892324  
 
-[19] 朱利军, 马婷婷. 哈希相位随机化在低功耗 MAC 中的应用[J]. 电子与信息学报, 2019, 41(9): 2167-2174.  
+[19] Lee, H., Hong, J., Yang, S., Jang, I., Yoon, H. A Pseudo-Random Asynchronous Duty Cycle MAC Protocol in Wireless Sensor Networks. IEEE Communications Letters, 2010, 14(2): 136-138. https://doi.org/10.1109/LCOMM.2010.02.091849  
 
-[20] 李晓光. 预共享口令认证协议的安全性研究[J]. 密码学报, 2021, 8(2): 295-310.  
+[20] Krawczyk, H., Eronen, P. RFC 5869: HMAC-based Extract-and-Expand Key Derivation Function (HKDF). IETF, 2010. https://www.rfc-editor.org/rfc/rfc5869  
+
+[21] 黄星河, 李艾静, 王海. DTN体系结构及关键技术研究综述[J]. 计算机科学, 2018, 45(12): 19-23+31. https://dblp.org/rec/journals/jsjkx/HuangLW18  
+
+[22] 肖明军, 黄刘生. 容迟网络路由算法[J]. 计算机研究与发展, 2009, 46(7): 1065-1073. https://crad.ict.ac.cn/article/2009/7  
+
+[23] 熊永平, 孙利民, 牛建伟, 刘燕. 机会网络[J]. 软件学报, 2009, 20(1): 124-137. https://www.jos.org.cn/jos/article/abstract/3467  
+
+[24] 马华东, 袁培燕, 赵东. 移动机会网络路由问题研究进展[J]. 软件学报, 2015, 26(3): 600-616. https://www.jos.org.cn/1000-9825/4741.htm  
+
+[25] 陈良银, 王金磊, 张靖宇, 王强, 刘燕, 殷锋, 罗谦. 低占空比WSN中一种节点休眠调度算法[J]. 软件学报, 2014, 25(3): 631-641. https://www.jos.org.cn/jos/article/abstract/4401  
+
+[26] 胡学先, 张振峰, 刘文芬. 标准模型下通用可组合的口令认证密钥交换协议[J]. 软件学报, 2011, 22(11): 2820-2832. https://www.jos.org.cn/1000-9825/3910.htm  
 
 ---
 
