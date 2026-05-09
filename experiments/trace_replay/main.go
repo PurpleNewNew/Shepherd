@@ -332,7 +332,7 @@ func main() {
 			}
 
 			var pivotListenerID string
-			if l, err := createPivotWithRetry(ctx, pivotClient, *uiToken, rootUUID, bind, 8*time.Second); err != nil {
+			if l, err := createPivotWithRetry(ctx, pivotClient, *uiToken, rootUUID, bind, 20*time.Second); err != nil {
 				fatalf("create pivot listener (%s): %v", bind, err)
 			} else if l != nil {
 				pivotListenerID = l.GetListenerId()
@@ -373,7 +373,7 @@ func main() {
 				bind = mustPickFreeAddr("127.0.0.1")
 			}
 			var pivotListenerID string
-			if l, err := createPivotWithRetry(ctx, pivotClient, *uiToken, parentUUID, bind, 8*time.Second); err != nil {
+			if l, err := createPivotWithRetry(ctx, pivotClient, *uiToken, parentUUID, bind, 20*time.Second); err != nil {
 				fatalf("create pivot listener (%s, parent=%s): %v", bind, parentLabel, err)
 			} else if l != nil {
 				pivotListenerID = l.GetListenerId()
@@ -1895,10 +1895,7 @@ func createPivotWithRetry(ctx context.Context, pivot uipb.PivotListenerAdminServ
 				if id := strings.TrimSpace(l.GetListenerId()); id != "" {
 					_, _ = pivot.DeletePivotListener(withToken(ctx, token), &uipb.DeletePivotListenerRequest{ListenerId: id})
 				}
-				lower := strings.ToLower(lastErr.Error())
-				if strings.Contains(lower, "route unavailable") ||
-					strings.Contains(lower, "session unavailable") ||
-					strings.Contains(lower, "connection unavailable") {
+				if isTransientPivotCreateError(lastErr) {
 					time.Sleep(150 * time.Millisecond)
 					continue
 				}
@@ -1908,15 +1905,23 @@ func createPivotWithRetry(ctx context.Context, pivot uipb.PivotListenerAdminServ
 		}
 		lastErr = err
 		// 路由计算带有去抖；这里短暂重试一次，避免与 bootstrap 竞争。
-		lower := strings.ToLower(err.Error())
-		if strings.Contains(lower, "route unavailable") ||
-			strings.Contains(lower, "session unavailable") ||
-			strings.Contains(lower, "connection unavailable") {
+		if isTransientPivotCreateError(err) {
 			time.Sleep(150 * time.Millisecond)
 			continue
 		}
 		return nil, err
 	}
+}
+
+func isTransientPivotCreateError(err error) bool {
+	if err == nil {
+		return false
+	}
+	lower := strings.ToLower(err.Error())
+	return strings.Contains(lower, "route unavailable") ||
+		strings.Contains(lower, "session unavailable") ||
+		strings.Contains(lower, "connection unavailable") ||
+		strings.Contains(lower, "start timeout")
 }
 
 func updateSleepWithRetry(ctx context.Context, sleep uipb.SleepAdminServiceClient, token string, req *uipb.UpdateSleepRequest, timeout time.Duration) error {

@@ -76,3 +76,24 @@ func TestNewDownstreamMessageForRouteRequiresFirstHopSession(t *testing.T) {
 		t.Fatalf("expected error when first-hop session is unavailable")
 	}
 }
+
+func TestRouteUsesSupplementalParsesRouteSegments(t *testing.T) {
+	tests := []struct {
+		name  string
+		route string
+		want  bool
+	}{
+		{name: "empty", route: "", want: false},
+		{name: "tree", route: "root:child:leaf", want: false},
+		{name: "supp", route: "root#supp:child:leaf", want: true},
+		{name: "later supp", route: "root:child#supp:leaf", want: true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := routeUsesSupplemental(tt.route); got != tt.want {
+				t.Fatalf("routeUsesSupplemental(%q)=%v, want %v", tt.route, got, tt.want)
+			}
+		})
+	}
+}

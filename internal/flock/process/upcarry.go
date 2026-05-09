@@ -4,7 +4,7 @@ import (
 	"net"
 	"time"
 
-	"codeberg.org/agnoie/shepherd/pkg/utils"
+	"codeberg.org/agnoie/shepherd/pkg/config/defaults"
 	"codeberg.org/agnoie/shepherd/protocol"
 )
 
@@ -204,37 +204,5 @@ func (agent *Agent) sendUpCarryItemOnConn(conn net.Conn, secret, uuid string, he
 	protocol.SetMessageMeta(up, flags)
 	protocol.ConstructMessage(up, header, payload, passThrough)
 
-	// 尽力改进错误上报：如果能直接访问底层缓冲区，就直接写入，
-	// 这样在临时失败时还可以重试（默认的 SendMessage() 路径会记录日志并关闭，
-	// 但不会返回错误）。
-	switch m := up.(type) {
-	case *protocol.RawMessage:
-		final := append([]byte(nil), m.HeaderBuffer...)
-		final = append(final, m.DataBuffer...)
-		m.HeaderBuffer = nil
-		m.DataBuffer = nil
-		if err := utils.WriteFull(m.Conn, final); err != nil {
-			if m.Conn != nil {
-				_ = m.Conn.Close()
-			}
-			return err
-		}
-		return nil
-	case *protocol.WSMessage:
-		rm := m.RawMessage
-		final := append([]byte(nil), rm.HeaderBuffer...)
-		final = append(final, rm.DataBuffer...)
-		rm.HeaderBuffer = nil
-		rm.DataBuffer = nil
-		if err := utils.WriteFull(rm.Conn, final); err != nil {
-			if rm.Conn != nil {
-				_ = rm.Conn.Close()
-			}
-			return err
-		}
-		return nil
-	default:
-		up.SendMessage()
-		return nil
-	}
+	return sendPreparedProtocolMessageWithDeadline(conn, up, defaults.BroadcastWriteDeadline)
 }

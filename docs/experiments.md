@@ -1,6 +1,6 @@
-# Shepherd 中期实验报告（初版）
+# Shepherd 实验报告（定稿版）
 
-日期：2026-02-08  
+日期：2026-05-09
 作者：`<姓名>`（本科毕业设计）
 
 ---
@@ -18,11 +18,11 @@
 
 ## 2 实验环境与工具链
 
-本中期实验不依赖外部仿真器，默认在本机完成（后续可拓展到 Mininet/ns-3）。
+本实验不依赖外部仿真器，默认在本机完成（后续可拓展到 Mininet/ns-3）。
 
 ### 2.1 必需环境
 
-- **Go**：1.22（见 `go.mod`）
+- **Go**：1.25（见 `go.mod`）
 - **Make**：用于构建 `build/kelpie` 与 `build/flock`
 - **Python 3**：仅使用标准库（用于 CSV 汇总与 SVG 出图，见 `experiments/analysis/`）
 - **Bash**：运行一键脚本（`script/experiments.sh`）
@@ -30,7 +30,7 @@
 ### 2.2 可选环境（后续阶段）
 
 - **Docker / Docker Compose**：用于形式化验证骨架的复现（见 `formal/README.md`）
-- **Mininet / ns-3**：网络仿真/离散事件模拟（中期阶段仅提供骨架，见 `experiments/mininet/`、`experiments/ns3/`）
+- **Mininet / ns-3**：网络仿真/离散事件模拟（当前仓库仅提供骨架，见 `experiments/mininet/`、`experiments/ns3/`）
 
 ---
 
@@ -87,7 +87,7 @@
 
 ## 5 实验场景设计
 
-本中期实验包含两组场景，均由一键脚本自动执行并产出论文插图级的 CSV/SVG。
+本实验包含两组场景，均由一键脚本自动执行并产出论文插图级的 CSV/SVG。
 
 ### 5.1 场景 A：拓扑 bootstrap/收敛（Gossip）
 
@@ -147,7 +147,7 @@ bash script/experiments.sh
 复现成功的判据：
 
 - `docs/data/*.csv` 与 `docs/figures/*.svg` 被生成/更新；
-- `docs/data/dtn_latency_summary.csv` 中每个 run 的 `delivered_n == enqueued_n`（本中期脚本设置为每次入队 3 条）。
+- `docs/data/dtn_latency_summary.csv` 中每个 run 的 `delivered_n == enqueued_n`（本实验脚本设置为每次入队 3 条）。
 
 ---
 
@@ -223,7 +223,8 @@ E[T_w] = \frac{T_{sleep}^2}{2(T_{sleep}+T_{work})}.
 
 ### 8.2 威胁与局限性
 
-- **规模局限**：中期实验节点规模较小（最高 8），尚不能代表更大规模网络的收敛行为；
+- **规模局限**：论文图表实验节点规模较小（最高 8），尚不能代表更大规模网络的收敛行为；
+- **补充回归**：定稿前已使用 `gossip_memo_scale_n16` 在 17 节点 star/chain 拓扑下验证连续两条 DTN memo bundle 交付均为 2/2，其中 star 结果记录于 `summary-gossip-memo-scale-n16-final6.json`（重试次数 0），chain 结果记录于 `summary-gossip-memo-scale-n16-chain-final9.json`（重试次数 1），两类拓扑均为 PASS；同时 `dtn_leaf_sleep_kill_parent_n2` 的 star/chain 回归记录于 `summary-dtn-leaf-sleep-kill-parent-n2-final2.json`，均为 PASS；但这些结果仍属于确定性工程回归，不替代大规模性能实验；
 - **网络真实性**：本机回放主要反映实现逻辑与调度抖动，尚未引入“可控链路参数”（带宽/丢包/时延）；需要 Mininet/ns-3 对照；
 - **统计显著性**：重复次数较少（收敛实验 3 次、DTN 实验 2 次），更严格的结论需增加重复与置信区间分析；
 - **指标口径误差**：DTN 交付时刻由 metrics 采样近似得到，存在 500ms 级量化误差；后续可引入更细粒度的交付事件日志以减少误差。
@@ -254,4 +255,3 @@ Trace 与分析脚本：
 形式化验证骨架：
 
 - `formal/README.md`
-

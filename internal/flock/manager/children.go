@@ -34,12 +34,36 @@ func (manager *childrenManager) AddChild(uuid string, conn net.Conn) {
 	if manager == nil || uuid == "" || conn == nil {
 		return
 	}
+	safeConn := utils.NewSafeConn(conn)
+	var oldConn net.Conn
 	manager.mu.Lock()
 	if manager.children == nil {
 		manager.children = make(map[string]*child)
 	}
-	manager.children[uuid] = &child{conn: utils.NewSafeConn(conn)}
+	if old := manager.children[uuid]; old != nil {
+		oldConn = old.conn
+	}
+	manager.children[uuid] = &child{conn: safeConn}
 	manager.mu.Unlock()
+	if oldConn != nil && !sameChildConn(oldConn, safeConn) {
+		_ = oldConn.Close()
+	}
+}
+
+func sameChildConn(a, b net.Conn) bool {
+	if a == nil || b == nil {
+		return false
+	}
+	if a == b {
+		return true
+	}
+	if safe, ok := a.(*utils.SafeConn); ok && safe != nil {
+		a = safe.Conn
+	}
+	if safe, ok := b.(*utils.SafeConn); ok && safe != nil {
+		b = safe.Conn
+	}
+	return a == b
 }
 
 func (manager *childrenManager) GetConn(uuid string) (net.Conn, bool) {

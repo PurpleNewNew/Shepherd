@@ -134,6 +134,7 @@ func (agent *Agent) dtnDataHandler() bus.Handler {
 		var dtnLogEcho string
 		msgText := strings.TrimSpace(string(clone.Payload))
 		lower := strings.ToLower(msgText)
+		memoPayload := strings.HasPrefix(lower, "memo:")
 		if strings.HasPrefix(lower, "log:") {
 			dtnLogEcho = strings.TrimSpace(msgText[len("log:"):])
 		}
@@ -180,11 +181,17 @@ func (agent *Agent) dtnDataHandler() bus.Handler {
 		}
 		if adminConn != nil && sess != nil {
 			if err := agent.sendUpCarryItemOnConn(adminConn, sess.Secret(), agent.UUID, ackHeader, ack, false); err == nil {
+				if applyErr == nil && memoPayload {
+					agent.publishMemoSnapshotAfterAck(adminConn)
+				}
 				return nil
 			}
 		}
 		// 如果上游链路正在抖动（sleep/kill/reconnect），先缓存 ACK，稍后重试。
 		agent.maybeEnqueueUpCarryLocal(ackHeader, ack)
+		if applyErr == nil && memoPayload {
+			agent.publishMemoSnapshotAfterAck(adminConn)
+		}
 		return nil
 	}
 }
@@ -252,11 +259,7 @@ func (agent *Agent) applyDTNPayload(data *protocol.DTNData, adminConn net.Conn) 
 		content := strings.TrimSpace(msg[len("memo:"):])
 		agent.Memo = content
 		logger.Infof("[diag/dtn_memo_apply] self=%s bundle=%s memo=%q", agent.UUID, data.BundleID, content)
-		// DTN memo 更新需要立刻对 Kelpie 可见。
-		agent.emitGossipUpdate()
-		agent.pushMemoSnapshotToAdmin(adminConn)
-		// 若立即上行失败，仍要保留最终收敛能力。
-		agent.triggerGossipUpdate()
+		// ACK 不应被 gossip 写入阻塞；dtnDataHandler 会在 ACK 完成后发布快照。
 		return nil
 	case strings.HasPrefix(lower, "log:"):
 		// "log:<message>" 载荷会通过 DTN_ACK.Error 回显（见 dtnDataHandler），
@@ -392,6 +395,17 @@ func (agent *Agent) pushMemoSnapshotToAdmin(adminConn net.Conn) {
 	if err := agent.sendUpCarryItemOnConn(adminConn, sess.Secret(), agent.UUID, header, update, false); err != nil {
 		agent.maybeEnqueueUpCarryLocal(header, update)
 	}
+}
+
+func (agent *Agent) publishMemoSnapshotAfterAck(adminConn net.Conn) {
+	if agent == nil {
+		return
+	}
+	agent.triggerGossipUpdate()
+	if adminConn == nil {
+		return
+	}
+	go agent.pushMemoSnapshotToAdmin(adminConn)
 }
 
 func (agent *Agent) gossipRequestHandler() bus.Handler {

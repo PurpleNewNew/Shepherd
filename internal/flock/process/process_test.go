@@ -321,6 +321,22 @@ func TestHandleIncomingGossipWithAdminParentSendsDirectToAdmin(t *testing.T) {
 	}
 }
 
+func TestSelectNeighborTargetsZeroFanoutDoesNotFloodNonParents(t *testing.T) {
+	agent := &Agent{
+		UUID:           "SELFNODE",
+		gossipConfig:   &protocol.GossipConfig{Fanout: 3},
+		knownNodes:     map[string]*protocol.NodeInfo{},
+		neighbors:      map[string]struct{}{"CHILD1": {}, "CHILD2": {}},
+		extraNeighbors: map[string]time.Time{},
+	}
+	agent.setParentUUID("PARENTNODE")
+
+	targets := agent.selectNeighborTargets("")
+	if len(targets) != 1 || targets[0] != "PARENTNODE" {
+		t.Fatalf("expected only parent target when gossip budget is exhausted, got %#v", targets)
+	}
+}
+
 func TestMemoUpdateHandlerTriggersDeferredPropagationWithoutSession(t *testing.T) {
 	agent := &Agent{
 		gossipTrigger: make(chan struct{}, 1),
@@ -339,7 +355,7 @@ func TestMemoUpdateHandlerTriggersDeferredPropagationWithoutSession(t *testing.T
 	}
 }
 
-func TestApplyDTNPayloadMemoTriggersDeferredPropagationWithoutSession(t *testing.T) {
+func TestApplyDTNPayloadMemoDefersPropagationUntilAfterAck(t *testing.T) {
 	agent := &Agent{
 		gossipTrigger: make(chan struct{}, 1),
 	}
@@ -357,7 +373,14 @@ func TestApplyDTNPayloadMemoTriggersDeferredPropagationWithoutSession(t *testing
 	}
 	select {
 	case <-agent.gossipTrigger:
+		t.Fatalf("memo propagation should wait until after ACK")
 	default:
-		t.Fatalf("expected deferred gossip trigger signal")
+	}
+
+	agent.publishMemoSnapshotAfterAck(nil)
+	select {
+	case <-agent.gossipTrigger:
+	default:
+		t.Fatalf("expected post-ACK gossip trigger signal")
 	}
 }

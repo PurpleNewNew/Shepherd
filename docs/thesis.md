@@ -1,6 +1,6 @@
 # Shepherd：面向受限网络的 Gossip 化延迟容忍远程运维系统设计与实现
 
-> 本科毕业设计论文初稿  
+> 本科毕业设计论文
 > 学生：`<姓名>`  
 > 学号：`<学号>`  
 > 学院：`<学院>`  
@@ -18,7 +18,7 @@
 
 本文的核心设计是将 Gossip 拓扑维护、补链自愈、DTN store-carry-forward 队列和 DTN 上的可靠 STREAM 传输层组合起来，使系统在节点 duty-cycling 和多跳链路下仍能维持控制面收敛与消息最终交付。实现上，Flock 使用自适应 fanout/TTL 的 Gossip 机制传播节点视图；Kelpie 维护带父子关系和补链边的拓扑图，并基于睡眠预算估计投递时机；DTN 管理器按目标节点维护优先级队列、TTL、HoldUntil、ACK 和重试；STREAM 层在 DTN 之上实现分片、ACK、RTO、AIMD 窗口和重传；补链调度器根据节点质量、路径重叠、睡眠预算、深度和冗余度选择候选节点。
 
-为验证系统可行性，本文构建了 Trace 回放实验框架，在本机自动启动 Kelpie 与多个 Flock，注入睡眠、DTN 入队、故障和重启等事件，并周期性采集指标。实验结果表明，在 4、6、8 节点的 star 与 chain 拓扑下，Gossip 驱动的拓扑收敛时间随节点数增长而上升，chain 拓扑由于多跳路径更长而慢于 star 拓扑；在 chain 拓扑、目标节点周期睡眠的 DTN 实验中，baseline、sleep8/work2、sleep16/work2 三组场景均实现 6/6 最终交付，平均交付时延分别约为 2.825s、5.401s 和 9.400s，呈现与 duty-cycle 理论等待模型一致的上升趋势。本文还给出了基于预共享秘密、Nonce 与 HMAC 的预认证握手机制，并提供 Tamarin/ProVerif 形式化验证骨架。
+为验证系统可行性，本文构建了 Trace 回放实验框架，在本机自动启动 Kelpie 与多个 Flock，注入睡眠、DTN 入队、故障和重启等事件，并周期性采集指标。实验结果表明，在 4、6、8 节点的 star 与 chain 拓扑下，Gossip 驱动的拓扑收敛时间随节点数增长而上升，chain 拓扑由于多跳路径更长而慢于 star 拓扑；在 chain 拓扑、目标节点周期睡眠的 DTN 实验中，baseline、sleep8/work2、sleep16/work2 三组场景均实现 6/6 最终交付，平均交付时延分别约为 2.825s、5.401s 和 9.400s，呈现与 duty-cycle 理论等待模型一致的上升趋势；17 节点 star/chain 规模回归也验证了连续两条 DTN memo bundle 均能最终交付。本文还给出了基于预共享秘密、Nonce 与 HMAC 的预认证握手机制，并提供 Tamarin/ProVerif 形式化验证骨架。
 
 实验说明，Shepherd 能够在本机可复现环境中体现面向受限网络的拓扑收敛和延迟容忍交付能力。本文也如实讨论了当前原型的局限：实验规模仍较小，主要基于本机 trace replay；形式化模型仍是骨架级；补链策略和 Gossip 参数还需要更多消融实验和 Mininet/ns-3 验证。总体而言，Shepherd 为“受限网络下远程运维控制面如何保持可达、可观测和可最终交付”提供了一个完整、可运行、可复现实验验证的系统化答案。
 
@@ -34,7 +34,7 @@ This thesis presents Shepherd, a prototype system for delay-tolerant remote oper
 
 The main design of Shepherd combines gossip-based topology maintenance, supplemental self-healing links, DTN store-carry-forward queues, and a reliable STREAM layer over DTN. Flock propagates node views with adaptive fanout and TTL. Kelpie maintains a topology graph with both tree edges and supplemental edges, estimates delivery opportunities using sleep budgets, and dispatches queued bundles accordingly. The DTN manager maintains per-target priority queues with TTL, HoldUntil, ACK tracking, and retry logic. The STREAM layer implements fragmentation, ACKs, RTO estimation, AIMD window adjustment, and retransmission over DTN. The supplemental planner selects candidates based on node quality, path overlap, sleep budget, depth, and redundancy.
 
-To evaluate the system, this thesis builds a trace replay framework that automatically launches local Kelpie and Flock processes, injects sleep, DTN enqueue, failure, and restart events, and periodically records metrics. Results show that in 4-, 6-, and 8-node star and chain topologies, gossip-driven convergence time increases with node count, and chain topologies converge more slowly due to multi-hop structure. In a chain topology with a duty-cycled target, DTN achieves 6/6 final delivery in baseline, sleep8/work2, and sleep16/work2 scenarios, with average delivery latency of approximately 2.825s, 5.401s, and 9.400s respectively. The trend is consistent with the theoretical waiting-time model for duty cycling. The thesis also presents a pre-authentication handshake based on a shared secret, nonces, and HMAC, together with a Tamarin/ProVerif verification skeleton.
+To evaluate the system, this thesis builds a trace replay framework that automatically launches local Kelpie and Flock processes, injects sleep, DTN enqueue, failure, and restart events, and periodically records metrics. Results show that in 4-, 6-, and 8-node star and chain topologies, gossip-driven convergence time increases with node count, and chain topologies converge more slowly due to multi-hop structure. In a chain topology with a duty-cycled target, DTN achieves 6/6 final delivery in baseline, sleep8/work2, and sleep16/work2 scenarios, with average delivery latency of approximately 2.825s, 5.401s, and 9.400s respectively. The trend is consistent with the theoretical waiting-time model for duty cycling. A supplemental 17-node star/chain regression further verifies successful delivery of two consecutive DTN memo bundles. The thesis also presents a pre-authentication handshake based on a shared secret, nonces, and HMAC, together with a Tamarin/ProVerif verification skeleton.
 
 The evaluation demonstrates that Shepherd can reproduce topology convergence and delay-tolerant delivery behavior in a local experimental environment. The thesis also discusses limitations: the current experiments are small-scale and mainly trace-based; the formal model is still a skeleton; and supplemental-link and gossip-parameter policies require further ablation and Mininet/ns-3 validation. Overall, Shepherd provides a complete, runnable, and reproducible prototype for studying how remote operations control planes can remain observable and eventually deliver messages under challenged-network conditions.
 
@@ -476,7 +476,7 @@ Kelpie 还实现了实验性的 dataplane TCP server，使用一次性 token 建
 
 ### 6.1 代码组织
 
-Shepherd 使用 Go 1.22 实现核心系统，Stockman 前端使用 Vue 3、Vite、TypeScript 和 Pinia。主要目录如下：
+Shepherd 使用 Go 1.25 实现核心系统，Stockman 前端使用 Vue 3、Vite、TypeScript 和 Pinia。主要目录如下：
 
 | 目录 | 说明 |
 | --- | --- |
@@ -585,11 +585,11 @@ Wails 后端 facade 位于 `clientui/backend/service/`，负责连接 Kelpie、�
 6. 周期性调用 gRPC metrics 和 snapshot；
 7. 输出 config.json、labels.json、metrics.jsonl、events.jsonl 和 logs。
 
-trace 支持 sleep、dtn_enqueue、kill、metrics、kelpie_restart、dataplane_roundtrip、stream_proxy、io_burst 等事件。回归脚本会断言 DTN enqueue 与 delivered 计数匹配，并对关键事件要求 trace_result ok=true。
+trace 支持 sleep、dtn_enqueue、kill、metrics、kelpie_restart、dataplane_roundtrip、stream_proxy、io_burst 等事件。回归脚本会断言 DTN enqueue 与 delivered 计数匹配，并对关键事件要求 trace_result ok=true。除用于生成论文图表的实验脚本外，仓库还保留标准回归 trace，用于覆盖更高风险的路径转发、Gossip 传播、DTN ACK 和重连场景。
 
 ### 6.8 测试情况
 
-项目包含单元测试、包级测试和 integration 测试，覆盖 protocol、DTN、STREAM、topology、planner、flock process、grpcserver、handshake 等模块。本文写作时执行 `make test`，即 `go test ./...`，所有包通过。
+项目包含单元测试、包级测试和 integration 测试，覆盖 protocol、DTN、STREAM、topology、planner、flock process、grpcserver、handshake 等模块。本文定稿前执行 `make test`（即 `go test ./...`）和重点包 race 检查（`go test -race ./internal/kelpie/topology ./internal/kelpie/process ./internal/flock/process ./internal/flock/manager`），均通过。对涉及 DTN ACK、Gossip memo 与 sleep/failover 的高风险路径，还补充执行了目标 trace replay 回归，结果见第 7.4 节。
 
 ---
 
@@ -599,7 +599,7 @@ trace 支持 sleep、dtn_enqueue、kill、metrics、kelpie_restart、dataplane_r
 
 本文实验使用本机 Trace 回放方式。实验不依赖外部仿真器，默认环境包括：
 
-- Go 1.22；
+- Go 1.25；
 - Make；
 - Python 3 标准库；
 - Bash；
@@ -731,7 +731,20 @@ E[T_w] = \frac{T_{sleep}^2}{2(T_{sleep}+T_{work})}.
 
 sleep16/work2 场景方差更大，说明睡眠周期越长，相位对交付时延的影响越明显。该结果符合 duty-cycling 网络的直觉，也支持系统将 sleep budget 纳入发送时机和 ACK timeout 的设计。
 
-### 7.4 可复现性分析
+### 7.4 工程回归补充验证
+
+除第 7.2 和第 7.3 节用于论文图表的实验外，本文还使用 trace replay 回归脚本补充验证更高风险场景。`gossip_memo_scale_n16` trace 会在 root + n1...n16 的 17 节点环境中连续向目标节点投递两条 memo bundle，用于检查 Gossip 规模传播、DTN 多跳路由、下行子链路写入、ACK 返回和重试判定是否一致。
+
+本次论文定稿前执行的目标回归结果如下。`star` 结果来自 `experiments/out/regress/summary-gossip-memo-scale-n16-final6.json`，`chain` 结果来自 `experiments/out/regress/summary-gossip-memo-scale-n16-chain-final9.json`；回归脚本同时检查 DTN delivered 计数、`wait_memo` 结果和节点状态等待结果。
+
+| Trace | 拓扑 | 节点数 | DTN 交付 | 重试次数 | 结果 |
+| --- | --- | ---: | ---: | ---: | --- |
+| `gossip_memo_scale_n16` | star | 17 | 2/2 | 0 | PASS |
+| `gossip_memo_scale_n16` | chain | 17 | 2/2 | 1 | PASS |
+
+此外，针对 sleep/failover 相关的 `dtn_leaf_sleep_kill_parent_n2` 回归也在 star/chain 拓扑下通过，结果记录于 `experiments/out/regress/summary-dtn-leaf-sleep-kill-parent-n2-final2.json`，每类拓扑 4 条 DTN payload 均完成交付并被 Kelpie 日志观测。该回归不替代大规模性能评估，因为它只覆盖少量确定性 trace，重复次数也较少；但它补充说明当前实现不仅能通过 4、6、8 节点的论文实验，也能在 17 节点规模下维持连续 DTN memo 投递的最终交付语义。
+
+### 7.5 可复现性分析
 
 本文实验的可复现性来自以下设计：
 
@@ -742,11 +755,11 @@ sleep16/work2 场景方差更大，说明睡眠周期越长，相位对交付时
 5. 论文图表由 CSV 自动生成；
 6. 实验数据和 SVG 图表纳入 `docs/` 管理。
 
-### 7.5 威胁与局限
+### 7.6 威胁与局限
 
 实验也存在明显局限：
 
-1. 节点规模较小，最高 8 节点，不足以代表大规模网络；
+1. 论文图表实验节点规模较小，最高 8 节点；虽然工程回归补充覆盖了 17 节点 trace，但仍不足以代表大规模网络；
 2. 当前主要使用本机进程和 loopback 网络，没有真实 delay/loss/jitter；
 3. 重复次数较少，统计显著性不足；
 4. metrics 采样周期带来 500ms 级误差；
@@ -845,7 +858,7 @@ Shepherd 的安全边界包括：
 
 Shepherd 当前仍是研究原型，主要局限如下：
 
-1. **实验规模有限**：当前论文数据主要覆盖 4、6、8 节点，无法证明大规模性能。
+1. **实验规模有限**：当前论文图表数据主要覆盖 4、6、8 节点；工程回归补充覆盖 17 节点确定性 trace，但仍无法证明大规模性能。
 2. **网络真实性不足**：本机 trace replay 无法完全模拟真实 delay、loss、jitter、带宽限制和无线碰撞。
 3. **统计重复不足**：拓扑实验每组 3 次，DTN 实验每组 2 次，适合趋势说明但不足以支撑严格显著性检验。
 4. **补链消融不足**：当前没有完整比较“启用补链/禁用补链”的恢复时延和交付率。
@@ -874,7 +887,7 @@ Shepherd 当前仍是研究原型，主要局限如下：
 
 在实现层面，Kelpie 负责拓扑、DTN、STREAM、补链、SQLite 和 gRPC UI；Flock 负责接入、Gossip、转发、sleep、repair 和 carry-forward；Stockman 提供连接、拓扑、节点、事件和演示控制台。协议层通过统一 messageType、route 和 payload codec 支撑多种控制与数据消息。
 
-在实验层面，本文构建了 trace replay 框架，并完成两组可复现实验。拓扑收敛实验显示，star 和 chain 拓扑在 4、6、8 节点下均能收敛，且 chain 因多跳结构收敛更慢。DTN duty-cycling 实验显示，在目标节点 sleep8/work2 和 sleep16/work2 场景下，系统仍能实现 6/6 最终交付，交付时延随 sleep 周期增加而上升，与理论等待模型趋势一致。
+在实验层面，本文构建了 trace replay 框架，并完成两组可复现实验。拓扑收敛实验显示，star 和 chain 拓扑在 4、6、8 节点下均能收敛，且 chain 因多跳结构收敛更慢。DTN duty-cycling 实验显示，在目标节点 sleep8/work2 和 sleep16/work2 场景下，系统仍能实现 6/6 最终交付，交付时延随 sleep 周期增加而上升，与理论等待模型趋势一致。工程回归进一步验证了 `gossip_memo_scale_n16` 在 17 节点 star/chain 拓扑下连续 DTN memo 投递 2/2 成功。
 
 在安全层面，本文实现了基于共享 secret、Nonce 和 HMAC 的预认证，UI token 鉴权，TLS TOFU 指纹确认和 dataplane 一次性 token，并提供 Tamarin/ProVerif 形式化验证骨架。
 

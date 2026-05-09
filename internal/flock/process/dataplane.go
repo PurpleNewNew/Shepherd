@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"codeberg.org/agnoie/shepherd/pkg/bus"
+	"codeberg.org/agnoie/shepherd/pkg/config/defaults"
 	"codeberg.org/agnoie/shepherd/pkg/utils"
 	"codeberg.org/agnoie/shepherd/protocol"
 )
@@ -19,6 +20,33 @@ var (
 	ErrNoRouteToChild           = errors.New("no route to child")
 	ErrNoUpstreamSession        = errors.New("no active upstream session")
 )
+
+type childRouteError struct {
+	err      error
+	target   string
+	conn     net.Conn
+	fromSupp bool
+}
+
+func (e *childRouteError) Error() string {
+	if e == nil {
+		return ""
+	}
+	if e.err == nil {
+		return e.target
+	}
+	if e.target == "" {
+		return e.err.Error()
+	}
+	return fmt.Sprintf("%v: %s", e.err, e.target)
+}
+
+func (e *childRouteError) Unwrap() error {
+	if e == nil {
+		return nil
+	}
+	return e.err
+}
 
 func (agent *Agent) sendMyInfo() {
 	conn, secret, uuid := agent.connectionTriple()
@@ -157,11 +185,15 @@ func (agent *Agent) sendChildMessage(msg *ChildrenMess) error {
 	}
 	conn, ok, fromSupp := agent.nextHopConn(msg.targetUUID, msg.preferSupp)
 	if !ok || conn == nil {
-		return fmt.Errorf("%w: %s (preferSupp=%v)", ErrNoRouteToChild, msg.targetUUID, msg.preferSupp)
+		return &childRouteError{
+			err:      fmt.Errorf("%w: preferSupp=%v", ErrNoRouteToChild, msg.preferSupp),
+			target:   msg.targetUUID,
+			fromSupp: fromSupp,
+		}
 	}
 	sess := agent.currentSession()
 	if sess == nil {
-		return ErrNoUpstreamSession
+		return &childRouteError{err: ErrNoUpstreamSession, target: msg.targetUUID, conn: conn, fromSupp: fromSupp}
 	}
 	if fromSupp {
 		noteSupplementalActivity(msg.targetUUID)
@@ -169,7 +201,10 @@ func (agent *Agent) sendChildMessage(msg *ChildrenMess) error {
 	sMessage := protocol.NewDownMsg(conn, sess.Secret(), sess.UUID())
 	protocol.SetMessageMeta(sMessage, sess.ProtocolFlags())
 	protocol.ConstructMessage(sMessage, msg.cHeader, msg.cMessage, true)
-	sMessage.SendMessage()
+	err := sendPreparedProtocolMessageWithDeadline(conn, sMessage, defaults.BroadcastWriteDeadline)
+	if err != nil {
+		return &childRouteError{err: err, target: msg.targetUUID, conn: conn, fromSupp: fromSupp}
+	}
 	return nil
 }
 

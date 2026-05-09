@@ -126,6 +126,24 @@ func (admin *Admin) fetchRoute(uuid string) (string, bool) {
 	return res.Route, true
 }
 
+func (admin *Admin) fetchDTNRoute(uuid string, attempts int) (string, bool) {
+	route, ok := admin.fetchRoute(uuid)
+	if !ok || route == "" || !routeUsesSupplemental(route) || attempts <= 0 {
+		return route, ok
+	}
+	if admin == nil || admin.topology == nil {
+		return route, ok
+	}
+	primaryRoute, primaryOK := admin.topology.PrimaryRoute(uuid)
+	if !primaryOK || strings.TrimSpace(primaryRoute) == "" {
+		return route, ok
+	}
+	if sess := admin.sessionForRoute(primaryRoute); sess == nil || sess.Conn() == nil {
+		return route, ok
+	}
+	return primaryRoute, true
+}
+
 func routeFirstHop(route string) string {
 	route = strings.TrimSpace(route)
 	if route == "" {
@@ -141,6 +159,20 @@ func routeFirstHop(route string) string {
 		return hop
 	}
 	return ""
+}
+
+func routeUsesSupplemental(route string) bool {
+	if route == "" {
+		return false
+	}
+	parts := strings.Split(route, ":")
+	for _, part := range parts {
+		_, supplemental := stripRouteSegment(strings.TrimSpace(part))
+		if supplemental {
+			return true
+		}
+	}
+	return false
 }
 
 func routeIncludesUUID(route, uuid string) bool {

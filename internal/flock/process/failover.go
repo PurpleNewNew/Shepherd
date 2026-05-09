@@ -179,8 +179,20 @@ func (agent *Agent) adoptFailoverCandidate(candidate *failoverCandidate) bool {
 	if candidate.parentUUID != "" {
 		agent.setParentUUID(candidate.parentUUID)
 	}
+	agent.holdAwakeFor(failoverWakeGrace(agent.loadSleepConfig()))
 	agent.resetFailoverState()
 	return true
+}
+
+func failoverWakeGrace(cfg sleepConfig) time.Duration {
+	grace := time.Duration(cfg.workSeconds) * time.Second
+	if grace < 20*time.Second {
+		grace = 20 * time.Second
+	}
+	if grace > failoverCommandWait {
+		return failoverCommandWait
+	}
+	return grace
 }
 
 func (agent *Agent) shouldContinueWaiting(initialDeadline time.Time) bool {

@@ -153,7 +153,7 @@ func (agent *Agent) shouldCarryRetry(err error, msg *ChildrenMess) bool {
 	if err == nil || msg == nil || msg.cHeader == nil {
 		return false
 	}
-	if !errors.Is(err, ErrNoRouteToChild) && !errors.Is(err, ErrNoUpstreamSession) {
+	if errors.Is(err, ErrInvalidDownstreamMessage) {
 		return false
 	}
 	switch msg.cHeader.MessageType {

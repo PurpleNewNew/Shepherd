@@ -2,6 +2,7 @@ package topology
 
 import (
 	"fmt"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -53,6 +54,58 @@ func TestTopologyCreatesExpectedRoute(t *testing.T) {
 	if info.Depth != 2 {
 		t.Fatalf("expected depth 2 for nodeB, got %d", info.Depth)
 	}
+}
+
+func TestPrimaryRouteIgnoresSupplementalShortcut(t *testing.T) {
+	topology := NewTopology()
+	topology.ResultChan = make(chan *topoResult, 10)
+
+	adminNode := NewNode(protocol.ADMIN_UUID, "127.0.0.1")
+	topology.addNode(&TopoTask{Target: adminNode, IsFirst: true})
+
+	nodeA := NewNode("NODE_AAA", "10.0.0.1")
+	topology.addNode(&TopoTask{Target: nodeA, ParentUUID: protocol.ADMIN_UUID})
+	nodeB := NewNode("NODE_BBB", "10.0.0.2")
+	topology.addNode(&TopoTask{Target: nodeB, ParentUUID: nodeA.uuid})
+	nodeC := NewNode("NODE_CCC", "10.0.0.3")
+	topology.addNode(&TopoTask{Target: nodeC, ParentUUID: nodeB.uuid})
+
+	topology.addEdge(&TopoTask{UUID: protocol.ADMIN_UUID, NeighborUUID: nodeA.uuid})
+	topology.addEdge(&TopoTask{UUID: nodeA.uuid, NeighborUUID: nodeB.uuid})
+	topology.addEdge(&TopoTask{UUID: nodeB.uuid, NeighborUUID: nodeC.uuid})
+	topology.addEdge(&TopoTask{
+		UUID:         protocol.ADMIN_UUID,
+		NeighborUUID: nodeC.uuid,
+		EdgeType:     SupplementalEdge,
+	})
+	topology.calculate()
+
+	info := topology.RouteInfo(nodeC.uuid)
+	if info == nil || info.Display == "" {
+		t.Fatalf("expected calculated route to nodeC")
+	}
+	if !routeDisplayUsesSupplemental(info.Display) {
+		t.Fatalf("expected shortest calculated route to use supplemental shortcut, got %s", info.Display)
+	}
+
+	primary, ok := topology.PrimaryRoute(nodeC.uuid)
+	if !ok {
+		t.Fatalf("expected primary route to nodeC")
+	}
+	expected := nodeA.uuid + ":" + nodeB.uuid + ":" + nodeC.uuid
+	if primary != expected {
+		t.Fatalf("unexpected primary route, want %s got %s", expected, primary)
+	}
+}
+
+func routeDisplayUsesSupplemental(route string) bool {
+	parts := strings.Split(route, ":")
+	for _, part := range parts {
+		if strings.HasSuffix(part, "#supp") {
+			return true
+		}
+	}
+	return false
 }
 
 func TestSupplementalEdgeType(t *testing.T) {

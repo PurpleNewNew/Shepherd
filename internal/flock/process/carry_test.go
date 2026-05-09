@@ -29,8 +29,11 @@ func TestShouldCarryRetry(t *testing.T) {
 	if !agent.shouldCarryRetry(ErrNoUpstreamSession, msg) {
 		t.Fatalf("expected retry for no upstream session")
 	}
-	if agent.shouldCarryRetry(errors.New("other"), msg) {
-		t.Fatalf("unexpected retry for unrelated error")
+	if !agent.shouldCarryRetry(errors.New("write: broken pipe"), msg) {
+		t.Fatalf("expected retry for transient write error")
+	}
+	if agent.shouldCarryRetry(ErrInvalidDownstreamMessage, msg) {
+		t.Fatalf("unexpected retry for invalid downstream message")
 	}
 	msg.cHeader.MessageType = uint16(protocol.SUPPLINKREQ)
 	if !agent.shouldCarryRetry(ErrNoRouteToChild, msg) {

@@ -2,6 +2,7 @@ package process
 
 import (
 	"context"
+	"errors"
 	"sync"
 )
 
@@ -62,15 +63,43 @@ func (d *childDispatcher) run(ctx context.Context) {
 				continue
 			}
 			if err := d.agent.sendChildMessage(msg); err != nil {
-				if d.agent != nil && d.agent.shouldCarryRetry(err, msg) {
-					d.agent.enqueueCarry(msg, err)
-					logger.Warnf("forward to child %s queued for retry: %v", d.uuid, err)
-					continue
-				}
-				logger.Warnf("failed to forward message to child %s: %v", d.uuid, err)
+				d.handleForwardError(err, msg)
 			}
 		}
 	}
+}
+
+func (d *childDispatcher) handleForwardError(err error, msg *ChildrenMess) {
+	if d == nil || err == nil {
+		return
+	}
+	var routeErr *childRouteError
+	hasRouteErr := errors.As(err, &routeErr)
+	if d.agent != nil && d.agent.shouldCarryRetry(err, msg) {
+		d.agent.enqueueCarry(msg, err)
+		logger.Warnf("forward to child %s queued for retry: %v", d.uuid, err)
+		if shouldMarkPrimaryChildOffline(routeErr) {
+			downStreamOffline(d.agent, d.uuid, d, routeErr.conn)
+			d.agent.removeDispatcher(d.uuid, d)
+		}
+		return
+	}
+
+	logger.Warnf("failed to forward message to child %s: %v", d.uuid, err)
+	if hasRouteErr && d.agent != nil && shouldMarkPrimaryChildOffline(routeErr) {
+		downStreamOffline(d.agent, d.uuid, d, routeErr.conn)
+		d.agent.removeDispatcher(d.uuid, d)
+	}
+}
+
+func shouldMarkPrimaryChildOffline(err *childRouteError) bool {
+	if err == nil || err.fromSupp {
+		return false
+	}
+	if errors.Is(err, ErrNoUpstreamSession) || errors.Is(err, ErrInvalidDownstreamMessage) {
+		return false
+	}
+	return true
 }
 
 func (d *childDispatcher) stopDispatcher() {

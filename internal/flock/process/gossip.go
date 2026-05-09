@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"codeberg.org/agnoie/shepherd/internal/flock/gossip"
+	"codeberg.org/agnoie/shepherd/pkg/config/defaults"
 	"codeberg.org/agnoie/shepherd/pkg/utils"
 	"codeberg.org/agnoie/shepherd/protocol"
 )
@@ -149,7 +150,9 @@ func (agent *Agent) requestDTNPull(limit int) {
 	}
 	req := &protocol.DTNPull{Limit: uint16(limit)}
 	protocol.ConstructMessage(up, header, req, false)
-	up.SendMessage()
+	if err := sendPreparedProtocolMessageWithDeadline(sess.Conn(), up, defaults.BroadcastWriteDeadline); err != nil {
+		logger.Warnf("dtn pull request failed: %v", err)
+	}
 }
 
 // nextWakeEstimate 返回当前节点的粗略下次唤醒时间（Unix 秒）。
@@ -719,7 +722,9 @@ func (agent *Agent) sendUpdateDirectToAdmin(update *protocol.GossipUpdate) {
 		return
 	}
 	protocol.ConstructMessage(sMessage, header, &clone, false)
-	sMessage.SendMessage()
+	if err := sendPreparedProtocolMessageWithDeadline(sess.Conn(), sMessage, defaults.BroadcastWriteDeadline); err != nil {
+		logger.Warnf("gossip update to admin failed: %v", err)
+	}
 }
 
 func (agent *Agent) selectNeighborTargets(sender string) []string {
@@ -742,7 +747,9 @@ func (agent *Agent) selectNeighborTargets(sender string) []string {
 	selected := make([]string, 0, len(others)+1)
 	fanout := agent.dynamicFanout()
 
-	if fanout == 0 || len(others) <= fanout {
+	if fanout <= 0 {
+		// 当前 gossip 预算耗尽时仍保留父路径，但不要把 fanout=0 解释成全量泛洪。
+	} else if len(others) <= fanout {
 		selected = append(selected, others...)
 	} else {
 		r := rand.New(rand.NewSource(time.Now().UnixNano()))
@@ -795,7 +802,8 @@ func (agent *Agent) sendGossipToParent(update *protocol.GossipUpdate) {
 		agent.sendUpdateDirectToAdmin(update)
 		return
 	}
-	if sess := agent.currentSession(); sess == nil || sess.Conn() == nil {
+	sess := agent.currentSession()
+	if sess == nil || sess.Conn() == nil {
 		return
 	}
 
@@ -810,7 +818,9 @@ func (agent *Agent) sendGossipToParent(update *protocol.GossipUpdate) {
 		return
 	}
 	protocol.ConstructMessage(sMessage, header, update, false)
-	sMessage.SendMessage()
+	if err := sendPreparedProtocolMessageWithDeadline(sess.Conn(), sMessage, defaults.BroadcastWriteDeadline); err != nil {
+		logger.Warnf("gossip update to parent %s failed: %v", parent, err)
+	}
 }
 
 func (agent *Agent) sendGossipToChild(childUUID string, update *protocol.GossipUpdate) {
@@ -836,7 +846,9 @@ func (agent *Agent) sendGossipToChild(childUUID string, update *protocol.GossipU
 	sMessage := protocol.NewDownMsg(conn, sess.Secret(), sess.UUID())
 	protocol.SetMessageMeta(sMessage, sess.ProtocolFlags())
 	protocol.ConstructMessage(sMessage, header, update, false)
-	sMessage.SendMessage()
+	if err := sendPreparedProtocolMessageWithDeadline(conn, sMessage, defaults.BroadcastWriteDeadline); err != nil {
+		logger.Warnf("gossip update to child %s failed: %v", childUUID, err)
+	}
 }
 
 func (agent *Agent) handleIncomingGossip(update *protocol.GossipUpdate, sender string) {
@@ -996,7 +1008,9 @@ func (agent *Agent) sendGossipResponse(resp *protocol.GossipResponse) {
 	}
 	sMessage := protocol.NewUpMsg(conn, secret, uuid)
 	protocol.ConstructMessage(sMessage, header, resp, false)
-	sMessage.SendMessage()
+	if err := sendPreparedProtocolMessageWithDeadline(conn, sMessage, defaults.BroadcastWriteDeadline); err != nil {
+		logger.Warnf("gossip response failed: %v", err)
+	}
 }
 
 func (agent *Agent) handleGossipPayload(message interface{}, origin string) {

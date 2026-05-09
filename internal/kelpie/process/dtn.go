@@ -217,7 +217,7 @@ func (admin *Admin) attemptBundleDelivery(ctx context.Context, bundle *dtn.Bundl
 	if admin.inflightForTarget(bundle.Target) >= admin.dtnMaxInflightPerTarget {
 		return false
 	}
-	route, ok := admin.fetchRoute(bundle.Target)
+	route, ok := admin.fetchDTNRoute(bundle.Target, bundle.Attempts)
 	if !ok || route == "" {
 		return false
 	}

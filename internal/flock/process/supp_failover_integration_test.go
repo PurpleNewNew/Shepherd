@@ -117,3 +117,31 @@ func TestSuppFailoverPromotionIntegration(t *testing.T) {
 		t.Fatalf("expected failover candidate queued")
 	}
 }
+
+func TestAdoptFailoverCandidateHoldsAwake(t *testing.T) {
+	agent := &Agent{}
+	agent.sleepCfg.Store(sleepConfig{sleepSeconds: 20, workSeconds: 2})
+
+	if !agent.adoptFailoverCandidate(&failoverCandidate{
+		conn:       newFakeConn(),
+		parentUUID: "PARENT-1",
+		linkUUID:   "link-1",
+	}) {
+		t.Fatalf("expected failover candidate adoption")
+	}
+	if got := agent.ParentUUID(); got != "PARENT-1" {
+		t.Fatalf("expected parent PARENT-1, got %s", got)
+	}
+
+	agent.sleepMu.Lock()
+	grace := agent.sleepGraceUntil
+	lastActivity := agent.lastActivity
+	agent.sleepMu.Unlock()
+
+	if time.Until(grace) < 15*time.Second {
+		t.Fatalf("expected failover wake grace to be extended, got %s", time.Until(grace))
+	}
+	if lastActivity.IsZero() {
+		t.Fatalf("expected failover adoption to record activity")
+	}
+}

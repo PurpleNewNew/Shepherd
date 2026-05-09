@@ -151,6 +151,57 @@ func (topology *Topology) RouteInfo(uuid string) *RouteInfo {
 	return topology.routeInfoUnlocked(uuid)
 }
 
+func (topology *Topology) primaryRouteUnlocked(uuid string) (string, bool) {
+	uuid = strings.TrimSpace(uuid)
+	if topology == nil || uuid == "" {
+		return "", false
+	}
+	if uuid == protocol.ADMIN_UUID {
+		return "", true
+	}
+	if topology.id2IDNum(uuid) < 0 {
+		return "", false
+	}
+	rev := make([]string, 0, 8)
+	seen := make(map[string]struct{}, 8)
+	current := uuid
+	for current != "" {
+		if _, ok := seen[current]; ok {
+			return "", false
+		}
+		seen[current] = struct{}{}
+		rev = append(rev, current)
+		if current == protocol.ADMIN_UUID {
+			break
+		}
+		parent := topology.parentOfUnlocked(current)
+		if parent == "" {
+			return "", false
+		}
+		current = parent
+	}
+	if len(rev) == 0 || rev[len(rev)-1] != protocol.ADMIN_UUID {
+		return "", false
+	}
+	path := make([]string, 0, len(rev))
+	for i := len(rev) - 1; i >= 0; i-- {
+		path = append(path, rev[i])
+	}
+	if len(path) <= 1 {
+		return "", true
+	}
+	return strings.Join(path[1:], ":"), true
+}
+
+func (topology *Topology) PrimaryRoute(uuid string) (string, bool) {
+	if topology == nil {
+		return "", false
+	}
+	topology.mu.RLock()
+	defer topology.mu.RUnlock()
+	return topology.primaryRouteUnlocked(uuid)
+}
+
 func (topology *Topology) ensureAdminRouteInfo(depth map[string]int, infos map[string]*RouteInfo) {
 	if infos == nil {
 		return
