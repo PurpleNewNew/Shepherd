@@ -478,13 +478,13 @@ func (p *SupplementalPlanner) candidateScore(target string, candidate *topology.
 	if candidate.Depth > 0 {
 		depthNorm = clamp01(float64(candidate.Depth) / float64(len(candidate.Path)+1))
 	}
-	redundancyNorm := clamp01(candidate.Redundancy)
+	redundancyCost := 1 - clamp01(candidate.Redundancy)
 	workNorm := 1 - clamp01(float64(candidate.WorkSeconds)/candidateWorkRef)
 	score := candidateQualityWeight*qualityNorm +
 		candidateSleepWeight*sleepNorm +
 		candidateOverlapWeight*overlapNorm +
 		candidateDepthWeight*depthNorm +
-		candidateRedundancyWeight*redundancyNorm +
+		candidateRedundancyWeight*redundancyCost +
 		candidateWorkWeight*workNorm
 	return score
 }

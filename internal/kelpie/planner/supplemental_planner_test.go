@@ -31,6 +31,35 @@ func TestBackoffDuration(t *testing.T) {
 	}
 }
 
+func TestCandidateScoreTreatsRedundancyAsLowerCost(t *testing.T) {
+	planner := NewSupplementalPlanner(nil, nil, nil, nil)
+	base := topology.SuppCandidate{
+		Path:        []string{"ADMIN", "parent", "candidate"},
+		Depth:       2,
+		Overlap:     1,
+		WorkSeconds: int(candidateWorkRef),
+	}
+
+	lowRedundancy := base
+	lowRedundancy.UUID = "low-redundancy"
+	lowRedundancy.Redundancy = 0.2
+	highRedundancy := base
+	highRedundancy.UUID = "high-redundancy"
+	highRedundancy.Redundancy = 0.8
+
+	lowScore := planner.candidateScore("target", &lowRedundancy)
+	highScore := planner.candidateScore("target", &highRedundancy)
+	if highScore >= lowScore {
+		t.Fatalf("high redundancy should lower candidate cost, high=%f low=%f", highScore, lowScore)
+	}
+
+	candidates := []*topology.SuppCandidate{&lowRedundancy, &highRedundancy}
+	planner.sortCandidates("target", candidates)
+	if got := candidates[0].UUID; got != highRedundancy.UUID {
+		t.Fatalf("expected high-redundancy candidate first, got %s", got)
+	}
+}
+
 func TestApplyRemovalRespectsPeerQuota(t *testing.T) {
 	planner := &SupplementalPlanner{}
 	links := []nodeLink{
