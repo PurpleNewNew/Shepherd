@@ -186,7 +186,5 @@ func (admin *Admin) startManagers(ctx context.Context) {
 	go DispatchConnectMess(ctx, admin.mgr)
 	go DispatchInfoMess(ctx, admin.mgr, admin.topology)
 	go DispatchChildrenMess(ctx, admin.mgr, admin.topology, admin.onNodeReonline)
-	if admin.options != nil && admin.options.Heartbeat {
-		go admin.runHeartbeat(ctx)
-	}
+	go admin.runHeartbeat(ctx)
 }

@@ -133,6 +133,7 @@ const resizeStart = reactive({
   left: 0,
   bottom: 0,
 });
+let workspaceRefreshTimer: number | null = null;
 
 const action = reactive({
   busy: false,
@@ -324,12 +325,14 @@ onMounted(async () => {
   await refreshAll();
   events.bootstrap();
   metrics.start(3000);
+  startWorkspaceRefresh(3000);
   const offStream = onStreamEvent(handleStreamEvent);
   (window as any).__stockmanOffStream = offStream;
 });
 
 onBeforeUnmount(() => {
   stopResize();
+  stopWorkspaceRefresh();
   metrics.stop();
   events.dispose();
   (window as any).__stockmanOffStream?.();
@@ -443,7 +446,28 @@ async function refreshAll() {
   await refreshListeners();
 }
 
+async function refreshWorkspaceSnapshot() {
+  await topo.refreshQuietly();
+  pivotListeners.value = [...(topo.pivotListeners ?? [])];
+  controllerListeners.value = [...(topo.controllerListeners ?? [])];
+}
+
+function startWorkspaceRefresh(intervalMs = 3000) {
+  stopWorkspaceRefresh();
+  workspaceRefreshTimer = window.setInterval(() => {
+    refreshWorkspaceSnapshot();
+  }, intervalMs);
+}
+
+function stopWorkspaceRefresh() {
+  if (workspaceRefreshTimer !== null) {
+    window.clearInterval(workspaceRefreshTimer);
+    workspaceRefreshTimer = null;
+  }
+}
+
 async function logout() {
+  stopWorkspaceRefresh();
   await conn.disconnect();
   topo.clear();
   events.dispose();

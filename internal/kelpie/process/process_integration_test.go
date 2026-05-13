@@ -191,6 +191,59 @@ func TestSupplementalHeartbeatRefreshesEndpointLiveness(t *testing.T) {
 	}
 }
 
+func TestHeartbeatReplyRefreshesSenderLiveness(t *testing.T) {
+	topo := topology.NewTopology()
+	go topo.Run()
+	t.Cleanup(topo.Stop)
+
+	addNode(t, topo, "NODE-ROOT", protocol.ADMIN_UUID, "10.0.0.1", true)
+	requestTopo(t, topo, &topology.TopoTask{Mode: topology.MARKNODEOFFLINE, UUID: "NODE-ROOT"})
+	if aliveInSnapshot(topo, "NODE-ROOT") {
+		t.Fatalf("expected node to start offline")
+	}
+
+	core := &routerCore{topo: topo}
+	handler := core.dispatchHeartbeat()
+	err := handler(context.Background(), &protocol.Header{Sender: "NODE-ROOT"}, &protocol.HeartbeatMsg{Ping: 1})
+	if err != nil {
+		t.Fatalf("dispatch heartbeat reply: %v", err)
+	}
+	if !aliveInSnapshot(topo, "NODE-ROOT") {
+		t.Fatalf("expected heartbeat reply sender to be marked alive")
+	}
+}
+
+func TestResolveHeartbeatTargetsIncludesOfflineRoutableNodes(t *testing.T) {
+	topo := topology.NewTopology()
+	go topo.Run()
+	t.Cleanup(topo.Stop)
+
+	addNode(t, topo, "NODE-ROOT", protocol.ADMIN_UUID, "10.0.0.1", true)
+	addNode(t, topo, "NODE-MID", "NODE-ROOT", "10.0.0.2", false)
+	addEdge(t, topo, protocol.ADMIN_UUID, "NODE-ROOT")
+	addEdge(t, topo, "NODE-ROOT", "NODE-MID")
+	requestTopo(t, topo, &topology.TopoTask{Mode: topology.CALCULATE})
+	requestTopo(t, topo, &topology.TopoTask{Mode: topology.MARKNODEOFFLINE, UUID: "NODE-MID"})
+
+	admin := NewAdmin(context.Background(), &initial.Options{}, topo, nil, nil, topology.PlannerMetricsSnapshot{}, nil, nil, nil, nil, nil)
+	targets := admin.resolveHeartbeatTargets()
+	if len(targets) != 2 {
+		t.Fatalf("expected heartbeat target count 2, got %d: %+v", len(targets), targets)
+	}
+	foundMid := false
+	for _, target := range targets {
+		if target.uuid == "NODE-MID" {
+			foundMid = true
+			if target.route == "" {
+				t.Fatalf("expected offline mid to keep a routable heartbeat route")
+			}
+		}
+	}
+	if !foundMid {
+		t.Fatalf("expected offline routable mid to be heartbeat target: %+v", targets)
+	}
+}
+
 func TestDTNAckRefreshesSenderLiveness(t *testing.T) {
 	topo := topology.NewTopology()
 	go topo.Run()

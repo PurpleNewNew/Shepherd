@@ -71,16 +71,18 @@ func main() {
 	case initial.NORMAL_PASSIVE:
 		conn, uuid, meta, err = initial.NormalPassive(options)
 	case initial.NORMAL_RECONNECT_ACTIVE:
-		fallthrough
+		conn, uuid, meta, err = initial.NormalActiveWithRetry(ctx, options, nil)
 	case initial.NORMAL_ACTIVE:
 		conn, uuid, meta, err = initial.NormalActive(ctx, options, nil)
 	case initial.SOCKS5_PROXY_RECONNECT_ACTIVE:
-		fallthrough
+		proxy := share.NewSocks5Proxy(options.Connect, options.Socks5Proxy, options.Socks5ProxyU, options.Socks5ProxyP)
+		conn, uuid, meta, err = initial.NormalActiveWithRetry(ctx, options, proxy)
 	case initial.SOCKS5_PROXY_ACTIVE:
 		proxy := share.NewSocks5Proxy(options.Connect, options.Socks5Proxy, options.Socks5ProxyU, options.Socks5ProxyP)
 		conn, uuid, meta, err = initial.NormalActive(ctx, options, proxy)
 	case initial.HTTP_PROXY_RECONNECT_ACTIVE:
-		fallthrough
+		proxy := share.NewHTTPProxy(options.Connect, options.HttpProxy)
+		conn, uuid, meta, err = initial.NormalActiveWithRetry(ctx, options, proxy)
 	case initial.HTTP_PROXY_ACTIVE:
 		proxy := share.NewHTTPProxy(options.Connect, options.HttpProxy)
 		conn, uuid, meta, err = initial.NormalActive(ctx, options, proxy)

@@ -30,9 +30,16 @@ export const useTopologyStore = defineStore('topology', () => {
     return m;
   });
 
-  function applySnapshot(s: Snapshot) {
-    nodes.value = s.nodes ?? [];
-    edges.value = s.edges ?? [];
+  function applySnapshot(s: Snapshot, options: { preserveTopologyIdentity?: boolean } = {}) {
+    const nextNodes = s.nodes ?? [];
+    const nextEdges = s.edges ?? [];
+    if (!options.preserveTopologyIdentity || topologyChanged(nextNodes, nextEdges)) {
+      nodes.value = nextNodes;
+      edges.value = nextEdges;
+    } else {
+      mergeNodes(nextNodes);
+      mergeEdges(nextEdges);
+    }
     streams.value = s.streams ?? [];
     sessions.value = s.sessions ?? [];
     pivotListeners.value = s.pivotListeners ?? [];
@@ -49,6 +56,47 @@ export const useTopologyStore = defineStore('topology', () => {
       error.value = err?.message ?? String(err);
     } finally {
       loading.value = false;
+    }
+  }
+
+  async function refreshQuietly() {
+    error.value = '';
+    try {
+      const snap = await getSnapshot();
+      applySnapshot(snap, { preserveTopologyIdentity: true });
+    } catch (err: any) {
+      error.value = err?.message ?? String(err);
+    }
+  }
+
+  function topologyChanged(nextNodes: NodeSummary[], nextEdges: EdgeSummary[]) {
+    return topologySignature(nodes.value, edges.value) !== topologySignature(nextNodes, nextEdges);
+  }
+
+  function topologySignature(inputNodes: NodeSummary[], inputEdges: EdgeSummary[]) {
+    const nodeKeys = inputNodes
+      .map((n) => n.uuid)
+      .sort()
+      .join('|');
+    const edgeKeys = inputEdges
+      .map((e) => [e.parentUuid, e.childUuid, e.supplemental ? 's' : 'p'].join(':'))
+      .sort()
+      .join('|');
+    return `${nodeKeys}#${edgeKeys}`;
+  }
+
+  function mergeNodes(nextNodes: NodeSummary[]) {
+    const byUUID = new Map(nextNodes.map((n) => [n.uuid, n]));
+    for (let i = 0; i < nodes.value.length; i++) {
+      const next = byUUID.get(nodes.value[i].uuid);
+      if (next) nodes.value[i] = next;
+    }
+  }
+
+  function mergeEdges(nextEdges: EdgeSummary[]) {
+    for (let i = 0; i < edges.value.length; i++) {
+      const next = nextEdges[i];
+      if (next) edges.value[i] = next;
     }
   }
 
@@ -79,6 +127,7 @@ export const useTopologyStore = defineStore('topology', () => {
     selectedUUID,
     nodeMap,
     refresh,
+    refreshQuietly,
     applySnapshot,
     select,
     clear,

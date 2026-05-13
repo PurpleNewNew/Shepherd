@@ -31,6 +31,7 @@ func (admin *Admin) handleNodeAdded(uuid string) {
 	if admin == nil || uuid == "" {
 		return
 	}
+	admin.bindAdminEntrySession(uuid)
 	if admin.suppPlanner != nil {
 		admin.suppPlanner.OnNodeAdded(uuid)
 		return
@@ -43,6 +44,9 @@ func (admin *Admin) handleNodeAdded(uuid string) {
 func (admin *Admin) handleNodeRemoved(uuid string) {
 	if admin == nil || uuid == "" {
 		return
+	}
+	if admin.sessions != nil {
+		admin.sessions.remove(uuid)
 	}
 	if admin.suppPlanner != nil {
 		admin.suppPlanner.OnNodeRemoved(uuid)

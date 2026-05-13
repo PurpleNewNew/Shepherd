@@ -162,6 +162,7 @@ func (admin *Admin) bootstrapRuntime() {
 	ctx := admin.context()
 
 	admin.initManager(ctx)
+	admin.bindAdminEntrySessions()
 	admin.routerCore = newRouterCore(ctx, admin.mgr, admin.topology)
 	if router := admin.routerCore.Router(); router != nil {
 		router.Register(uint16(protocol.GOSSIP_UPDATE), admin.dispatchGossipUpdate())

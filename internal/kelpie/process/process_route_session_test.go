@@ -4,7 +4,9 @@ import (
 	"net"
 	"testing"
 
+	"codeberg.org/agnoie/shepherd/internal/kelpie/topology"
 	"codeberg.org/agnoie/shepherd/pkg/global"
+	"codeberg.org/agnoie/shepherd/protocol"
 )
 
 func registerStoreSession(t *testing.T, store *global.Store, uuid string, activate bool) {
@@ -64,6 +66,40 @@ func TestSessionForUUIDNoFallbackToUnrelatedActiveSession(t *testing.T) {
 
 	if sess := admin.sessionForUUID("target"); sess != nil {
 		t.Fatalf("expected nil session when first hop unavailable, got %s", sess.UUID())
+	}
+}
+
+func TestSessionForRouteUsesAdminEntryWhenRepairSessionIsPrimary(t *testing.T) {
+	store := global.NewStoreWithTransports(nil)
+	registerStoreSession(t, store, protocol.ADMIN_UUID, true)
+	registerStoreSession(t, store, "repair-entry", true)
+
+	topo := topology.NewTopology()
+	go topo.Run()
+	t.Cleanup(topo.Stop)
+	if _, err := topo.Execute(&topology.TopoTask{
+		Mode:       topology.ADDNODE,
+		Target:     topology.NewNode("root", "127.0.0.1"),
+		ParentUUID: protocol.ADMIN_UUID,
+	}); err != nil {
+		t.Fatalf("add root node: %v", err)
+	}
+
+	admin := &Admin{
+		store:    store,
+		topology: topo,
+		adminSessionState: adminSessionState{
+			sessions: newSessionRegistry(store, topo),
+		},
+	}
+	t.Cleanup(admin.sessions.stop)
+
+	sess := admin.sessionForRoute("root:target")
+	if sess == nil {
+		t.Fatalf("expected admin entry session")
+	}
+	if sess.UUID() != protocol.ADMIN_UUID {
+		t.Fatalf("expected admin entry session, got %s", sess.UUID())
 	}
 }
 

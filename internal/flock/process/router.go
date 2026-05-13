@@ -49,7 +49,7 @@ func (agent *Agent) setupRouter() {
 	agent.router.Register(uint16(protocol.SUPPFAILOVER), agent.supplinkFailoverHandler())
 	agent.router.Register(uint16(protocol.RESCUE_REQUEST), agent.rescueRequestHandler())
 	agent.router.Register(protocol.SHUTDOWN, agent.shutdownHandler())
-	agent.router.Register(protocol.HEARTBEAT, agent.ignoreHandler())
+	agent.router.Register(protocol.HEARTBEAT, agent.heartbeatHandler())
 	agent.router.Register(uint16(protocol.DTN_DATA), agent.dtnDataHandler())
 	agent.router.Register(uint16(protocol.STREAM_OPEN), agent.streamOpenHandler())
 	agent.router.Register(uint16(protocol.STREAM_DATA), agent.streamDataHandler())
@@ -363,19 +363,19 @@ func (agent *Agent) applyDTNPayload(data *protocol.DTNData, adminConn net.Conn) 
 	}
 }
 
-func (agent *Agent) pushMemoSnapshotToAdmin(adminConn net.Conn) {
+func (agent *Agent) pushMemoSnapshotToAdmin(adminConn net.Conn) bool {
 	if agent == nil || adminConn == nil {
-		return
+		return false
 	}
 	sess := agent.currentSession()
 	if sess == nil {
-		return
+		return false
 	}
 	info := agent.buildNodeInfo()
 	nodeData, err := json.Marshal(info)
 	if err != nil {
 		logger.Warnf("marshal memo snapshot failed: %v", err)
-		return
+		return false
 	}
 	update := &protocol.GossipUpdate{
 		TTL:           1,
@@ -393,19 +393,36 @@ func (agent *Agent) pushMemoSnapshotToAdmin(adminConn net.Conn) {
 		Route:       protocol.TEMP_ROUTE,
 	}
 	if err := agent.sendUpCarryItemOnConn(adminConn, sess.Secret(), agent.UUID, header, update, false); err != nil {
+		logger.Warnf("memo snapshot on origin link failed: %v", err)
+		if err := agent.sendUpdateDirectToAdmin(update); err == nil {
+			return true
+		}
 		agent.maybeEnqueueUpCarryLocal(header, update)
+		return false
 	}
+	return true
 }
 
 func (agent *Agent) publishMemoSnapshotAfterAck(adminConn net.Conn) {
 	if agent == nil {
 		return
 	}
-	agent.triggerGossipUpdate()
-	if adminConn == nil {
-		return
+	if !agent.pushMemoSnapshotToAdmin(adminConn) && adminConn == nil {
+		info := agent.buildNodeInfo()
+		nodeData, err := json.Marshal(info)
+		if err == nil {
+			update := &protocol.GossipUpdate{
+				TTL:           1,
+				NodeDataLen:   uint64(len(nodeData)),
+				NodeData:      nodeData,
+				SenderUUIDLen: uint16(len(info.UUID)),
+				SenderUUID:    info.UUID,
+				Timestamp:     time.Now().Unix(),
+			}
+			_ = agent.sendUpdateDirectToAdmin(update)
+		}
 	}
-	go agent.pushMemoSnapshotToAdmin(adminConn)
+	agent.triggerGossipUpdate()
 }
 
 func (agent *Agent) gossipRequestHandler() bus.Handler {
@@ -483,6 +500,43 @@ func (agent *Agent) ignoreHandler() bus.Handler {
 		return nil
 	}
 }
+
+func (agent *Agent) heartbeatHandler() bus.Handler {
+	return func(ctx context.Context, header *protocol.Header, payload interface{}) error {
+		hb, ok := payload.(*protocol.HeartbeatMsg)
+		if !ok {
+			return fmt.Errorf("expected *protocol.HeartbeatMsg, got %T", payload)
+		}
+		if header == nil || header.Sender != protocol.ADMIN_UUID {
+			return nil
+		}
+		agent.noteActivity()
+		agent.replyHeartbeat(hb)
+		return nil
+	}
+}
+
+func (agent *Agent) replyHeartbeat(req *protocol.HeartbeatMsg) {
+	if agent == nil {
+		return
+	}
+	ping := uint16(1)
+	if req != nil && req.Ping != 0 {
+		ping = req.Ping
+	}
+	header := &protocol.Header{
+		Sender:      agent.UUID,
+		Accepter:    protocol.ADMIN_UUID,
+		MessageType: protocol.HEARTBEAT,
+		RouteLen:    uint32(len([]byte(protocol.TEMP_ROUTE))),
+		Route:       protocol.TEMP_ROUTE,
+	}
+	resp := &protocol.HeartbeatMsg{Ping: ping}
+	if err := agent.sendUpCarryItem(header, resp, false); err != nil {
+		logger.Warnf("heartbeat reply failed: %v", err)
+	}
+}
+
 func (agent *Agent) streamOpenHandler() bus.Handler {
 	return func(ctx context.Context, header *protocol.Header, payload interface{}) error {
 		open, ok := payload.(*protocol.StreamOpen)

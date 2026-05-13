@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"fmt"
 	"io"
+	"math/rand"
 	"net"
 	"os"
 	"os/exec"
@@ -16,6 +17,7 @@ import (
 	"codeberg.org/agnoie/shepherd/pkg/config/defaults"
 	"codeberg.org/agnoie/shepherd/pkg/share"
 	"codeberg.org/agnoie/shepherd/pkg/share/handshake"
+	reconn "codeberg.org/agnoie/shepherd/pkg/share/reconnect"
 	"codeberg.org/agnoie/shepherd/pkg/share/transport"
 	"codeberg.org/agnoie/shepherd/pkg/utils"
 	"codeberg.org/agnoie/shepherd/pkg/utils/runtimeerr"
@@ -29,6 +31,20 @@ const mfaEnvVar = "SHEPHERD_MFA_PIN"
 
 var START_FORWARDING string
 var STOP_FORWARDING string
+
+func initialReconnectStrategy(options *Options) reconn.Strategy {
+	strategy := reconn.DefaultStrategy
+	if options != nil && options.Reconnect > 0 {
+		base := time.Duration(options.Reconnect) * time.Second
+		if base > 0 {
+			strategy.BaseDelay = base
+			if base*8 > strategy.MaxDelay {
+				strategy.MaxDelay = base * 8
+			}
+		}
+	}
+	return strategy
+}
 
 func achieveUUID(conn net.Conn, secret, transport string) (string, error) {
 	rMessage := protocol.NewUpMsgWithTransport(conn, secret, protocol.TEMP_UUID, transport)
@@ -192,6 +208,86 @@ func NormalActive(ctx context.Context, userOptions *Options, proxy share.Proxy) 
 	}
 	trace.Record(handshake.CodeComplete, nil)
 	return conn, uuid, &meta, nil
+}
+
+func NormalActiveWithRetry(ctx context.Context, userOptions *Options, proxy share.Proxy) (net.Conn, string, *protocol.ProtocolMeta, error) {
+	if userOptions == nil {
+		return nil, "", nil, fmt.Errorf("nil options")
+	}
+	if ctx == nil {
+		ctx = context.Background()
+	}
+
+	baseSecret := userOptions.BaseSecret()
+	strategy := initialReconnectStrategy(userOptions)
+
+	var lastErr error
+	delay := time.Duration(0)
+	if !strategy.ImmediateFirst {
+		delay = strategy.BaseDelay
+	}
+	for attempt := 1; strategy.MaxAttempts <= 0 || attempt <= strategy.MaxAttempts; attempt++ {
+		if delay > 0 {
+			timer := time.NewTimer(delay)
+			select {
+			case <-timer.C:
+			case <-ctx.Done():
+				timer.Stop()
+				return nil, "", nil, ctx.Err()
+			}
+		}
+
+		if baseSecret != "" {
+			userOptions.Secret = baseSecret
+		}
+		conn, uuid, meta, err := NormalActive(ctx, userOptions, proxy)
+		if err == nil {
+			if attempt > 1 {
+				logger.Infof("initial active reconnect succeeded on attempt %d", attempt)
+			}
+			return conn, uuid, meta, nil
+		}
+		lastErr = err
+		logger.Warnf("initial active reconnect attempt %d failed: %v", attempt, err)
+
+		if delay <= 0 {
+			delay = strategy.BaseDelay
+		} else {
+			delay = nextInitialReconnectDelay(delay, strategy)
+		}
+	}
+
+	if err := ctx.Err(); err != nil {
+		return nil, "", nil, err
+	}
+	if lastErr == nil {
+		lastErr = fmt.Errorf("initial active reconnect attempts exhausted")
+	}
+	return nil, "", nil, lastErr
+}
+
+func nextInitialReconnectDelay(prev time.Duration, strategy reconn.Strategy) time.Duration {
+	next := time.Duration(float64(prev) * strategy.Multiplier)
+	if next < strategy.BaseDelay {
+		next = strategy.BaseDelay
+	}
+	if next > strategy.MaxDelay {
+		next = strategy.MaxDelay
+	}
+	if strategy.JitterFactor > 0 {
+		jitter := rand.Float64()*2 - 1
+		next += time.Duration(float64(next) * strategy.JitterFactor * jitter)
+	}
+	if next < strategy.BaseDelay {
+		next = strategy.BaseDelay
+	}
+	if next > strategy.MaxDelay {
+		next = strategy.MaxDelay
+	}
+	if next <= 0 {
+		next = strategy.BaseDelay
+	}
+	return next
 }
 
 func NormalPassive(userOptions *Options) (net.Conn, string, *protocol.ProtocolMeta, error) {

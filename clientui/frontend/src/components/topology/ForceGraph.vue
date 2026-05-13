@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeUnmount, ref, shallowRef, watch } from 'vue';
+import { computed, onBeforeUnmount, ref, shallowRef, watch } from 'vue';
 import {
   forceCenter,
   forceCollide,
@@ -59,6 +59,19 @@ const transform = ref<{ x: number; y: number; k: number }>({
   k: 1,
 });
 const dimensions = ref<{ w: number; h: number }>({ w: 800, h: 600 });
+const graphSignature = computed(() => topologySignature(props.nodes, props.edges));
+
+function topologySignature(nodes: NodeSummary[], edges: EdgeSummary[]) {
+  const nodeKeys = nodes
+    .map((n) => n.uuid)
+    .sort()
+    .join('|');
+  const edgeKeys = edges
+    .map((e) => [e.parentUuid, e.childUuid, e.supplemental ? 's' : 'p'].join(':'))
+    .sort()
+    .join('|');
+  return `${nodeKeys}#${edgeKeys}`;
+}
 
 /**
  * 每一帧由 d3 simulation 触发，直接 DOM 操作节点和边的坐标，
@@ -165,6 +178,21 @@ function rebuildSimulation() {
 
   // Vue 首次渲染完 DOM 后，初始 tick 一次把位置填上，避免首帧在 (0,0)。
   queueMicrotask(() => tickRender());
+}
+
+function syncNodeData() {
+  const byUUID = new Map(props.nodes.map((n) => [n.uuid, n]));
+  let changed = false;
+  for (const node of forceNodes.value) {
+    const next = byUUID.get(node.uuid);
+    if (next && node.data !== next) {
+      node.data = next;
+      changed = true;
+    }
+  }
+  if (changed) {
+    forceNodes.value = [...forceNodes.value];
+  }
 }
 
 function setupZoom() {
@@ -291,9 +319,17 @@ function observeResize() {
 
 // ---- lifecycle ----
 watch(
-  () => [props.nodes, props.edges],
+  graphSignature,
   () => {
     rebuildSimulation();
+  },
+  { immediate: false },
+);
+
+watch(
+  () => props.nodes,
+  () => {
+    syncNodeData();
   },
   { deep: true, immediate: false },
 );

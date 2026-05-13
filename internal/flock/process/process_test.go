@@ -321,6 +321,199 @@ func TestHandleIncomingGossipWithAdminParentSendsDirectToAdmin(t *testing.T) {
 	}
 }
 
+func TestEmitGossipUpdateNonRootReportsDirectToAdmin(t *testing.T) {
+	prevUp, prevDown := protocol.DefaultTransports().Upstream(), protocol.DefaultTransports().Downstream()
+	protocol.SetDefaultTransports("raw", "raw")
+	defer protocol.SetDefaultTransports(prevUp, prevDown)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	t.Cleanup(cancel)
+	store := global.NewStoreWithTransports(nil)
+	if err := store.SetPreAuthToken("test-preauth-token"); err != nil {
+		t.Fatalf("set preauth token: %v", err)
+	}
+
+	agent := NewAgent(ctx, &initial.Options{PreAuthToken: "test-preauth-token"}, store, nil)
+	agent.UUID = "MIDNODE"
+	agent.setParentUUID("ROOTNODE")
+
+	upConn, upPeer := net.Pipe()
+	defer upPeer.Close()
+	defer upConn.Close()
+
+	store.Reset()
+	t.Cleanup(store.Reset)
+	store.InitializeComponent(upConn, "secret", agent.UUID, "raw", "raw")
+	agent.BindSession(store.ActiveSession())
+
+	done := make(chan struct{})
+	go func() {
+		agent.emitGossipUpdate()
+		close(done)
+	}()
+
+	_ = upPeer.SetReadDeadline(time.Now().Add(2 * time.Second))
+	rMessage := protocol.NewDownMsg(upPeer, "secret", protocol.ADMIN_UUID)
+	header, payload, err := protocol.DestructMessage(rMessage)
+	if err != nil {
+		t.Fatalf("read direct gossip update: %v", err)
+	}
+	if header.MessageType != uint16(protocol.GOSSIP_UPDATE) {
+		t.Fatalf("expected gossip update message, got type=%d", header.MessageType)
+	}
+	if header.Accepter != protocol.ADMIN_UUID {
+		t.Fatalf("expected direct accepter=%s, got %s", protocol.ADMIN_UUID, header.Accepter)
+	}
+
+	update, ok := payload.(*protocol.GossipUpdate)
+	if !ok {
+		t.Fatalf("expected *protocol.GossipUpdate payload, got %T", payload)
+	}
+	if update.SenderUUID != "MIDNODE" {
+		t.Fatalf("expected sender uuid MIDNODE, got %s", update.SenderUUID)
+	}
+
+	header, _, err = protocol.DestructMessage(rMessage)
+	if err != nil {
+		t.Fatalf("read parent gossip update: %v", err)
+	}
+	if header.Accepter != "ROOTNODE" {
+		t.Fatalf("expected parent gossip accepter ROOTNODE, got %s", header.Accepter)
+	}
+
+	select {
+	case <-done:
+	case <-time.After(2 * time.Second):
+		t.Fatalf("emitGossipUpdate did not return")
+	}
+}
+
+func TestHeartbeatHandlerRepliesToAdmin(t *testing.T) {
+	prevUp, prevDown := protocol.DefaultTransports().Upstream(), protocol.DefaultTransports().Downstream()
+	protocol.SetDefaultTransports("raw", "raw")
+	defer protocol.SetDefaultTransports(prevUp, prevDown)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	t.Cleanup(cancel)
+	store := global.NewStoreWithTransports(nil)
+	if err := store.SetPreAuthToken("test-preauth-token"); err != nil {
+		t.Fatalf("set preauth token: %v", err)
+	}
+
+	agent := NewAgent(ctx, &initial.Options{PreAuthToken: "test-preauth-token"}, store, nil)
+	agent.UUID = "MIDNODE"
+
+	upConn, upPeer := net.Pipe()
+	defer upPeer.Close()
+	defer upConn.Close()
+
+	store.Reset()
+	t.Cleanup(store.Reset)
+	store.InitializeComponent(upConn, "secret", agent.UUID, "raw", "raw")
+	agent.BindSession(store.ActiveSession())
+
+	done := make(chan struct{})
+	go func() {
+		handler := agent.heartbeatHandler()
+		if err := handler(context.Background(), &protocol.Header{Sender: protocol.ADMIN_UUID}, &protocol.HeartbeatMsg{Ping: 7}); err != nil {
+			t.Errorf("heartbeat handler returned error: %v", err)
+		}
+		close(done)
+	}()
+
+	_ = upPeer.SetReadDeadline(time.Now().Add(2 * time.Second))
+	rMessage := protocol.NewDownMsg(upPeer, "secret", protocol.ADMIN_UUID)
+	header, payload, err := protocol.DestructMessage(rMessage)
+	if err != nil {
+		t.Fatalf("read heartbeat reply: %v", err)
+	}
+	if header.MessageType != uint16(protocol.HEARTBEAT) {
+		t.Fatalf("expected heartbeat reply message, got type=%d", header.MessageType)
+	}
+	if header.Sender != "MIDNODE" {
+		t.Fatalf("expected sender MIDNODE, got %s", header.Sender)
+	}
+	if header.Accepter != protocol.ADMIN_UUID {
+		t.Fatalf("expected accepter=%s, got %s", protocol.ADMIN_UUID, header.Accepter)
+	}
+	reply, ok := payload.(*protocol.HeartbeatMsg)
+	if !ok {
+		t.Fatalf("expected *protocol.HeartbeatMsg payload, got %T", payload)
+	}
+	if reply.Ping != 7 {
+		t.Fatalf("expected ping echo 7, got %d", reply.Ping)
+	}
+
+	select {
+	case <-done:
+	case <-time.After(2 * time.Second):
+		t.Fatalf("heartbeat handler did not return")
+	}
+}
+
+func TestPublishMemoSnapshotAfterAckSendsDirectSnapshot(t *testing.T) {
+	prevUp, prevDown := protocol.DefaultTransports().Upstream(), protocol.DefaultTransports().Downstream()
+	protocol.SetDefaultTransports("raw", "raw")
+	defer protocol.SetDefaultTransports(prevUp, prevDown)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	t.Cleanup(cancel)
+	store := global.NewStoreWithTransports(nil)
+	if err := store.SetPreAuthToken("test-preauth-token"); err != nil {
+		t.Fatalf("set preauth token: %v", err)
+	}
+
+	agent := NewAgent(ctx, &initial.Options{PreAuthToken: "test-preauth-token"}, store, nil)
+	agent.UUID = "MEMONODE"
+	agent.Memo = "memo-after-ack"
+
+	upConn, upPeer := net.Pipe()
+	defer upPeer.Close()
+	defer upConn.Close()
+
+	store.Reset()
+	t.Cleanup(store.Reset)
+	store.InitializeComponent(upConn, "secret", agent.UUID, "raw", "raw")
+	agent.BindSession(store.ActiveSession())
+
+	done := make(chan struct{})
+	go func() {
+		agent.publishMemoSnapshotAfterAck(upConn)
+		close(done)
+	}()
+
+	_ = upPeer.SetReadDeadline(time.Now().Add(2 * time.Second))
+	rMessage := protocol.NewDownMsg(upPeer, "secret", protocol.ADMIN_UUID)
+	header, payload, err := protocol.DestructMessage(rMessage)
+	if err != nil {
+		t.Fatalf("read memo snapshot: %v", err)
+	}
+	if header.MessageType != uint16(protocol.GOSSIP_UPDATE) {
+		t.Fatalf("expected gossip update, got type=%d", header.MessageType)
+	}
+	if header.Accepter != protocol.ADMIN_UUID {
+		t.Fatalf("expected accepter=%s, got %s", protocol.ADMIN_UUID, header.Accepter)
+	}
+
+	update, ok := payload.(*protocol.GossipUpdate)
+	if !ok {
+		t.Fatalf("expected *protocol.GossipUpdate payload, got %T", payload)
+	}
+	var info protocol.NodeInfo
+	if err := json.Unmarshal(update.NodeData, &info); err != nil {
+		t.Fatalf("decode node info: %v", err)
+	}
+	if info.UUID != "MEMONODE" || info.Memo != "memo-after-ack" {
+		t.Fatalf("unexpected node snapshot: uuid=%s memo=%q", info.UUID, info.Memo)
+	}
+
+	select {
+	case <-done:
+	case <-time.After(2 * time.Second):
+		t.Fatalf("memo snapshot publish did not return")
+	}
+}
+
 func TestSelectNeighborTargetsZeroFanoutDoesNotFloodNonParents(t *testing.T) {
 	agent := &Agent{
 		UUID:           "SELFNODE",

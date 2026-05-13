@@ -96,6 +96,7 @@ func (core *routerCore) bootstrap() {
 	core.bus.Register(uint16(protocol.STREAM_DATA), core.dispatchStreamData())
 	core.bus.Register(uint16(protocol.STREAM_ACK), core.dispatchStreamAck())
 	core.bus.Register(uint16(protocol.STREAM_CLOSE), core.dispatchStreamClose())
+	core.bus.Register(uint16(protocol.HEARTBEAT), core.dispatchHeartbeat())
 	core.bus.Register(uint16(protocol.SLEEP_UPDATE_ACK), core.dispatchSleepUpdateAck())
 }
 
@@ -310,6 +311,16 @@ func (core *routerCore) dispatchStreamClose() bus.Handler {
 		if core.streamClose != nil {
 			core.streamClose(header, msg)
 		}
+		return nil
+	}
+}
+
+func (core *routerCore) dispatchHeartbeat() bus.Handler {
+	return func(ctx context.Context, header *protocol.Header, payload interface{}) error {
+		if _, ok := payload.(*protocol.HeartbeatMsg); !ok {
+			return fmt.Errorf("expected *protocol.HeartbeatMsg, got %T", payload)
+		}
+		core.markSenderAlive(header)
 		return nil
 	}
 }

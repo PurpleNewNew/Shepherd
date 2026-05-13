@@ -3,17 +3,23 @@ package process
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"codeberg.org/agnoie/shepherd/internal/kelpie/printer"
-	"codeberg.org/agnoie/shepherd/internal/kelpie/topology"
 	"codeberg.org/agnoie/shepherd/pkg/config/defaults"
 	"codeberg.org/agnoie/shepherd/protocol"
 )
 
-// runHeartbeat 会周期性探测上游会话，以发现失效的 admin 路由。
+type heartbeatTarget struct {
+	uuid  string
+	route string
+}
+
+// runHeartbeat 会周期性探测所有已知可路由节点。只有收到 Flock 回执时，
+// Kelpie 才刷新 last_seen/is_alive，避免 Stockman 把可操作节点误判离线。
 func (admin *Admin) runHeartbeat(ctx context.Context) {
-	if admin == nil || admin.topology == nil || admin.mgr == nil {
+	if admin == nil || admin.topology == nil {
 		return
 	}
 	if ctx == nil {
@@ -26,39 +32,42 @@ func (admin *Admin) runHeartbeat(ctx context.Context) {
 		case <-ctx.Done():
 			return
 		case <-ticker.C:
-			uuid, route, err := admin.resolveHeartbeatRoute()
-			if err != nil {
-				printer.Warning("\r\n[!] Admin heartbeat skipped: %v\r\n", err)
-				continue
-			}
-			if err := admin.sendHeartbeat(uuid, route); err != nil {
-				printer.Warning("\r\n[!] Admin heartbeat failed for %s: %v\r\n", uuid, err)
+			targets := admin.resolveHeartbeatTargets()
+			for _, target := range targets {
+				if err := admin.sendHeartbeat(target.uuid, target.route); err != nil {
+					printer.Warning("\r\n[!] Admin heartbeat failed for %s: %v\r\n", target.uuid, err)
+				}
 			}
 		}
 	}
 }
 
 func (admin *Admin) resolveHeartbeatRoute() (string, string, error) {
+	targets := admin.resolveHeartbeatTargets()
+	if len(targets) == 0 {
+		return "", "", fmt.Errorf("no heartbeat targets available")
+	}
+	return targets[0].uuid, targets[0].route, nil
+}
+
+func (admin *Admin) resolveHeartbeatTargets() []heartbeatTarget {
 	if admin == nil || admin.topology == nil {
-		return "", "", fmt.Errorf("topology unavailable")
+		return nil
 	}
-	task := &topology.TopoTask{
-		Mode:    topology.GETUUID,
-		UUIDNum: 0,
+	snapshot := admin.topology.UISnapshot("", "")
+	targets := make([]heartbeatTarget, 0, len(snapshot.Nodes))
+	for _, node := range snapshot.Nodes {
+		uuid := strings.TrimSpace(node.UUID)
+		if uuid == "" || uuid == protocol.ADMIN_UUID || uuid == protocol.TEMP_UUID {
+			continue
+		}
+		route, ok := admin.fetchRoute(uuid)
+		if !ok || strings.TrimSpace(route) == "" {
+			continue
+		}
+		targets = append(targets, heartbeatTarget{uuid: uuid, route: route})
 	}
-	result, err := admin.topoRequest(task)
-	if err != nil {
-		return "", "", fmt.Errorf("resolve admin uuid: %w", err)
-	}
-	if result == nil || result.UUID == "" {
-		return "", "", fmt.Errorf("admin uuid unavailable")
-	}
-	uuid := result.UUID
-	route, ok := admin.fetchRoute(uuid)
-	if !ok || route == "" {
-		return "", "", fmt.Errorf("route unavailable for %s", uuid)
-	}
-	return uuid, route, nil
+	return targets
 }
 
 func (admin *Admin) sendHeartbeat(targetUUID, route string) error {

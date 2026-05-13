@@ -38,6 +38,8 @@ func upCarryTTLForMessageType(msgType uint16) time.Duration {
 		return upCarryDefaultTTL
 	case uint16(protocol.RUNTIMELOG):
 		return upCarryDefaultTTL
+	case uint16(protocol.GOSSIP_UPDATE):
+		return upCarryDefaultTTL
 	// 拓扑与自愈控制面消息（小消息）。
 	case uint16(protocol.NODEOFFLINE), uint16(protocol.NODEREONLINE):
 		return upCarryDefaultTTL

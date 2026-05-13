@@ -688,20 +688,20 @@ func (agent *Agent) emitGossipUpdate() {
 			agent.UUID, nodeInfo.UUID, memo, ttl, agent.ParentUUID(), len(nodeInfo.Neighbors))
 	}
 
-	if agent.ParentUUID() == "" {
-		agent.sendUpdateDirectToAdmin(update)
-	}
+	// 每个节点都周期性上报自身到 Kelpie，避免中间节点只依赖邻居 gossip
+	// 间接抵达管理端而被 stale 检测误判离线。
+	agent.sendUpdateDirectToAdmin(update)
 
 	agent.forwardGossipUpdate(update, "", ttl)
 }
 
-func (agent *Agent) sendUpdateDirectToAdmin(update *protocol.GossipUpdate) {
+func (agent *Agent) sendUpdateDirectToAdmin(update *protocol.GossipUpdate) error {
 	sess := agent.currentSession()
 	if sess == nil {
-		return
+		return ErrNoUpstreamSession
 	}
 	if sess.Conn() == nil {
-		return
+		return ErrNoUpstreamSession
 	}
 
 	header := &protocol.Header{
@@ -719,12 +719,14 @@ func (agent *Agent) sendUpdateDirectToAdmin(update *protocol.GossipUpdate) {
 
 	sMessage, _, ok := agent.newUpMsg()
 	if !ok {
-		return
+		return ErrNoUpstreamSession
 	}
 	protocol.ConstructMessage(sMessage, header, &clone, false)
 	if err := sendPreparedProtocolMessageWithDeadline(sess.Conn(), sMessage, defaults.BroadcastWriteDeadline); err != nil {
 		logger.Warnf("gossip update to admin failed: %v", err)
+		return err
 	}
+	return nil
 }
 
 func (agent *Agent) selectNeighborTargets(sender string) []string {

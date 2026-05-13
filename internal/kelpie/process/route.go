@@ -71,6 +71,11 @@ func (admin *Admin) sessionForRoute(route string) session.Session {
 		if sess := admin.sessionForComponent(firstHop); sess != nil && sess.Conn() != nil {
 			return sess
 		}
+		if admin.bindAdminEntrySession(firstHop) {
+			if sess := admin.sessionForComponent(firstHop); sess != nil && sess.Conn() != nil {
+				return sess
+			}
+		}
 	}
 	sess := admin.currentSession()
 	if sess == nil || sess.Conn() == nil {
@@ -84,6 +89,70 @@ func (admin *Admin) sessionForRoute(route string) session.Session {
 		return sess
 	}
 	return nil
+}
+
+func (admin *Admin) adminEntrySession() session.Session {
+	if admin == nil {
+		return nil
+	}
+	if admin.store != nil {
+		if sess := admin.store.SessionFor(protocol.ADMIN_UUID); sess != nil && sess.Conn() != nil {
+			return sess
+		}
+		if sess := admin.store.SessionFor(protocol.TEMP_UUID); sess != nil && sess.Conn() != nil {
+			return sess
+		}
+	}
+	if admin.session != nil {
+		switch strings.TrimSpace(admin.session.UUID()) {
+		case protocol.ADMIN_UUID, protocol.TEMP_UUID:
+			if admin.session.Conn() != nil {
+				return admin.session
+			}
+		}
+	}
+	return nil
+}
+
+func (admin *Admin) bindAdminEntrySessions() {
+	if admin == nil || admin.topology == nil {
+		return
+	}
+	snapshot := admin.topology.UISnapshot("", "")
+	for _, node := range snapshot.Nodes {
+		if node.ParentUUID == protocol.ADMIN_UUID {
+			admin.bindAdminEntrySession(node.UUID)
+		}
+	}
+}
+
+func (admin *Admin) bindAdminEntrySession(uuid string) bool {
+	if admin == nil || admin.sessions == nil || !admin.isAdminEntryFirstHop(uuid) {
+		return false
+	}
+	sess := admin.adminEntrySession()
+	if sess == nil || sess.Conn() == nil {
+		return false
+	}
+	admin.sessions.set(uuid, newRouteAliasSession(sess))
+	return true
+}
+
+func (admin *Admin) isAdminEntryFirstHop(uuid string) bool {
+	if admin == nil || admin.topology == nil {
+		return false
+	}
+	uuid = strings.TrimSpace(uuid)
+	if uuid == "" || uuid == protocol.ADMIN_UUID || uuid == protocol.TEMP_UUID {
+		return false
+	}
+	snapshot := admin.topology.UISnapshot("", "")
+	for _, node := range snapshot.Nodes {
+		if node.UUID == uuid {
+			return node.ParentUUID == protocol.ADMIN_UUID
+		}
+	}
+	return false
 }
 
 func (admin *Admin) newDownstreamMessageForRoute(targetUUID, route string) (protocol.Message, error) {
