@@ -238,6 +238,33 @@ func TestReparentNodeGuardsAgainstCycle(t *testing.T) {
 	}
 }
 
+func TestReparentNodeRejectsCycleWithoutAdminFallback(t *testing.T) {
+	topology := NewTopology()
+	go topology.Run()
+	defer topology.Stop()
+
+	adminNode := NewNode(protocol.ADMIN_UUID, "127.0.0.1")
+	waitForTask(t, topology, &TopoTask{Mode: ADDNODE, Target: adminNode, IsFirst: true})
+
+	parent := NewNode("NODE-PARENT", "10.0.0.1")
+	a := NewNode("NODE-A", "10.0.0.2")
+	b := NewNode("NODE-B", "10.0.0.3")
+	waitForTask(t, topology, &TopoTask{Mode: ADDNODE, Target: parent, ParentUUID: protocol.ADMIN_UUID})
+	waitForTask(t, topology, &TopoTask{Mode: ADDNODE, Target: a, ParentUUID: parent.uuid})
+	waitForTask(t, topology, &TopoTask{Mode: ADDNODE, Target: b, ParentUUID: a.uuid})
+
+	waitForTask(t, topology, &TopoTask{Mode: REPARENTNODE, UUID: a.uuid, ParentUUID: b.uuid})
+
+	metaA := waitForTask(t, topology, &TopoTask{Mode: GETNODEMETA, UUID: a.uuid})
+	if metaA == nil || metaA.Parent != parent.uuid {
+		t.Fatalf("expected NODE-A parent remain %s, got %+v", parent.uuid, metaA)
+	}
+	metaB := waitForTask(t, topology, &TopoTask{Mode: GETNODEMETA, UUID: b.uuid})
+	if metaB == nil || metaB.Parent != a.uuid {
+		t.Fatalf("expected NODE-B parent remain NODE-A, got %+v", metaB)
+	}
+}
+
 func TestReonlinePreservesSleepMetadata(t *testing.T) {
 	topology := NewTopology()
 	topology.ResultChan = make(chan *topoResult, 10)

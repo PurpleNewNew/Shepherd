@@ -107,8 +107,12 @@ func attemptSupplementalFailover(mgr *manager.Manager, topo *topology.Topology, 
 	}
 	diagSuppFailover("reparent_selected", uuid, parentUUID, target, candidates, "")
 
+	if !reparentTree(topo, uuid, target) {
+		diagSuppFailover("reparent_rejected", uuid, parentUUID, target, candidates,
+			fmt.Sprintf("current_parent=%s", shortID(fetchParentUUID(topo, uuid))))
+		return false
+	}
 	detachBrokenTreeEdge(topo, parentUUID, uuid)
-	reparentTree(topo, uuid, target)
 
 	// Failover 命令必须能够立即路由；如果路由计算带去抖，
 	// 就可能与消息下发竞争，把晋升消息卡在已断裂的父边之后。
@@ -311,6 +315,10 @@ func selectFailoverCandidate(topo *topology.Topology, uuid, parent string, candi
 				continue
 			}
 		}
+		if parentChainIncludes(topo, peer, uuid) {
+			diagSuppFailoverCandidate(uuid, parent, peer, "parent_chain_loops_back", "")
+			continue
+		}
 		route := fetchRouteString(topo, peer)
 		if route == "" {
 			diagSuppFailoverCandidate(uuid, parent, peer, "empty_route", "")
@@ -339,6 +347,27 @@ func selectFailoverCandidate(topo *topology.Topology, uuid, parent string, candi
 	return best
 }
 
+func parentChainIncludes(topo *topology.Topology, uuid, ancestor string) bool {
+	uuid = strings.TrimSpace(uuid)
+	ancestor = strings.TrimSpace(ancestor)
+	if topo == nil || uuid == "" || ancestor == "" {
+		return false
+	}
+	visited := make(map[string]struct{}, 8)
+	current := uuid
+	for current != "" && current != protocol.ADMIN_UUID {
+		if current == ancestor {
+			return true
+		}
+		if _, seen := visited[current]; seen {
+			return false
+		}
+		visited[current] = struct{}{}
+		current = fetchParentUUID(topo, current)
+	}
+	return false
+}
+
 func detachBrokenTreeEdge(topo *topology.Topology, parent, child string) {
 	if parent == "" || child == "" {
 		return
@@ -355,14 +384,16 @@ func detachBrokenTreeEdge(topo *topology.Topology, parent, child string) {
 	}
 }
 
-func reparentTree(topo *topology.Topology, child, newParent string) {
+func reparentTree(topo *topology.Topology, child, newParent string) bool {
 	if err := topoExecute(topo, &topology.TopoTask{
 		Mode:       topology.REPARENTNODE,
 		UUID:       child,
 		ParentUUID: newParent,
 	}); err != nil {
 		printer.Warn("ADMIN_CHILDREN_REPARENT_NODE", true, err, "reparent node %s to %s failed", child, newParent)
+		return false
 	}
+	return fetchParentUUID(topo, child) == newParent
 }
 
 func fetchParentUUID(topo *topology.Topology, uuid string) string {

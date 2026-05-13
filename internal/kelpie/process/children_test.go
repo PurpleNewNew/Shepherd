@@ -63,6 +63,7 @@ func TestSelectFailoverCandidate(t *testing.T) {
 func TestSelectFailoverCandidateRespectsEntry(t *testing.T) {
 	topo := topology.NewTopology()
 	go topo.Run()
+	t.Cleanup(topo.Stop)
 
 	addNode := func(uuid, parent string, isFirst bool) {
 		node := topology.NewNode(uuid, "127.0.0.1")
@@ -127,5 +128,67 @@ func TestSelectFailoverCandidateRespectsEntry(t *testing.T) {
 
 	if candidate := selectFailoverCandidate(topo, "NODE-1A", "ENTRY-1", []string{"NODE-2A", "NODE-1B"}); candidate != "NODE-1B" {
 		t.Fatalf("expected same-entry candidate NODE-1B, got %s", candidate)
+	}
+}
+
+func TestSelectFailoverCandidateRejectsParentChainCycleWithStaleRoute(t *testing.T) {
+	topo := topology.NewTopology()
+	go topo.Run()
+	t.Cleanup(topo.Stop)
+
+	addNode := func(uuid, parent string, isFirst bool) {
+		node := topology.NewNode(uuid, "127.0.0.1")
+		if err := topo.Enqueue(&topology.TopoTask{
+			Mode:       topology.ADDNODE,
+			Target:     node,
+			ParentUUID: parent,
+			IsFirst:    isFirst,
+		}); err != nil {
+			t.Fatalf("enqueue add node: %v", err)
+		}
+		<-topo.ResultChan
+		if parent != "" {
+			if err := topo.Enqueue(&topology.TopoTask{
+				Mode:         topology.ADDEDGE,
+				UUID:         parent,
+				NeighborUUID: uuid,
+			}); err != nil {
+				t.Fatalf("enqueue add edge: %v", err)
+			}
+			<-topo.ResultChan
+		}
+	}
+
+	addNode("ROOT", protocol.ADMIN_UUID, true)
+	addNode("NODE-1", "ROOT", false)
+	addNode("NODE-2", "ROOT", false)
+
+	if err := topo.Enqueue(&topology.TopoTask{
+		Mode:         topology.ADDEDGE,
+		UUID:         "NODE-1",
+		NeighborUUID: "NODE-2",
+		EdgeType:     topology.SupplementalEdge,
+	}); err != nil {
+		t.Fatalf("enqueue supplemental edge: %v", err)
+	}
+	<-topo.ResultChan
+	if err := topo.Enqueue(&topology.TopoTask{Mode: topology.CALCULATE}); err != nil {
+		t.Fatalf("enqueue calculate: %v", err)
+	}
+	<-topo.ResultChan
+
+	// Simulate a race: NODE-2 has already been reparented under NODE-1,
+	// but routeInfo still contains the previous ROOT:NODE-2 route.
+	if err := topo.Enqueue(&topology.TopoTask{
+		Mode:       topology.REPARENTNODE,
+		UUID:       "NODE-2",
+		ParentUUID: "NODE-1",
+	}); err != nil {
+		t.Fatalf("enqueue reparent node: %v", err)
+	}
+	<-topo.ResultChan
+
+	if candidate := selectFailoverCandidate(topo, "NODE-1", "ROOT", []string{"NODE-2"}); candidate != "" {
+		t.Fatalf("candidate would create parent cycle, got %s", candidate)
 	}
 }

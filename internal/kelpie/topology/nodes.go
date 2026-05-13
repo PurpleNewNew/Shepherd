@@ -823,9 +823,10 @@ func (topology *Topology) reparentNode(task *TopoTask) {
 	oldParent := topology.parentOfUnlocked(task.UUID)
 	newParent := topology.resolveParentUUID(task.UUID, task.ParentUUID, false)
 	if topology.createsParentCycle(task.UUID, newParent) {
-		printer.Warning("\r\n[*] Reparent cycle guard: reject parent %s for %s, fallback to ADMIN\r\n",
-			newParent, task.UUID)
-		newParent = protocol.ADMIN_UUID
+		printer.Warning("\r\n[*] Reparent cycle guard: reject parent %s for %s; keep parent %s\r\n",
+			newParent, task.UUID, oldParent)
+		topology.ResultChan <- &topoResult{}
+		return
 	}
 	if oldParent == newParent {
 		topology.ResultChan <- &topoResult{}
