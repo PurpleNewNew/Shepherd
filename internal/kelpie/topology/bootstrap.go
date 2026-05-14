@@ -47,7 +47,9 @@ func (topology *Topology) ApplySnapshot(snapshot *Snapshot) {
 			memo:            snap.Memo,
 			lastSeen:        snap.LastSeen,
 			isAlive:         snap.IsAlive,
+			status:          statusFromPersisted(snap.Status, snap.IsAlive),
 		}
+		n.isAlive = n.lifecycleStatus() == NodeStatusOnline
 		topology.nodes[idx] = n
 		topology.history[snap.UUID] = idx
 		topology.uuidIndex[snap.UUID] = idx

@@ -39,6 +39,7 @@ type NodeSnapshot struct {
 	Username       string
 	Memo           string
 	IsAlive        bool
+	Status         int
 	LastSeen       time.Time
 }
 
@@ -118,7 +119,8 @@ func (topology *Topology) persistNode(uuid string) {
 		Hostname:       node.currentHostname,
 		Username:       node.currentUser,
 		Memo:           node.memo,
-		IsAlive:        node.isAlive,
+		IsAlive:        node.lifecycleStatus() == NodeStatusOnline,
+		Status:         statusToPersisted(node.lifecycleStatus(), node.isAlive),
 		LastSeen:       node.lastSeen,
 	}
 	if err := topology.persist.UpsertNode(record); err != nil {

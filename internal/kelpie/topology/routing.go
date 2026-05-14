@@ -51,6 +51,10 @@ func (topology *Topology) getRoute(task *TopoTask) {
 		topology.ResultChan <- &topoResult{}
 		return
 	}
+	if status, ok := topology.nodeStatusUnlocked(task.UUID); ok && statusRouteExcluded(status) {
+		topology.ResultChan <- &topoResult{}
+		return
+	}
 	if !topology.matchesNetwork(task.UUID, strings.TrimSpace(task.NetworkID)) {
 		topology.ResultChan <- &topoResult{}
 		return
@@ -71,10 +75,18 @@ func (topology *Topology) calculate() {
 
 	// 为每个节点还原路径
 	for idNum := range topology.nodes {
-		uuid := topology.nodes[idNum].uuid
+		node := topology.nodes[idNum]
+		if node == nil {
+			continue
+		}
+		uuid := node.uuid
 		// ADMIN 自身
 		if uuid == protocol.ADMIN_UUID {
 			topology.assignRouteInfo(uuid, []string{protocol.ADMIN_UUID}, newDepth, newInfos)
+			continue
+		}
+		if statusRouteExcluded(node.lifecycleStatus()) {
+			topology.assignRouteInfo(uuid, nil, newDepth, newInfos)
 			continue
 		}
 		// 还原路径：从 uuid 回溯至 ADMIN
@@ -159,7 +171,11 @@ func (topology *Topology) primaryRouteUnlocked(uuid string) (string, bool) {
 	if uuid == protocol.ADMIN_UUID {
 		return "", true
 	}
-	if topology.id2IDNum(uuid) < 0 {
+	id := topology.id2IDNum(uuid)
+	if id < 0 {
+		return "", false
+	}
+	if node := topology.nodes[id]; node == nil || statusRouteExcluded(node.lifecycleStatus()) {
 		return "", false
 	}
 	rev := make([]string, 0, 8)
@@ -173,6 +189,9 @@ func (topology *Topology) primaryRouteUnlocked(uuid string) (string, bool) {
 		rev = append(rev, current)
 		if current == protocol.ADMIN_UUID {
 			break
+		}
+		if status, ok := topology.nodeStatusUnlocked(current); ok && statusRouteExcluded(status) {
+			return "", false
 		}
 		parent := topology.parentOfUnlocked(current)
 		if parent == "" {

@@ -371,6 +371,38 @@ func (m *portProxyManager) StopAll() {
 	}
 }
 
+func (m *portProxyManager) StopTarget(target string) int {
+	if m == nil || strings.TrimSpace(target) == "" {
+		return 0
+	}
+	target = strings.ToLower(strings.TrimSpace(target))
+	m.mu.Lock()
+	forwards := make([]*forwardEntry, 0)
+	for id, entry := range m.forwards {
+		if entry == nil || !strings.EqualFold(entry.target, target) {
+			continue
+		}
+		forwards = append(forwards, entry)
+		delete(m.forwards, id)
+	}
+	backwards := make([]*backwardEntry, 0)
+	for id, entry := range m.backwards {
+		if entry == nil || !strings.EqualFold(entry.target, target) {
+			continue
+		}
+		backwards = append(backwards, entry)
+		delete(m.backwards, id)
+	}
+	m.mu.Unlock()
+	for _, entry := range forwards {
+		entry.stop()
+	}
+	for _, entry := range backwards {
+		entry.stop()
+	}
+	return len(forwards) + len(backwards)
+}
+
 func (m *portProxyManager) List() []*ProxyDescriptor {
 	if m == nil {
 		return nil

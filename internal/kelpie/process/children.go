@@ -70,7 +70,9 @@ func nodeOffline(mgr *manager.Manager, topo *topology.Topology, uuid string) {
 	}
 }
 
-func attemptSupplementalFailover(mgr *manager.Manager, topo *topology.Topology, uuid string) bool {
+type failoverCleanupFunc func(failedParent, child, newParent string)
+
+func attemptSupplementalFailover(mgr *manager.Manager, topo *topology.Topology, uuid string, cleanup ...failoverCleanupFunc) bool {
 	if topo == nil || uuid == "" {
 		diagSuppFailover("invalid_input", uuid, "", "", nil, "topology_nil_or_empty_uuid")
 		return false
@@ -105,6 +107,18 @@ func attemptSupplementalFailover(mgr *manager.Manager, topo *topology.Topology, 
 			fmt.Sprintf("node_network=%s target_network=%s", networkForNode(topo, uuid), networkForNode(topo, target)))
 		return false
 	}
+
+	if prt, ok := topo.NodeRuntime(parentUUID); ok && prt.SleepSeconds > 0 {
+		// A duty-cycled parent can disappear during its normal sleep window.
+		// Do not mutate the tree until a later repair/rescue path proves that
+		// the parent is genuinely unavailable; otherwise a harmless sleep can
+		// leave a child reparented away without promoting/quarantining the old
+		// parent.
+		supp.PublishNodeRemoved(uuid)
+		diagSuppFailover("skip_reparent_parent_sleepy", uuid, parentUUID, target, candidates,
+			"publish_node_removed_only")
+		return false
+	}
 	diagSuppFailover("reparent_selected", uuid, parentUUID, target, candidates, "")
 
 	if !reparentTree(topo, uuid, target) {
@@ -123,34 +137,13 @@ func attemptSupplementalFailover(mgr *manager.Manager, topo *topology.Topology, 
 	}
 
 	if linkUUID := supp.FindSuppLinkUUID(uuid, target); linkUUID != "" {
-		// duty-cycled 父节点（sleepSeconds>0）会主动断开自己的上游连接。
-		// 如果父节点只是因为睡眠离线，就为其后代晋升 supplemental 边，
-		// 会带来本可避免的拓扑抖动，还可能与唤醒重连竞争。
-		//
-		// 但如果旧父节点本身不是 duty-cycled，那么“父节点丢失”通常意味着
-		// 真实的故障或死亡。这时即使子节点本身也是 duty-cycled，
-		// 也必须启动 failover promotion；否则它会不断重连到死掉的父节点，
-		// 而 DTN ACK 永远回不到上游。
-		parentSleepy := false
-		if prt, ok := topo.NodeRuntime(parentUUID); ok && prt.SleepSeconds > 0 {
-			parentSleepy = true
-		}
-		if parentSleepy {
-			// 仅保持为 supplemental。
-			//
-			// 注意：在 duty-cycled（sleep/work）拓扑中，我们有意跳过 promotion，
-			// 以避免链路抖动；但这也意味着若故障是永久性的
-			// （例如节点在睡眠时被 kill），子节点可能会持续重连到旧的死父节点。
-			//
-			// 因此这里发布一个“offline”提示，便于 supplemental planner
-			// 在该子节点多个周期都未刷新 LastSeen 时，再安排延迟的救援探测。
-			supp.PublishNodeRemoved(uuid)
-			diagSuppFailover("skip_promote_parent_sleepy", uuid, parentUUID, target, candidates,
-				"publish_node_removed_only")
-		} else {
-			diagSuppFailover("start_promote", uuid, parentUUID, target, candidates,
-				fmt.Sprintf("link_uuid=%s", shortID(linkUUID)))
-			supp.StartSuppFailover(topo, mgr, linkUUID, target, uuid)
+		diagSuppFailover("start_promote", uuid, parentUUID, target, candidates,
+			fmt.Sprintf("link_uuid=%s", shortID(linkUUID)))
+		supp.StartSuppFailover(topo, mgr, linkUUID, target, uuid)
+		for _, fn := range cleanup {
+			if fn != nil {
+				fn(parentUUID, uuid, target)
+			}
 		}
 	} else {
 		diagSuppFailover("no_link_uuid", uuid, parentUUID, target, candidates,
@@ -167,7 +160,7 @@ func attemptSupplementalFailover(mgr *manager.Manager, topo *topology.Topology, 
 //
 // NodeOffline 由原父节点上报。如果这个父节点已经死亡，更深层的后代不会被逐个上报，
 // 但它们仍可能持有可被晋升的存活 supplemental 链路。
-func salvageOfflineSubtree(mgr *manager.Manager, topo *topology.Topology, offlineUUID string) {
+func salvageOfflineSubtree(mgr *manager.Manager, topo *topology.Topology, offlineUUID string, cleanup ...failoverCleanupFunc) {
 	if topo == nil || offlineUUID == "" {
 		return
 	}
@@ -197,13 +190,20 @@ func salvageOfflineSubtree(mgr *manager.Manager, topo *topology.Topology, offlin
 			// 递归之前先尝试给子节点换父：如果 failover 成功，
 			// 它就会从离线子树中脱离出来，后续的 MARKNODEOFFLINE
 			// 也就不会再把它一并盲目标记为离线。
-			_ = attemptSupplementalFailover(mgr, topo, child)
+			_ = attemptSupplementalFailover(mgr, topo, child, cleanup...)
 			queue = append(queue, child)
 		}
 	}
 }
 
-func nodeReonline(mgr *manager.Manager, topo *topology.Topology, mess *protocol.NodeReonline) {
+func nodeReonline(mgr *manager.Manager, topo *topology.Topology, mess *protocol.NodeReonline, cleanup ...failoverCleanupFunc) {
+	oldParent := fetchParentUUID(topo, mess.UUID)
+	oldParentUnavailable := false
+	if oldParent != "" && oldParent != mess.ParentUUID && oldParent != protocol.ADMIN_UUID && topo != nil {
+		status, ok := topo.NodeStatus(oldParent)
+		oldParentUnavailable = !ok || status != topology.NodeStatusOnline
+	}
+
 	node := topology.NewNode(mess.UUID, mess.IP)
 
 	if err := topoExecute(topo, &topology.TopoTask{
@@ -255,9 +255,16 @@ func nodeReonline(mgr *manager.Manager, topo *topology.Topology, mess *protocol.
 
 	printer.Success("\r\n[*] Node %d is reonline!", result.IDNum)
 	supp.PublishNodeAdded(mess.UUID)
+	if oldParentUnavailable {
+		for _, fn := range cleanup {
+			if fn != nil {
+				fn(oldParent, mess.UUID, mess.ParentUUID)
+			}
+		}
+	}
 }
 
-func DispatchChildrenMess(ctx context.Context, mgr *manager.Manager, topo *topology.Topology, onNodeReonline func(string)) {
+func DispatchChildrenMess(ctx context.Context, mgr *manager.Manager, topo *topology.Topology, onNodeReonline func(string), onFailoverCleanup ...failoverCleanupFunc) {
 	for {
 		var message interface{}
 		select {
@@ -272,7 +279,7 @@ func DispatchChildrenMess(ctx context.Context, mgr *manager.Manager, topo *topol
 			// （无论是死亡还是 duty-cycled 睡眠），更深层的后代
 			// 已经不能再依赖这个离线父节点回传上行 ACK，
 			// 但它们可能仍然拥有可晋升的 supplemental 链路。
-			salvageOfflineSubtree(mgr, topo, mess.UUID)
+			salvageOfflineSubtree(mgr, topo, mess.UUID, onFailoverCleanup...)
 
 			// duty-cycled 节点（sleepSeconds>0）会主动断开与父节点的连接；
 			// 若试图通过 supplemental failover 为它们换父，
@@ -282,11 +289,11 @@ func DispatchChildrenMess(ctx context.Context, mgr *manager.Manager, topo *topol
 				break
 			}
 
-			if !attemptSupplementalFailover(mgr, topo, mess.UUID) {
+			if !attemptSupplementalFailover(mgr, topo, mess.UUID, onFailoverCleanup...) {
 				nodeOffline(mgr, topo, mess.UUID)
 			}
 		case *protocol.NodeReonline:
-			nodeReonline(mgr, topo, mess)
+			nodeReonline(mgr, topo, mess, onFailoverCleanup...)
 			if onNodeReonline != nil {
 				onNodeReonline(strings.TrimSpace(mess.UUID))
 			}

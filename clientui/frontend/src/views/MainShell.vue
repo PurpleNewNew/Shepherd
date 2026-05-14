@@ -189,6 +189,8 @@ const activeTargetNode = computed(() => {
   return topo.nodeMap.get(activeTargetUUID.value) ?? null;
 });
 
+const activeTargetReachable = computed(() => isReachable(activeTargetNode.value?.status));
+
 const activeTargetSessions = computed(() => {
   const uuid = activeTargetUUID.value;
   if (!uuid) return [];
@@ -486,14 +488,42 @@ function labelForUUID(uuid: string): string {
 
 function isOnline(status?: string): boolean {
   const normalized = (status || '').toLowerCase();
-  return normalized.includes('online') || normalized.includes('connected') || normalized === 'ready';
+  return (
+    (normalized.includes('online') && !normalized.includes('offline')) ||
+    normalized.includes('connected') ||
+    normalized === 'ready'
+  );
+}
+
+function isReachable(status?: string): boolean {
+  const normalized = (status || '').toLowerCase();
+  return isOnline(status) && !['quarantined', 'retired', 'unreachable'].some((s) => normalized.includes(s));
+}
+
+function isTargetReachable(uuid?: string): boolean {
+  if (!uuid) return false;
+  return isReachable(topo.nodeMap.get(uuid)?.status);
+}
+
+function guardReachableTarget(uuid: string, label = 'Target'): boolean {
+  const node = topo.nodeMap.get(uuid);
+  if (isReachable(node?.status)) return true;
+  action.error = `${label} ${labelForUUID(uuid)} is ${node?.status || 'unreachable'}.`;
+  return false;
 }
 
 function statusTone(status?: string): 'ok' | 'warn' | 'bad' | 'idle' {
   const normalized = (status || '').toLowerCase();
   if (isOnline(status)) return 'ok';
   if (normalized.includes('sleep') || normalized.includes('hold')) return 'warn';
-  if (normalized.includes('error') || normalized.includes('fail') || normalized.includes('lost')) return 'bad';
+  if (
+    normalized.includes('error') ||
+    normalized.includes('fail') ||
+    normalized.includes('lost') ||
+    normalized.includes('quarantined') ||
+    normalized.includes('retired') ||
+    normalized.includes('unreachable')
+  ) return 'bad';
   return 'idle';
 }
 
@@ -581,16 +611,32 @@ async function chooseTargetAction(kind: 'detail' | 'shell' | 'files' | 'proxy' |
   if (kind === 'detail') {
     openTargetTab(node.uuid);
   } else if (kind === 'shell') {
+    if (!isReachable(node.status)) {
+      action.error = `Target ${labelForNode(node)} is ${node.status || 'unreachable'}.`;
+      return;
+    }
     openTargetTab(node.uuid, 'shell');
     await ensureShell(node.uuid);
   } else if (kind === 'files') {
     openTargetTab(node.uuid, 'files');
     await loadFiles(node.uuid);
   } else if (kind === 'proxy') {
+    if (!isReachable(node.status)) {
+      action.error = `Target ${labelForNode(node)} is ${node.status || 'unreachable'}.`;
+      return;
+    }
     openTargetTab(node.uuid, 'proxy');
   } else if (kind === 'ssh') {
+    if (!isReachable(node.status)) {
+      action.error = `Target ${labelForNode(node)} is ${node.status || 'unreachable'}.`;
+      return;
+    }
     openTargetTab(node.uuid, 'ssh');
   } else if (kind === 'listeners') {
+    if (!isReachable(node.status)) {
+      action.error = `Target ${labelForNode(node)} is ${node.status || 'unreachable'}.`;
+      return;
+    }
     openTargetTab(node.uuid, 'listeners');
     await refreshListeners();
   } else if (kind === 'events') {
@@ -718,16 +764,20 @@ function handleStreamEvent(ev: StreamEventDTO) {
   if (!uuid) return;
   const isSsh = ev.kind === 'ssh' || sshHandles[uuid]?.handleId === ev.handleId;
   const lines = isSsh ? sshLines : shellLines;
+  const handles = isSsh ? sshHandles : shellHandles;
   if (!lines[uuid]) lines[uuid] = [];
   if (ev.type === 'open') {
-    lines[uuid].push(`[stream ${ev.streamId || '-'} opened]`);
-    const handles = isSsh ? sshHandles : shellHandles;
+    lines[uuid].push(`[stream ${ev.streamId || '-'} opening]`);
     if (handles[uuid] && ev.streamId) handles[uuid].streamId = ev.streamId;
+    if (handles[uuid]) handles[uuid].status = 'opening';
   } else if (ev.type === 'data' && ev.data) {
+    if (handles[uuid]) handles[uuid].status = 'open_ack';
     lines[uuid].push(...ev.data.replace(/\r/g, '').split('\n').filter(Boolean));
   } else if (ev.type === 'closed') {
+    if (handles[uuid]) handles[uuid].status = 'closed';
     lines[uuid].push('[stream closed]');
   } else if (ev.type === 'error') {
+    if (handles[uuid]) handles[uuid].status = 'failed';
     lines[uuid].push(`[error] ${ev.error || 'stream error'}`);
   }
   lines[uuid] = lines[uuid].slice(-160);
@@ -736,12 +786,18 @@ function handleStreamEvent(ev: StreamEventDTO) {
 async function ensureShell(uuid = activeTargetUUID.value) {
   if (!uuid) return;
   targetMode.value = 'shell';
+  const node = topo.nodeMap.get(uuid);
+  if (!isReachable(node?.status)) {
+    if (!shellLines[uuid]) shellLines[uuid] = [];
+    shellLines[uuid].push(`[target unreachable] ${node?.status || 'unknown'}`);
+    return;
+  }
   if (shellHandles[uuid]) return;
   if (!shellLines[uuid]) shellLines[uuid] = [];
   try {
     const handle = await startShell({ target: uuid, mode: 'pty' });
     shellHandles[uuid] = handle;
-    shellLines[uuid].push(`[shell requested] ${handle.sessionId || handle.handleId}`);
+    shellLines[uuid].push(`[shell queued] ${handle.sessionId || handle.handleId}`);
   } catch (err: any) {
     action.error = err?.message ?? String(err);
     shellLines[uuid].push(`[error] ${action.error}`);
@@ -754,6 +810,7 @@ async function submitShellCommand() {
   if (!uuid || !cmd.trim()) return;
   await ensureShell(uuid);
   const handle = shellHandles[uuid];
+  if (!handle) return;
   shellLines[uuid].push(`$ ${cmd}`);
   shellInput.value = '';
   try {
@@ -779,6 +836,11 @@ async function closeActiveShell() {
 async function ensureSsh(uuid = activeTargetUUID.value) {
   if (!uuid) return;
   targetMode.value = 'ssh';
+  if (!guardReachableTarget(uuid, 'SSH target')) {
+    if (!sshLines[uuid]) sshLines[uuid] = [];
+    sshLines[uuid].push(`[target unreachable] ${topo.nodeMap.get(uuid)?.status || 'unknown'}`);
+    return;
+  }
   if (sshHandles[uuid]) return;
   if (!sshLines[uuid]) sshLines[uuid] = [];
   try {
@@ -802,6 +864,7 @@ async function submitSshCommand() {
   if (!uuid || !cmd.trim()) return;
   await ensureSsh(uuid);
   const handle = sshHandles[uuid];
+  if (!handle) return;
   sshLines[uuid].push(`$ ${cmd}`);
   sshInput.value = '';
   try {
@@ -827,6 +890,7 @@ async function closeActiveSsh() {
 async function submitSshTunnel() {
   const uuid = activeTargetUUID.value;
   if (!uuid) return;
+  if (!guardReachableTarget(uuid, 'SSH tunnel target')) return;
   try {
     await startSshTunnel({
       target: uuid,
@@ -928,6 +992,7 @@ async function startForwardForActive() {
   const uuid = activeTargetUUID.value;
   if (!uuid) return;
   targetMode.value = 'proxy';
+  if (!guardReachableTarget(uuid, 'Proxy target')) return;
   if (!proxyResults[uuid]) proxyResults[uuid] = [];
   try {
     const result = await startForwardProxy({
@@ -945,6 +1010,7 @@ async function startBackwardForActive() {
   const uuid = activeTargetUUID.value;
   if (!uuid) return;
   targetMode.value = 'proxy';
+  if (!guardReachableTarget(uuid, 'Proxy target')) return;
   if (!proxyResults[uuid]) proxyResults[uuid] = [];
   try {
     const result = await startBackwardProxy({
@@ -990,6 +1056,7 @@ async function startSocksForActive() {
   const uuid = activeTargetUUID.value;
   if (!uuid) return;
   targetMode.value = 'proxy';
+  if (!guardReachableTarget(uuid, 'SOCKS target')) return;
   try {
     const handle = await startSocksProxy({
       target: uuid,
@@ -1016,6 +1083,7 @@ async function closeStream(streamId: number) {
 async function pingActiveStream() {
   const uuid = activeTargetUUID.value || topo.selectedUUID;
   if (!uuid) return;
+  if (!guardReachableTarget(uuid, 'Stream target')) return;
   try {
     await streamPing({ target: uuid, count: 3, payloadSize: 32 });
     action.message = `Stream ping queued for ${uuid.slice(0, 8)}.`;
@@ -1066,6 +1134,7 @@ async function loadSessionDiagnostics(uuid = activeTargetUUID.value || topo.sele
 async function createPivotForActive() {
   const uuid = activeTargetUUID.value || topo.selectedUUID;
   if (!uuid) return;
+  if (!guardReachableTarget(uuid, 'Listener target')) return;
   try {
     await createPivotListener({
       target: uuid,
@@ -1521,7 +1590,7 @@ function normalizeDTNPayload(raw: string): string {
                   <option value="soreuse">soreuse</option>
                 </select>
               </label>
-              <button :disabled="!(activeTargetUUID || topo.selectedUUID)" @click="createPivotForActive">Create</button>
+              <button :disabled="!isTargetReachable(activeTargetUUID || topo.selectedUUID)" @click="createPivotForActive">Create</button>
             </section>
           </div>
           <div class="listener-table">
@@ -1542,7 +1611,7 @@ function normalizeDTNPayload(raw: string): string {
               <span>{{ labelForUUID(listener.targetUuid || '') }}</span>
               <span>{{ listener.status }}</span>
               <small>{{ listener.lastError || listener.listenerId }}</small>
-              <button @click="setPivotStatus(listener, 'resume')">Resume</button>
+              <button :disabled="!isTargetReachable(listener.targetUuid)" @click="setPivotStatus(listener, 'resume')">Resume</button>
               <button @click="setPivotStatus(listener, 'pause')">Pause</button>
               <button @click="removePivot(listener)">Delete</button>
             </p>
@@ -1568,11 +1637,11 @@ function normalizeDTNPayload(raw: string): string {
           </header>
           <nav class="target-mode-tabs">
             <button :class="{ active: targetMode === 'overview' }" @click="targetMode = 'overview'">Overview</button>
-            <button :class="{ active: targetMode === 'shell' }" @click="ensureShell()">Shell</button>
+            <button :disabled="!activeTargetReachable" :class="{ active: targetMode === 'shell' }" @click="ensureShell()">Shell</button>
             <button :class="{ active: targetMode === 'files' }" @click="loadFiles()">Files</button>
-            <button :class="{ active: targetMode === 'proxy' }" @click="targetMode = 'proxy'">Proxy</button>
-            <button :class="{ active: targetMode === 'ssh' }" @click="targetMode = 'ssh'">SSH</button>
-            <button :class="{ active: targetMode === 'listeners' }" @click="targetMode = 'listeners'; refreshListeners()">Listeners</button>
+            <button :disabled="!activeTargetReachable" :class="{ active: targetMode === 'proxy' }" @click="targetMode = 'proxy'">Proxy</button>
+            <button :disabled="!activeTargetReachable" :class="{ active: targetMode === 'ssh' }" @click="targetMode = 'ssh'">SSH</button>
+            <button :disabled="!activeTargetReachable" :class="{ active: targetMode === 'listeners' }" @click="targetMode = 'listeners'; refreshListeners()">Listeners</button>
           </nav>
           <div v-if="activeTargetNode && targetMode === 'overview'" class="target-grid">
             <dl class="facts">
@@ -1655,7 +1724,7 @@ function normalizeDTNPayload(raw: string): string {
             <div class="shell-head">
               <span>{{ activeShellHandle ? activeShellHandle.status : 'not started' }}</span>
               <span class="sf-mono">{{ activeShellHandle?.sessionId || activeTargetUUID }}</span>
-              <button @click="ensureShell()">Start</button>
+              <button :disabled="!activeTargetReachable" @click="ensureShell()">Start</button>
               <button @click="closeActiveShell">Close</button>
             </div>
             <div class="shell-output">
@@ -1664,8 +1733,8 @@ function normalizeDTNPayload(raw: string): string {
             </div>
             <form class="shell-input" @submit.prevent="submitShellCommand">
               <span>$</span>
-              <input v-model="shellInput" class="sf-mono" placeholder="whoami" />
-              <button>Send</button>
+              <input v-model="shellInput" class="sf-mono" :disabled="!activeTargetReachable" placeholder="whoami" />
+              <button :disabled="!activeTargetReachable">Send</button>
             </form>
           </div>
           <div v-else-if="targetMode === 'files'" class="files-workspace">
@@ -1722,19 +1791,19 @@ function normalizeDTNPayload(raw: string): string {
               <h3>Forward Proxy</h3>
               <label><span>Local bind</span><input v-model="proxyLocalBind" class="sf-mono" /></label>
               <label><span>Remote address</span><input v-model="proxyRemoteAddr" class="sf-mono" /></label>
-              <button @click="startForwardForActive">Start Forward</button>
+              <button :disabled="!activeTargetReachable" @click="startForwardForActive">Start Forward</button>
             </section>
             <section class="proxy-panel">
               <h3>Backward Proxy</h3>
               <label><span>Agent remote port</span><input v-model="backwardRemotePort" class="sf-mono" /></label>
               <label><span>Kelpie local port</span><input v-model="backwardLocalPort" class="sf-mono" /></label>
-              <button @click="startBackwardForActive">Start Backward</button>
+              <button :disabled="!activeTargetReachable" @click="startBackwardForActive">Start Backward</button>
             </section>
             <section class="proxy-panel">
               <h3>SOCKS</h3>
               <label><span>Username</span><input v-model="socksUsername" /></label>
               <label><span>Password</span><input v-model="socksPassword" type="password" /></label>
-              <button @click="startSocksForActive">Start SOCKS</button>
+              <button :disabled="!activeTargetReachable" @click="startSocksForActive">Start SOCKS</button>
             </section>
             <section class="proxy-panel active-proxies">
               <h3>Active Proxies</h3>
@@ -1753,8 +1822,8 @@ function normalizeDTNPayload(raw: string): string {
               <label><span>Username</span><input v-model="sshUsername" /></label>
               <label><span>Password</span><input v-model="sshPassword" type="password" /></label>
               <label><span>Agent tunnel port</span><input v-model="sshAgentPort" class="sf-mono" /></label>
-              <button @click="ensureSsh()">Start Session</button>
-              <button @click="submitSshTunnel">Start Tunnel</button>
+              <button :disabled="!activeTargetReachable" @click="ensureSsh()">Start Session</button>
+              <button :disabled="!activeTargetReachable" @click="submitSshTunnel">Start Tunnel</button>
               <button @click="closeActiveSsh">Close Session</button>
             </section>
             <textarea v-model="sshPrivateKey" class="ssh-key sf-mono" placeholder="private key for cert auth tunnel"></textarea>
@@ -1786,7 +1855,7 @@ function normalizeDTNPayload(raw: string): string {
                     <option value="soreuse">soreuse</option>
                   </select>
                 </label>
-                <button @click="createPivotForActive">Create Pivot</button>
+                <button :disabled="!activeTargetReachable" @click="createPivotForActive">Create Pivot</button>
               </section>
             </section>
             <section class="listener-table">
@@ -1796,7 +1865,7 @@ function normalizeDTNPayload(raw: string): string {
                 <span>{{ listener.protocol }}</span>
                 <span>{{ listener.status }}</span>
                 <small>{{ listener.lastError || listener.listenerId }}</small>
-                <button @click="setPivotStatus(listener, 'resume')">Resume</button>
+                <button :disabled="!activeTargetReachable" @click="setPivotStatus(listener, 'resume')">Resume</button>
                 <button @click="setPivotStatus(listener, 'pause')">Pause</button>
                 <button @click="removePivot(listener)">Delete</button>
               </p>
@@ -1842,7 +1911,7 @@ function normalizeDTNPayload(raw: string): string {
         <span>Inspect Target</span>
         <kbd>Enter</kbd>
       </button>
-      <button @click="chooseTargetAction('shell')">
+      <button :disabled="contextMenu.node ? !isReachable(contextMenu.node.status) : true" @click="chooseTargetAction('shell')">
         <span>Interact / Shell</span>
         <kbd>⌘I</kbd>
       </button>
@@ -1850,15 +1919,15 @@ function normalizeDTNPayload(raw: string): string {
         <span>Browse Files</span>
         <kbd>⌘F</kbd>
       </button>
-      <button @click="chooseTargetAction('proxy')">
+      <button :disabled="contextMenu.node ? !isReachable(contextMenu.node.status) : true" @click="chooseTargetAction('proxy')">
         <span>Port Forward / SOCKS</span>
         <kbd>⌘P</kbd>
       </button>
-      <button @click="chooseTargetAction('ssh')">
+      <button :disabled="contextMenu.node ? !isReachable(contextMenu.node.status) : true" @click="chooseTargetAction('ssh')">
         <span>SSH Session / Tunnel</span>
         <kbd>SSH</kbd>
       </button>
-      <button @click="chooseTargetAction('listeners')">
+      <button :disabled="contextMenu.node ? !isReachable(contextMenu.node.status) : true" @click="chooseTargetAction('listeners')">
         <span>Pivot Listener</span>
         <kbd>L</kbd>
       </button>

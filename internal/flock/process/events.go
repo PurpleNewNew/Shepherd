@@ -127,6 +127,9 @@ func downStreamOffline(agent *Agent, uuid string, expected *childDispatcher, exp
 	mgr.ChildrenManager.RemoveChild(uuid)
 
 	agent.removeNeighbor(uuid)
+	if dropped := agent.dropCarryQueue(uuid); dropped > 0 {
+		logger.Warnf("[diag][child_offline] stage=drop_carry child=%s dropped=%d", uuid, dropped)
+	}
 
 	sMessage, sess, ok := agent.newUpMsg()
 	if !ok {

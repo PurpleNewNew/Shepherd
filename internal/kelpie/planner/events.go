@@ -324,6 +324,10 @@ func (p *SupplementalPlanner) OnNodeRemoved(uuid string) {
 	}
 	p.clearTopologyBlocks()
 	p.recordPlannerEvent("node", "removed", eventSourceSystem, uuid, "")
+	if p.nodeRepairBlocked(uuid) {
+		p.StopRepair(uuid, "node is quarantined or retired")
+		return
+	}
 	// 对常在线节点（sleepSeconds=0）而言，“offline”通常意味着硬故障（kill/crash）。
 	// 因此这里主动将其 supplemental 链路判为失效，让路由尽快停止使用过期的
 	// "#supp" 边，也让 planner 能立即创建替代链路，而不是继续等待心跳超时。
@@ -362,6 +366,9 @@ func (p *SupplementalPlanner) RequestManualRepair(uuid string) error {
 	}
 	if !p.Enabled() {
 		return fmt.Errorf("supplemental planner is disabled")
+	}
+	if p.nodeRepairBlocked(uuid) {
+		return fmt.Errorf("node %s is not repairable", uuid)
 	}
 	action := PlanAction{
 		Reason:      reasonManual,

@@ -4,8 +4,11 @@ import (
 	"fmt"
 	"sort"
 	"strings"
+	"time"
 
 	"codeberg.org/agnoie/shepherd/internal/kelpie/planner"
+	"codeberg.org/agnoie/shepherd/internal/kelpie/printer"
+	"codeberg.org/agnoie/shepherd/internal/kelpie/supp"
 	"codeberg.org/agnoie/shepherd/internal/kelpie/topology"
 	"codeberg.org/agnoie/shepherd/protocol"
 )
@@ -45,6 +48,7 @@ func (admin *Admin) handleNodeRemoved(uuid string) {
 	if admin == nil || uuid == "" {
 		return
 	}
+	admin.cleanupUnavailableNode(uuid, "node offline", topology.NodeStatusOffline)
 	if admin.sessions != nil {
 		admin.sessions.remove(uuid)
 	}
@@ -55,6 +59,80 @@ func (admin *Admin) handleNodeRemoved(uuid string) {
 	admin.suppPendingMu.Lock()
 	admin.pendingNodeRemovals = append(admin.pendingNodeRemovals, uuid)
 	admin.suppPendingMu.Unlock()
+}
+
+func (admin *Admin) cleanupUnavailableNode(uuid, reason string, status topology.NodeStatus) {
+	if admin == nil || strings.TrimSpace(uuid) == "" {
+		return
+	}
+	uuid = strings.TrimSpace(uuid)
+	if strings.EqualFold(uuid, protocol.ADMIN_UUID) || strings.EqualFold(uuid, protocol.TEMP_UUID) {
+		return
+	}
+	if reason == "" {
+		reason = string(status)
+	}
+	_ = admin.DropSession(uuid)
+	if admin.sessions != nil {
+		admin.sessions.remove(uuid)
+	}
+	state := admin.sessionState(uuid)
+	state.Status = SessionStatusMarkedDead
+	state.LastError = reason
+	state.Reason = reason
+	state.UpdatedAt = time.Now().UTC()
+	state.LastCommand = "lifecycle:" + string(status)
+	state.LastCommandAt = state.UpdatedAt
+	admin.setSessionState(uuid, state)
+	listenerStatus := ListenerStatusOwnerOff
+	switch status {
+	case topology.NodeStatusQuarantined, topology.NodeStatusRetired:
+		listenerStatus = ListenerStatusStale
+	case topology.NodeStatusUnreachable:
+		listenerStatus = ListenerStatusUnreach
+	}
+	admin.markListenersForTarget(uuid, listenerStatus, reason)
+	terminal := status == topology.NodeStatusQuarantined || status == topology.NodeStatusRetired
+	if terminal && admin.suppPlanner != nil {
+		admin.suppPlanner.StopRepair(uuid, reason)
+	}
+	if terminal && admin.topology != nil && admin.mgr != nil {
+		supp.FailLinksForEndpoint(admin.topology, admin.mgr, uuid, reason)
+	}
+	if terminal {
+		admin.clearDTNForTarget(uuid, reason)
+	}
+	if admin.streamEngine != nil {
+		admin.streamEngine.AbortTarget(uuid, reason)
+	}
+	if admin.portProxies != nil {
+		admin.portProxies.StopTarget(uuid)
+	}
+	if admin.topology != nil {
+		admin.topology.ScheduleCalculate()
+	}
+}
+
+func (admin *Admin) QuarantineNode(uuid, reason string) error {
+	if admin == nil || admin.topology == nil {
+		return fmt.Errorf("topology unavailable")
+	}
+	uuid = strings.TrimSpace(uuid)
+	if uuid == "" {
+		return fmt.Errorf("target uuid required")
+	}
+	if reason == "" {
+		reason = "node quarantined"
+	}
+	res, err := admin.topology.Service().Request(admin.context(), &topology.TopoTask{Mode: topology.QUARANTINENODE, UUID: uuid})
+	if err != nil {
+		return err
+	}
+	if res == nil || len(res.AllNodes) == 0 {
+		return fmt.Errorf("node %s not found", uuid)
+	}
+	admin.cleanupUnavailableNode(uuid, reason, topology.NodeStatusQuarantined)
+	return nil
 }
 
 func (admin *Admin) handleLinkRetired(linkUUID string, endpoints []string, reason string) {
@@ -89,6 +167,20 @@ func (admin *Admin) handleLinkPromoted(linkUUID, parentUUID, childUUID string) {
 		child:  childUUID,
 	})
 	admin.suppPendingMu.Unlock()
+}
+
+func (admin *Admin) handleFailoverCleanup(failedParent, child, newParent string) {
+	if admin == nil {
+		return
+	}
+	failedParent = strings.TrimSpace(failedParent)
+	if failedParent == "" || failedParent == protocol.ADMIN_UUID || failedParent == protocol.TEMP_UUID {
+		return
+	}
+	reason := fmt.Sprintf("failover promoted %s under %s", shortID(child), shortID(newParent))
+	if err := admin.QuarantineNode(failedParent, reason); err != nil {
+		printer.Warn("ADMIN_FAILOVER_QUARANTINE", true, err, "quarantine failed parent %s after failover", failedParent)
+	}
 }
 
 func (admin *Admin) flushPendingSuppEvents() {
@@ -329,6 +421,9 @@ func (admin *Admin) PruneOffline() (int, error) {
 	}
 	if res == nil || len(res.AllNodes) == 0 {
 		return 0, nil
+	}
+	for _, uuid := range res.AllNodes {
+		admin.cleanupUnavailableNode(uuid, "offline node pruned", topology.NodeStatusRetired)
 	}
 	return len(res.AllNodes), nil
 }

@@ -323,6 +323,9 @@ func (topology *Topology) earliestArrivalFrom(base time.Time, source string) (ma
 		if node == nil || node.uuid == "" {
 			continue
 		}
+		if node.uuid != source && statusRouteExcluded(node.lifecycleStatus()) {
+			continue
+		}
 		dist[node.uuid] = math.MaxInt64
 	}
 	if _, ok := dist[source]; !ok {
@@ -340,6 +343,11 @@ func (topology *Topology) earliestArrivalFrom(base time.Time, source string) (ma
 		if t > dist[u] {
 			continue
 		}
+		if u != source {
+			if status, ok := topology.nodeStatusUnlocked(u); ok && statusRouteExcluded(status) {
+				continue
+			}
+		}
 		// 松弛所有邻居
 		neighbors := topology.edges[u]
 		if len(neighbors) == 0 {
@@ -351,6 +359,11 @@ func (topology *Topology) earliestArrivalFrom(base time.Time, source string) (ma
 		for _, v := range neighbors {
 			if v == "" || v == u {
 				continue
+			}
+			if v != source {
+				if status, ok := topology.nodeStatusUnlocked(v); ok && statusRouteExcluded(status) {
+					continue
+				}
 			}
 			wait := int64(topology.expectedWaitAtNodeMs(u, base.Add(time.Duration(t)*time.Millisecond)))
 			lat := int64(topology.baseEdgeLatencyMs(u, v))

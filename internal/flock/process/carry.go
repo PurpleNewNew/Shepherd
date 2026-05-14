@@ -213,6 +213,17 @@ func (agent *Agent) requeueCarryItem(item *carryItem) {
 	agent.carryMu.Unlock()
 }
 
+func (agent *Agent) dropCarryQueue(target string) int {
+	if agent == nil || target == "" {
+		return 0
+	}
+	agent.carryMu.Lock()
+	count := len(agent.carryQueue[target])
+	delete(agent.carryQueue, target)
+	agent.carryMu.Unlock()
+	return count
+}
+
 func carryBackoff(attempts int) time.Duration {
 	if attempts <= 0 {
 		return carryRetryBase

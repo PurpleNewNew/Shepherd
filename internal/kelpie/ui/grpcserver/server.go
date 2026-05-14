@@ -68,6 +68,7 @@ type StreamAdmin interface {
 	StreamDiagnostics() []stream.SessionDiag
 	StreamCloseReason(streamID uint32) string
 	ShellSessionID(uuid string) string
+	CheckTargetReady(targetUUID string) error
 	OpenStream(ctx context.Context, target, sessionID string, meta map[string]string) (io.ReadWriteCloser, error)
 	CloseStream(sessionID uint32, reason string) error
 	StreamStats() []process.StreamStat
@@ -1331,6 +1332,8 @@ func mapStreamPingError(err error) error {
 		return nil
 	}
 	switch {
+	case errors.Is(err, process.ErrTargetUnreachable):
+		return status.Error(codes.FailedPrecondition, err.Error())
 	case errors.Is(err, process.ErrStreamPingMissingTarget),
 		errors.Is(err, process.ErrStreamPingInvalidCount),
 		errors.Is(err, process.ErrStreamPingInvalidSize):
@@ -1368,9 +1371,12 @@ func (s *service) close() {
 }
 
 func convertNodeInfo(node topology.UINodeSnapshot) *uipb.NodeInfo {
-	status := "offline"
-	if node.IsAlive {
-		status = "online"
+	status := strings.TrimSpace(node.Status)
+	if status == "" {
+		status = "offline"
+		if node.IsAlive {
+			status = "online"
+		}
 	}
 	sleep := ""
 	if node.SleepSecond > 0 || node.WorkSecond > 0 {
@@ -1475,30 +1481,10 @@ func (s *service) handleAuditRecord(rec sqlite.AuditRecord) {
 }
 
 func (s *service) ListRepairs(ctx context.Context, _ *uipb.ListRepairsRequest) (*uipb.ListRepairsResponse, error) {
-	if s == nil || (s.admin == nil && s.listRepairsOverride == nil && s.sessionsOverride == nil) {
+	if s == nil || (s.admin == nil && s.listRepairsOverride == nil) {
 		return nil, status.Error(codes.Unavailable, "admin unavailable")
 	}
-	filter := process.SessionFilter{IncludeInactive: true}
-	var sessions []process.SessionInfo
-	switch {
-	case s.sessionsOverride != nil:
-		sessions = s.sessionsOverride(filter)
-	default:
-		sessions = s.admin.Sessions(filter)
-	}
 	statusMap := make(map[string]*uipb.RepairStatus)
-	for _, sess := range sessions {
-		if sess.Status != process.SessionStatusRepairing {
-			continue
-		}
-		key := strings.ToLower(sess.TargetUUID)
-		entry := &uipb.RepairStatus{
-			TargetUuid: sess.TargetUUID,
-			LastError:  sess.LastError,
-			Reason:     sess.StatusReason,
-		}
-		statusMap[key] = entry
-	}
 	var snapshots []planner.RepairStatusSnapshot
 	switch {
 	case s.listRepairsOverride != nil:

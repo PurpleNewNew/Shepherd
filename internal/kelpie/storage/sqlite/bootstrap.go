@@ -67,7 +67,7 @@ func (s *TopologyRepository) Load() (*topology.Snapshot, error) {
 }
 
 func (s *TopologyRepository) loadNodes() ([]topology.NodeSnapshot, error) {
-	rows, err := s.db.Query(`SELECT uuid, parent_uuid, network_id, ip, port, listen_port, dial_address, fallback_port, transport, tls_enabled, last_success, repair_failures, repair_updated, hostname, username, memo, is_alive, last_seen FROM nodes`)
+	rows, err := s.db.Query(`SELECT uuid, parent_uuid, network_id, ip, port, listen_port, dial_address, fallback_port, transport, tls_enabled, last_success, repair_failures, repair_updated, hostname, username, memo, is_alive, status, last_seen FROM nodes`)
 	if err != nil {
 		return nil, fmt.Errorf("load nodes: %w", err)
 	}
@@ -77,6 +77,7 @@ func (s *TopologyRepository) loadNodes() ([]topology.NodeSnapshot, error) {
 		var rec topology.NodeSnapshot
 		var lastSeen string
 		var isAlive int
+		var status sql.NullInt64
 		var dial sql.NullString
 		var fallback sql.NullInt64
 		var transport sql.NullString
@@ -102,11 +103,15 @@ func (s *TopologyRepository) loadNodes() ([]topology.NodeSnapshot, error) {
 			&rec.Username,
 			&rec.Memo,
 			&isAlive,
+			&status,
 			&lastSeen,
 		); err != nil {
 			return nil, fmt.Errorf("scan node: %w", err)
 		}
 		rec.IsAlive = isAlive == 1
+		if status.Valid {
+			rec.Status = int(status.Int64)
+		}
 		if dial.Valid {
 			rec.DialAddress = dial.String
 		}

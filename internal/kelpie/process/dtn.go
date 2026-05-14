@@ -9,6 +9,7 @@ import (
 
 	"codeberg.org/agnoie/shepherd/internal/kelpie/dtn"
 	"codeberg.org/agnoie/shepherd/internal/kelpie/printer"
+	"codeberg.org/agnoie/shepherd/internal/kelpie/topology"
 	"codeberg.org/agnoie/shepherd/pkg/bus"
 	"codeberg.org/agnoie/shepherd/pkg/session"
 	"codeberg.org/agnoie/shepherd/protocol"
@@ -27,6 +28,8 @@ type dtnMetricSnapshot struct {
 const (
 	dtnSuppTriggerAge      = 2 * time.Minute
 	dtnSuppTriggerCooldown = 2 * time.Minute
+	dtnOfflineHold         = 30 * time.Second
+	dtnUnreachableBackoff  = 2 * time.Minute
 )
 
 func (admin *Admin) initDTN(ctx context.Context) {
@@ -97,8 +100,11 @@ func (admin *Admin) flushDTNBundles(ctx context.Context) {
 		return
 	}
 	for _, bundle := range ready {
+		if admin.handleBundleLifecycle(bundle) {
+			continue
+		}
 		if delay := admin.preDispatchDelay(bundle); delay > 0 {
-			admin.dtnManager.Requeue(bundle, delay)
+			admin.dtnManager.Hold(bundle, delay)
 			continue
 		}
 		if admin.attemptBundleDelivery(ctx, bundle) {
@@ -134,8 +140,11 @@ func (admin *Admin) dispatchDTNPull() bus.Handler {
 		now := time.Now()
 		ready := admin.dtnManager.ReadyFor(header.Sender, now, limit)
 		for _, b := range ready {
+			if admin.handleBundleLifecycle(b) {
+				continue
+			}
 			if delay := admin.preDispatchDelay(b); delay > 0 {
-				admin.dtnManager.Requeue(b, delay)
+				admin.dtnManager.Hold(b, delay)
 				continue
 			}
 			if !admin.attemptBundleDelivery(ctx, b) {
@@ -193,6 +202,40 @@ func (admin *Admin) preDispatchDelay(bundle *dtn.Bundle) time.Duration {
 	return 0
 }
 
+func (admin *Admin) handleBundleLifecycle(bundle *dtn.Bundle) bool {
+	if admin == nil || admin.dtnManager == nil || bundle == nil {
+		return false
+	}
+	status, ok := admin.targetStatus(bundle.Target)
+	if !ok {
+		admin.dtnManager.Hold(bundle, dtnOfflineHold)
+		return true
+	}
+	switch status {
+	case topology.NodeStatusOnline:
+		return false
+	case topology.NodeStatusOffline:
+		delay := admin.nextSendDelay(bundle.Target)
+		if delay <= 0 {
+			delay = dtnOfflineHold
+		}
+		admin.dtnManager.Hold(bundle, delay)
+		return true
+	case topology.NodeStatusUnreachable:
+		admin.dtnManager.Hold(bundle, dtnUnreachableBackoff)
+		return true
+	case topology.NodeStatusQuarantined, topology.NodeStatusRetired:
+		_, _ = admin.dtnManager.Remove(bundle.ID)
+		admin.dtnFailed++
+		printer.Warning("\r\n[*] DTN bundle %s dropped: target %s is %s\r\n",
+			shortID(bundle.ID), shortID(bundle.Target), status)
+		return true
+	default:
+		admin.dtnManager.Hold(bundle, dtnOfflineHold)
+		return true
+	}
+}
+
 // nextSendDelay 估算从现在到“首跳可发送”的等待时长；若不可达或无需等待则返回 0。
 func (admin *Admin) nextSendDelay(target string) time.Duration {
 	if admin == nil || admin.topology == nil || strings.TrimSpace(target) == "" {
@@ -212,6 +255,9 @@ func (admin *Admin) nextSendDelay(target string) time.Duration {
 func (admin *Admin) attemptBundleDelivery(ctx context.Context, bundle *dtn.Bundle) bool {
 	if admin == nil || bundle == nil {
 		return false
+	}
+	if admin.handleBundleLifecycle(bundle) {
+		return true
 	}
 	// 按目标限制 inflight 数量。
 	if admin.inflightForTarget(bundle.Target) >= admin.dtnMaxInflightPerTarget {
@@ -532,6 +578,33 @@ func (admin *Admin) inflightForTarget(target string) int {
 	return count
 }
 
+func (admin *Admin) clearDTNForTarget(target, reason string) int {
+	if admin == nil || strings.TrimSpace(target) == "" {
+		return 0
+	}
+	target = strings.TrimSpace(target)
+	removed := 0
+	if admin.dtnManager != nil {
+		removed += admin.dtnManager.RemoveTarget(target)
+	}
+	admin.dtnInflightMu.Lock()
+	for id, rec := range admin.dtnInflight {
+		if rec == nil || rec.bundle == nil || rec.bundle.Target != target {
+			continue
+		}
+		delete(admin.dtnInflight, id)
+		removed++
+	}
+	admin.dtnInflightMu.Unlock()
+	if removed > 0 {
+		if reason == "" {
+			reason = "target unavailable"
+		}
+		printer.Warning("\r\n[*] DTN cleared for %s: bundles=%d reason=%s\r\n", shortID(target), removed, reason)
+	}
+	return removed
+}
+
 func (admin *Admin) EnqueueDiagnostic(target, data string, priority dtn.Priority, ttl time.Duration) (string, error) {
 	if admin == nil {
 		return "", fmt.Errorf("dtn manager unavailable")
@@ -541,6 +614,12 @@ func (admin *Admin) EnqueueDiagnostic(target, data string, priority dtn.Priority
 	}
 	if admin.dtnManager == nil {
 		return "", fmt.Errorf("dtn manager unavailable")
+	}
+	if status, ok := admin.targetStatus(target); ok {
+		switch status {
+		case topology.NodeStatusQuarantined, topology.NodeStatusRetired:
+			return "", fmt.Errorf("%w: node %s is %s", ErrTargetUnreachable, shortID(target), status)
+		}
 	}
 	opts := []dtn.EnqueueOptions{dtn.WithPriority(priority)}
 	if ttl > 0 {

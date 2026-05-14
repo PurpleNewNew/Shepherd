@@ -19,10 +19,13 @@ import (
 type ListenerStatus string
 
 const (
-	ListenerStatusPending ListenerStatus = "pending"
-	ListenerStatusRunning ListenerStatus = "running"
-	ListenerStatusFailed  ListenerStatus = "failed"
-	ListenerStatusStopped ListenerStatus = "stopped"
+	ListenerStatusPending  ListenerStatus = "pending"
+	ListenerStatusRunning  ListenerStatus = "running"
+	ListenerStatusFailed   ListenerStatus = "failed"
+	ListenerStatusStopped  ListenerStatus = "stopped"
+	ListenerStatusStale    ListenerStatus = "stale"
+	ListenerStatusUnreach  ListenerStatus = "unreachable"
+	ListenerStatusOwnerOff ListenerStatus = "owner_offline"
 )
 
 // ListenerRecord 表示一条 Kelpie 监听的持久化/运行时状态。
@@ -177,6 +180,34 @@ func (r *listenerRegistry) save(rec ListenerRecord) error {
 	return nil
 }
 
+func (r *listenerRegistry) markTargetStatus(target string, status ListenerStatus, reason string) []ListenerRecord {
+	if r == nil || strings.TrimSpace(target) == "" {
+		return nil
+	}
+	target = strings.TrimSpace(target)
+	now := time.Now().UTC()
+	changed := make([]ListenerRecord, 0)
+	r.mu.Lock()
+	for id, rec := range r.items {
+		if !strings.EqualFold(strings.TrimSpace(rec.TargetUUID), target) {
+			continue
+		}
+		rec.Status = status
+		rec.LastError = strings.TrimSpace(reason)
+		rec.Route = ""
+		rec.UpdatedAt = now
+		r.items[id] = cloneListener(rec)
+		changed = append(changed, cloneListener(rec))
+	}
+	r.mu.Unlock()
+	if r.persist != nil {
+		for _, rec := range changed {
+			_ = r.persist.SaveListener(rec)
+		}
+	}
+	return changed
+}
+
 func (r *listenerRegistry) delete(id string) (ListenerRecord, error) {
 	if r == nil || id == "" {
 		return ListenerRecord{}, fmt.Errorf("listener registry unavailable")
@@ -305,6 +336,13 @@ func (admin *Admin) ListListeners(filter ListenerFilter) []ListenerRecord {
 	return admin.listeners.list(filter)
 }
 
+func (admin *Admin) markListenersForTarget(target string, status ListenerStatus, reason string) []ListenerRecord {
+	if admin == nil || admin.listeners == nil {
+		return nil
+	}
+	return admin.listeners.markTargetStatus(target, status, reason)
+}
+
 // CreateListener 新建监听实例并立刻尝试在目标节点上启用。
 func (admin *Admin) CreateListener(ctx context.Context, targetUUID string, spec ListenerSpec) (ListenerRecord, error) {
 	_ = ctx
@@ -317,6 +355,9 @@ func (admin *Admin) CreateListener(ctx context.Context, targetUUID string, spec 
 	targetUUID = strings.TrimSpace(targetUUID)
 	if targetUUID == "" {
 		return ListenerRecord{}, fmt.Errorf("missing target uuid")
+	}
+	if err := admin.CheckTargetReady(targetUUID); err != nil {
+		return ListenerRecord{}, err
 	}
 	mode := spec.Mode
 	meta := copyMetadata(spec.Metadata)
@@ -418,6 +459,14 @@ func (admin *Admin) UpdateListener(ctx context.Context, id string, spec *Listene
 	switch strings.ToLower(strings.TrimSpace(desiredStatus)) {
 	case "":
 	case "restart":
+		if err := admin.CheckTargetReady(current.TargetUUID); err != nil {
+			current.Status = ListenerStatusOwnerOff
+			current.LastError = err.Error()
+			current.Route = ""
+			current.UpdatedAt = time.Now().UTC()
+			_ = admin.listeners.save(current)
+			return current, err
+		}
 		if err := admin.stopListenerInternal(current.TargetUUID, current.ID); err != nil {
 			current.Status = ListenerStatusFailed
 			current.LastError = err.Error()
@@ -445,6 +494,14 @@ func (admin *Admin) UpdateListener(ctx context.Context, id string, spec *Listene
 		current.Route = ""
 		changed = true
 	case "start", "resume", "running":
+		if err := admin.CheckTargetReady(current.TargetUUID); err != nil {
+			current.Status = ListenerStatusOwnerOff
+			current.LastError = err.Error()
+			current.Route = ""
+			current.UpdatedAt = time.Now().UTC()
+			_ = admin.listeners.save(current)
+			return current, err
+		}
 		route, err := admin.startListenerInternal(current.TargetUUID, current.Bind, current.Mode, current.ID)
 		if err != nil {
 			current.Status = ListenerStatusFailed
@@ -583,6 +640,14 @@ func (admin *Admin) startListenerRecord(rec ListenerRecord) {
 	}
 	rec = current
 	if rec.TargetUUID == "" || strings.TrimSpace(rec.ID) == "" {
+		return
+	}
+	if err := admin.CheckTargetReady(rec.TargetUUID); err != nil {
+		rec.Status = ListenerStatusOwnerOff
+		rec.LastError = err.Error()
+		rec.Route = ""
+		rec.UpdatedAt = time.Now().UTC()
+		_ = admin.listeners.save(rec)
 		return
 	}
 	route, err := admin.startListenerInternal(rec.TargetUUID, rec.Bind, rec.Mode, rec.ID)

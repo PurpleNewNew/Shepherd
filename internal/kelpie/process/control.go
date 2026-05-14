@@ -559,6 +559,9 @@ func (admin *Admin) StartForwardProxy(ctx context.Context, targetUUID, bindAddr,
 	if admin == nil {
 		return nil, fmt.Errorf("admin unavailable")
 	}
+	if err := admin.CheckTargetReady(targetUUID); err != nil {
+		return nil, err
+	}
 	mgr := admin.ensurePortProxyManager()
 	if mgr == nil {
 		return nil, fmt.Errorf("proxy manager unavailable")
@@ -580,6 +583,9 @@ func (admin *Admin) StopForwardProxy(targetUUID, proxyID string) ([]*ProxyDescri
 func (admin *Admin) StartBackwardProxy(ctx context.Context, targetUUID, remotePort, localPort string) (*ProxyDescriptor, error) {
 	if admin == nil {
 		return nil, fmt.Errorf("admin unavailable")
+	}
+	if err := admin.CheckTargetReady(targetUUID); err != nil {
+		return nil, err
 	}
 	mgr := admin.ensurePortProxyManager()
 	if mgr == nil {
@@ -634,9 +640,9 @@ func (admin *Admin) StartListener(targetUUID, bind string, mode int, listenerID 
 		}
 		bind = validated
 	}
-	route, ok := admin.fetchRoute(targetUUID)
-	if !ok || route == "" {
-		return "", fmt.Errorf("route unavailable for %s", targetUUID)
+	route, err := admin.routeForControl(targetUUID)
+	if err != nil {
+		return "", err
 	}
 	ackCh := admin.mgr.ListenManager.RegisterAck(listenerID)
 	if err := admin.sendListenerStart(route, targetUUID, listenerID, mode, bind); err != nil {
@@ -662,9 +668,9 @@ func (admin *Admin) StopListener(targetUUID, listenerID string) error {
 	if targetUUID == "" || listenerID == "" {
 		return fmt.Errorf("target uuid and listener id required")
 	}
-	route, ok := admin.fetchRoute(targetUUID)
-	if !ok || strings.TrimSpace(route) == "" {
-		return fmt.Errorf("route unavailable for %s", targetUUID)
+	route, err := admin.routeForControl(targetUUID)
+	if err != nil {
+		return err
 	}
 	ackCh := admin.mgr.ListenManager.RegisterAck(listenerID)
 	if err := admin.sendListenerStop(route, targetUUID, listenerID); err != nil {

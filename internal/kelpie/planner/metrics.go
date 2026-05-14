@@ -324,7 +324,9 @@ func (p *SupplementalPlanner) RepairStatuses() []RepairStatusSnapshot {
 	if p == nil {
 		return nil
 	}
-	p.failuresMu.Lock()
+	if !p.failuresMu.TryLock() {
+		return nil
+	}
 	defer p.failuresMu.Unlock()
 	if len(p.failures) == 0 {
 		return nil

@@ -50,9 +50,11 @@ type traceEvent struct {
 	TTLSeconds int64  `json:"ttl_seconds,omitempty"` // <=0 uses server defaults
 
 	// dataplane_roundtrip（stream_proxy 也会复用）
-	Path      string `json:"path,omitempty"`
-	Expect    string `json:"expect,omitempty"`
-	TimeoutMS int64  `json:"timeout_ms,omitempty"`
+	Path             string            `json:"path,omitempty"`
+	Expect           string            `json:"expect,omitempty"`
+	ExpectByTopology map[string]string `json:"expect_by_topology,omitempty"`
+	Topologies       []string          `json:"topologies,omitempty"`
+	TimeoutMS        int64             `json:"timeout_ms,omitempty"`
 
 	// io_burst / dataplane_upload_interrupt 事件
 	StreamCount    int    `json:"stream_count,omitempty"`
@@ -478,6 +480,9 @@ func main() {
 			if ctx.Err() != nil {
 				return
 			}
+			if !traceEventApplies(evt, shape) {
+				continue
+			}
 			at := startMono.Add(time.Duration(evt.AtMS) * time.Millisecond)
 			if d := time.Until(at); d > 0 {
 				timer := time.NewTimer(d)
@@ -578,6 +583,11 @@ func main() {
 				}
 				uuid := labels[label]
 				expect := strings.TrimSpace(evt.Expect)
+				if len(evt.ExpectByTopology) > 0 {
+					if topoExpect := strings.TrimSpace(evt.ExpectByTopology[shape]); topoExpect != "" {
+						expect = topoExpect
+					}
+				}
 				if uuid == "" || expect == "" {
 					_ = metricsW.Write(map[string]any{
 						"kind":           "trace_error",
@@ -624,6 +634,11 @@ func main() {
 				}
 				uuid := labels[label]
 				expect := strings.TrimSpace(evt.Expect)
+				if len(evt.ExpectByTopology) > 0 {
+					if topoExpect := strings.TrimSpace(evt.ExpectByTopology[shape]); topoExpect != "" {
+						expect = topoExpect
+					}
+				}
 				if uuid == "" || expect == "" {
 					_ = metricsW.Write(map[string]any{
 						"kind":           "trace_error",
@@ -3037,6 +3052,19 @@ func loadTrace(path string) ([]traceEvent, error) {
 		return events[i].AtMS < events[j].AtMS
 	})
 	return events, nil
+}
+
+func traceEventApplies(evt traceEvent, topology string) bool {
+	if len(evt.Topologies) == 0 {
+		return true
+	}
+	topology = strings.TrimSpace(topology)
+	for _, allowed := range evt.Topologies {
+		if strings.EqualFold(strings.TrimSpace(allowed), topology) {
+			return true
+		}
+	}
+	return false
 }
 
 func parsePriority(raw string) uipb.DtnPriority {

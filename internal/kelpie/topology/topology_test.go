@@ -98,6 +98,49 @@ func TestPrimaryRouteIgnoresSupplementalShortcut(t *testing.T) {
 	}
 }
 
+func TestQuarantinedNodeExcludedFromRoutes(t *testing.T) {
+	topology := NewTopology()
+	go topology.Run()
+	defer topology.Stop()
+
+	adminNode := NewNode(protocol.ADMIN_UUID, "127.0.0.1")
+	waitForTask(t, topology, &TopoTask{Mode: ADDNODE, Target: adminNode, IsFirst: true})
+
+	mid := NewNode("NODE-MID", "10.0.0.2")
+	leaf := NewNode("NODE-LEAF", "10.0.0.3")
+	waitForTask(t, topology, &TopoTask{Mode: ADDNODE, Target: mid, ParentUUID: protocol.ADMIN_UUID})
+	waitForTask(t, topology, &TopoTask{Mode: ADDNODE, Target: leaf, ParentUUID: mid.uuid})
+	waitForTask(t, topology, &TopoTask{Mode: ADDEDGE, UUID: protocol.ADMIN_UUID, NeighborUUID: mid.uuid})
+	waitForTask(t, topology, &TopoTask{Mode: ADDEDGE, UUID: mid.uuid, NeighborUUID: leaf.uuid})
+	waitForTask(t, topology, &TopoTask{Mode: CALCULATE})
+
+	if res := waitForTask(t, topology, &TopoTask{Mode: GETROUTE, UUID: mid.uuid}); res == nil || res.Route == "" {
+		t.Fatalf("expected initial route to mid, got %+v", res)
+	}
+	if primary, ok := topology.PrimaryRoute(leaf.uuid); !ok || primary != mid.uuid+":"+leaf.uuid {
+		t.Fatalf("expected initial primary route through mid, got route=%q ok=%v", primary, ok)
+	}
+
+	waitForTask(t, topology, &TopoTask{Mode: QUARANTINENODE, UUID: mid.uuid})
+	waitForTask(t, topology, &TopoTask{Mode: CALCULATE})
+
+	if res := waitForTask(t, topology, &TopoTask{Mode: GETROUTE, UUID: mid.uuid}); res != nil && res.Route != "" {
+		t.Fatalf("expected quarantined mid route to be empty, got %q", res.Route)
+	}
+	if res := waitForTask(t, topology, &TopoTask{Mode: GETROUTE, UUID: leaf.uuid}); res != nil && res.Route != "" {
+		t.Fatalf("expected leaf route through quarantined mid to be empty, got %q", res.Route)
+	}
+	if primary, ok := topology.PrimaryRoute(leaf.uuid); ok || primary != "" {
+		t.Fatalf("expected primary route through quarantined mid to be rejected, got route=%q ok=%v", primary, ok)
+	}
+
+	waitForTask(t, topology, &TopoTask{Mode: ADDEDGE, UUID: protocol.ADMIN_UUID, NeighborUUID: leaf.uuid})
+	waitForTask(t, topology, &TopoTask{Mode: CALCULATE})
+	if res := waitForTask(t, topology, &TopoTask{Mode: GETROUTE, UUID: leaf.uuid}); res == nil || res.Route != leaf.uuid {
+		t.Fatalf("expected alternative direct route to leaf, got %+v", res)
+	}
+}
+
 func routeDisplayUsesSupplemental(route string) bool {
 	parts := strings.Split(route, ":")
 	for _, part := range parts {

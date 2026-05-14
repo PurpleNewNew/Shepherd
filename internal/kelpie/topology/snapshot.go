@@ -24,6 +24,7 @@ type UINodeSnapshot struct {
 	Network     string
 	Memo        string
 	IsAlive     bool
+	Status      string
 	Depth       int
 	Hostname    string
 	Username    string
@@ -80,7 +81,8 @@ func (topology *Topology) UISnapshot(filterEntry, network string) UISnapshot {
 			Alias:       alias,
 			Network:     topology.networkForUnlocked(node.uuid),
 			Memo:        node.memo,
-			IsAlive:     node.isAlive,
+			IsAlive:     node.lifecycleStatus() == NodeStatusOnline,
+			Status:      string(node.lifecycleStatus()),
 			Depth:       topology.depthOf(node.uuid),
 			Hostname:    node.currentHostname,
 			Username:    node.currentUser,

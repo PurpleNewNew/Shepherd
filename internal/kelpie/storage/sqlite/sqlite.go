@@ -146,6 +146,7 @@ func (s *Store) initSchema() error {
 		username TEXT,
 		memo TEXT,
 		is_alive INTEGER,
+		status INTEGER,
 		last_seen TEXT
 	);`
 	const edges = `CREATE TABLE IF NOT EXISTS edges (
@@ -285,6 +286,7 @@ func (r *TopologyRepository) ensureNodeColumns() error {
 		{"last_success", "TEXT"},
 		{"repair_failures", "INTEGER"},
 		{"repair_updated", "TEXT"},
+		{"status", "INTEGER"},
 	}
 	for _, col := range columns {
 		if err := r.ensureColumn("nodes", col.name, col.def); err != nil {
@@ -394,8 +396,8 @@ func (s *TopologyRepository) UpsertNode(node topology.NodeSnapshot) error {
 		tlsEnabled = 1
 	}
 	_, err := s.db.Exec(`INSERT INTO nodes
-		(uuid, parent_uuid, network_id, ip, port, listen_port, dial_address, fallback_port, transport, tls_enabled, last_success, repair_failures, repair_updated, hostname, username, memo, is_alive, last_seen)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+		(uuid, parent_uuid, network_id, ip, port, listen_port, dial_address, fallback_port, transport, tls_enabled, last_success, repair_failures, repair_updated, hostname, username, memo, is_alive, status, last_seen)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 		ON CONFLICT(uuid) DO UPDATE SET parent_uuid=excluded.parent_uuid,
 			network_id=excluded.network_id,
 			ip=excluded.ip,
@@ -412,6 +414,7 @@ func (s *TopologyRepository) UpsertNode(node topology.NodeSnapshot) error {
 			username=excluded.username,
 			memo=excluded.memo,
 			is_alive=excluded.is_alive,
+			status=excluded.status,
 			last_seen=excluded.last_seen;`,
 		node.UUID,
 		node.Parent,
@@ -430,6 +433,7 @@ func (s *TopologyRepository) UpsertNode(node topology.NodeSnapshot) error {
 		node.Username,
 		node.Memo,
 		isAlive,
+		node.Status,
 		lastSeen,
 	)
 	if err != nil {

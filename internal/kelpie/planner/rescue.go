@@ -45,6 +45,8 @@ type RescueCoordinator struct {
 	pendingMu      sync.Mutex
 	pendingRes     map[string]chan *protocol.RescueResponse
 	candidateGuard func(target, rescuer string) bool
+	cleanupMu      sync.RWMutex
+	cleanup        func(failedParent, child, newParent string)
 }
 
 // NewRescueCoordinator 构建实例；拓扑为空时返回 nil。
@@ -165,6 +167,18 @@ func (c *RescueCoordinator) SetCandidateGuard(fn func(target, rescuer string) bo
 		return
 	}
 	c.candidateGuard = fn
+}
+
+// SetCleanup registers a callback invoked after rescue reparents a child away
+// from an already unavailable parent. The owner performs broader lifecycle
+// cleanup such as quarantine, DTN teardown, and listener invalidation.
+func (c *RescueCoordinator) SetCleanup(fn func(failedParent, child, newParent string)) {
+	if c == nil {
+		return
+	}
+	c.cleanupMu.Lock()
+	c.cleanup = fn
+	c.cleanupMu.Unlock()
 }
 
 func (c *RescueCoordinator) processTask(task rescueTask) bool {
@@ -389,6 +403,12 @@ func (c *RescueCoordinator) applyRescueResult(resp *protocol.RescueResponse) err
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), rescueWaitTimeout)
 	defer cancel()
+	oldParent := ""
+	needsCleanup := false
+	if meta, err := c.service.Request(ctx, &topology.TopoTask{Mode: topology.GETNODEMETA, UUID: resp.ChildUUID}); err == nil && meta != nil {
+		oldParent = strings.TrimSpace(meta.Parent)
+		needsCleanup = oldParent != "" && oldParent != resp.ParentUUID && oldParent != protocol.ADMIN_UUID
+	}
 	_, err := c.service.Request(ctx, &topology.TopoTask{
 		Mode:       topology.REPARENTNODE,
 		UUID:       resp.ChildUUID,
@@ -399,7 +419,18 @@ func (c *RescueCoordinator) applyRescueResult(resp *protocol.RescueResponse) err
 	}
 	// Rescue reparent 必须能够立刻路由成功，后续控制流量才能跟上。
 	_, err = c.service.Request(ctx, &topology.TopoTask{Mode: topology.CALCULATE})
-	return err
+	if err != nil {
+		return err
+	}
+	if needsCleanup {
+		c.cleanupMu.RLock()
+		cleanup := c.cleanup
+		c.cleanupMu.RUnlock()
+		if cleanup != nil {
+			cleanup(oldParent, resp.ChildUUID, resp.ParentUUID)
+		}
+	}
+	return nil
 }
 
 func (c *RescueCoordinator) requestConnInfo(uuid string) (*topology.Result, error) {

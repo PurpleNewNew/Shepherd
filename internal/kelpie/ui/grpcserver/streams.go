@@ -2,12 +2,14 @@ package grpcserver
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"strconv"
 	"strings"
 	"time"
 
+	"codeberg.org/agnoie/shepherd/internal/kelpie/process"
 	"codeberg.org/agnoie/shepherd/internal/kelpie/uipb"
 	"codeberg.org/agnoie/shepherd/protocol"
 	"github.com/google/uuid"
@@ -43,6 +45,9 @@ func (s *service) ProxyStream(streamSrv uipb.KelpieUIService_ProxyStreamServer) 
 	defer cancel()
 	upstream, err := s.admin.OpenStream(ctx, targetUUID, sessionID, meta)
 	if err != nil {
+		if errors.Is(err, process.ErrTargetUnreachable) {
+			return status.Errorf(codes.FailedPrecondition, "target unreachable: %v", err)
+		}
 		return status.Errorf(codes.Internal, "open stream failed: %v", err)
 	}
 	defer upstream.Close()
@@ -187,6 +192,12 @@ func (s *service) StartShell(ctx context.Context, req *uipb.StartShellRequest) (
 	default:
 		return nil, status.Errorf(codes.InvalidArgument, "unsupported shell mode: %v", mode)
 	}
+	if err := s.admin.CheckTargetReady(target); err != nil {
+		if errors.Is(err, process.ErrTargetUnreachable) {
+			return nil, status.Errorf(codes.FailedPrecondition, "target unreachable: %v", err)
+		}
+		return nil, status.Errorf(codes.Internal, "target readiness check failed: %v", err)
+	}
 	ops := map[string]string{"mode": strconv.Itoa(int(shellMode))}
 	handle := buildProxyStreamHandle(target, sessionID, "shell", ops)
 	return &uipb.StartShellResponse{Handle: handle}, nil
@@ -221,6 +232,12 @@ func (s *service) StartSocksProxy(ctx context.Context, req *uipb.StartSocksProxy
 		opts["password"] = password
 	default:
 		return nil, status.Errorf(codes.InvalidArgument, "unsupported socks auth method: %v", req.GetAuth())
+	}
+	if err := s.admin.CheckTargetReady(target); err != nil {
+		if errors.Is(err, process.ErrTargetUnreachable) {
+			return nil, status.Errorf(codes.FailedPrecondition, "target unreachable: %v", err)
+		}
+		return nil, status.Errorf(codes.Internal, "target readiness check failed: %v", err)
 	}
 	return &uipb.StartSocksProxyResponse{
 		Handle: buildProxyStreamHandle(target, uuid.NewString(), "socks", opts),
@@ -265,6 +282,12 @@ func (s *service) StartSshSession(ctx context.Context, req *uipb.StartSshSession
 		opts["password"] = password
 	default:
 		return nil, status.Errorf(codes.InvalidArgument, "unsupported auth method: %v", authMethod)
+	}
+	if err := s.admin.CheckTargetReady(target); err != nil {
+		if errors.Is(err, process.ErrTargetUnreachable) {
+			return nil, status.Errorf(codes.FailedPrecondition, "target unreachable: %v", err)
+		}
+		return nil, status.Errorf(codes.Internal, "target readiness check failed: %v", err)
 	}
 
 	return &uipb.StartSshSessionResponse{

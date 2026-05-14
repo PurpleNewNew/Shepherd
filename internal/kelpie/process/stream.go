@@ -364,6 +364,9 @@ func (admin *Admin) OpenStream(ctx context.Context, target, sessionID string, me
 	if admin == nil || admin.streamEngine == nil {
 		return nil, fmt.Errorf("stream engine unavailable")
 	}
+	if err := admin.CheckTargetReady(target); err != nil {
+		return nil, err
+	}
 	opts := map[string]string{}
 	for k, v := range meta {
 		opts[k] = v
@@ -433,6 +436,9 @@ func (admin *Admin) StreamPing(targetUUID string, count, payloadSize int) error 
 	}
 	if payloadSize < 0 {
 		return ErrStreamPingInvalidSize
+	}
+	if err := admin.CheckTargetReady(targetUUID); err != nil {
+		return err
 	}
 	streamID := streamid.Next()
 	open := &protocol.StreamOpen{StreamID: streamID, Options: "mode=ping"}

@@ -953,6 +953,27 @@ func (e *Engine) getSession(id uint32) *streamSession {
 	return s
 }
 
+// AbortTarget aborts every stream whose target matches the supplied UUID.
+func (e *Engine) AbortTarget(target, reason string) int {
+	if e == nil || strings.TrimSpace(target) == "" {
+		return 0
+	}
+	target = strings.TrimSpace(target)
+	e.mux.Lock()
+	sessions := make([]*streamSession, 0)
+	for _, sess := range e.streams {
+		if sess == nil || !strings.EqualFold(strings.TrimSpace(sess.target), target) {
+			continue
+		}
+		sessions = append(sessions, sess)
+	}
+	e.mux.Unlock()
+	for _, sess := range sessions {
+		sess.Abort(reason)
+	}
+	return len(sessions)
+}
+
 func (e *Engine) removeSession(id uint32) {
 	e.mux.Lock()
 	delete(e.streams, id)

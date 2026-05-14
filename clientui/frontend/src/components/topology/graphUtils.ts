@@ -5,7 +5,14 @@ export type StatusCategory = 'online' | 'sleeping' | 'offline' | 'unknown';
 export function statusCategory(n: NodeSummary | undefined | null): StatusCategory {
   const raw = String(n?.status ?? '').toLowerCase();
   if (!raw) return 'unknown';
-  if (raw.includes('offline') || raw.includes('dead') || raw.includes('fail')) {
+  if (
+    raw.includes('offline') ||
+    raw.includes('dead') ||
+    raw.includes('fail') ||
+    raw.includes('quarantined') ||
+    raw.includes('retired') ||
+    raw.includes('unreachable')
+  ) {
     return 'offline';
   }
   if (raw.includes('sleep') || raw.includes('pending')) {

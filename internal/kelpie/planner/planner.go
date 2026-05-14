@@ -115,6 +115,7 @@ type failureState struct {
 	repairAttempts        int
 	repairNext            time.Time
 	repairTimer           *time.Timer
+	repairRunning         bool
 	broken                bool
 }
 
@@ -328,6 +329,15 @@ func NewSupplementalPlanner(topo *topology.Topology, svc *topology.Service, mgr 
 		planner.rescue.SetCandidateGuard(planner.rescueCandidateAllowed)
 	}
 	return planner
+}
+
+// SetRescueCleanup installs the lifecycle cleanup hook used when rescue
+// successfully moves a child away from a confirmed unavailable parent.
+func (p *SupplementalPlanner) SetRescueCleanup(fn func(failedParent, child, newParent string)) {
+	if p == nil || p.rescue == nil {
+		return
+	}
+	p.rescue.SetCleanup(fn)
 }
 
 // RestoreMetrics 使用持久化数据恢复调度器的计数器。
@@ -653,6 +663,10 @@ func (p *SupplementalPlanner) planForNode(action PlanAction) {
 	if uuid == "" || !p.Enabled() {
 		return
 	}
+	if p.nodeRepairBlocked(uuid) {
+		p.StopRepair(uuid, "node is quarantined or retired")
+		return
+	}
 
 	if !p.allowNode(uuid) {
 		return
@@ -810,6 +824,17 @@ func (p *SupplementalPlanner) shouldAttemptRepair(reason string) bool {
 	return reason != reasonNodeAdded
 }
 
+func (p *SupplementalPlanner) nodeRepairBlocked(uuid string) bool {
+	if p == nil || p.topo == nil || strings.TrimSpace(uuid) == "" {
+		return false
+	}
+	status, ok := p.topo.NodeStatus(strings.TrimSpace(uuid))
+	if !ok {
+		return false
+	}
+	return status == topology.NodeStatusQuarantined || status == topology.NodeStatusRetired
+}
+
 func (p *SupplementalPlanner) tryRepair(action PlanAction) bool {
 	if p == nil {
 		return false
@@ -833,18 +858,31 @@ func (p *SupplementalPlanner) tryRepair(action PlanAction) bool {
 		p.failuresMu.Unlock()
 		return false
 	}
+	if state.repairRunning {
+		p.failuresMu.Unlock()
+		p.recordPlannerEvent("repair", "skip-running", eventSourcePlanner, uuid, "")
+		return true
+	}
 	now := time.Now()
 	if !manual && !state.repairNext.IsZero() && now.Before(state.repairNext) {
 		wait := state.repairNext.Sub(now)
 		if wait > 0 {
-			p.scheduleRepair(uuid, action, wait)
 			p.failuresMu.Unlock()
+			p.scheduleRepair(uuid, action, wait)
 			return true
 		}
 	}
 	state.repairAttempts++
 	attempt := state.repairAttempts
+	state.repairRunning = true
 	p.failuresMu.Unlock()
+	defer func() {
+		p.failuresMu.Lock()
+		if state, ok := p.failures[uuid]; ok && state != nil {
+			state.repairRunning = false
+		}
+		p.failuresMu.Unlock()
+	}()
 
 	detail := fmt.Sprintf("attempt=%d reason=%s", attempt, action.Reason)
 	p.recordPlannerEvent("repair", "start", eventSourcePlanner, uuid, detail)
@@ -1893,4 +1931,39 @@ func (p *SupplementalPlanner) markRepairBroken(uuid, detail string) {
 	p.recordPlannerEvent("repair", "abandon", eventSourcePlanner, uuid, detail)
 	printer.Warning("\r\n[*] Supplemental planner abandoned repair for %s: %s\r\n",
 		short(uuid), detail)
+}
+
+// StopRepair cancels automatic repair state for a node and marks it manual-only.
+func (p *SupplementalPlanner) StopRepair(uuid, detail string) {
+	if p == nil || strings.TrimSpace(uuid) == "" {
+		return
+	}
+	uuid = strings.TrimSpace(uuid)
+	if detail == "" {
+		detail = "repair stopped"
+	}
+	p.failuresMu.Lock()
+	if p.failures == nil {
+		p.failures = make(map[string]*failureState)
+	}
+	state := p.failures[uuid]
+	if state == nil {
+		state = &failureState{}
+		p.failures[uuid] = state
+	}
+	if state.timer != nil {
+		state.timer.Stop()
+		state.timer = nil
+	}
+	if state.repairTimer != nil {
+		state.repairTimer.Stop()
+		state.repairTimer = nil
+	}
+	state.next = time.Time{}
+	state.repairNext = time.Time{}
+	state.repairRunning = false
+	state.broken = true
+	state.reason = detail
+	p.failuresMu.Unlock()
+	p.recordPlannerEvent("repair", "manual-only", eventSourceSystem, uuid, detail)
 }

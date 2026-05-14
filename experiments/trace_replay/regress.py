@@ -128,7 +128,22 @@ class TraceSpec:
     nodes: int
 
 
-def _load_trace_spec(path: Path) -> TraceSpec:
+def _trace_event_applies(evt: Dict[str, Any], topology: str = "") -> bool:
+    allowed = evt.get("topologies")
+    if not allowed:
+        return True
+    if isinstance(allowed, str):
+        values = [allowed]
+    elif isinstance(allowed, list):
+        values = [str(v) for v in allowed]
+    else:
+        return True
+    if not topology:
+        return True
+    return any(v.strip().lower() == topology.strip().lower() for v in values)
+
+
+def _load_trace_spec(path: Path, topology: str = "") -> TraceSpec:
     expected_enqueued = 0
     dtn_log_messages: List[str] = []
     dtn_log_absent_messages: List[str] = []
@@ -171,6 +186,8 @@ def _load_trace_spec(path: Path) -> TraceSpec:
             if not line or line.startswith("#"):
                 continue
             evt = json.loads(line)
+            if not _trace_event_applies(evt, topology):
+                continue
             at_ms = evt.get("at_ms", 0)
             try:
                 at_ms = int(at_ms)
@@ -965,13 +982,12 @@ def main(argv: List[str]) -> int:
         print(f"missing trace_replay binary: {trace_replay_bin} (build it or omit --skip-build)", file=sys.stderr)
         return 2
 
-    specs = [_load_trace_spec(p) for p in trace_paths]
-
     results: List[RunResult] = []
     start = _dt.datetime.utcnow()
 
-    for spec in specs:
+    for trace_path in trace_paths:
         for topo in topologies:
+            spec = _load_trace_spec(trace_path, topo)
             for rep in range(1, args.repeat + 1):
                 if args.repeat > 1:
                     rep_dir = f"rep{rep}"

@@ -44,3 +44,20 @@ func TestShouldCarryRetry(t *testing.T) {
 		t.Fatalf("unexpected retry for non-eligible message")
 	}
 }
+
+func TestDropCarryQueueFlushesConfirmedDeadChild(t *testing.T) {
+	agent := &Agent{}
+	msg := &ChildrenMess{
+		cHeader:    &protocol.Header{MessageType: uint16(protocol.DTN_DATA)},
+		cMessage:   []byte("payload"),
+		targetUUID: "dead-child",
+	}
+	agent.enqueueCarry(msg, ErrNoRouteToChild)
+
+	if got := agent.dropCarryQueue("dead-child"); got != 1 {
+		t.Fatalf("expected one dropped carry item, got %d", got)
+	}
+	if got := agent.dropCarryQueue("dead-child"); got != 0 {
+		t.Fatalf("expected queue to stay empty, got %d", got)
+	}
+}

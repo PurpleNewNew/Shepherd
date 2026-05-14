@@ -44,6 +44,12 @@ const (
 	MARKSTALEOFFLINE
 	// 标记节点（及其子树）离线（不删除，仅置位）
 	MARKNODEOFFLINE
+	// 标记节点不可达（保留拓扑，降低投递频率）
+	MARKNODEUNREACHABLE
+	// 隔离节点，禁止路由、控制命令、DTN 和自动 repair。
+	QUARANTINENODE
+	// 退役节点，视为永久不可用。
+	RETIRENODE
 )
 
 const calcDebounceInterval = 250 * time.Millisecond
@@ -156,6 +162,7 @@ type node struct {
 	memo            string
 	lastSeen        time.Time
 	isAlive         bool
+	status          NodeStatus
 	// DTN/短连接属性（仅内存使用，初期不持久化）
 	sleepSeconds int       // 预期睡眠周期（秒），0=长连接
 	workSeconds  int       // 唤醒窗口长度（秒）
@@ -171,6 +178,7 @@ type NodeRuntime struct {
 	SleepSeconds int
 	WorkSeconds  int
 	NextWake     time.Time
+	Status       NodeStatus
 }
 
 // TopoTask 表示拓扑操作的任务
@@ -205,6 +213,7 @@ type TopoTask struct {
 	SleepSeconds int
 	WorkSeconds  int
 	NextWakeUnix int64
+	Status       NodeStatus
 	// SkipLiveness 用于阻止更新任务（例如配置变更）
 	// 改动节点活性字段（LastSeen/IsAlive）。
 	SkipLiveness bool
@@ -219,6 +228,7 @@ type NodeConnectionMeta struct {
 	LastSuccess    time.Time
 	RepairAttempts int
 	TLSEnabled     bool
+	Status         NodeStatus
 }
 
 // topoResult 表示拓扑操作的结果。
@@ -243,6 +253,7 @@ type topoResult struct {
 	LastSuccess    time.Time
 	RepairFailures int
 	TLSEnabled     bool
+	Status         NodeStatus
 }
 
 // Result 是 topoResult 的导出别名，供更高层的服务使用。
@@ -354,6 +365,7 @@ func NewNode(uuid string, ip string) *node {
 	node.currentIP = ip
 	node.lastSeen = time.Now()
 	node.lastSuccess = time.Now()
+	node.status = NodeStatusOnline
 	node.isAlive = true
 	return node
 }
@@ -517,5 +529,11 @@ func (topology *Topology) handleTask(task *TopoTask) {
 		topology.markStaleOffline()
 	case MARKNODEOFFLINE:
 		topology.markNodeOffline(task)
+	case MARKNODEUNREACHABLE:
+		topology.markNodeUnreachable(task)
+	case QUARANTINENODE:
+		topology.quarantineNode(task)
+	case RETIRENODE:
+		topology.retireNode(task)
 	}
 }

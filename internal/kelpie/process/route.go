@@ -2,6 +2,7 @@ package process
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -10,6 +11,8 @@ import (
 	"codeberg.org/agnoie/shepherd/pkg/session"
 	"codeberg.org/agnoie/shepherd/protocol"
 )
+
+var ErrTargetUnreachable = errors.New("target unreachable")
 
 func (admin *Admin) currentSession() session.Session {
 	if admin == nil {
@@ -193,6 +196,78 @@ func (admin *Admin) fetchRoute(uuid string) (string, bool) {
 		return "", false
 	}
 	return res.Route, true
+}
+
+func (admin *Admin) targetStatus(uuid string) (topology.NodeStatus, bool) {
+	if admin == nil || admin.topology == nil || strings.TrimSpace(uuid) == "" {
+		return topology.NodeStatusOffline, false
+	}
+	return admin.topology.NodeStatus(strings.TrimSpace(uuid))
+}
+
+func (admin *Admin) validateRouteForControl(targetUUID, route string) error {
+	targetUUID = strings.TrimSpace(targetUUID)
+	route = strings.TrimSpace(route)
+	if targetUUID == "" {
+		return fmt.Errorf("%w: missing target uuid", ErrTargetUnreachable)
+	}
+	if route == "" {
+		return fmt.Errorf("%w: route unavailable for %s", ErrTargetUnreachable, targetUUID)
+	}
+	if admin != nil && admin.topology != nil {
+		for hop, status := range admin.topology.PathStatuses(route) {
+			switch status {
+			case topology.NodeStatusQuarantined, topology.NodeStatusRetired:
+				return fmt.Errorf("%w: route contains %s node %s", ErrTargetUnreachable, status, shortID(hop))
+			}
+		}
+	}
+	firstHop := routeFirstHop(route)
+	if firstHop == "" {
+		return fmt.Errorf("%w: first hop unavailable for %s", ErrTargetUnreachable, targetUUID)
+	}
+	sess := admin.sessionForRoute(route)
+	if sess == nil || sess.Conn() == nil {
+		return fmt.Errorf("%w: first hop %s has no live session", ErrTargetUnreachable, shortID(firstHop))
+	}
+	return nil
+}
+
+func (admin *Admin) routeForControl(targetUUID string) (string, error) {
+	targetUUID = strings.TrimSpace(targetUUID)
+	if admin == nil {
+		return "", fmt.Errorf("admin unavailable")
+	}
+	if targetUUID == "" {
+		return "", fmt.Errorf("%w: missing target uuid", ErrTargetUnreachable)
+	}
+	if strings.EqualFold(targetUUID, protocol.ADMIN_UUID) {
+		return "", nil
+	}
+	status, ok := admin.targetStatus(targetUUID)
+	if !ok {
+		return "", fmt.Errorf("%w: node %s not found", ErrTargetUnreachable, shortID(targetUUID))
+	}
+	if status != topology.NodeStatusOnline {
+		return "", fmt.Errorf("%w: node %s is %s", ErrTargetUnreachable, shortID(targetUUID), status)
+	}
+	route, ok := admin.fetchRoute(targetUUID)
+	if !ok || strings.TrimSpace(route) == "" {
+		return "", fmt.Errorf("%w: route unavailable for %s", ErrTargetUnreachable, shortID(targetUUID))
+	}
+	if err := admin.validateRouteForControl(targetUUID, route); err != nil {
+		return "", err
+	}
+	return route, nil
+}
+
+// CheckTargetReady verifies that interactive/control traffic can be sent now.
+func (admin *Admin) CheckTargetReady(targetUUID string) error {
+	if admin != nil && admin.topology == nil {
+		return nil
+	}
+	_, err := admin.routeForControl(targetUUID)
+	return err
 }
 
 func (admin *Admin) fetchDTNRoute(uuid string, attempts int) (string, bool) {

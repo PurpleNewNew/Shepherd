@@ -162,6 +162,36 @@ func TestPlanForNodeSuspendsUnsatisfiableNoCandidateTopology(t *testing.T) {
 	}
 }
 
+func TestRescueCleanupRunsForUnavailableOldParent(t *testing.T) {
+	topo := topology.NewTopology()
+	go topo.Run()
+	t.Cleanup(topo.Stop)
+
+	addPlannerTestNode(t, topo, "NODE-ROOT", protocol.ADMIN_UUID, "10.0.0.1", true)
+	addPlannerTestNode(t, topo, "NODE-MID", "NODE-ROOT", "10.0.0.2", false)
+	addPlannerTestNode(t, topo, "NODE-LEAF", "NODE-MID", "10.0.0.3", false)
+	mustTopo(t, topo, &topology.TopoTask{Mode: topology.CALCULATE})
+	mustTopo(t, topo, &topology.TopoTask{Mode: topology.MARKNODEOFFLINE, UUID: "NODE-MID"})
+
+	planner := NewSupplementalPlanner(topo, topo.Service(), nil, nil)
+	var gotParent, gotChild, gotNewParent string
+	planner.SetRescueCleanup(func(failedParent, child, newParent string) {
+		gotParent = failedParent
+		gotChild = child
+		gotNewParent = newParent
+	})
+
+	if err := planner.rescue.applyRescueResult(&protocol.RescueResponse{
+		ParentUUID: "NODE-ROOT",
+		ChildUUID:  "NODE-LEAF",
+	}); err != nil {
+		t.Fatalf("apply rescue result: %v", err)
+	}
+	if gotParent != "NODE-MID" || gotChild != "NODE-LEAF" || gotNewParent != "NODE-ROOT" {
+		t.Fatalf("unexpected cleanup callback parent=%s child=%s newParent=%s", gotParent, gotChild, gotNewParent)
+	}
+}
+
 func TestMetricsSnapshotDefaults(t *testing.T) {
 	planner := NewSupplementalPlanner(nil, nil, nil, nil)
 	snapshot := planner.MetricsSnapshot()
@@ -289,5 +319,34 @@ func TestRepairStatuses(t *testing.T) {
 	}
 	if statuses[1].TargetUUID != "node-b" || statuses[1].Attempts != 1 {
 		t.Fatalf("unexpected snapshot for node-b: %+v", statuses[1])
+	}
+}
+
+func TestRepairStatusesReturnsSnapshotWithoutWaitingOnFailuresLock(t *testing.T) {
+	planner := NewSupplementalPlanner(nil, nil, nil, nil)
+	planner.failuresMu.Lock()
+	defer planner.failuresMu.Unlock()
+
+	start := time.Now()
+	statuses := planner.RepairStatuses()
+	if elapsed := time.Since(start); elapsed > 50*time.Millisecond {
+		t.Fatalf("RepairStatuses waited on lock for %s", elapsed)
+	}
+	if len(statuses) != 0 {
+		t.Fatalf("expected empty snapshot while lock is contended, got %+v", statuses)
+	}
+}
+
+func TestManualRepairRejectsQuarantinedNode(t *testing.T) {
+	topo := topology.NewTopology()
+	go topo.Run()
+	t.Cleanup(topo.Stop)
+
+	addPlannerTestNode(t, topo, "NODE-DEAD", protocol.ADMIN_UUID, "10.0.0.2", true)
+	mustTopo(t, topo, &topology.TopoTask{Mode: topology.QUARANTINENODE, UUID: "NODE-DEAD"})
+
+	planner := NewSupplementalPlanner(topo, topo.Service(), nil, nil)
+	if err := planner.RequestManualRepair("NODE-DEAD"); err == nil {
+		t.Fatalf("expected manual repair for quarantined node to be rejected")
 	}
 }

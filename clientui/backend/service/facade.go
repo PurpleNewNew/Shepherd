@@ -1058,9 +1058,7 @@ func (a *API) openInteractiveStream(client *kelpie.Client, handle *uipb.ProxyStr
 		return StreamHandleDTO{}, err
 	}
 	dto := streamHandleFromPB(handle, a.nextStreamHandleID())
-	if dto.Status == "" {
-		dto.Status = "opening"
-	}
+	dto.Status = "queued"
 	if err := stream.Send(&uipb.StreamRequest{
 		SessionId:  handle.GetSessionId(),
 		TargetUuid: handle.GetTargetUuid(),

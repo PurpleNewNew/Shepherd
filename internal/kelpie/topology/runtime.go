@@ -25,5 +25,6 @@ func (topology *Topology) NodeRuntime(uuid string) (NodeRuntime, bool) {
 		SleepSeconds: n.sleepSeconds,
 		WorkSeconds:  n.workSeconds,
 		NextWake:     n.nextWake,
+		Status:       n.lifecycleStatus(),
 	}, true
 }

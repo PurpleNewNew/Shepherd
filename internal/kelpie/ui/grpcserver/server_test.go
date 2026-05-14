@@ -371,14 +371,6 @@ func TestListSleepProfilesFilters(t *testing.T) {
 
 func TestListRepairsAggregates(t *testing.T) {
 	svc := &service{
-		sessionsOverride: func(filter process.SessionFilter) []process.SessionInfo {
-			return []process.SessionInfo{{
-				TargetUUID:   "node-a",
-				Status:       process.SessionStatusRepairing,
-				LastError:    "dial",
-				StatusReason: "retry",
-			}}
-		},
 		listRepairsOverride: func() []planner.RepairStatusSnapshot {
 			return []planner.RepairStatusSnapshot{
 				{TargetUUID: "node-a", Attempts: 2},
@@ -393,8 +385,8 @@ func TestListRepairsAggregates(t *testing.T) {
 	if len(resp.GetRepairs()) != 2 || resp.GetRepairs()[0].GetTargetUuid() != "node-a" {
 		t.Fatalf("unexpected repair list: %+v", resp.GetRepairs())
 	}
-	if resp.GetRepairs()[0].GetAttempts() != 2 || resp.GetRepairs()[0].GetReason() != "retry" {
-		t.Fatalf("expected attempts merged: %+v", resp.GetRepairs()[0])
+	if resp.GetRepairs()[0].GetAttempts() != 2 || resp.GetRepairs()[0].GetReason() != "" {
+		t.Fatalf("expected pure repair snapshot: %+v", resp.GetRepairs()[0])
 	}
 }
 

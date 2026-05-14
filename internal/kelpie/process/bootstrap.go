@@ -103,7 +103,7 @@ func (admin *Admin) decorateSupplementalHooks() {
 		if uuid == "" {
 			return
 		}
-		attemptSupplementalFailover(admin.mgr, admin.topology, uuid)
+		attemptSupplementalFailover(admin.mgr, admin.topology, uuid, admin.handleFailoverCleanup)
 	}))
 	admin.hookCancelers = append(admin.hookCancelers, supp.RegisterNodeAddedHook(admin.handleNodeAdded))
 	admin.hookCancelers = append(admin.hookCancelers, supp.RegisterSuppLinkFailedHook(func(linkUUID string, endpoints []string) {
@@ -159,6 +159,7 @@ func (admin *Admin) initSupplementalPlanner(ctx context.Context) {
 		return
 	}
 	admin.suppPlanner.SetBaseOptions(admin.options)
+	admin.suppPlanner.SetRescueCleanup(admin.handleFailoverCleanup)
 	admin.suppPlanner.RestoreMetrics(admin.plannerMetricsSeed)
 	admin.suppPlanner.Start(ctx)
 	admin.flushPendingSuppEvents()
@@ -185,6 +186,6 @@ func (admin *Admin) startManagers(ctx context.Context) {
 	go DispatchListenMess(ctx, admin.mgr, admin.topology)
 	go DispatchConnectMess(ctx, admin.mgr)
 	go DispatchInfoMess(ctx, admin.mgr, admin.topology)
-	go DispatchChildrenMess(ctx, admin.mgr, admin.topology, admin.onNodeReonline)
+	go DispatchChildrenMess(ctx, admin.mgr, admin.topology, admin.onNodeReonline, admin.handleFailoverCleanup)
 	go admin.runHeartbeat(ctx)
 }

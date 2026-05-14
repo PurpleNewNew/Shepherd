@@ -104,6 +104,7 @@ func (topology *Topology) checkNode(task *TopoTask) {
 func (topology *Topology) addNode(task *TopoTask) {
 	parentUUID := topology.resolveParentUUID(task.Target.uuid, task.ParentUUID, task.IsFirst)
 	topology.setParentRelationLocked(task.Target.uuid, parentUUID)
+	task.Target.setLifecycleStatus(NodeStatusOnline)
 	if task.Target.workSeconds <= 0 {
 		task.Target.workSeconds = defaultWorkSeconds
 	}
@@ -183,7 +184,7 @@ func (topology *Topology) updateDetail(task *TopoTask) {
 		}
 		if !task.SkipLiveness {
 			node.lastSeen = time.Now()
-			node.isAlive = true
+			node.setLifecycleStatus(NodeStatusOnline)
 		}
 	}
 
@@ -220,6 +221,7 @@ func (topology *Topology) updateConnInfo(task *TopoTask) {
 		}
 		if !task.LastSuccess.IsZero() {
 			node.lastSuccess = task.LastSuccess
+			node.setLifecycleStatus(NodeStatusOnline)
 		}
 		if task.RepairAttempts >= 0 {
 			node.repairFailures = task.RepairAttempts
@@ -275,7 +277,7 @@ func (topology *Topology) updateMemo(task *TopoTask) {
 	if uuidNum >= 0 {
 		topology.nodes[uuidNum].memo = task.Memo
 		topology.nodes[uuidNum].lastSeen = time.Now()
-		topology.nodes[uuidNum].isAlive = true
+		topology.nodes[uuidNum].setLifecycleStatus(NodeStatusOnline)
 	}
 	topology.persistNode(task.UUID)
 }
@@ -385,7 +387,7 @@ func (topology *Topology) reonlineNode(task *TopoTask) {
 				existing.workSeconds = defaultWorkSeconds
 			}
 			existing.lastSeen = now
-			existing.isAlive = true
+			existing.setLifecycleStatus(NodeStatusOnline)
 			n = existing
 		} else {
 			topology.nodes[idNum] = task.Target
@@ -417,7 +419,7 @@ func (topology *Topology) reonlineNode(task *TopoTask) {
 	// 标记节点为活跃
 	if n != nil {
 		n.lastSeen = now
-		n.isAlive = true
+		n.setLifecycleStatus(NodeStatusOnline)
 		if n.workSeconds <= 0 {
 			n.workSeconds = defaultWorkSeconds
 		}
@@ -500,8 +502,8 @@ func (topology *Topology) getAllNodes(task *TopoTask) {
 		if node == nil || node.uuid == "" || node.uuid == protocol.ADMIN_UUID {
 			continue
 		}
-		// 仅返回在线节点，避免调度器等组件将离线节点视为可用。
-		if !node.isAlive {
+		// 仅返回在线节点，避免调度器等组件将不可用节点视为可用。
+		if node.lifecycleStatus() != NodeStatusOnline {
 			continue
 		}
 		if network != "" && !topology.matchesNetwork(node.uuid, network) {
@@ -524,8 +526,8 @@ func (topology *Topology) MarkAllOffline() {
 		if n == nil || n.uuid == "" || n.uuid == protocol.ADMIN_UUID {
 			continue
 		}
-		if n.isAlive {
-			n.isAlive = false
+		if n.lifecycleStatus() == NodeStatusOnline {
+			n.setLifecycleStatus(NodeStatusOffline)
 			// 持久化更新，避免下次启动再次误判
 			topology.persistNode(n.uuid)
 		}
@@ -544,14 +546,14 @@ func (topology *Topology) pruneOffline(task *TopoTask) {
 		if n == nil || n.uuid == "" || n.uuid == protocol.ADMIN_UUID {
 			continue
 		}
-		if n.isAlive {
+		if n.lifecycleStatus() == NodeStatusOnline {
 			continue
 		}
 		// 若父节点也离线，则由更高层处理，避免重复
 		parentOffline := false
 		if p := topology.parentOfUnlocked(n.uuid); p != "" {
 			if pid := topology.id2IDNum(p); pid >= 0 {
-				if pn := topology.nodes[pid]; pn != nil && !pn.isAlive {
+				if pn := topology.nodes[pid]; pn != nil && pn.lifecycleStatus() != NodeStatusOnline {
 					parentOffline = true
 				}
 			}
@@ -572,7 +574,7 @@ func (topology *Topology) pruneOffline(task *TopoTask) {
 	for _, rootID := range candidates {
 		// 重新校验仍存在且离线
 		root := topology.nodes[rootID]
-		if root == nil || root.isAlive || root.uuid == "" || root.uuid == protocol.ADMIN_UUID {
+		if root == nil || root.lifecycleStatus() == NodeStatusOnline || root.uuid == "" || root.uuid == protocol.ADMIN_UUID {
 			continue
 		}
 
@@ -586,7 +588,7 @@ func (topology *Topology) pruneOffline(task *TopoTask) {
 			if n == nil || n.uuid == "" || n.uuid == protocol.ADMIN_UUID {
 				continue
 			}
-			if n.isAlive {
+			if n.lifecycleStatus() == NodeStatusOnline {
 				continue
 			}
 			uuid := n.uuid
@@ -632,8 +634,9 @@ func (topology *Topology) markNodeOffline(task *TopoTask) {
 			continue
 		}
 		offline = append(offline, n.uuid)
-		if n.isAlive {
-			n.isAlive = false
+		status := n.lifecycleStatus()
+		if status != NodeStatusOffline && !statusRouteExcluded(status) {
+			n.setLifecycleStatus(NodeStatusOffline)
 			topology.persistNode(n.uuid)
 			changed = true
 		}
@@ -642,6 +645,58 @@ func (topology *Topology) markNodeOffline(task *TopoTask) {
 		topology.lastUpdateTime = now
 	}
 	topology.ResultChan <- &topoResult{AllNodes: offline}
+}
+
+func (topology *Topology) setNodeStatus(task *TopoTask, status NodeStatus, includeChildren bool) {
+	if topology == nil || task == nil {
+		return
+	}
+	uuid := strings.TrimSpace(task.UUID)
+	idNum := topology.id2IDNum(uuid)
+	if uuid == "" || idNum < 0 {
+		topology.ResultChan <- &topoResult{}
+		return
+	}
+
+	ready := []int{idNum}
+	if includeChildren {
+		topology.findChildrenNodes(&ready, idNum)
+	}
+
+	now := time.Now()
+	changed := false
+	updated := make([]string, 0, len(ready))
+	for _, id := range ready {
+		n := topology.nodes[id]
+		if n == nil || n.uuid == "" || n.uuid == protocol.ADMIN_UUID {
+			continue
+		}
+		updated = append(updated, n.uuid)
+		if n.setLifecycleStatus(status) {
+			changed = true
+		}
+		if status == NodeStatusOnline {
+			n.lastSeen = now
+		}
+		topology.persistNode(n.uuid)
+	}
+	if changed {
+		topology.lastUpdateTime = now
+		topology.ScheduleCalculate()
+	}
+	topology.ResultChan <- &topoResult{AllNodes: updated}
+}
+
+func (topology *Topology) markNodeUnreachable(task *TopoTask) {
+	topology.setNodeStatus(task, NodeStatusUnreachable, false)
+}
+
+func (topology *Topology) quarantineNode(task *TopoTask) {
+	topology.setNodeStatus(task, NodeStatusQuarantined, false)
+}
+
+func (topology *Topology) retireNode(task *TopoTask) {
+	topology.setNodeStatus(task, NodeStatusRetired, false)
 }
 
 // markStaleOffline 遍历节点，将超过阈值未更新(lastSeen)的节点标记为离线。
@@ -660,7 +715,7 @@ func (topology *Topology) markStaleOffline() {
 		if n == nil || n.uuid == "" || n.uuid == protocol.ADMIN_UUID {
 			continue
 		}
-		if !n.isAlive {
+		if n.lifecycleStatus() != NodeStatusOnline {
 			continue
 		}
 		if n.lastSeen.IsZero() {
@@ -668,7 +723,7 @@ func (topology *Topology) markStaleOffline() {
 		}
 		threshold := baseGrace + topology.pathSleepBudget(n.uuid)
 		if now.Sub(n.lastSeen) > threshold {
-			n.isAlive = false
+			n.setLifecycleStatus(NodeStatusOffline)
 			topology.persistNode(n.uuid)
 			changed = true
 		}
@@ -771,7 +826,7 @@ func (topology *Topology) hasOnlineDescendant(id int) bool {
 		if cn == nil {
 			continue
 		}
-		if cn.isAlive {
+		if cn.lifecycleStatus() == NodeStatusOnline {
 			return true
 		}
 		if topology.hasOnlineDescendant(cid) {

@@ -12,9 +12,10 @@
 
 # 等待 n4 自愈（通过补链/救援恢复 online）。
 {"at_ms":22000,"type":"wait_node_status","node":"n4","expect":"online","timeout_ms":240000}
+{"at_ms":22500,"type":"wait_node_status","node":"n3","expect_by_topology":{"star":"offline","chain":"quarantined"},"timeout_ms":120000}
 
 # 自愈后做一轮更狠的 IO burst：并发 stream_proxy + dataplane_roundtrip。
-{"at_ms":23000,"type":"io_burst","target":"n4","stream_count":4,"dataplane_count":3,"payload_bytes":2048,"timeout_ms":120000}
+# star 下 n3 不是 n4 的父节点，这个场景没有补链救援等待窗口；n4 的 2s work 窗口会让 stream burst 退化成 sleep 竞态。
+{"at_ms":23000,"type":"io_burst","target":"n4","stream_count":4,"dataplane_count":3,"payload_bytes":2048,"timeout_ms":120000,"topologies":["chain"]}
 
 {"at_ms":70000,"type":"metrics","note":"checkpoint-70s"}
-

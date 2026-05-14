@@ -410,6 +410,39 @@ func (m *Manager) Requeue(bundle *Bundle, delay time.Duration) {
 	}
 }
 
+// Hold places a bundle back into its target queue without increasing attempts.
+func (m *Manager) Hold(bundle *Bundle, delay time.Duration) {
+	if bundle == nil {
+		return
+	}
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	if delay > 0 {
+		bundle.HoldUntil = m.Now().Add(delay)
+	} else {
+		bundle.HoldUntil = time.Time{}
+	}
+	if m.persist != nil {
+		_ = m.persist.UpsertDTNBundle(bundle)
+	}
+	q := m.ensureQueue(bundle.Target)
+	dropped := q.enqueue(bundle, m.cfg.PerNodeCapacity)
+	if len(dropped) > 0 {
+		m.mDropped += uint64(len(dropped))
+		var dropIDs []string
+		for _, db := range dropped {
+			if db == nil {
+				continue
+			}
+			m.dropByPriority[db.Priority]++
+			dropIDs = append(dropIDs, db.ID)
+		}
+		if m.persist != nil && len(dropIDs) > 0 {
+			_ = m.persist.DeleteDTNBundles(dropIDs)
+		}
+	}
+}
+
 // RecalculateHoldForTarget 会为某个目标的所有未过期 bundle 设置新的 HoldUntil。
 // 如果 hold.IsZero()，则清空 HoldUntil（立即可发送）。返回被更新的 bundle 数量。
 func (m *Manager) RecalculateHoldForTarget(target string, hold time.Time) int {
@@ -591,6 +624,33 @@ func (m *Manager) Remove(id string) (*Bundle, bool) {
 		_ = m.persist.DeleteDTNBundle(id)
 	}
 	return removedBundle, removed
+}
+
+// RemoveTarget deletes every queued bundle for a target and returns the count.
+func (m *Manager) RemoveTarget(target string) int {
+	if m == nil || target == "" {
+		return 0
+	}
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	q := m.queues[target]
+	if q == nil || len(q.items) == 0 {
+		delete(m.queues, target)
+		return 0
+	}
+	ids := make([]string, 0, len(q.items))
+	for _, b := range q.items {
+		if b == nil || b.ID == "" {
+			continue
+		}
+		ids = append(ids, b.ID)
+	}
+	removed := len(q.items)
+	delete(m.queues, target)
+	if m.persist != nil && len(ids) > 0 {
+		_ = m.persist.DeleteDTNBundles(ids)
+	}
+	return removed
 }
 
 func (m *Manager) ensureQueue(target string) *nodeQueue {
